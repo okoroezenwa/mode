@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="MyriadPro-Light.otf">
+            <string>MyriadPro-Light</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="NoAccessView" customModule="Mode" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="NoArt" translatesAutoresizingMaskIntoConstraints="NO" id="apZ-BB-b6t">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                </imageView>
+                <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NA0-uP-Cvd" customClass="MELVisualEffectView" customModule="Mode" customModuleProvider="target">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                    <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="nu6-mO-vWw">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                    </view>
+                    <color key="backgroundColor" white="1" alpha="0.40000000000000002" colorSpace="calibratedWhite"/>
+                    <blurEffect style="light"/>
+                </visualEffectView>
+                <stackView opaque="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" axis="vertical" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="5IO-1h-wLq">
+                    <rect key="frame" x="20" y="183.5" width="375" height="300.5"/>
+                    <subviews>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="WarningLarge" translatesAutoresizingMaskIntoConstraints="NO" id="yyc-sA-x9x" customClass="MELImageView" customModule="Mode" customModuleProvider="target">
+                            <rect key="frame" x="0.0" y="0.0" width="375" height="100"/>
+                            <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                        </imageView>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Library Unavailable" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bga-Sq-6Kn" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                            <rect key="frame" x="0.0" y="112" width="375" height="29.5"/>
+                            <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="25"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XXY-7q-QXR" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                            <rect key="frame" x="0.0" y="153.5" width="375" height="55"/>
+                            <attributedString key="attributedText">
+                                <fragment content="Mode has no access to your library. You can change this in Settings.">
+                                    <attributes>
+                                        <color key="NSColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                        <font key="NSFont" size="21" name="MyriadPro-Light"/>
+                                        <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" lineSpacing="6" tighteningFactorForTruncation="0.0"/>
+                                    </attributes>
+                                </fragment>
+                            </attributedString>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fQ1-yb-tPq">
+                            <rect key="frame" x="0.0" y="220.5" width="375" height="80"/>
+                            <subviews>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0pz-Eb-u3y" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="80"/>
+                                    <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="25"/>
+                                    <state key="normal" title="Open Settings">
+                                        <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                    </state>
+                                    <connections>
+                                        <action selector="openSettings" destination="iN0-l3-epB" eventType="touchUpInside" id="3b7-Sy-zG6"/>
+                                    </connections>
+                                </button>
+                                <view userInteractionEnabled="NO" alpha="0.050000000000000003" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="H8b-80-bRD" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
+                                    <rect key="frame" x="47" y="18" width="375" height="44"/>
+                                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                    <userDefinedRuntimeAttributes>
+                                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                            <integer key="value" value="22"/>
+                                        </userDefinedRuntimeAttribute>
+                                    </userDefinedRuntimeAttributes>
+                                </view>
+                            </subviews>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            <constraints>
+                                <constraint firstAttribute="trailing" secondItem="0pz-Eb-u3y" secondAttribute="trailing" id="C1L-fI-J8N"/>
+                                <constraint firstItem="0pz-Eb-u3y" firstAttribute="leading" secondItem="fQ1-yb-tPq" secondAttribute="leading" id="KZN-R3-2DM"/>
+                                <constraint firstAttribute="trailing" secondItem="H8b-80-bRD" secondAttribute="trailing" constant="48" id="Nws-tb-0QR"/>
+                                <constraint firstAttribute="height" constant="80" id="PMy-5a-irq"/>
+                                <constraint firstItem="H8b-80-bRD" firstAttribute="leading" secondItem="fQ1-yb-tPq" secondAttribute="leading" constant="47" id="V9z-Yf-aOh"/>
+                                <constraint firstItem="H8b-80-bRD" firstAttribute="top" secondItem="fQ1-yb-tPq" secondAttribute="top" constant="18" id="cpQ-1s-lS1"/>
+                                <constraint firstAttribute="bottom" secondItem="H8b-80-bRD" secondAttribute="bottom" constant="18" id="gq2-Qn-BAV"/>
+                                <constraint firstItem="0pz-Eb-u3y" firstAttribute="top" secondItem="fQ1-yb-tPq" secondAttribute="top" id="l0O-cq-6Ga"/>
+                                <constraint firstAttribute="bottom" secondItem="0pz-Eb-u3y" secondAttribute="bottom" id="zSB-3T-Fjg"/>
+                            </constraints>
+                        </view>
+                    </subviews>
+                </stackView>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="5IO-1h-wLq" secondAttribute="trailing" constant="20" id="4zY-U8-qmX"/>
+                <constraint firstItem="apZ-BB-b6t" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="6BG-j0-CRq"/>
+                <constraint firstItem="NA0-uP-Cvd" firstAttribute="leading" secondItem="apZ-BB-b6t" secondAttribute="leading" id="6gM-Mh-UA1"/>
+                <constraint firstItem="NA0-uP-Cvd" firstAttribute="bottom" secondItem="apZ-BB-b6t" secondAttribute="bottom" id="JNB-Bf-sMR"/>
+                <constraint firstItem="5IO-1h-wLq" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="JeG-10-HNU"/>
+                <constraint firstItem="5IO-1h-wLq" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="20" id="TMd-IK-1Pl"/>
+                <constraint firstItem="5IO-1h-wLq" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="U8S-Tg-s6z"/>
+                <constraint firstItem="NA0-uP-Cvd" firstAttribute="trailing" secondItem="apZ-BB-b6t" secondAttribute="trailing" id="byX-Gm-7TE"/>
+                <constraint firstAttribute="bottom" secondItem="apZ-BB-b6t" secondAttribute="bottom" id="lNS-bZ-FeV"/>
+                <constraint firstItem="apZ-BB-b6t" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="lmU-1x-fc2"/>
+                <constraint firstAttribute="trailing" secondItem="apZ-BB-b6t" secondAttribute="trailing" id="op7-Bb-OAV"/>
+                <constraint firstItem="NA0-uP-Cvd" firstAttribute="top" secondItem="apZ-BB-b6t" secondAttribute="top" id="zlM-nc-8WR"/>
+            </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="NoArt" width="20" height="20"/>
+        <image name="WarningLarge" width="100" height="100"/>
+    </resources>
+</document>
