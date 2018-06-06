@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13526" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13524"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="MyriadPro-Regular.otf">
+            <string>MyriadPro-Regular</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="playlistCell" id="DNl-Ih-uyf" customClass="SmallPlaylistCollectionViewCell" customModule="Mode" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="328" height="54"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="328" height="54"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RYh-7E-ius" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
+                        <rect key="frame" x="4" y="8" width="320" height="38"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zlg-g7-Y3T">
+                                <rect key="frame" x="5" y="4" width="30" height="30"/>
+                                <subviews>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="A7E-Rh-NZp">
+                                        <rect key="frame" x="0.0" y="0.0" width="30" height="30"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="4"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                    </imageView>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="A7E-Rh-NZp" secondAttribute="trailing" id="Cdl-mT-RwV"/>
+                                    <constraint firstAttribute="width" secondItem="zlg-g7-Y3T" secondAttribute="height" multiplier="1:1" id="Ozj-Cu-39D"/>
+                                    <constraint firstItem="A7E-Rh-NZp" firstAttribute="leading" secondItem="zlg-g7-Y3T" secondAttribute="leading" id="dmA-Lh-Icy"/>
+                                    <constraint firstItem="A7E-Rh-NZp" firstAttribute="top" secondItem="zlg-g7-Y3T" secondAttribute="top" id="l2G-iJ-Y5x"/>
+                                    <constraint firstAttribute="bottom" secondItem="A7E-Rh-NZp" secondAttribute="bottom" id="sbq-Bd-ABG"/>
+                                </constraints>
+                            </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.90000000000000002" translatesAutoresizingMaskIntoConstraints="NO" id="Mk5-5Q-MD7" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                <rect key="frame" x="39" y="4" width="259" height="18"/>
+                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="15"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" ambiguous="YES" text="Count" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lhe-Z1-Stf" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                <rect key="frame" x="39" y="22" width="259" height="12"/>
+                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="12"/>
+                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="greyOverride" value="YES"/>
+                                </userDefinedRuntimeAttributes>
+                            </label>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ForwardArrowAlt" translatesAutoresizingMaskIntoConstraints="NO" id="4nr-Az-nvc" customClass="MELImageView" customModule="Mode" customModuleProvider="target">
+                                <rect key="frame" x="306" y="14" width="10" height="10"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="10" id="9rg-Or-HJS"/>
+                                    <constraint firstAttribute="width" constant="10" id="Q2A-ba-tmq"/>
+                                </constraints>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="0.050000000000000003" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="Mk5-5Q-MD7" firstAttribute="top" secondItem="RYh-7E-ius" secondAttribute="top" constant="4" id="2LU-FE-stP"/>
+                            <constraint firstItem="Mk5-5Q-MD7" firstAttribute="leading" secondItem="zlg-g7-Y3T" secondAttribute="trailing" constant="4" id="8uB-Ja-aoh"/>
+                            <constraint firstItem="zlg-g7-Y3T" firstAttribute="top" secondItem="RYh-7E-ius" secondAttribute="top" constant="4" id="AcW-v1-kvT"/>
+                            <constraint firstAttribute="bottom" secondItem="Lhe-Z1-Stf" secondAttribute="bottom" constant="4" id="D1o-jQ-NBc"/>
+                            <constraint firstItem="4nr-Az-nvc" firstAttribute="leading" secondItem="Mk5-5Q-MD7" secondAttribute="trailing" constant="8" id="DrZ-2G-g4U"/>
+                            <constraint firstItem="Lhe-Z1-Stf" firstAttribute="leading" secondItem="Mk5-5Q-MD7" secondAttribute="leading" id="FG1-EQ-NFy"/>
+                            <constraint firstItem="4nr-Az-nvc" firstAttribute="centerY" secondItem="RYh-7E-ius" secondAttribute="centerY" id="Gav-Gh-pfl"/>
+                            <constraint firstAttribute="bottom" secondItem="zlg-g7-Y3T" secondAttribute="bottom" constant="4" id="aTZ-GI-H43"/>
+                            <constraint firstItem="Lhe-Z1-Stf" firstAttribute="trailing" secondItem="Mk5-5Q-MD7" secondAttribute="trailing" id="bxR-6m-Uzv"/>
+                            <constraint firstItem="Mk5-5Q-MD7" firstAttribute="bottom" secondItem="Lhe-Z1-Stf" secondAttribute="top" id="ffb-At-7Fc"/>
+                            <constraint firstItem="zlg-g7-Y3T" firstAttribute="leading" secondItem="RYh-7E-ius" secondAttribute="leading" constant="5" id="rnI-go-Tev"/>
+                            <constraint firstAttribute="trailing" secondItem="4nr-Az-nvc" secondAttribute="trailing" constant="4" id="yR8-f0-Xts"/>
+                        </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                <integer key="value" value="4"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
+                    </view>
+                </subviews>
+            </view>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="RYh-7E-ius" secondAttribute="bottom" constant="8" id="16M-Qa-Hpr"/>
+                <constraint firstAttribute="trailing" secondItem="RYh-7E-ius" secondAttribute="trailing" constant="4" id="jD8-U1-vj4"/>
+                <constraint firstItem="RYh-7E-ius" firstAttribute="top" secondItem="DNl-Ih-uyf" secondAttribute="top" constant="8" id="ldn-9Z-qVs"/>
+                <constraint firstItem="RYh-7E-ius" firstAttribute="leading" secondItem="DNl-Ih-uyf" secondAttribute="leading" constant="4" id="uXA-u5-9eU"/>
+            </constraints>
+            <edgeInsets key="layoutMargins" top="0.0" left="0.0" bottom="0.0" right="0.0"/>
+            <size key="customSize" width="328" height="134"/>
+            <connections>
+                <outlet property="artworkContainer" destination="zlg-g7-Y3T" id="PGR-mI-gsX"/>
+                <outlet property="artworkImageView" destination="A7E-Rh-NZp" id="YUa-lu-2WM"/>
+                <outlet property="containerView" destination="RYh-7E-ius" id="Yhh-nF-haD"/>
+                <outlet property="nameLabel" destination="Mk5-5Q-MD7" id="oQK-ml-4jC"/>
+                <outlet property="songCountLabel" destination="Lhe-Z1-Stf" id="eSn-cq-oRq"/>
+            </connections>
+            <point key="canvasLocation" x="39" y="74"/>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <image name="ForwardArrowAlt" width="9" height="12"/>
+    </resources>
+</document>

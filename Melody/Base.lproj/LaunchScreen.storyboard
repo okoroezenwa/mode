@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="EHf-IW-A2E">
+            <objects>
+                <viewController id="01J-lp-oVM" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Llm-lL-Icb"/>
+                        <viewControllerLayoutGuide type="bottom" id="xb3-aO-Qok"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Ze5-6b-2t3">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="NoArtwork" translatesAutoresizingMaskIntoConstraints="NO" id="mbH-v9-V5g">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                            </imageView>
+                            <visualEffectView opaque="NO" tag="1" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0yG-8o-Rik">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="wpB-m0-huf">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3Li-Ys-Tz8">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="o8Q-l2-a8w">
+                                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Equaliser" translatesAutoresizingMaskIntoConstraints="NO" id="FoX-aJ-2EW">
+                                                        <rect key="frame" x="57" y="203" width="262.5" height="262.5"/>
+                                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="width" secondItem="FoX-aJ-2EW" secondAttribute="height" multiplier="1:1" id="5X0-R4-MvQ"/>
+                                                        </constraints>
+                                                    </imageView>
+                                                </subviews>
+                                                <constraints>
+                                                    <constraint firstItem="FoX-aJ-2EW" firstAttribute="width" secondItem="o8Q-l2-a8w" secondAttribute="width" multiplier="0.7" id="82L-sc-8cU"/>
+                                                    <constraint firstItem="FoX-aJ-2EW" firstAttribute="centerX" secondItem="o8Q-l2-a8w" secondAttribute="centerX" id="FNb-5e-OpE"/>
+                                                    <constraint firstItem="FoX-aJ-2EW" firstAttribute="centerY" secondItem="o8Q-l2-a8w" secondAttribute="centerY" id="JpP-B1-FYP"/>
+                                                </constraints>
+                                            </view>
+                                            <vibrancyEffect>
+                                                <blurEffect style="dark"/>
+                                            </vibrancyEffect>
+                                        </visualEffectView>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstAttribute="bottom" secondItem="3Li-Ys-Tz8" secondAttribute="bottom" id="55N-8e-3NU"/>
+                                        <constraint firstAttribute="trailing" secondItem="3Li-Ys-Tz8" secondAttribute="trailing" id="DvG-oO-5uf"/>
+                                        <constraint firstItem="3Li-Ys-Tz8" firstAttribute="top" secondItem="wpB-m0-huf" secondAttribute="top" id="Eln-da-jdv"/>
+                                        <constraint firstItem="3Li-Ys-Tz8" firstAttribute="leading" secondItem="wpB-m0-huf" secondAttribute="leading" id="Okg-L9-Q2K"/>
+                                    </constraints>
+                                </view>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <blurEffect style="dark"/>
+                            </visualEffectView>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="0yG-8o-Rik" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="0vg-cX-N9C"/>
+                            <constraint firstAttribute="bottom" secondItem="0yG-8o-Rik" secondAttribute="bottom" id="5zM-9L-kTA"/>
+                            <constraint firstItem="mbH-v9-V5g" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="topMargin" id="GaE-C3-AEu"/>
+                            <constraint firstAttribute="trailing" secondItem="mbH-v9-V5g" secondAttribute="trailing" id="I3L-Kh-OFd"/>
+                            <constraint firstItem="mbH-v9-V5g" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="bXu-qy-VyR"/>
+                            <constraint firstAttribute="bottom" secondItem="mbH-v9-V5g" secondAttribute="bottom" id="cEA-36-zfv"/>
+                            <constraint firstItem="0yG-8o-Rik" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="topMargin" id="hIf-DU-0fb"/>
+                            <constraint firstAttribute="trailing" secondItem="0yG-8o-Rik" secondAttribute="trailing" id="p5i-68-ox9"/>
+                        </constraints>
+                    </view>
+                    <nil key="simulatedStatusBarMetrics"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="53" y="375"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="Equaliser" width="779" height="592"/>
+        <image name="NoArtwork" width="20" height="20"/>
+    </resources>
+</document>

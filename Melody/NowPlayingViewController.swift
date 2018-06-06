@@ -1,0 +1,1351 @@
+//
+//  NowPlayingViewController.swift
+//  Melody
+//
+//  Created by Ezenwa Okoro on 10/07/2016.
+//  Copyright © 2016 Ezenwa Okoro. All rights reserved.
+//
+
+import UIKit
+import StoreKit
+
+class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTransitionable, PreviewTransitionable, InteractivePresenter, TimerBased, SongActionable, Boldable, EntityVerifiable, Peekable, ScreenshotProviding {
+
+    @IBOutlet weak var songName: MELButton!
+    @IBOutlet weak var artistButton: MELButton!
+    @IBOutlet weak var albumButton: MELButton!
+    @IBOutlet weak var albumArt: UIImageView!
+    @IBOutlet weak var albumArtContainer: UIView!
+    @IBOutlet weak var closeButtonBorder: UIView! {
+        
+        didSet {
+            
+            closeButtonBorder.superview?.isHidden = !showCloseButton
+            UniversalMethods.addShadow(to: closeButtonBorder, radius: 10, opacity: 0.3, path: UIBezierPath.init(roundedRect: .init(x: 0, y: 0, width: 26, height: 26), cornerRadius: 13).cgPath)
+        }
+    }
+    @IBOutlet weak var divider: MELLabel!
+    @IBOutlet weak var playPauseButton: MELButton!
+    @IBOutlet weak var previous: MELButton!
+    @IBOutlet weak var nextButton: MELButton!
+    @IBOutlet weak var shuffle: MELButton!
+    @IBOutlet weak var startTime: MELLabel!
+    @IBOutlet weak var stopTime: MELLabel!
+    @IBOutlet weak var timeSlider: MELSlider!
+    @IBOutlet weak var queue: MELButton!
+    @IBOutlet weak var lyricsButton: MELButton!
+    @IBOutlet weak var lyricsVisualEffectView: MELVisualEffectView!
+    @IBOutlet weak var lyricsTextView: MELTextView!
+    @IBOutlet weak var nowPlayingView: UIView!
+    @IBOutlet var horizontalConstraints: [NSLayoutConstraint]!
+    @IBOutlet weak var songNameWidthConstraint: NSLayoutConstraint!
+    @IBOutlet weak var albumWidthConstraint: NSLayoutConstraint!
+    @IBOutlet var albumArtContainerTopConstraint: NSLayoutConstraint!
+    @IBOutlet var albumArtContainerBottomConstraint: NSLayoutConstraint!
+    @IBOutlet weak var nowPlayingViewTopConstraint: NSLayoutConstraint!
+    @IBOutlet weak var detailsView: UIView!
+    @IBOutlet weak var songNameScrollView: UIScrollView!
+    @IBOutlet weak var songDetailsScrollView: UIScrollView!
+    @IBOutlet weak var volumeViewContainer: UIView! {
+        
+        didSet {
+            
+            if showVolumeViews {
+                
+                volumeViewContainer.fill(with: volumeView)
+                
+            } else {
+                
+                volumeViewContainer.fill(with: rateShareView)
+            }
+        }
+    }
+    @IBOutlet var volumeViewContainerEqualHeightConstraint: NSLayoutConstraint!
+    @IBOutlet var volumeViewContainerHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var timeViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var addButtonLeadingConstraint: NSLayoutConstraint!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var actionsButton: MELButton! {
+        
+        didSet {
+            
+            let gr = UILongPressGestureRecognizer.init(target: self, action: #selector(showSettings(with:)))
+            gr.minimumPressDuration = longPressDuration
+            actionsButton.addGestureRecognizer(gr)
+            LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: gr))
+        }
+    }
+    @IBOutlet weak var repeatView: UIView!
+    @IBOutlet weak var repeatButton: MELButton!
+    @IBOutlet weak var statusBarBackground: UIView!
+    @IBOutlet weak var imageView: UIImageView!
+    @IBOutlet weak var effectView: MELVisualEffectView!
+    @IBOutlet weak var artworkIntermediaryView: UIView!
+    @IBOutlet weak var shuffleView: UIView!
+    @IBOutlet weak var queueChevronTrailingConstraint: NSLayoutConstraint!
+    @IBOutlet weak var editButton: MELButton! {
+        
+        didSet {
+            
+            editButton.addTarget(songManager, action: #selector(SongActionManager.showActionsForAll(_:)), for: .touchUpInside)
+        }
+    }
+    
+    @objc lazy var rateShareView: RateShareView = { RateShareView.instance(nowPlayingVC: self) }()
+    lazy var volumeView = VolumeView.instance(leadingWith: 25)
+    
+    override var modalPresentationStyle: UIModalPresentationStyle {
+        
+        get { return .overFullScreen }
+        
+        set { }
+    }
+    
+    @objc var actionableSongs: [MPMediaItem] { return [activeItem].flatMap({ $0 }) }
+    var applicableActions: [SongAction] {
+        
+        var actions = [SongAction.collect, .newPlaylist, .addTo]
+        
+        if activeItem?.existsInLibrary == false {
+            
+            actions.insert(.library, at: 1)
+        }
+        
+        return actions
+    }
+    @objc lazy var songManager: SongActionManager = { return SongActionManager.init(actionable: self) }()
+    
+    @objc let animator = NowPlayingAnimationController.init(interactor: NowPlayingInteractionController.init())
+    @objc let presenter = PresentationAnimationController.init(interactor: InteractionController())
+    @objc weak var peeker: UIViewController?
+    @objc weak var container: ContainerViewController?
+    @objc var from3DTouch: Bool { return peeker != nil }
+    var alternateItem: MPMediaItem?
+    @objc var albumQuery: MPMediaQuery?
+    @objc var artistQuery: MPMediaQuery?
+    @objc var currentItem: MPMediaItem?
+    @objc var currentAlbum: MPMediaItemCollection?
+    @objc var viewController: UIViewController?
+    @objc var lifetimeObservers = Set<NSObject>()
+    let playingImage = #imageLiteral(resourceName: "Pause")
+    let pausedImage = #imageLiteral(resourceName: "Play")
+    var updateableView: UIView? { return detailsView }
+    @objc var lyricsVisible = false
+    var viewHeirachy: UIImage?
+    var activeItem: MPMediaItem? { return alternateItem ?? musicPlayer.nowPlayingItem }
+    
+    var boldableLabels: [TextContaining?] { return [albumButton.titleLabel, songName.titleLabel, artistButton.titleLabel, divider] }
+    
+    override func viewDidLoad() {
+        
+        super.viewDidLoad()
+        
+        modalPresentationCapturesStatusBarAppearance = true
+        NowPlaying.shared.nowPlayingVC = self
+        
+        animator.interactor.addToVC(self)
+        
+        if let _ = peeker {
+            
+            container?.deferToNowPlayingViewController = true
+        }
+        
+        artworkIntermediaryView.layer.setRadiusTypeIfNeeded()
+        
+        useAlternateAnimation = false
+        shouldReturnToContainer = false
+        container?.shouldUseNowPlayingArt = true
+        container?.updateBackgroundWithNowPlaying()
+        
+        updateDetailsView()
+        
+        prepareViews(animated: false)
+        updateSliderDuration()
+        updateTimes(setValue: true, seeking: false)
+        preparePlaybackGestures()
+        updateTitle()
+        prepareLifetimeObservers()
+        prepareDetailLabels()
+        
+        if #available(iOS 11, *) {
+            
+            view.accessibilityIgnoresInvertColors = darkTheme
+        }
+        
+        lyricsTextView.textContainerInset = UIEdgeInsets.init(top: 10, left: 5, bottom: 10, right: 5)
+        lyricsTextView.scrollIndicatorInsets = UIEdgeInsets.init(top: 10, left: 5, bottom: 10, right: 5)
+        
+        modifyShuffleState(changingMusicPlayer: false)
+        modifyRepeatButton(changingMusicPlayer: false)
+        
+        registerForPreviewing(with: self, sourceView: nowPlayingView)
+        prepareGestures()
+    }
+    
+    @IBAction func showArtistOptions(_ sender: UILongPressGestureRecognizer) {
+        
+        guard let _ = activeItem else { return }
+        
+        if sender.state == .began {
+            
+            guard artistQuery != nil else {
+                
+                let newBanner = Banner.init(title: showiCloudItems ? "This artist is not in your library" : "This artist is not available offline", subtitle: nil, image: nil, backgroundColor: .black, didTapBlock: nil)
+                newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+                newBanner.show(duration: 0.7)
+                
+                return
+            }
+            
+            performSegue(withIdentifier: "toArtistOptions", sender: nil)
+        }
+    }
+    
+    @objc func showAlbumOptions(_ sender: UILongPressGestureRecognizer) {
+        
+        guard let _ = activeItem else { return }
+        
+        if sender.state == .began {
+            
+            guard albumQuery != nil else {
+                
+                let newBanner = Banner.init(title: showiCloudItems ? "This album is not in your library" : "This album is not available offline", subtitle: nil, image: nil, backgroundColor: .black, didTapBlock: nil)
+                newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+                newBanner.show(duration: 0.7)
+                
+                return
+             }
+            
+            performSegue(withIdentifier: "toAlbumOptions", sender: nil)
+        }
+    }
+    
+    @objc func prepareGestures() {
+        
+        let artistHold = UILongPressGestureRecognizer.init(target: self, action: #selector(showArtistOptions(_:)))
+        artistHold.minimumPressDuration = longPressDuration
+        artistButton.addGestureRecognizer(artistHold)
+        LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: artistHold))
+        
+        let albumHold = UILongPressGestureRecognizer.init(target: self, action: #selector(showAlbumOptions(_:)))
+        albumHold.minimumPressDuration = longPressDuration
+        albumButton.addGestureRecognizer(albumHold)
+        LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: albumHold))
+        
+        let doubleTap = UITapGestureRecognizer.init(target: self, action: #selector(changeArtworkSize(_:)))
+        doubleTap.numberOfTapsRequired = 2
+        albumArtContainer.addGestureRecognizer(doubleTap)
+        
+        let optionsHold = UILongPressGestureRecognizer.init(target: self, action: #selector(showOptions(_:)))
+        optionsHold.minimumPressDuration = longPressDuration
+        songName.addGestureRecognizer(optionsHold)
+        LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: optionsHold))
+        
+        let edge = UIScreenEdgePanGestureRecognizer.init(target: self, action: #selector(goToQueue))
+        edge.edges = .right
+        view.addGestureRecognizer(edge)
+    }
+    
+    @IBAction func showSongActions() {
+        
+        let info = UIAlertAction.init(title: "Get Info", style: .default, handler: { [weak self] _ in
+            
+            guard let weakSelf = self else { return }
+            
+            weakSelf.showOptions(weakSelf)
+        })
+        
+        var array = alertActions(from: self)
+        array.insert(info, at: 1)
+        
+        present(UIAlertController.withTitle(nil, message: activeItem?.validTitle, style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
+    }
+    
+    @objc func goToQueue(_ sender: UIGestureRecognizer) {
+        
+        guard sender.state == .began, let _ = musicPlayer.nowPlayingItem else { return }
+        
+        performSegue(withIdentifier: "toQueue", sender: nil)
+    }
+    
+    @objc func changeArtworkSize(_ gr: UITapGestureRecognizer) {
+        
+        guard !isSmallScreen else { return }
+        
+        prefs.set(!dynamicStatusBar, forKey: .dynamicStatusBar)
+        updateArtworkImageView(changingArt: true, animated: true)
+    }
+    
+    @objc func prepareLifetimeObservers() {
+        
+        lifetimeObservers.insert(notifier.addObserver(forName: .UIApplicationWillEnterForeground, object: UIApplication.shared, queue: nil, using: { [weak self] _ in
+            
+            guard let weakSelf = self else { return }
+            
+            weakSelf.modifyShuffleState(changingMusicPlayer: false)
+            weakSelf.modifyRepeatButton(changingMusicPlayer: false)
+            weakSelf.modifyQueueLabel()
+            weakSelf.verifyLibraryStatus(of: weakSelf.activeItem, itemProperty: .song)
+            weakSelf.verifyLibraryStatus(of: weakSelf.activeItem, itemProperty: .artist)
+            weakSelf.verifyLibraryStatus(of: weakSelf.activeItem, itemProperty: .album)
+            
+        }) as! NSObject)
+        
+        lifetimeObservers.insert(notifier.addObserver(forName: .themeChanged, object: nil, queue: nil, using: { [weak self] _ in
+            
+            guard let weakSelf = self else { return }
+            
+            if #available(iOS 11, *) {
+                
+                weakSelf.view.accessibilityIgnoresInvertColors = darkTheme
+            }
+            
+        }) as! NSObject)
+        
+        lifetimeObservers.insert(notifier.addObserver(forName: .queueModified, object: nil, queue: nil, using: { [weak self] _ in self?.modifyQueueLabel() }) as! NSObject)
+        
+        lifetimeObservers.insert(notifier.addObserver(forName: .MPMusicPlayerControllerPlaybackStateDidChange, object: musicPlayer, queue: nil, using: { [weak self] _ in
+            
+            guard let weakSelf = self else { return }
+            
+            weakSelf.updateArtworkImageView(changingArt: true, animated: true)
+            
+        }) as! NSObject)
+        
+        [Notification.Name.compressOnPauseChanged, .separationMethodChanged, .avoidDoubleHeightBarChanged, .UIApplicationDidChangeStatusBarFrame, .cornerRadiusChanged].forEach({
+            
+            lifetimeObservers.insert(notifier.addObserver(forName: $0, object: nil, queue: nil, using: { [weak self] _ in
+                
+                guard let weakSelf = self else { return }
+                
+                weakSelf.updateArtworkImageView(changingArt: true, animated: true)
+                
+            }) as! NSObject)
+        })
+        
+        lifetimeObservers.insert(notifier.addObserver(forName: .songAddedToPlaylist, object: nil, queue: nil, using: { [weak self] notification in
+            
+            guard let weakSelf = self, let song = musicPlayer.nowPlayingItem, let songs = notification.userInfo?["songs"] as? [MPMediaItem], Set(songs).contains(song) else { return }
+            
+            weakSelf.updateAddButton(hidden: true, animated: true)
+            
+        }) as! NSObject)
+        
+        lifetimeObservers.insert(notifier.addObserver(forName: .dynamicStatusBarChanged, object: nil, queue: nil, using: { [weak self] _ in
+            
+            guard let weakSelf = self else { return }
+            
+            weakSelf.updateArtworkImageView(changingArt: true, animated: true)
+                
+        }) as! NSObject)
+        
+        lifetimeObservers.insert(notifier.addObserver(forName: .showNowPlayingSupplementaryViewChanged, object: nil, queue: nil, using: { [weak self] _ in
+            
+            self?.updateDetailsView(needsArtworkUpdate: false)
+            
+        }) as! NSObject)
+        
+        lifetimeObservers.insert(notifier.addObserver(forName: .nowPlayingTextSizesChanged, object: nil, queue: nil, using: { [weak self] _ in
+            
+            guard let weakSelf = self else { return }
+            
+            weakSelf.prepareDetailLabels()
+            
+        }) as! NSObject)
+        
+        lifetimeObservers.insert(notifier.addObserver(forName: .iCloudVisibilityChanged, object: nil, queue: nil, using: { [weak self] _ in
+            
+            guard let weakSelf = self else { return }
+            
+            weakSelf.verifyLibraryStatus(of: weakSelf.activeItem, itemProperty: .song)
+            weakSelf.verifyLibraryStatus(of: weakSelf.activeItem, itemProperty: .artist)
+            weakSelf.verifyLibraryStatus(of: weakSelf.activeItem, itemProperty: .album)
+            
+        }) as! NSObject)
+        
+//        lifetimeObservers.insert(notifier.addObserver(forName: .libraryUpdated, object: appDelegate, queue: nil, using: { [weak self] _ in
+//            
+//            guard let weakSelf = self, weakSelf.activeItem?.existsInLibrary == false else { return }
+//            
+//            useAlternateAnimation = true
+//            musicPlayer.stop()
+//            notifier.post(name: .saveQueue, object: musicPlayer, userInfo: [String.queueItems: []])
+//        
+//        }) as! NSObject)
+        
+        lifetimeObservers.insert(notifier.addObserver(forName: .nowPlayingItemChanged, object: nil, queue: nil, using: { [weak self] _ in
+            
+            guard let weakSelf = self else { return }
+            
+            weakSelf.updateTitle()
+            weakSelf.prepareViews(animated: true)
+            weakSelf.updateSliderDuration()
+            weakSelf.updateTimes(setValue: true, seeking: false)
+            
+            if weakSelf.from3DTouch {
+                
+                weakSelf.updateMoveButtons(visible: true)
+            }
+            
+        }) as! NSObject)
+        
+        lifetimeObservers.insert(notifier.addObserver(forName: .ratingChanged, object: nil, queue: nil, using: { [weak self] notification in
+            
+            guard let weakSelf = self, let view = notification.userInfo?[String.sender] as? UIStackView, view != weakSelf.rateShareView.ratingStackView, let id = notification.userInfo?[String.id] as? MPMediaEntityPersistentID, id == weakSelf.activeItem?.persistentID else { return }
+            
+            weakSelf.rateShareView.setRating()
+       
+        }) as! NSObject)
+        
+        lifetimeObservers.insert(notifier.addObserver(forName: .likedStateChanged, object: nil, queue: nil, using: { [weak self] notification in
+            
+            guard let weakSelf = self, let view = notification.userInfo?[String.sender] as? UIStackView, view != weakSelf.rateShareView.ratingStackView, let id = notification.userInfo?[String.id] as? MPMediaEntityPersistentID, id == weakSelf.activeItem?.persistentID else { return }
+            
+            weakSelf.rateShareView.prepareLikedView()
+            
+        }) as! NSObject)
+        
+        lifetimeObservers.insert(notifier.addObserver(forName: .volumeVisibilityChanged, object: nil, queue: nil, using: { [weak self] _ in
+            
+            guard let weakSelf = self else { return }
+            
+            if showVolumeViews {
+                
+                weakSelf.rateShareView.removeFromSuperview()
+                weakSelf.volumeViewContainer.fill(with: weakSelf.volumeView)
+            
+            } else {
+                
+                weakSelf.volumeView.removeFromSuperview()
+                weakSelf.volumeViewContainer.fill(with: weakSelf.rateShareView)
+            }
+            
+        }) as! NSObject)
+        
+        lifetimeObservers.insert(notifier.addObserver(forName: .showCloseButtonChanged, object: nil, queue: nil, using: { [weak self] _ in
+            
+            guard let weakSelf = self else { return }
+            
+            weakSelf.closeButtonBorder.superview?.isHidden = !showCloseButton
+        
+        }) as! NSObject)
+    }
+    
+    @objc func prepareDetailLabels() {
+        
+        changeSize(to: nowPlayingBoldTextEnabled ? .regular : .light)
+    }
+    
+    @objc func updateTitle() {
+        
+        title = {
+            
+            if let title = activeItem?.validTitle, let artist = activeItem?.validArtist {
+                
+                return title + " — " + artist
+                
+            } else {
+                
+                return "Now Playing"
+            }
+        }()
+    }
+    
+    @objc func updateMoveButtons(visible: Bool) {
+        
+        let rated: (Bool, Int) = {
+            
+            guard let rating = activeItem?.rating else { return (false, 0) }
+            
+            return (rating > 0, rating)
+        }()
+        
+        if visible {
+            
+            let rating = rated.0 ? #imageLiteral(resourceName: "StarFilled17") : #imageLiteral(resourceName: "Star17")
+            var love: UIImage {
+                
+                guard let likedState = activeItem?.likedState else { return #imageLiteral(resourceName: "NoLove17") }
+                
+                switch likedState {
+                    
+                    case .none: return #imageLiteral(resourceName: "NoLove17")
+                        
+                    case .liked: return #imageLiteral(resourceName: "Loved17")
+                        
+                    case .disliked: return #imageLiteral(resourceName: "Unloved17")
+                }
+            }
+            
+            playPauseButton.isHidden = true
+            previous.setImage(rating, for: .normal)
+            previous.setTitle(rated.0 ? rated.1.description : "", for: .normal)
+            previous.imageEdgeInsets.right = rated.0 ? 3 : 0
+            nextButton.setImage(love, for: .normal)
+            
+        } else {
+            
+            playPauseButton.isHidden = false
+            previous.setImage(#imageLiteral(resourceName: "Back"), for: .normal)
+            previous.setTitle("", for: .normal)
+            previous.imageEdgeInsets.right = 0
+            nextButton.setImage(#imageLiteral(resourceName: "Forward"), for: .normal)
+        }
+    }
+    
+    func updateDetailsView(needsArtworkUpdate: Bool = true) {
+        
+        if !isSmallScreen {
+            
+            let doNotShowSupplementaryView = showNowPlayingSupplementaryView.inverted
+            
+            updateMoveButtons(visible: from3DTouch)
+            volumeViewContainer.isHidden = from3DTouch || doNotShowSupplementaryView
+            volumeViewContainerEqualHeightConstraint.isActive = !(from3DTouch || doNotShowSupplementaryView)
+            volumeViewContainerHeightConstraint.isActive = from3DTouch || doNotShowSupplementaryView
+            volumeViewContainerHeightConstraint.priority = UILayoutPriority(rawValue: doNotShowSupplementaryView || from3DTouch ? 999 : 250)
+        }
+        
+        guard needsArtworkUpdate else { return }
+        
+        updateArtworkImageView(changingArt: false, animated: false)
+    }
+    
+    @objc func updateArtworkImageView(changingArt: Bool, animated: Bool) {
+        
+        // ratio obtained from 3D Touch Peek screenshot
+        let verticalRatio: CGFloat = 1054/1334
+        let horizontalRatio: CGFloat = 694/750
+        let displayHeight = UIScreen.main.bounds.height * (from3DTouch ? verticalRatio : 1)
+        let displayWidth = UIScreen.main.bounds.width * (from3DTouch ? horizontalRatio : 1)
+        
+        let buttonsSpaceUsed: CGFloat = {
+            
+            if isSmallScreen {
+                
+                return 248
+                
+            } else {
+                
+                return UIScreen.main.bounds.height - UIScreen.main.bounds.width - (from3DTouch ? heightOfSupplementaryView() : 0)
+            }
+        }()
+        
+        let trialConstraints: (top: CGFloat, bottom: CGFloat) = {
+            
+            if isiPhoneX {
+                
+                if dynamicStatusBar {
+                    
+                    return musicPlayer.isPlaying || !compressOnPause ? (0, 0) : (UIApplication.shared.statusBarFrame.height + 40, 40)
+                    
+                } else {
+                    
+                    switch separationMethod {
+                        
+                        case .overlay: return (0, 0)
+                        
+                        case .below: return (UIApplication.shared.statusBarFrame.height + (musicPlayer.isPlaying || !compressOnPause ? 0 : 40), (musicPlayer.isPlaying || !compressOnPause ? 0 : 40))
+                        
+                        case .smaller: return (UIApplication.shared.statusBarFrame.height + 20 + (musicPlayer.isPlaying || !compressOnPause ? 0 : 20), 20 + (musicPlayer.isPlaying || !compressOnPause ? 0 : 40))
+                    }
+                }
+            
+            } else {
+                
+                if from3DTouch || isSmallScreen {
+                    
+                    return musicPlayer.isPlaying || !compressOnPause ? (35, 20) : (55, 40)
+                }
+                
+                let high: CGFloat = 52
+                let low: CGFloat = 32
+                let higher = high + 20
+                
+                if dynamicStatusBar {
+                    
+                    if avoidDoubleHeightBar && UIApplication.shared.statusBarFrame.height == 40 {
+                        
+                        return (20 + (musicPlayer.isPlaying || !compressOnPause ? 0 : high), musicPlayer.isPlaying || !compressOnPause ? 0 : 40)
+                    
+                    } else {
+                        
+                        return (musicPlayer.isPlaying || !compressOnPause ? 0 : higher, musicPlayer.isPlaying || !compressOnPause ? 0 : 40)
+                    }
+                
+                } else {
+                    
+                    switch separationMethod {
+                        
+                        case .overlay:
+                        
+                            if avoidDoubleHeightBar && UIApplication.shared.statusBarFrame.height == 40 {
+                                
+                                return (20 + (musicPlayer.isPlaying || !compressOnPause ? 0 : higher/* - 20*/), musicPlayer.isPlaying || !compressOnPause ? 0 : 40)
+                                
+                            } else {
+                                
+                                return (musicPlayer.isPlaying || !compressOnPause ? 0 : higher, musicPlayer.isPlaying || !compressOnPause ? 0 : 40)
+                            }
+                        
+                        case .below: return (20 + (musicPlayer.isPlaying || !compressOnPause ? 0 : high /*- (UIApplication.shared.statusBarFrame.height == 40 ? 20 : 0)*/), musicPlayer.isPlaying || !compressOnPause ? 0 : 40)
+                        
+                        case .smaller: return (20 + low + (musicPlayer.isPlaying || !compressOnPause ? 0 : 20 /*- (UIApplication.shared.statusBarFrame.height == 40 ? 20 : 0)*/), 20 + (musicPlayer.isPlaying || !compressOnPause ? 0 : 20))
+                    }
+                }
+            }
+        }()
+        
+        albumArtContainerTopConstraint.constant = trialConstraints.top
+        albumArtContainerBottomConstraint.constant = trialConstraints.bottom
+        
+        let horizontal: CGFloat = {
+            
+            let constraint = (displayWidth - (displayHeight - buttonsSpaceUsed - trialConstraints.top - trialConstraints.bottom)) / 2
+            
+            if isiPhoneX {
+            
+                if dynamicStatusBar {
+                    
+                    return musicPlayer.isPlaying || !compressOnPause ? 0 : constraint
+                    
+                } else {
+                    
+                    switch separationMethod {
+                        
+                        case .overlay: return 0
+                        
+                        case .below: return musicPlayer.isPlaying || !compressOnPause ? 0 : constraint
+                        
+                        case .smaller: return constraint
+                    }
+                }
+            
+            } else {
+                
+                if from3DTouch || isSmallScreen {
+                    
+                    return constraint
+                }
+                
+                if dynamicStatusBar {
+                    
+                    if avoidDoubleHeightBar && UIApplication.shared.statusBarFrame.height == 40 {
+                        
+                        return musicPlayer.isPlaying || !compressOnPause ? 0 : constraint
+                    
+                    } else {
+                        
+                        return musicPlayer.isPlaying || !compressOnPause ? 0 : constraint
+                    }
+                
+                } else {
+                    
+                    switch separationMethod {
+                        
+                        case .overlay:
+                        
+                            if avoidDoubleHeightBar && UIApplication.shared.statusBarFrame.height == 40 {
+                                
+                                return musicPlayer.isPlaying || !compressOnPause ? 0 : constraint
+                                
+                            } else {
+                                
+                                return musicPlayer.isPlaying || !compressOnPause ? 0 : constraint
+                            }
+                        
+                        case .below: return musicPlayer.isPlaying || !compressOnPause ? 0 : constraint
+                        
+                        case .smaller: return constraint
+                    }
+                }
+            }
+        }()
+        
+        horizontalConstraints.forEach({ $0.constant = horizontal })
+        
+        var radius: CGFloat {
+            
+            switch cornerRadius {
+            
+                case .automatic: return fullPlayerCornerRadius?.nowPlayingRadius(width: displayWidth - (horizontal * 2)) ?? 8
+            
+                default: return cornerRadius.radius(for: .song, width: displayWidth - (horizontal * 2))
+            }
+        }
+        
+        if animated {
+            
+            UIView.animate(withDuration: 0.65, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0, options: [.curveEaseInOut, .allowUserInteraction, .beginFromCurrentState], animations: {
+                
+                self.view.layoutIfNeeded()
+                self.setNeedsStatusBarAppearanceUpdate()
+                self.statusBarBackground.backgroundColor = !dynamicStatusBar && separationMethod == .overlay ? Themer.themeColour(reversed: true, alpha: 0.5) : .clear
+            
+            }, completion: nil)
+            
+            artworkIntermediaryView.animateCornerRadius(to: isSmallScreen || (compressOnPause && musicPlayer.isPlaying.inverted) || from3DTouch || (dynamicStatusBar.inverted && separationMethod == .smaller) ? radius : 0, duration: 0.65 / 4)
+            albumArtContainer.animateShadowOpacity(to: musicPlayer.isPlaying || !compressOnPause ? 0.5 : 0, duration: 0.65)
+            
+        } else {
+            
+            view.layoutIfNeeded()
+            
+            if albumArtContainer.layer.shadowOpacity < 0.1 {
+                
+                UniversalMethods.addShadow(to: albumArtContainer, radius: 20, opacity: musicPlayer.isPlaying || !compressOnPause ? 0.5 : 0, shouldRasterise: true)
+            }
+            
+            artworkIntermediaryView.layer.cornerRadius = isSmallScreen || (compressOnPause && musicPlayer.isPlaying.inverted) || from3DTouch || (dynamicStatusBar.inverted && separationMethod == .smaller) ? radius : 0
+            statusBarBackground.backgroundColor = !dynamicStatusBar && separationMethod == .overlay ? Themer.themeColour(reversed: true, alpha: 0.5) : .clear
+            setNeedsStatusBarAppearanceUpdate()
+        }
+        
+        if changingArt { updateArtwork() }
+    }
+    
+    @objc func perfrom3DTouchCleanup() {
+        
+        updateDetailsView()
+        updateArtwork()
+//        container?.deferToNowPlayingViewController = false
+    }
+    
+    @objc func updateArtwork() {
+        
+        if let nowPlaying = activeItem {
+            
+            let image = nowPlaying.actualArtwork?.image(at: .init(width: albumArtContainer.bounds.width, height: albumArtContainer.bounds.height)) ?? #imageLiteral(resourceName: "NoSong900")
+
+            albumArt.image = image
+        }
+    }
+    
+    @objc func heightOfSupplementaryView() -> CGFloat {
+        // ... - time view - bottom view - details view
+        return (UIScreen.main.bounds.height - UIScreen.main.bounds.width - 38 - 46 - 70) / 2
+    }
+    
+    @objc func modifyRepeatButton(changingMusicPlayer: Bool) {
+        
+        switch musicPlayer.repeatMode {
+            
+            case .one:
+            
+                repeatView.isHidden = changingMusicPlayer
+                repeatButton.setImage(changingMusicPlayer ? #imageLiteral(resourceName: "Repeat") : #imageLiteral(resourceName: "RepeatOne"), for: .normal)
+            
+                if changingMusicPlayer {
+                    
+                    musicPlayer.repeatMode = .none
+                }
+            
+            case .all:
+            
+                repeatView.isHidden = false
+                repeatButton.setImage(changingMusicPlayer ? #imageLiteral(resourceName: "RepeatOne") : #imageLiteral(resourceName: "Repeat"), for: .normal)
+            
+                if changingMusicPlayer {
+                    
+                    musicPlayer.repeatMode = .one
+                }
+            
+            case .none:
+            
+                repeatView.isHidden = !changingMusicPlayer
+                repeatButton.setImage(#imageLiteral(resourceName: "Repeat"), for: .normal)
+            
+                if changingMusicPlayer {
+                    
+                    musicPlayer.repeatMode = .all
+                }
+            
+            case .default:
+            
+                repeatView.isHidden = !changingMusicPlayer
+                repeatButton.setImage(changingMusicPlayer ? #imageLiteral(resourceName: "RepeatOne") : #imageLiteral(resourceName: "Repeat"), for: .normal)
+                
+                if changingMusicPlayer {
+                    
+                    musicPlayer.repeatMode = .all
+                }
+        }
+        
+        if changingMusicPlayer {
+            
+            prefs.set(musicPlayer.repeatMode.rawValue, forKey: .repeatMode)
+        }
+    }
+    
+    @IBAction func setRepeatMode() {
+        
+        modifyRepeatButton(changingMusicPlayer: true)
+        modifyQueueLabel()
+    }
+    
+    @objc func modifyShuffleState(changingMusicPlayer: Bool) {
+        
+        switch musicPlayer.shuffleMode {
+            
+            case .default, .off:
+                
+                shuffleView.isHidden = !changingMusicPlayer
+                
+                if changingMusicPlayer {
+                    
+                    musicPlayer.shuffleMode = .songs
+                }
+            
+            
+            case .albums, .songs:
+                
+                shuffleView.isHidden = changingMusicPlayer
+            
+                if changingMusicPlayer {
+                    
+                    musicPlayer.shuffleMode = .off
+                }
+        }
+    }
+    
+    @objc func updateSliderDuration() {
+        
+        if let nowPlaying = activeItem {
+            
+            timeSlider.minimumValue = 0
+            timeSlider.maximumValue = Float(nowPlaying.playbackDuration)
+        }
+    }
+    
+    @objc func clearQueue() {
+        
+        if let nowPlaying = musicPlayer.nowPlayingItem {
+            
+            if warnForQueueInterruption && clearGuard {
+                
+                let clear = UIAlertAction.init(title: "Clear Queue", style: .destructive, handler: { _ in
+                    
+                    musicPlayer.play([nowPlaying], startingFrom: nowPlaying, respectingPlaybackState: true, from: nil, withTitle: nil, alertTitle: "")
+                })
+                
+                peeker?.present(UniversalMethods.alertController(withTitle: nil, message: nil, preferredStyle: .actionSheet, actions: clear, .cancel()), animated: true, completion: nil)
+                
+            } else {
+                
+                musicPlayer.play([nowPlaying], startingFrom: nowPlaying, respectingPlaybackState: true, from: nil, withTitle: nil, alertTitle: "")
+            }
+        }
+    }
+    
+    @objc func prepareViews(animated: Bool) {
+        
+        if let currentItem = activeItem {
+            
+            let albumTitle = currentItem.validAlbum
+            let artistName = currentItem.validArtist
+            let songTitle = currentItem.validTitle
+            let albumImage = currentItem.actualArtwork?.image(at: self.albumArtContainer.bounds.size)
+            let image = currentItem.actualArtwork?.image(at: .init(width: 20, height: 20))
+            
+            if animated {
+                
+                UniversalMethods.performTransitions(withRelevantParameters:
+                    
+                    (albumArt, 0.3, { [weak self] in self?.albumArt.image = albumImage ?? #imageLiteral(resourceName: "NoSong900") }, nil),
+                    (imageView, 0.3, { [weak self] in self?.imageView.image = image ?? #imageLiteral(resourceName: "NoArt") }, nil)
+                )
+                
+            } else {
+                
+                albumArt.image = albumImage ?? #imageLiteral(resourceName: "NoSong900")
+                imageView.image = image ?? #imageLiteral(resourceName: "NoArt")
+            }
+            
+            songName.setTitle(songTitle, for: .normal)
+            artistButton.setTitle(artistName, for: .normal)
+            albumButton.setTitle(albumTitle, for: .normal)
+            
+            detailsView.layoutIfNeeded()
+            
+            if songName.intrinsicContentSize.width < songNameScrollView.bounds.width {
+                
+                songNameWidthConstraint.constant = songNameScrollView.bounds.width
+                songNameWidthConstraint.priority = UILayoutPriority(rawValue: 999)
+                
+            } else {
+                
+                songNameWidthConstraint.priority = UILayoutPriority(rawValue: 249)
+            }
+            
+            if albumButton.intrinsicContentSize.width + artistButton.intrinsicContentSize.width < songDetailsScrollView.bounds.width {
+                
+                albumWidthConstraint.constant = songDetailsScrollView.bounds.width - artistButton.intrinsicContentSize.width
+                albumWidthConstraint.priority = UILayoutPriority(rawValue: 999)
+                
+            } else {
+                
+                albumWidthConstraint.priority = UILayoutPriority(rawValue: 249)
+            }
+            
+            if lyricsVisible && currentItem.lyrics?.isEmpty == true {
+                
+                modifyLyricsView(hidden: true)
+            }
+            
+            lyricsButton.alpha = currentItem.lyrics?.isEmpty == true ? 0 : 1
+            lyricsButton.isUserInteractionEnabled = currentItem.lyrics?.isEmpty == false
+            lyricsTextView.text = currentItem.lyrics
+            
+            modifyQueueLabel()
+            modifyPlayPauseButton()
+            rateShareView.entity = currentItem
+            setNeedsStatusBarAppearanceUpdate()
+            verifyLibraryStatus(of: currentItem, itemProperty: .song)
+            verifyLibraryStatus(of: currentItem, itemProperty: .artist)
+            verifyLibraryStatus(of: currentItem, itemProperty: .album)
+        
+        } else {
+            
+            performSegue(withIdentifier: "unwind", sender: nil)
+        }
+    }
+    
+    @objc func modifyLyricsView(hidden: Bool) {
+        
+        lyricsVisible = !hidden
+        lyricsVisualEffectView.isUserInteractionEnabled = !hidden
+        
+        lyricsButton.update(for: hidden ? .unselected : .selected)
+        
+        UIView.animate(withDuration: 0.3, animations: {
+        
+            self.lyricsVisualEffectView.effect = hidden ? nil : Themer.vibrancyContainingEffect
+            self.lyricsVisualEffectView.alpha = hidden ? 0 : 1
+        })
+        
+        setNeedsStatusBarAppearanceUpdate()
+    }
+    
+    @IBAction func viewLyrics() {
+        
+        modifyLyricsView(hidden: lyricsVisible)
+    }
+    
+    @IBAction func viewFullLyrcs(_ sender: UILongPressGestureRecognizer) {
+        
+        guard sender.state == .began else { return }
+        
+        performSegue(withIdentifier: "toLyrics", sender: nil)
+    }
+
+    @objc func modifyQueueLabel() {
+        
+        queue.superview?.layoutIfNeeded()
+        
+        let string = musicPlayer.fullQueueCount(withInitialSpace: false, parentheses: false).uppercased()
+        queue.setTitle(string, for: .normal)
+        queue.attributes = [Attributes.init(name: .font, value: .other(UIFont.myriadPro(ofWeight: .regular, size: 12)), range: string.nsRange(of: "OF"))]
+        
+        queueChevronTrailingConstraint.constant = queue.intrinsicContentSize.width + 3
+        
+        UIView.animate(withDuration: 0.3, animations: { self.queue.superview?.layoutIfNeeded() })
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        
+        guard /*!useSmallerArt &&*/
+            !isSmallScreen &&
+            (musicPlayer.isPlaying || !compressOnPause) &&
+            dynamicStatusBar &&
+            activeItem?.actualArtwork != nil &&
+            !lyricsVisible
+            else { return darkTheme ? .lightContent : .default }
+
+        return activeItem?.artwork?.image(at: CGSize.init(width: 20, height: 20))?.crop(within: CGRect.init(x: 5, y: 0, width: 20, height: (UIApplication.shared.statusBarFrame.height / UIScreen.main.bounds.width) * 10))?.statusBarStyle() ?? .default
+    }
+    
+    @objc func preparePlaybackGestures() {
+        
+        let seekBackward = UILongPressGestureRecognizer(target: self, action: #selector(seekBackward(_:)))
+//        seekBackward.minimumPressDuration = 0.5
+        previous.addGestureRecognizer(seekBackward)
+        
+        let seekForward = UILongPressGestureRecognizer(target: self, action: #selector(seekForward(_:)))
+//        seekForward.minimumPressDuration = 0.5
+        nextButton.addGestureRecognizer(seekForward)
+    }
+    
+    @objc func seekForward(_ gr: UILongPressGestureRecognizer) {
+        
+        if gr.state == .began {
+            
+            musicPlayer.beginSeekingForward()
+        
+        } else if gr.state == .ended || gr.state == .cancelled {
+            
+            musicPlayer.endSeeking()
+        }
+    }
+    
+    @objc func seekBackward(_ gr: UILongPressGestureRecognizer) {
+        
+        if gr.state == .began {
+            
+            musicPlayer.beginSeekingBackward()
+        
+        } else if gr.state == .ended || gr.state == .cancelled {
+            
+            musicPlayer.endSeeking()
+        }
+    }
+    
+    @IBAction func changeShuffle() {
+        
+        modifyShuffleState(changingMusicPlayer: true)
+        modifyQueueLabel()
+        
+        if #available(iOS 10.3, *), !useSystemPlayer, let musicPlayer = musicPlayer as? MPMusicPlayerApplicationController {
+            
+            musicPlayer.perform(queueTransaction: { _ in }, completionHandler: { controller, _ in notifier.post(name: .saveQueue, object: nil, userInfo: [String.queueItems: controller.items]) })
+        }
+    }
+    
+    @IBAction func nextSong() {
+        
+        musicPlayer.skipToNextItem()
+    }
+    
+    @IBAction func previousSong() {
+        
+        if musicPlayer.currentPlaybackTime < 4 {
+            
+            musicPlayer.skipToPreviousItem()
+            
+        } else {
+            
+            musicPlayer.skipToBeginning()
+            NowPlaying.shared.registered.forEach({ $0?.updateTimes(setValue: true, seeking: false) })
+        }
+    }
+    
+    @IBAction func goToArtist() {
+        
+        performUnwindSegue(with: .artist, isEntityAvailable: artistQuery != nil, title: Entity.artist.title())
+    }
+    
+    @IBAction func goToAlbum() {
+        
+        performUnwindSegue(with: .album, isEntityAvailable: albumQuery != nil, title: Entity.album.title())
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        
+        super.viewDidAppear(animated)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        
+        super.viewWillDisappear(animated)
+        
+        container?.deferToNowPlayingViewController = true
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        
+        super.viewDidDisappear(animated)
+        
+        container?.deferToNowPlayingViewController = false
+        
+        if peeker == nil {
+        
+            if let _ = container?.currentModifier {
+                
+                container?.shouldUseNowPlayingArt = false
+                container?.updateBackgroundViaModifier()
+            }
+        }
+        
+        NowPlaying.shared.nowPlayingVC = nil
+    }
+
+    override func didReceiveMemoryWarning() {
+        
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+    
+    @IBAction func dismissVC(_ sender: AnyObject) {
+        
+        dismiss(animated: true, completion: nil)
+    }
+    
+    @objc func pop(to vc: UIViewController?, queue: Bool) {
+        
+        if queue {
+            
+            guard let presentedVC = presentedStoryboard.instantiateViewController(withIdentifier: "presentedVC") as? PresentedContainerViewController else { return }
+                
+            presentedVC.qVC = vc as! QueueViewController
+            presentedVC.context = .queue
+            
+            present(presentedVC, animated: false, completion: { presentedVC.viewIfLoaded?.backgroundColor = UIColor.black.withAlphaComponent(0.2) })
+        
+        } else {
+            
+            viewController = vc
+            
+            performSegue(withIdentifier: "preview", sender: nil)
+        }
+    }
+    
+    @objc @discardableResult func performTransition(to vc: UIViewController, sender: Any?, perform3DTouchActions: Bool = false) -> UIViewController? {
+        
+        if let presentedVC = vc as? PresentedContainerViewController {
+            
+            presentedVC.context = .queue
+            
+            return presentedVC
+        
+        } else if let queueVC = vc as? QueueViewController {
+            
+            queueVC.peeker = self
+            queueVC.screenshotProvider = self
+            queueVC.modifyBackgroundView(forState: .visible)
+            
+            return queueVC
+        }
+        
+        return nil
+    }
+    
+    @objc func showOptions(_ sender: Any) {
+        
+        guard let item = activeItem else { return }
+        
+        if let gr = sender as? UILongPressGestureRecognizer {
+            
+            guard gr.state == .began else { return }
+        }
+        
+        Transitioner.shared.showInfo(from: self, with: .song(location: .queue(loaded: false, index: item == musicPlayer.nowPlayingItem ? musicPlayer.nowPlayingItemIndex : 0), at: 0, within: [item]))
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+        guard let id = segue.identifier else { return }
+        
+        switch id {
+            
+            case "toOptions":
+            
+                if let presentedVC = segue.destination as? PresentedContainerViewController {
+                    
+                    presentedVC.context = .info
+                    presentedVC.optionsContext = .song(location: .queue(loaded: false, index: musicPlayer.nowPlayingItemIndex), at: 0, within: [activeItem].flatMap({ $0 }))
+                }
+            
+            case "toArtistOptions":
+            
+                if let query = artistQuery, let artist = query.collections?.first, let presentedVC = segue.destination as? PresentedContainerViewController {
+                    
+                    presentedVC.context = .info
+                    presentedVC.optionsContext = .collection(kind: .artist, at: 0, within: [artist])
+                }
+            
+            case "toAlbumOptions":
+            
+                if let query = albumQuery, let album = query.collections?.first, let presentedVC = segue.destination as? PresentedContainerViewController {
+                    
+                    presentedVC.context = .info
+                    presentedVC.optionsContext = .album(at: 0, within: [album])
+                }
+            
+            case "toQueue": performTransition(to: segue.destination, sender: nil)
+            
+            case "toLibraryOptions":
+                
+                let options = LibraryOptions.init(fromVC: self, configuration: .nowPlaying, context: .song(location: .queue(loaded: false, index: musicPlayer.nowPlayingItemIndex), at: 0, within: [activeItem].flatMap({ $0 })))
+                
+                Transitioner.shared.transition(to: segue.destination, using: options, sourceView: actionsButton)
+            
+            case "toArtistUnwind", "toAlbumUnwind": useAlternateAnimation = true
+            
+            case "toLyrics":
+            
+                if let presentedVC = segue.destination as? PresentedContainerViewController {
+                    
+                    presentedVC.showLyrics = true
+                    presentedVC.context = .info
+                    presentedVC.optionsContext = .song(location: .queue(loaded: false, index: musicPlayer.nowPlayingItemIndex), at: 0, within: [musicPlayer.nowPlayingItem].flatMap({ $0 }))
+                }
+            
+            default: break
+        }
+    }
+    
+    @IBAction func unwind(_ segue: UIStoryboardSegue) { }
+    
+    override func canPerformUnwindSegueAction(_ action: Selector, from fromViewController: UIViewController, withSender sender: Any) -> Bool {
+        
+        if action == #selector(unwind(_:)) {
+            
+            return !shouldReturnToContainer
+        }
+        
+        return false
+    }
+        
+    deinit {
+        
+        if isInDebugMode, deinitBannersEnabled {
+            
+            UniversalMethods.banner(withTitle: "NVC going away...").show(for: 0.3)
+        }
+        
+        notifier.removeObserver(self)
+        
+        unregisterAll(from: lifetimeObservers)
+    }
+}
+
+// MARK: - 3D Touch
+extension NowPlayingViewController: UIViewControllerPreviewingDelegate {
+    
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
+        
+        if queue.bounds.contains(nowPlayingView.convert(location, to: queue)) {
+            
+            if let queueVC = presentedChilrenStoryboard.instantiateViewController(withIdentifier: "queueTVC") as? QueueViewController, let vc = performTransition(to: queueVC, sender: nil) {
+                
+                previewingContext.sourceRect = queue.convert(queue.bounds, to: nowPlayingView)
+                
+                return vc
+            }
+        
+        } else if self.albumButton.bounds.contains(nowPlayingView.convert(location, to: self.albumButton)), let album = albumQuery?.collections?.first {
+            
+            let albumVC = entityStoryboard.instantiateViewController(withIdentifier: "entityItems")
+            
+            previewingContext.sourceRect = self.albumButton.convert(self.albumButton.bounds, to: nowPlayingView)
+            
+            return Transitioner.shared.transition(to: .album, vc: albumVC, from: self, sender: album, highlightedItem: currentItem, preview: true, titleOverride: container?.activeViewController?.topViewController?.title)
+        
+        } else if self.artistButton.bounds.contains(nowPlayingView.convert(location, to: self.artistButton)), let artist = artistQuery?.collections?.first {
+            
+            let entityVC = entityStoryboard.instantiateViewController(withIdentifier: "entityItems")
+            
+            previewingContext.sourceRect = self.artistButton.convert(self.artistButton.bounds, to: nowPlayingView)
+            
+            return Transitioner.shared.transition(to: .artist, vc: entityVC, from: self, sender: artist, highlightedItem: currentItem, preview: true, titleOverride: container?.activeViewController?.topViewController?.title)
+        }
+        
+        return nil
+    }
+    
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
+        
+        if let vc = viewControllerToCommit as? BackgroundHideable {
+            
+            vc.modifyBackgroundView(forState: .removed)
+        }
+        
+        if let vc = viewControllerToCommit as? Peekable {
+            
+            vc.peeker = nil
+        }
+        
+        pop(to: viewControllerToCommit, queue: viewControllerToCommit is QueueViewController)
+    }
+    
+    override var previewActionItems: [UIPreviewActionItem] {
+        
+        let show = UIPreviewAction.init(title: "Show...", style: .default, handler: { [weak self] _, VC in
+            
+            guard let weakSelf = self, let container = weakSelf.peeker as? ContainerViewController else { return }
+            
+            container.goTo(container)
+        })
+        
+        let stop = UIPreviewAction.init(title: "Stop Playback", style: .destructive, handler: { [weak self] _, _ in
+            
+            guard let weakSelf = self else { return }
+            
+            weakSelf.peeker?
+                .guardQueue(using: 
+                    .withTitle(nil,
+                               message: nil,
+                               style: .actionSheet,
+                               actions: .stop, .cancel()),
+                            onCondition: warnForQueueInterruption && stopGuard,
+                            fallBack: NowPlaying.shared.stopPlayback)
+        })
+        
+        let shuffle = UIPreviewAction.init(title: musicPlayer.shuffleMode == .off ? .shuffle() : "Unshuffle", style: .default, handler: { _, _ in
+            
+            switch musicPlayer.shuffleMode {
+                
+                case .off: musicPlayer.shuffleMode = .songs
+                
+                default: musicPlayer.shuffleMode = .off
+            }
+        })
+        
+        let repeatArray: [UIPreviewAction] = {
+            
+            let off = UIPreviewAction.init(title: "Off", style: .default, handler: { _, _ in musicPlayer.repeatMode = .none; prefs.set(musicPlayer.repeatMode.rawValue, forKey: .repeatMode) })
+            
+            let one = UIPreviewAction.init(title: "One", style: .default, handler: { _, _ in musicPlayer.repeatMode = .one; prefs.set(musicPlayer.repeatMode.rawValue, forKey: .repeatMode) })
+            
+            let all = UIPreviewAction.init(title: "All", style: .default, handler: { _, _ in musicPlayer.repeatMode = .all; prefs.set(musicPlayer.repeatMode.rawValue, forKey: .repeatMode) })
+            
+            return [off, one, all]
+        }()
+        
+        let repeats = UIPreviewActionGroup.init(title: "Repeat...", style: .default, actions: repeatArray)
+        
+        let first: [UIPreviewActionItem] = [show]
+        let second: [UIPreviewActionItem] = musicPlayer.queueCount() > 1 ? [shuffle, repeats] : []
+        let third: [UIPreviewActionItem] = [stop]
+    
+        return first + second + third
+    }
+}
+
+//MARK: - GestureRecogniser
+extension NowPlayingViewController: UIGestureRecognizerDelegate {
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        
+        if let gr = gestureRecognizer as? UIPanGestureRecognizer {
+            
+            if gr.view is UISlider {
+                
+                return false
+            }
+        }
+        
+        return true
+    }
+    
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        
+        guard let gr = gestureRecognizer as? UIPanGestureRecognizer else { return true }
+        
+        if fabs(gr.translation(in: view).y) < fabs(gr.translation(in: view).x) {
+            
+            return false
+        }
+        
+        return true
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        
+        return otherGestureRecognizer is UIScreenEdgePanGestureRecognizer
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        
+        return otherGestureRecognizer is UIScreenEdgePanGestureRecognizer
+    }
+}

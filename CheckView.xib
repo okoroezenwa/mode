@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13528" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13526"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Agm-uy-x7W" customClass="CheckView" customModule="Mode" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="24" height="24"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LYP-NC-10M" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
+                    <rect key="frame" x="-0.5" y="0.0" width="24.5" height="24"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="boolean" keyPath="white" value="YES"/>
+                    </userDefinedRuntimeAttributes>
+                </view>
+                <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Q3I-ro-law">
+                    <rect key="frame" x="0.0" y="0.0" width="24.5" height="24"/>
+                    <state key="normal" image="Check">
+                        <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </state>
+                </button>
+            </subviews>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <constraints>
+                <constraint firstItem="Q3I-ro-law" firstAttribute="trailing" secondItem="LYP-NC-10M" secondAttribute="trailing" id="6n8-Or-YHX"/>
+                <constraint firstAttribute="trailing" secondItem="LYP-NC-10M" secondAttribute="trailing" id="CpS-uK-KTS"/>
+                <constraint firstAttribute="bottom" secondItem="LYP-NC-10M" secondAttribute="bottom" id="lbn-61-MDg"/>
+                <constraint firstItem="Q3I-ro-law" firstAttribute="bottom" secondItem="LYP-NC-10M" secondAttribute="bottom" id="ls4-gf-gN9"/>
+                <constraint firstItem="Q3I-ro-law" firstAttribute="top" secondItem="LYP-NC-10M" secondAttribute="top" id="mhX-Or-fqA"/>
+                <constraint firstItem="LYP-NC-10M" firstAttribute="top" secondItem="Agm-uy-x7W" secondAttribute="top" id="o9b-aR-jIQ"/>
+                <constraint firstItem="LYP-NC-10M" firstAttribute="leading" secondItem="Agm-uy-x7W" secondAttribute="leading" id="otk-eC-Q8t"/>
+                <constraint firstItem="Q3I-ro-law" firstAttribute="leading" secondItem="LYP-NC-10M" secondAttribute="leading" id="wIf-53-gcz"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="3XG-Ho-WyY"/>
+            <connections>
+                <outlet property="borderView" destination="LYP-NC-10M" id="UBh-ek-Ogx"/>
+                <outlet property="button" destination="Q3I-ro-law" id="SXX-ci-qsP"/>
+            </connections>
+        </view>
+    </objects>
+    <resources>
+        <image name="Check" width="11" height="8"/>
+    </resources>
+</document>
