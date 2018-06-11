@@ -70,7 +70,7 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
             let allHold = UILongPressGestureRecognizer.init(target: songManager, action: #selector(SongActionManager.showActionsForAll(_:)))
             allHold.minimumPressDuration = longPressDuration
             editButton.addGestureRecognizer(allHold)
-            LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: allHold))
+            LongPressManager.shared.gestureRecognisers.append(Weak.init(value: allHold))
         }
     }
     var shuffleButton: MELButton!
@@ -272,7 +272,7 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
         let hold = UILongPressGestureRecognizer.init(target: tableDelegate, action: #selector(TableDelegate.showOptions(_:)))
         hold.minimumPressDuration = longPressDuration
         tableView.addGestureRecognizer(hold)
-        LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: hold))
+        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: hold))
     }
     
     @objc func showFilteredContext(_ sender: Any) {
@@ -826,12 +826,12 @@ extension SongsViewController: UITableViewDelegate, UITableViewDataSource {
         return true
     }
     
-    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         
         return .insert
     }
     
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         
         if editingStyle == .insert {
             

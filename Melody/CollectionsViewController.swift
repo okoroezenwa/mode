@@ -32,7 +32,7 @@ class CollectionsViewController: UIViewController, InfoLoading, ArtistTransition
             let gr = UILongPressGestureRecognizer.init(target: self, action: #selector(showSettings(with:)))
             gr.minimumPressDuration = longPressDuration
             actionsButton.addGestureRecognizer(gr)
-            LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: gr))
+            LongPressManager.shared.gestureRecognisers.append(Weak.init(value: gr))
         }
     }
     
@@ -105,7 +105,7 @@ class CollectionsViewController: UIViewController, InfoLoading, ArtistTransition
                 return editView
             }()
             
-            [shuffleView, arrangeBorderView, editView].flatMap({ $0 }).forEach({ actionsStackView.addArrangedSubview($0) })
+            [shuffleView, arrangeBorderView, editView].compactMap({ $0 }).forEach({ actionsStackView.addArrangedSubview($0) })
         }
     }
     
@@ -158,7 +158,7 @@ class CollectionsViewController: UIViewController, InfoLoading, ArtistTransition
             let allHold = UILongPressGestureRecognizer.init(target: songManager, action: #selector(SongActionManager.showActionsForAll(_:)))
             allHold.minimumPressDuration = longPressDuration
             editButton.addGestureRecognizer(allHold)
-            LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: allHold))
+            LongPressManager.shared.gestureRecognisers.append(Weak.init(value: allHold))
         }
     }
     @objc var shuffleButton: MELButton!
@@ -506,7 +506,7 @@ class CollectionsViewController: UIViewController, InfoLoading, ArtistTransition
             let hold = UILongPressGestureRecognizer.init(target: tableDelegate, action: #selector(TableDelegate.showOptions(_:)))
             hold.minimumPressDuration = longPressDuration
             tableView.addGestureRecognizer(hold)
-            LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: hold))
+            LongPressManager.shared.gestureRecognisers.append(Weak.init(value: hold))
         }
     }
     
@@ -653,7 +653,7 @@ class CollectionsViewController: UIViewController, InfoLoading, ArtistTransition
         tableView.tableHeaderView?.frame.size.height = 92 + (showRecents ? headerView.collectionViewHeaderHeightConstraint.constant + headerView.collectionViewHeightConstraint.constant : 0)
         tableView.tableHeaderView = headerView
         
-        var array = [shuffleView, arrangeBorderView, editView].flatMap({ $0 })
+        var array = [shuffleView, arrangeBorderView, editView].compactMap({ $0 })
         
         if collectionKind != .playlist {
             
@@ -712,8 +712,8 @@ class CollectionsViewController: UIViewController, InfoLoading, ArtistTransition
         
         super.viewDidDisappear(animated)
         
-        notifier.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-            notifier.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        notifier.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+            notifier.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
         
         unregisterAll(from: transientObservers)
     }
@@ -1862,7 +1862,7 @@ extension CollectionsViewController: CollectionActionable {
                 
                 if weakSelf.showActionsAfterFilling {
                     
-                    weakSelf.showArrayActions(weakSelf.tableView.isEditing ? weakSelf.editButton : weakSelf)
+                    weakSelf.showArrayActions(weakSelf.tableView.isEditing ? weakSelf.editButton : weakSelf as Any)
                 }
                 
                 weakSelf.actionableActivityIndicator.stopAnimating()

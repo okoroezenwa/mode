@@ -10,7 +10,7 @@ import UIKit
 
 class LongPressManager: NSObject {
 
-    var gestureRecognisers = Set<Weak<UILongPressGestureRecognizer>>()
+    var gestureRecognisers = [Weak<UILongPressGestureRecognizer>]()
     var count = 20
     
     @objc static let shared = LongPressManager()
@@ -26,7 +26,7 @@ class LongPressManager: NSObject {
     
     @objc func updateGestureTimes() {
         
-        for gesture in gestureRecognisers.flatMap({ $0.value }) {
+        for gesture in gestureRecognisers.compactMap({ $0.value }) {
             
             gesture.minimumPressDuration = longPressDuration
         }
@@ -40,7 +40,7 @@ class LongPressManager: NSObject {
             
         } else {
             
-            gestureRecognisers = Set(gestureRecognisers.filter({ $0.value != nil }))
+            gestureRecognisers = gestureRecognisers.filter({ $0.value != nil })
             
             count = 20
         }

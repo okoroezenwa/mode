@@ -71,17 +71,17 @@ extension UIImage {
         return UIImageEffects.imageByApplyingTintEffect(with: tintColor, to: self)
     }
     
-    func blur(with effect: UIBlurEffectStyle) -> UIImage {
+    func blur(with effect: UIBlurEffect.Style) -> UIImage {
         
         switch effect {
             
-        case .dark: return UIImageEffects.imageByApplyingDarkEffect(to: self)
+            case .dark: return UIImageEffects.imageByApplyingDarkEffect(to: self)
             
-        case .light: return UIImageEffects.imageByApplyingLightEffect(to: self)
+            case .light: return UIImageEffects.imageByApplyingLightEffect(to: self)
             
-        case .extraLight: return UIImageEffects.imageByApplyingExtraLightEffect(to: self)
+            case .extraLight: return UIImageEffects.imageByApplyingExtraLightEffect(to: self)
             
-        default: return self
+            default: return self
         }
     }
     

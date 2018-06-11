@@ -73,7 +73,7 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, I
             let allHold = UILongPressGestureRecognizer.init(target: songManager, action: #selector(SongActionManager.showActionsForAll(_:)))
             allHold.minimumPressDuration = longPressDuration
             editButton.addGestureRecognizer(allHold)
-            LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: allHold))
+            LongPressManager.shared.gestureRecognisers.append(Weak.init(value: allHold))
         }
     }
     @objc var shuffleButton: MELButton!
@@ -325,7 +325,7 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, I
         let itemOptionsHold = UILongPressGestureRecognizer.init(target: tableDelegate, action: #selector(TableDelegate.showOptions(_:)))
         itemOptionsHold.minimumPressDuration = longPressDuration
         tableView.addGestureRecognizer(itemOptionsHold)
-        LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: itemOptionsHold))
+        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: itemOptionsHold))
     }
     
     @objc func showFilteredContext(_ sender: Any) {
@@ -829,7 +829,7 @@ extension ArtistAlbumsViewController: CollectionActionable {
                 
                 if weakSelf.showActionsAfterFilling {
                     
-                    weakSelf.showArrayActions(weakSelf.tableView.isEditing ? weakSelf.editButton : weakSelf)
+                    weakSelf.showArrayActions(weakSelf.tableView.isEditing ? weakSelf.editButton : weakSelf as Any)
                 }
                 
                 weakSelf.actionableActivityIndicator.stopAnimating()

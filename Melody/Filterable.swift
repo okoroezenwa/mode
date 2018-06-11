@@ -339,7 +339,7 @@ extension Filterable {
         }
     }
     
-    var rightViewDetails: (rightView: UIView?, mode: UITextFieldViewMode) {
+    var rightViewDetails: (rightView: UIView?, mode: UITextField.ViewMode) {
         
         switch filterProperty {
             
@@ -464,7 +464,7 @@ extension Filterable {
                 
                 guard let string = term as? String else { return [] }
                 
-                let components = string.components(separatedBy: ".").flatMap({ Int($0) })
+                let components = string.components(separatedBy: ".").compactMap({ Int($0) })
                 
                 guard let day = components.first, let month = components.value(at: 1), let year = components.value(at: 2), let date = Date.from(day: day, month: month, year: year) else { return [] }
             
@@ -483,7 +483,7 @@ extension Filterable {
                 
                 guard let string = term as? String else { return [] }
                 
-                let components = string.components(separatedBy: ".").flatMap({ Int($0) })
+                let components = string.components(separatedBy: ".").compactMap({ Int($0) })
                 
                 guard let day = components.first, let month = components.value(at: 1), let year = components.value(at: 2), let date = Date.from(day: day, month: month, year: year) else { return [] }
             
@@ -624,7 +624,7 @@ extension Filterable {
                 
                 guard let string = term as? String else { return [] }
                 
-                let components = string.components(separatedBy: ".").flatMap({ Int($0) })
+                let components = string.components(separatedBy: ".").compactMap({ Int($0) })
                 
                 guard let day = components.first, let month = components.value(at: 1), let year = components.value(at: 2), let date = Date.from(day: day, month: month, year: year) else { return [] }
             

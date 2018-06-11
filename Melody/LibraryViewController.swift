@@ -317,7 +317,7 @@ class LibraryViewController: UIViewController, Contained, OptionsContaining {
         if let inActiveVC = inactiveViewController {
             
             // call before removing child view controller's view from hierarchy
-            inActiveVC.willMove(toParentViewController: nil)
+            inActiveVC.willMove(toParent: nil)
             
             UIView.animate(withDuration: 0.3, animations: {
                 
@@ -330,7 +330,7 @@ class LibraryViewController: UIViewController, Contained, OptionsContaining {
                     inActiveVC.view.removeFromSuperview()
                     
                     // call after removing child view controller's view from hierarchy
-                    inActiveVC.removeFromParentViewController()
+                    inActiveVC.removeFromParent()
             })
         }
     }
@@ -339,9 +339,9 @@ class LibraryViewController: UIViewController, Contained, OptionsContaining {
         
         guard let activeVC = activeChildViewController, let inActiveVC = vc else { return }
         
-        addChildViewController(activeVC)
+        addChild(activeVC)
         activeVC.view.frame = contentView.bounds
-        inActiveVC.willMove(toParentViewController: nil)
+        inActiveVC.willMove(toParent: nil)
         
         if animated {
             
@@ -371,8 +371,8 @@ class LibraryViewController: UIViewController, Contained, OptionsContaining {
             contentView.addSubview(activeVC.view)
         }
         
-        inActiveVC.removeFromParentViewController()
-        activeVC.didMove(toParentViewController: self)
+        inActiveVC.removeFromParent()
+        activeVC.didMove(toParent: self)
         (activeVC as? LibrarySectionContainer)?.updateTopLabels(withFilteredCount: nil)
     }
     
@@ -380,9 +380,9 @@ class LibraryViewController: UIViewController, Contained, OptionsContaining {
         
         if let activeVC = activeChildViewController {
             
-            addChildViewController(activeVC)
+            addChild(activeVC)
             activeVC.view.frame = contentView.bounds
-            activeVC.didMove(toParentViewController: self)
+            activeVC.didMove(toParent: self)
             contentView.addSubview(activeVC.view)
         }
     }

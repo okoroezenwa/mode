@@ -137,7 +137,7 @@ public final class Insomnia: BatteryStateReporting, InsomniaModeHaving {
         device.isBatteryMonitoringEnabled = true
         notificationCenter.addObserver(self,
                                        selector: #selector(batteryStateDidChange),
-                                       name: NSNotification.Name.UIDeviceBatteryStateDidChange, object: nil)
+                                       name: UIDevice.batteryStateDidChangeNotification, object: nil)
         updateInsomniaMode()
     }
 

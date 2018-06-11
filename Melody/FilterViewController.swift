@@ -158,8 +158,8 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         
         resetRecentSearches()
        
-        notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillHideNotification, object: nil)
         notifier.addObserver(self, selector: #selector(updateCollectedView(_:)), name: .managerItemsChanged, object: nil)
         
         (parent as? PresentedContainerViewController)?.transitionStart = { [weak self] in
@@ -224,8 +224,8 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         sender?.filtering = false
         tableContainer?.filterContainer = nil
         
-        notifier.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        notifier.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        notifier.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        notifier.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     override func viewDidLayoutSubviews() {
@@ -241,9 +241,9 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
     
     @objc func adjustKeyboard(with notification: Notification) {
         
-        guard let keyboardHeightAtEnd = ((notification as NSNotification).userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.size.height, searchBar.isFirstResponder, let duration = (notification as NSNotification).userInfo?[UIKeyboardAnimationDurationUserInfoKey] as? TimeInterval else { return }
+        guard let keyboardHeightAtEnd = ((notification as NSNotification).userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.size.height, searchBar.isFirstResponder, let duration = (notification as NSNotification).userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval else { return }
         
-        let keyboardWillShow = notification.name == NSNotification.Name.UIKeyboardWillShow
+        let keyboardWillShow = notification.name == UIResponder.keyboardWillShowNotification
         
         bottomViewBottomConstraint.constant = keyboardWillShow ? keyboardHeightAtEnd - 8 : 0
         updateActivityViewConstraint(keyboardShowing: keyboardWillShow)
@@ -473,12 +473,12 @@ extension FilterViewController: UITableViewDelegate, UITableViewDataSource {
         return tableContainer?.tableDelegate.sectionIndexTitles(for: tableView, filtering: true)
     }
     
-    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         
         return filtering ? .insert : .none
     }
     
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         
         guard filtering else { return }
         

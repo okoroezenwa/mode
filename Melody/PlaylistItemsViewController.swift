@@ -83,7 +83,7 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
             let allHold = UILongPressGestureRecognizer.init(target: songManager, action: #selector(SongActionManager.showActionsForAll(_:)))
             allHold.minimumPressDuration = longPressDuration
             editButton.addGestureRecognizer(allHold)
-            LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: allHold))
+            LongPressManager.shared.gestureRecognisers.append(Weak.init(value: allHold))
         }
     }
     @objc var shuffleButton: MELButton!
@@ -447,7 +447,7 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
         optionsHold.minimumPressDuration = longPressDuration
         optionsHold.delegate = self
         tableView.addGestureRecognizer(optionsHold)
-        LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: optionsHold))
+        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: optionsHold))
     }
     
     @objc func showFilteredContext(_ sender: Any) {
@@ -790,8 +790,8 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
         
         super.viewDidDisappear(animated)
         
-        notifier.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        notifier.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        notifier.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        notifier.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
         
         unregisterAll(from: transientObservers)
     }
@@ -1030,7 +1030,7 @@ extension PlaylistItemsViewController: UITableViewDelegate, UITableViewDataSourc
         return true
     }
     
-    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         
         return .insert
     }
@@ -1049,7 +1049,7 @@ extension PlaylistItemsViewController: UITableViewDelegate, UITableViewDataSourc
         }
     }
     
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         
         if editingStyle == .insert {
             

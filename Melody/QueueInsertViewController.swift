@@ -196,7 +196,7 @@ class QueueInsertViewController: UIViewController, BorderButtonContaining {
                 
                 } else if let query = query, !shuffled {
                     
-                    return .queries([query].flatMap({ $0 }))
+                    return .queries([query].compactMap({ $0 }))
                 
                 } else {
                     

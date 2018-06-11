@@ -64,7 +64,7 @@ class SongDelegate: NSObject {
 //        cell.setHighlighted(false, animated: true)
 //    }
 //    
-//    @objc func handleScrollSwipe(in cell: SongTableViewCell, from gr: UISwipeGestureRecognizer, direction: UISwipeGestureRecognizerDirection) {
+//    @objc func handleScrollSwipe(in cell: SongTableViewCell, from gr: UISwipeGestureRecognizer, direction: UISwipeGestureRecognizer.Direction) {
 //        
 //        guard let container = container else { return }
 //        

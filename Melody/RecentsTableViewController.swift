@@ -203,7 +203,7 @@ class RecentsTableViewController: UITableViewController {
     
     func toggleRecentlyUpdated(with playlistView: PlaylistView) {
         
-        guard let array = (prefs.array(forKey: .recentlyUpdatedPlaylistSorts) as? [Int])?.flatMap({ PlaylistView(rawValue: $0) }) else { return }
+        guard let array = (prefs.array(forKey: .recentlyUpdatedPlaylistSorts) as? [Int])?.compactMap({ PlaylistView(rawValue: $0) }) else { return }
         
         if recentlyUpdatedPlaylistSorts.contains(playlistView) {
             

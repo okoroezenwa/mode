@@ -16,7 +16,7 @@ class MELSegmentedControl: UISegmentedControl {
         
         changeThemeColor()
         
-        setTitleTextAttributes([NSAttributedStringKey.font: UIFont.myriadPro(ofWeight: .regular, size: 15)], for: .normal)
+        setTitleTextAttributes([NSAttributedString.Key.font: UIFont.myriadPro(ofWeight: .regular, size: 15)], for: .normal)
         
         notifier.addObserver(self, selector: #selector(changeThemeColor), name: .themeChanged, object: nil)
     }

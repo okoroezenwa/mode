@@ -38,7 +38,7 @@ class NowPlaying: NSObject {
         
         }) as! NSObject)
         
-        observers.insert(notifier.addObserver(forName: .UIApplicationWillEnterForeground, object: UIApplication.shared, queue: nil, using: { [weak self] _ in
+        observers.insert(notifier.addObserver(forName: UIApplication.willEnterForegroundNotification, object: UIApplication.shared, queue: nil, using: { [weak self] _ in
             
             guard let weakSelf = self else { return }
         
@@ -59,13 +59,13 @@ class NowPlaying: NSObject {
             
         }) as! NSObject)
         
-        observers.insert(notifier.addObserver(forName: .UIApplicationDidEnterBackground, object: UIApplication.shared, queue: nil, using: { [weak self] _ in
+        observers.insert(notifier.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: UIApplication.shared, queue: nil, using: { [weak self] _ in
         
             self?.invalidateTimer()
         
         }) as! NSObject)
         
-        observers.insert(notifier.addObserver(forName: .UIApplicationDidBecomeActive, object: UIApplication.shared, queue: nil, using: { [weak self] _ in
+        observers.insert(notifier.addObserver(forName: UIApplication.didBecomeActiveNotification, object: UIApplication.shared, queue: nil, using: { [weak self] _ in
             
             guard let weakSelf = self else { return }
             
@@ -90,13 +90,13 @@ class NowPlaying: NSObject {
         }
         
         timerBased?.playPauseButton.addTarget(self, action: #selector(changePlaybackState), for: .touchUpInside)
-        timerBased?.altPlayPauseButton?.addTarget(self, action: #selector(changePlaybackState), for: .touchUpInside)
+        timerBased?.altPlayPauseButton??.addTarget(self, action: #selector(changePlaybackState), for: .touchUpInside)
         
         let gr = UILongPressGestureRecognizer.init(target: self, action: #selector(stop(_:)))
         gr.minimumPressDuration = 1.0
         timerBased?.playPauseButton.addGestureRecognizer(gr)
         
-        timerBased?.altPlayPauseButton?.addGestureRecognizer({
+        timerBased?.altPlayPauseButton??.addGestureRecognizer({
             
             let gr = UILongPressGestureRecognizer.init(target: self, action: #selector(stop(_:)))
             gr.minimumPressDuration = 1.0

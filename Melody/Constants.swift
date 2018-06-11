@@ -92,7 +92,7 @@ struct Attributes {
     }
     
     let range: NSRange
-    let name: NSAttributedStringKey
+    let name: NSAttributedString.Key
     let value: AttributeValue
     var trueValue: Any {
         
@@ -104,7 +104,7 @@ struct Attributes {
         }
     }
     
-    init(name: NSAttributedStringKey, value: AttributeValue, range: NSRange) {
+    init(name: NSAttributedString.Key, value: AttributeValue, range: NSRange) {
         
         self.range = range
         self.name = name

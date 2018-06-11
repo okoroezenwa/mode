@@ -125,7 +125,7 @@ class ActionsViewController: UIViewController {
     lazy var volumeView = VolumeView.instance(leadingWith: 20)
     
 //    @objc lazy var index: CGFloat = 0
-    lazy var context = InfoViewController.Context.song(location: .queue(loaded: false, index: musicPlayer.nowPlayingItemIndex), at: 0, within: [musicPlayer.nowPlayingItem].flatMap({ $0 }))
+    lazy var context = InfoViewController.Context.song(location: .queue(loaded: false, index: musicPlayer.nowPlayingItemIndex), at: 0, within: [musicPlayer.nowPlayingItem].compactMap({ $0 }))
     @objc var libraryVC: LibraryViewController? { return sender as? LibraryViewController ?? sender?.parent as? LibraryViewController }
     var filterer: Filterable? { return sender as? Filterable }
     var overridable: OnlineOverridable? { return sender as? OnlineOverridable }
@@ -156,7 +156,7 @@ class ActionsViewController: UIViewController {
         hold.minimumPressDuration = longPressDuration
         hold.delegate = self
         lockButton.addGestureRecognizer(hold)
-        LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: hold))
+        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: hold))
     }
 
     override func didReceiveMemoryWarning() {
@@ -383,7 +383,7 @@ class ActionsViewController: UIViewController {
             
             self.optionsStackView.arrangedSubviews.forEach({
                 
-                let bool = Set(array.flatMap({ $0?.superview })).contains($0)
+                let bool = Set(array.compactMap({ $0?.superview })).contains($0)
                 
                 if bool && $0.isHidden == true { } else { $0.isHidden = bool }
                 
@@ -786,7 +786,7 @@ class ActionsViewController: UIViewController {
         
         if let sender = sender as? InfoViewController {
             
-            let context = InfoViewController.Context.song(location: .queue(loaded: false, index: musicPlayer.nowPlayingItemIndex), at: 0, within: [musicPlayer.nowPlayingItem].flatMap({ $0 }))
+            let context = InfoViewController.Context.song(location: .queue(loaded: false, index: musicPlayer.nowPlayingItemIndex), at: 0, within: [musicPlayer.nowPlayingItem].compactMap({ $0 }))
 
             if persistActionsView || persistPopovers {
                 

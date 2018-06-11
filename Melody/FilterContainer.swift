@@ -78,7 +78,7 @@ extension FilterContainer where Self: UIViewController {
             
         case .size:
             
-            let actions = Array(Int64.FileSize.byte.rawValue...Int64.FileSize.terabyte.rawValue).flatMap({ Int64.FileSize(rawValue: $0) }).map({ size in UIAlertAction.init(title: size.suffix, style: .default, handler: { _ in action(size) }) })
+            let actions = Array(Int64.FileSize.byte.rawValue...Int64.FileSize.terabyte.rawValue).compactMap({ Int64.FileSize(rawValue: $0) }).map({ size in UIAlertAction.init(title: size.suffix, style: .default, handler: { _ in action(size) }) })
             
             let clear = UIAlertAction.init(title: "Clear", style: .destructive, handler: { [weak self] _ in
                 

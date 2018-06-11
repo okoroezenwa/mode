@@ -18,7 +18,7 @@ public extension MPMusicPlayerController {
     
     enum QueueCompletionKind { case notification, completion((() -> ())?) }
     
-    enum QueueRemovalReason { case moving, removal }
+    enum QueueEditReason { case change, move, insert, removal }
     
     enum QueueCompletionCriteria { case unknown }
     
@@ -429,6 +429,8 @@ public extension MPMusicPlayerController {
                         
                         completion?()
                     }
+                    
+                    notifier.post(name: .saveQueue, object: musicPlayer, userInfo: [String.queueItems: itemDescriptor.query.items ?? itemDescriptor.itemCollection.items])
                     
                     return
                 }

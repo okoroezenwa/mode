@@ -51,7 +51,7 @@ extension UIView {
     @objc func animateShadowOpacity(to newOpacity: Float, duration: CFTimeInterval) {
         
         let animation = CABasicAnimation.init(keyPath: "shadowOpacity")
-        animation.timingFunction = CAMediaTimingFunction.init(name: kCAMediaTimingFunctionEaseInEaseOut)
+        animation.timingFunction = CAMediaTimingFunction.init(name: CAMediaTimingFunctionName.easeInEaseOut)
         animation.fromValue = layer.shadowOpacity
         animation.toValue = newOpacity
         animation.duration = duration
@@ -62,7 +62,7 @@ extension UIView {
     @objc func animateCornerRadius(to newRadius: CGFloat, duration: CFTimeInterval) {
         
         let animation = CABasicAnimation.init(keyPath: "cornerRadius")
-        animation.timingFunction = CAMediaTimingFunction.init(name: kCAMediaTimingFunctionEaseInEaseOut)
+        animation.timingFunction = CAMediaTimingFunction.init(name: CAMediaTimingFunctionName.easeInEaseOut)
         animation.fromValue = layer.cornerRadius
         animation.toValue = newRadius
         animation.duration = duration

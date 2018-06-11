@@ -53,7 +53,7 @@ var showExplicit: Bool { return prefs.bool(forKey: .showExplicitness) }
 var songCountVisible: Bool { return prefs.bool(forKey: .songCountVisible) }
 var playlistsView: Int { return prefs.integer(forKey: .playlistsView) }
 var infoBoldTextEnabled: Bool { return prefs.bool(forKey: .infoBoldText) }
-var songSecondaryDetails: [SecondaryCategory]? { return (prefs.array(forKey: .songCellCategories) as? [Int])?.flatMap({ SecondaryCategory(rawValue: $0) }) }
+var songSecondaryDetails: [SecondaryCategory]? { return (prefs.array(forKey: .songCellCategories) as? [Int])?.compactMap({ SecondaryCategory(rawValue: $0) }) }
 var deinitBannersEnabled: Bool { return prefs.bool(forKey: .deinitBannersEnabled) }
 var showInfoButtons: Bool { return prefs.bool(forKey: .showInfoButtons) }
 var addGuard: Bool { return prefs.bool(forKey: .addGuard) }
@@ -90,8 +90,8 @@ var usePlaylistCustomBackground: Bool { return prefs.bool(forKey: .usePlaylistCu
 var useArtistCustomBackground: Bool { return prefs.bool(forKey: .useArtistCustomBackground) }
 var primarySizeSuffix: Int { return prefs.integer(forKey: .primarySizeSuffix) }
 var secondarySizeSuffix: Int { return prefs.integer(forKey: .secondarySizeSuffix) }
-var filterProperties: [Property] { return prefs.array(forKey: .filterProperties)?.flatMap({ $0 as? Int }).flatMap({ Property(rawValue: $0) }) ?? [] }
-var librarySections: [LibrarySection]{ return prefs.array(forKey: .librarySections)?.flatMap({ $0 as? Int }).flatMap({ LibrarySection(rawValue: $0) }) ?? [] }
+var filterProperties: [Property] { return prefs.array(forKey: .filterProperties)?.compactMap({ $0 as? Int }).compactMap({ Property(rawValue: $0) }) ?? [] }
+var librarySections: [LibrarySection]{ return prefs.array(forKey: .librarySections)?.compactMap({ $0 as? Int }).compactMap({ LibrarySection(rawValue: $0) }) ?? [] }
 var useCompactCollector: Bool { return prefs.bool(forKey: .useCompactCollector) }
 var cornerRadius: CornerRadius { return CornerRadius(rawValue: prefs.integer(forKey: .cornerRadius)) ?? .automatic }
 var widgetCornerRadius: CornerRadius? { return CornerRadius(rawValue: prefs.integer(forKey: .widgetCornerRadius)) }
@@ -114,7 +114,7 @@ var useMediaItems: Bool { return prefs.bool(forKey: .useMediaItems) }
 var useOldStyleQueue: Bool { return prefs.bool(forKey: .useOldStyleQueue) }
 var forceOldStyleQueue: Bool { return Settings.forceOldStyleQueue }
 var libraryRefreshInterval: LibraryRefreshInterval { return LibraryRefreshInterval(rawValue: prefs.integer(forKey: .libraryRefreshInterval)) ?? Settings.defaultRefreshInterval }
-var recentlyUpdatedPlaylistSorts: Set<PlaylistView> { return Set((prefs.array(forKey: .recentlyUpdatedPlaylistSorts) as? [Int])?.flatMap({ PlaylistView(rawValue: $0) }) ?? Settings.defaultRecentlyUpdatedPlaylistSorts) }
+var recentlyUpdatedPlaylistSorts: Set<PlaylistView> { return Set((prefs.array(forKey: .recentlyUpdatedPlaylistSorts) as? [Int])?.compactMap({ PlaylistView(rawValue: $0) }) ?? Settings.defaultRecentlyUpdatedPlaylistSorts) }
 var showPlaylistFolders: Bool { return prefs.bool(forKey: .showPlaylistFolders) }
 var tabBarTapBehaviour: TabBarTapBehaviour { return TabBarTapBehaviour(rawValue: prefs.integer(forKey: .tabBarTapBehaviour)) ?? Settings.defaultTabBarBehaviour }
 
@@ -280,10 +280,16 @@ class Settings {
     
     static var useSystemMusicPlayer: Bool {
         
+        #if targetEnvironment(simulator)
+        
+        return true
+        
+        #else
+        
         if #available(iOS 11, *) {
             
             return true
-        
+            
         } else if #available(iOS 10.3, *) {
             
             return false
@@ -292,6 +298,8 @@ class Settings {
             
             return true
         }
+        
+        #endif
     }
     
     static var useDescriptor: Bool {

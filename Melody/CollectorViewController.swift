@@ -23,7 +23,7 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
             let gr = UILongPressGestureRecognizer.init(target: self, action: #selector(showSettings(with:)))
             gr.minimumPressDuration = longPressDuration
             actionsButton.addGestureRecognizer(gr)
-            LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: gr))
+            LongPressManager.shared.gestureRecognisers.append(Weak.init(value: gr))
         }
     }
     @IBOutlet weak var stackView: UIStackView! {
@@ -540,7 +540,7 @@ extension CollectorViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
     
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         
         switch editingStyle {
             

@@ -83,7 +83,7 @@ class PlaylistCollectionViewCell: UICollectionViewCell, ArtworkContainingCell {
         UniversalMethods.addShadow(to: artworkContainer, radius: 4, opacity: 0.3, shouldRasterise: true)
     }
     
-    func prepare(with playlist: MPMediaPlaylist, count: Int, editingMode editing: Bool = false, direction: UICollectionViewScrollDirection = .horizontal, position: Position = .leading, topConstraint: CGFloat = 0) {
+    func prepare(with playlist: MPMediaPlaylist, count: Int, editingMode editing: Bool = false, direction: UICollectionView.ScrollDirection = .horizontal, position: Position = .leading, topConstraint: CGFloat = 0) {
         
         if direction == .vertical {
             

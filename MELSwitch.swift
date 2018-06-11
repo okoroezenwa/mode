@@ -159,7 +159,7 @@ class Switch: UIView {
         color.fromValue = fromValue
         color.toValue = Themer.themeColour(alpha: isUserInteractionEnabled ? 1 : isOn ? 0 : 0.2).cgColor
         color.duration = animated ? 0.27 : 0
-        color.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionLinear)
+        color.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.linear)
         layer.add(color, forKey: "borderColor")
     }
     

@@ -27,7 +27,7 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
             let gr = UILongPressGestureRecognizer.init(target: self, action: #selector(popToRoot(_:)))
             gr.minimumPressDuration = longPressDuration
             topView.addGestureRecognizer(gr)
-            LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: gr))
+            LongPressManager.shared.gestureRecognisers.append(Weak.init(value: gr))
         }
     }*/
     
@@ -389,8 +389,8 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         
         super.viewDidDisappear(animated)
         
-        notifier.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        notifier.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        notifier.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        notifier.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
         
         unregisterAll(from: transientObservers)
         
@@ -670,9 +670,9 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         
         guard let activeVC = activeChildViewController, let inActiveVC = vc else { return }
         
-        inActiveVC.willMove(toParentViewController: nil)
+        inActiveVC.willMove(toParent: nil)
         
-        addChildViewController(activeVC)
+        addChild(activeVC)
         
         activeVC.view.alpha = 0
         activeVC.view.frame = containerView.bounds
@@ -680,7 +680,7 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         containerView.addSubview(activeVC.view)
         
         // call before adding child view controller's view as subview
-        activeVC.didMove(toParentViewController: self)
+        activeVC.didMove(toParent: self)
         
         UIView.animateKeyframes(withDuration: 0.3, delay: 0, options: .calculationModeCubic, animations: {
             
@@ -702,7 +702,7 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
             inActiveVC.view.removeFromSuperview()
             
             // call after removing child view controller's view from hierarchy
-            inActiveVC.removeFromParentViewController()
+            inActiveVC.removeFromParent()
         })
     }
     
@@ -711,13 +711,13 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         if let activeVC = activeChildViewController {
             
             // call before adding child view controller's view as subview
-            addChildViewController(activeVC)
+            addChild(activeVC)
             
             activeVC.view.frame = containerView.bounds
             containerView.addSubview(activeVC.view)
             
             // call before adding child view controller's view as subview
-            activeVC.didMove(toParentViewController: self)
+            activeVC.didMove(toParent: self)
         }
     }
     

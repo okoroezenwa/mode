@@ -306,7 +306,7 @@ class QueueTableViewController: UITableViewController {
             guard #available(iOS 10.3, *) else { return 0.00001 }
         }
         
-        return UITableViewAutomaticDimension
+        return UITableView.automaticDimension
     }
     
     override func tableView(_ tableView: UITableView, estimatedHeightForFooterInSection section: Int) -> CGFloat {

@@ -30,7 +30,7 @@ extension MPMediaPlaylist {
     
     func gatherChildren(from temp: [TempPlaylistContainer], root: MPMediaPlaylist?, index: CGFloat) -> PlaylistContainer? {
         
-        let children = temp.first(where: { $0.id == id })?.children.flatMap({ $0.gatherChildren(from: temp, root: root, index: index + 1) }) ?? []
+        let children = temp.first(where: { $0.id == id })?.children.compactMap({ $0.gatherChildren(from: temp, root: root, index: index + 1) }) ?? []
         
         let container = PlaylistContainer.init(playlist: self, children: collapsedPlaylists.contains(id) ? [] : children, actualChildren: children, root: root, index: index)
         

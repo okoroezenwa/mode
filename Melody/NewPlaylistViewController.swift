@@ -105,8 +105,8 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
         
         updateHeaderView(with: (manager?.queue ?? playlistItems).count, animated: false)
         
-        notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillHideNotification, object: nil)
         
         let swipeRight = UISwipeGestureRecognizer.init(target: songManager, action: #selector(SongActionManager.toggleEditing(_:)))
         swipeRight.direction = .right
@@ -156,9 +156,9 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
     
     @objc func adjustKeyboard(with notification: Notification) {
         
-        guard let keyboardHeightAtEnd = ((notification as NSNotification).userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.size.height, nameSearchBar.isFirstResponder, let duration = (notification as NSNotification).userInfo?[UIKeyboardAnimationDurationUserInfoKey] as? TimeInterval else { return }
+        guard let keyboardHeightAtEnd = ((notification as NSNotification).userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.size.height, nameSearchBar.isFirstResponder, let duration = (notification as NSNotification).userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval else { return }
         
-        let keyboardWillShow = notification.name == NSNotification.Name.UIKeyboardWillShow
+        let keyboardWillShow = notification.name == UIResponder.keyboardWillShowNotification
         
         bottomViewBottomConstraint.constant = keyboardWillShow ? keyboardHeightAtEnd - 8 : 0
         

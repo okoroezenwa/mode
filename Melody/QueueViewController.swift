@@ -27,7 +27,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             let gr = UILongPressGestureRecognizer.init(target: self, action: #selector(showSettings(with:)))
             gr.minimumPressDuration = longPressDuration
             actionsButton.addGestureRecognizer(gr)
-            LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: gr))
+            LongPressManager.shared.gestureRecognisers.append(Weak.init(value: gr))
         }
     }
     @IBOutlet weak var editButton: MELButton! {
@@ -147,9 +147,9 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         
         shouldReturnToContainer = false
         
-        notifier.addObserver(self, selector: #selector(applicationChangedState(_:)), name: NSNotification.Name.UIApplicationWillEnterForeground, object: UIApplication.shared)
+        notifier.addObserver(self, selector: #selector(applicationChangedState(_:)), name: UIApplication.willEnterForegroundNotification, object: UIApplication.shared)
         
-        notifier.addObserver(self, selector: #selector(applicationChangedState(_:)), name: .UIApplicationDidEnterBackground, object: UIApplication.shared)
+        notifier.addObserver(self, selector: #selector(applicationChangedState(_:)), name: UIApplication.didEnterBackgroundNotification, object: UIApplication.shared)
         
         notifier.addObserver(self, selector: #selector(reload), name: NSNotification.Name.MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer)
         
@@ -183,12 +183,12 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             hold.minimumPressDuration = longPressDuration
             hold.delegate = self
             tableView.addGestureRecognizer(hold)
-            LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: hold))
+            LongPressManager.shared.gestureRecognisers.append(Weak.init(value: hold))
             
             let allHold = UILongPressGestureRecognizer.init(target: songManager, action: #selector(SongActionManager.showActionsForAll(_:)))
             allHold.minimumPressDuration = longPressDuration
             editButton.addGestureRecognizer(allHold)
-            LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: allHold))
+            LongPressManager.shared.gestureRecognisers.append(Weak.init(value: allHold))
         }
         
         let edge = UIScreenEdgePanGestureRecognizer.init(target: self, action: #selector(updateSections))
@@ -206,7 +206,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
     
     @objc func applicationChangedState(_ notification: Notification) {
         
-        if notification.name == .UIApplicationDidEnterBackground {
+        if notification.name == UIApplication.didEnterBackgroundNotification {
             
             notifier.removeObserver(self, name: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer)
         
@@ -280,12 +280,12 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                 
             } else {
                 
-                return .song(location: .queue(loaded: false, index: index), at: 0, within: [getSong(from: indexPath)].flatMap({ $0 }))
+                return .song(location: .queue(loaded: false, index: index), at: 0, within: [getSong(from: indexPath)].compactMap({ $0 }))
             }
             
         } else {
             
-            return .song(location: .queue(loaded: true, index: musicPlayer.nowPlayingItemIndex), at: 0, within: [musicPlayer.nowPlayingItem].flatMap({ $0 }))
+            return .song(location: .queue(loaded: true, index: musicPlayer.nowPlayingItemIndex), at: 0, within: [musicPlayer.nowPlayingItem].compactMap({ $0 }))
         }
     }
     
@@ -573,7 +573,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                 
                 guard let weakSelf = self else { return }
                 
-                let set = Set(indexPaths.map({ weakSelf.getSong(from: $0) }).flatMap({ $0 }) + [musicPlayer.nowPlayingItem].flatMap({ $0 }))
+                let set = Set(indexPaths.map({ weakSelf.getSong(from: $0) }).compactMap({ $0 }) + [musicPlayer.nowPlayingItem].compactMap({ $0 }))
                 
                 musicPlayer.perform(queueTransaction: { controller in
                     
@@ -929,7 +929,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         
         if operation?.isCancelled == true { return [] }
         
-        let array = (0..<max(1, musicPlayer.queueCount())).flatMap({ musicPlayer.item(at: $0) })
+        let array = (0..<max(1, musicPlayer.queueCount())).compactMap({ musicPlayer.item(at: $0) })
         
         if operation?.isCancelled == true { return [] }
         
@@ -1333,7 +1333,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         return cell
     }
     
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         
         return
     }
@@ -1446,7 +1446,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         }
     }
     
-    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         
         return .none
     }

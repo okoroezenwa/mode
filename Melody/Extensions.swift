@@ -8,12 +8,19 @@
 
 import UIKit
 
+#if swift(>=4.2)
+import UIKit.UIGeometry
+extension UIEdgeInsets {
+    public static let zero = UIEdgeInsets()
+}
+#endif
+
 // MARK: - UIButton
 extension UIButton {
     
-    enum State { case selected, unselected }
+    enum SelectionState { case selected, unselected }
     
-    func update(for state: State, capitalised: Bool = true) {
+    func update(for state: SelectionState, capitalised: Bool = true) {
         
         switch state {
             
@@ -271,7 +278,7 @@ extension Array where Element: MPMediaPlaylist {
 
         let temp = childrenArray.map({ TempPlaylistContainer(id: $0.first?.parentPersistentID ?? 0, children: $0) })
         
-        return filter({ $0.parentPersistentID == 0 }).flatMap({ $0.isFolder ? $0.gatherChildren(from: temp, root: $0, index: 0) : PlaylistContainer.init(playlist: $0, children: [], actualChildren: []) })
+        return filter({ $0.parentPersistentID == 0 }).compactMap({ $0.isFolder ? $0.gatherChildren(from: temp, root: $0, index: 0) : PlaylistContainer.init(playlist: $0, children: [], actualChildren: []) })
     }
 }
 
@@ -396,12 +403,12 @@ extension UIView {
         color.fromValue = fromValue
         color.toValue = newRadius
         color.duration = duration
-        color.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionLinear)
+        color.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.linear)
         layer.add(color, forKey: "cornerRadius")
         
 //        CATransaction.begin()
 //        CATransaction.setAnimationDuration(duration)
-//        CATransaction.setAnimationTimingFunction(CAMediaTimingFunction.init(name: kCAMediaTimingFunctionEaseInEaseOut))
+//        CATransaction.setAnimationTimingFunction(CAMediaTimingFunction.init(name: CAMediaTimingFunctionName.easeInEaseOut))
 //        layer.cornerRadius = newRadius
 //        CATransaction.commit()
     }
@@ -409,7 +416,7 @@ extension UIView {
     func animateShadowOpacity(to newOpacity: Float, duration: CFTimeInterval) {
         
         let animation = CABasicAnimation.init(keyPath: "shadowOpacity")
-        animation.timingFunction = CAMediaTimingFunction.init(name: kCAMediaTimingFunctionEaseInEaseOut)
+        animation.timingFunction = CAMediaTimingFunction.init(name: CAMediaTimingFunctionName.easeInEaseOut)
         animation.fromValue = layer.shadowOpacity
         animation.toValue = newOpacity
         animation.duration = duration
@@ -925,12 +932,12 @@ extension UIAlertAction {
 
 extension UIAlertController {
     
-    static func withTitle(_ title: String?, message: String?, style: UIAlertControllerStyle, actions: UIAlertAction..., popoverDetails details: (rect: CGRect, view: UIView)? = nil) -> UIAlertController {
+    static func withTitle(_ title: String?, message: String?, style: UIAlertController.Style, actions: UIAlertAction..., popoverDetails details: (rect: CGRect, view: UIView)? = nil) -> UIAlertController {
         
         return self.withTitle(title, message: message, style: style, popoverDetails: details, actions: actions)
     }
     
-    static func withTitle(_ title: String?, message: String?, style: UIAlertControllerStyle, popoverDetails details: (rect: CGRect, view: UIView)? = nil, actions: [UIAlertAction]) -> UIAlertController {
+    static func withTitle(_ title: String?, message: String?, style: UIAlertController.Style, popoverDetails details: (rect: CGRect, view: UIView)? = nil, actions: [UIAlertAction]) -> UIAlertController {
         
         let alert = UIAlertController.init(title: title, message: message, preferredStyle: style)
         

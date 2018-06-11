@@ -39,8 +39,8 @@ class TextViewController: UIViewController {
 
         prepare()
         
-        notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: .UIKeyboardWillShow, object: nil)
-        notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: .UIKeyboardWillHide, object: nil)
+        notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillHideNotification, object: nil)
         
         searchBar.setImage(#imageLiteral(resourceName: "CreatorIcon"), for: .search, state: .normal)
         
@@ -130,9 +130,9 @@ class TextViewController: UIViewController {
     
     @objc func adjustKeyboard(with notification: Notification) {
         
-        guard let keyboardHeightAtEnd = ((notification as NSNotification).userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.size.height, searchBar.isFirstResponder || textView.isFirstResponder else { return }
+        guard let keyboardHeightAtEnd = ((notification as NSNotification).userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.size.height, searchBar.isFirstResponder || textView.isFirstResponder else { return }
         
-        let keyboardWillShow = notification.name == NSNotification.Name.UIKeyboardWillShow
+        let keyboardWillShow = notification.name == UIResponder.keyboardWillShowNotification
         
         searchBarBottomConstraint.constant = keyboardWillShow && searchBar.isFirstResponder ? keyboardHeightAtEnd - 8 : 0
         

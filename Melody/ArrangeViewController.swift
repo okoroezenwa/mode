@@ -65,7 +65,7 @@ class ArrangeViewController: UIViewController {
         hold.minimumPressDuration = longPressDuration
         hold.delegate = self
         lockButton.addGestureRecognizer(hold)
-        LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: hold))
+        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: hold))
         
         verticalPresentedVC?.containerViewHeightConstraint.constant = 169
         verticalPresentedVC?.setTitle("Sort By")

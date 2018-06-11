@@ -234,7 +234,7 @@ extension TableDelegate: UITableViewDelegate, UITableViewDataSource {
         return sectionIndexTitles(for: tableView, filtering: false)
     }
     
-    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         
         return .insert
     }
@@ -244,7 +244,7 @@ extension TableDelegate: UITableViewDelegate, UITableViewDataSource {
 //        return false
 //    }
     
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         
         self.tableView(tableView, commit: editingStyle, forRowAt: indexPath, filtering: false)
     }
@@ -902,12 +902,12 @@ extension TableDelegate {
         }
     }
     
-    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath, filtering: Bool) -> UITableViewCellEditingStyle {
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath, filtering: Bool) -> UITableViewCell.EditingStyle {
         
         return self.tableView(tableView, editingStyleForRowAt: indexPath)
     }
     
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath, filtering: Bool) {
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath, filtering: Bool) {
         
         guard editingStyle == .insert else { return }
         

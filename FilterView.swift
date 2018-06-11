@@ -147,7 +147,7 @@ class FilterView: UIView {
                 let gr = UILongPressGestureRecognizer.init(target: container, action: #selector(UIViewController.showSettings(with:)))
                 gr.minimumPressDuration = longPressDuration
                 actionsButtonContainer.addGestureRecognizer(gr)
-                LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: gr))
+                LongPressManager.shared.gestureRecognisers.append(Weak.init(value: gr))
                 
                 hasSetUpSettingsGesture = true
             }
@@ -165,7 +165,7 @@ class FilterView: UIView {
         let hold = UILongPressGestureRecognizer.init(target: self, action: #selector(showCollectedActions(_:)))
         hold.minimumPressDuration = longPressDuration
         collectedView.addGestureRecognizer(hold)
-        LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: hold))
+        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: hold))
     }
     
     class func with(context: Context) -> FilterView {
@@ -568,8 +568,6 @@ extension FilterView: UICollectionViewDelegate, UICollectionViewDataSource {
 extension FilterView: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        
-//        guard case .filter(let filter, _) = context else { return .zero }
         
         let property = properties[indexPath.row]
         let isActive: Bool = {

@@ -66,10 +66,13 @@ public extension String {
             // Find next first case-insensitive match of word's i-th character.
             // The search in "string" begins at "startAt".
             
+//            let range = startAt..<lString.endIndex
+//            let other = range.lowerBound...range.upperBound
+            
             if let range = lString.range(of:
                 String(lWord[lWord.index(lWord.startIndex, offsetBy: i)] as Character),
                                          options: NSString.CompareOptions.caseInsensitive,
-                                         range: Range<String.Index>(startAt..<lString.endIndex),
+                                         range: startAt..<lString.endIndex/*Range<String.Index>.init(uncheckedBounds: (startAt, lString.endIndex))(startAt..<lString.endIndex)*/,
                                          locale: nil
                 ) {
                 // start index of word's i-th character in string.

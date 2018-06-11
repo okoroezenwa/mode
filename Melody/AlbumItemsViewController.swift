@@ -96,7 +96,7 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Inf
             let allHold = UILongPressGestureRecognizer.init(target: songManager, action: #selector(SongActionManager.showActionsForAll(_:)))
             allHold.minimumPressDuration = longPressDuration
             editButton.addGestureRecognizer(allHold)
-            LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: allHold))
+            LongPressManager.shared.gestureRecognisers.append(Weak.init(value: allHold))
         }
     }
     @objc var shuffleButton: MELButton!
@@ -367,12 +367,12 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Inf
         let hold = UILongPressGestureRecognizer.init(target: tableDelegate, action: #selector(TableDelegate.showOptions(_:)))
         hold.minimumPressDuration = longPressDuration
         tableView.addGestureRecognizer(hold)
-        LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: hold))
+        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: hold))
         
         let artistOptionsHold = UILongPressGestureRecognizer.init(target: self, action: #selector(showArtistOptions(_:)))
         artistOptionsHold.minimumPressDuration = longPressDuration
         artistButton.addGestureRecognizer(artistOptionsHold)
-        LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: artistOptionsHold))
+        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: artistOptionsHold))
     }
     
     @objc func showFilteredContext(_ sender: Any) {
@@ -836,12 +836,12 @@ extension AlbumItemsViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
     
-    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         
         return .insert
     }
     
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         
         if editingStyle == .insert {
             

@@ -19,7 +19,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
             let gr = UILongPressGestureRecognizer.init(target: self, action: #selector(showSettings(with:)))
             gr.minimumPressDuration = longPressDuration
             actionsButton.addGestureRecognizer(gr)
-            LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: gr))
+            LongPressManager.shared.gestureRecognisers.append(Weak.init(value: gr))
         }
     }
     @IBOutlet weak var shuffleButton: MELButton!
@@ -144,7 +144,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
     var genreQuery: MPMediaQuery?
     var albumArtistQuery: MPMediaQuery?
     var viewController: UIViewController?
-    var context = Context.song(location: .queue(loaded: false, index: 0), at: 0, within: [musicPlayer.nowPlayingItem].flatMap({ $0 }))
+    var context = Context.song(location: .queue(loaded: false, index: 0), at: 0, within: [musicPlayer.nowPlayingItem].compactMap({ $0 }))
     var tempContext: Context?
     var entityState = EntityState.single
     var container: ContainerViewController? { return appDelegate.window?.rootViewController as? ContainerViewController }
@@ -264,7 +264,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
         
         editButton.addTarget(songManager, action: #selector(SongActionManager.toggleEditing(_:)), for: .touchUpInside)
         
-        notifier.addObserver(self, selector: #selector(prepareViews), name: .UIApplicationWillEnterForeground, object: UIApplication.shared)
+        notifier.addObserver(self, selector: #selector(prepareViews), name: UIApplication.willEnterForegroundNotification, object: UIApplication.shared)
         
         collectionView.register(UINib.init(nibName: "PlaylistCollectionCell", bundle: nil), forCellWithReuseIdentifier: "playlistCell")
         
@@ -272,7 +272,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
         hold.minimumPressDuration = longPressDuration
         hold.delegate = self
         collectionView.addGestureRecognizer(hold)
-        LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: hold))
+        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: hold))
         
         prepareTapGestures()
         
@@ -1039,8 +1039,8 @@ extension InfoViewController {
                             
                         case .album(at: _, within: let collections):
                         
-                            let albums = collections.flatMap({ $0.representativeItem?.validAlbum })
-                            let artists = collections.flatMap({ $0.representativeItem?.validArtist })
+                            let albums = collections.compactMap({ $0.representativeItem?.validAlbum })
+                            let artists = collections.compactMap({ $0.representativeItem?.validArtist })
                             let years = collections.map({ $0.year }).filter({ $0 != 0 })
                             let count = collections.reduce(0, { $0 + $1.count })
                         
@@ -1056,25 +1056,25 @@ extension InfoViewController {
                                 
                                 case .artist:
                                     
-                                    let artists = collections.flatMap({ $0.representativeItem?.validArtist })
+                                    let artists = collections.compactMap({ $0.representativeItem?.validArtist })
                                     
                                     return (nil, .artist, artists.value(given: Set(artists).count < 2)?.first ?? "Mixed", albumCount.fullCountText(for: .album), itemCount.fullCountText(for: .song), nil, collections.first)
                                     
                                 case .genre:
                                     
-                                    let genres = collections.flatMap({ $0.representativeItem?.validGenre })
+                                    let genres = collections.compactMap({ $0.representativeItem?.validGenre })
                                     
                                     return (nil, .genre, genres.value(given: Set(genres).count < 2)?.first ?? "Mixed", albumCount.fullCountText(for: .album), itemCount.fullCountText(for: .song), artistCount.fullCountText(for: .artist), collections.first)
                                     
                                 case .composer:
                                     
-                                    let composers = collections.flatMap({ $0.representativeItem?.validComposer })
+                                    let composers = collections.compactMap({ $0.representativeItem?.validComposer })
                                     
                                     return (nil, .composer, composers.value(given: Set(composers).count < 2)?.first ?? "Mixed", albumCount.fullCountText(for: .album), itemCount.fullCountText(for: .song), artistCount.fullCountText(for: .artist), collections.first)
                                 
                                 case .albumArtist:
                                 
-                                    let artists = collections.flatMap({ $0.representativeItem?.validAlbumArtist })
+                                    let artists = collections.compactMap({ $0.representativeItem?.validAlbumArtist })
                                     
                                     return (nil, .artist, artists.value(given: Set(artists).count < 2)?.first ?? "Mixed", albumCount.fullCountText(for: .album), itemCount.fullCountText(for: .song), nil, collections.first)
                             }

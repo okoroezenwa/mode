@@ -72,7 +72,7 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
             let allHold = UILongPressGestureRecognizer.init(target: songManager, action: #selector(SongActionManager.showActionsForAll(_:)))
             allHold.minimumPressDuration = longPressDuration
             editButton.addGestureRecognizer(allHold)
-            LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: allHold))
+            LongPressManager.shared.gestureRecognisers.append(Weak.init(value: allHold))
         }
     }
     @objc var shuffleButton: MELButton!
@@ -303,7 +303,7 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
         let itemOptionsHold = UILongPressGestureRecognizer.init(target: tableDelegate, action: #selector(TableDelegate.showOptions(_:)))
         itemOptionsHold.minimumPressDuration = longPressDuration
         tableView.addGestureRecognizer(itemOptionsHold)
-        LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: itemOptionsHold))
+        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: itemOptionsHold))
     }
     
     @objc func showFilteredContext(_ sender: Any) {
@@ -420,8 +420,8 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
         
         super.viewDidDisappear(animated)
         
-        notifier.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        notifier.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        notifier.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        notifier.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
         
         unregisterAll(from: transientObservers)
     }
@@ -747,7 +747,7 @@ extension ArtistSongsViewController: UITableViewDelegate, UITableViewDataSource 
         return cell
     }
     
-    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         
         return .insert
     }
@@ -769,7 +769,7 @@ extension ArtistSongsViewController: UITableViewDelegate, UITableViewDataSource 
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         
         let song = getSong(from: indexPath)
         

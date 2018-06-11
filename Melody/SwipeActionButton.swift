@@ -69,7 +69,7 @@ class SwipeActionButton: MELButton {
         
         return title.boundingRect(with: size,
                                   options: [.usesLineFragmentOrigin],
-                                  attributes: [NSAttributedStringKey.font: font],
+                                  attributes: [NSAttributedString.Key.font: font],
                                   context: nil).integral
     }
     

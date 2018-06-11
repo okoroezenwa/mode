@@ -91,7 +91,7 @@ class UniversalMethods: NSObject {
     
     class func alertController(withTitle title: String?,
                                message: String?,
-                               preferredStyle: UIAlertControllerStyle,
+                               preferredStyle: UIAlertController.Style,
                                popoverDetails: (rect: CGRect, view: UIView)? = nil,
                                actions: UIAlertAction...) -> UIAlertController {
         
@@ -100,7 +100,7 @@ class UniversalMethods: NSObject {
     
     class func alertController(withTitle title: String?,
                                message: String?,
-                               preferredStyle: UIAlertControllerStyle,
+                               preferredStyle: UIAlertController.Style,
                                popoverDetails: (rect: CGRect, view: UIView)? = nil,
                                actions: [UIAlertAction]) -> UIAlertController {
         

@@ -29,7 +29,7 @@ extension BackgroundHideable {
                 for subview in views {
                     
                     view.addSubview(subview)
-                    view.sendSubview(toBack: subview)
+                    view.sendSubviewToBack(subview)
                     subview.translatesAutoresizingMaskIntoConstraints = false
                     
                     view.addConstraints([NSLayoutConstraint.init(item: view, attribute: .bottom, relatedBy: .equal, toItem: subview, attribute: .bottom, multiplier: 1, constant: 0), NSLayoutConstraint.init(item: view, attribute: .top, relatedBy: .equal, toItem: subview, attribute: .top, multiplier: 1, constant: 0), NSLayoutConstraint.init(item: view, attribute: .leading, relatedBy: .equal, toItem: subview, attribute: .leading, multiplier: 1, constant: 0), NSLayoutConstraint.init(item: view, attribute: .trailing, relatedBy: .equal, toItem: subview, attribute: .trailing, multiplier: 1, constant: 0)])
@@ -172,8 +172,8 @@ protocol EntityContainer: class, UITableViewDelegate, TableViewContaining {
 protocol SongContainer: EntityContainer {
     
     func getSong(from indexPath: IndexPath, filtering: Bool) -> MPMediaItem
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath)
-    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath)
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle
 }
 
 protocol TableViewContainer: Arrangeable, InfoLoading, Filterable, SingleItemActionable {
@@ -196,14 +196,14 @@ protocol FilterContaining: class {
 
 @objc protocol TimerBased {
     
-    @objc optional var startTime: MELLabel! { get set }
-    @objc optional var stopTime: MELLabel! { get set }
+    @objc optional var startTime: MELLabel? { get set }
+    @objc optional var stopTime: MELLabel? { get set }
     var playPauseButton: MELButton! { get set }
     var timeSlider: MELSlider! { get set }
     var playingImage: UIImage { get }
     var pausedImage: UIImage { get }
     @objc optional var playingInset: CGFloat { get }
-    @objc optional var altPlayPauseButton: MELButton! { get set }
+    @objc optional var altPlayPauseButton: MELButton? { get set }
     @objc optional var pausedInset: CGFloat { get }
 }
 
@@ -213,11 +213,11 @@ extension TimerBased {
         
         if let nowPlaying = musicPlayer.nowPlayingItem {
             
-            if let startTime = startTime, let stopTime = stopTime {
-                
-                startTime.text = seeking ? TimeInterval(timeSlider.value).nowPlayingRepresentation : musicPlayer.currentPlaybackTime.nowPlayingRepresentation
-                stopTime.text = (TimeInterval(seeking ? TimeInterval(timeSlider.value) : musicPlayer.currentPlaybackTime) - nowPlaying.playbackDuration).nowPlayingRepresentation
-            }
+//            if let startTime = startTime, let stopTime = stopTime {
+            
+                startTime??.text = seeking ? TimeInterval(timeSlider.value).nowPlayingRepresentation : musicPlayer.currentPlaybackTime.nowPlayingRepresentation
+                stopTime??.text = (TimeInterval(seeking ? TimeInterval(timeSlider.value) : musicPlayer.currentPlaybackTime) - nowPlaying.playbackDuration).nowPlayingRepresentation
+//            }
             
             if setValue {
                 
@@ -246,11 +246,11 @@ extension TimerBased {
         
         playPauseButton.setImage(image, for: .normal)
         playPauseButton.imageEdgeInsets.left = musicPlayer.isPlaying ? playingInset ?? 0 : pausedInset ?? 0
-        altPlayPauseButton?.setImage(musicPlayer.isPlaying ? #imageLiteral(resourceName: "PauseFilled17") : #imageLiteral(resourceName: "PlayFilled17"), for: .normal)
+        altPlayPauseButton??.setImage(musicPlayer.isPlaying ? #imageLiteral(resourceName: "PauseFilled17") : #imageLiteral(resourceName: "PlayFilled17"), for: .normal)
         
         UIView.animate(withDuration: 0.65, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .allowUserInteraction, animations: {
             
-            self.altPlayPauseButton?.superview?.layoutIfNeeded()
+            self.altPlayPauseButton??.superview?.layoutIfNeeded()
             
             if !(self is NowPlayingViewController) {
                 

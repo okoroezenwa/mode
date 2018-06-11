@@ -76,7 +76,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     @objc var player: AVPlayer?
     let screenLocker = Insomnia.init(mode: InsomniaMode(rawValue: screenLockPreventionMode) ?? .disabled)
     
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         
         musicLibrary.beginGeneratingLibraryChangeNotifications()
         musicPlayer.beginGeneratingPlaybackNotifications()
@@ -99,7 +99,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         if #available(iOS 10.3, *), !useSystemPlayer {
 
-            UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplicationBackgroundFetchIntervalMinimum)
+            UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalMinimum)
 
             Timer.scheduledTimer(withTimeInterval: 5, repeats: true, block: { _ in
 
@@ -187,7 +187,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         completionHandler(handleQuickActions(with: shortcutItem))
     }
     
-    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         
         guard let string = url.absoluteString.components(separatedBy: "/").last, let urlAction = URLAction.init(rawValue: string), let topVC = topViewController else { return false }
         
@@ -203,7 +203,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 
                 } else {
                     
-                    Transitioner.shared.showInfo(from: topVC, with: .song(location: .queue(loaded: false, index: musicPlayer.nowPlayingItemIndex), at: 0, within: [musicPlayer.nowPlayingItem].flatMap({ $0 })))
+                    Transitioner.shared.showInfo(from: topVC, with: .song(location: .queue(loaded: false, index: musicPlayer.nowPlayingItemIndex), at: 0, within: [musicPlayer.nowPlayingItem].compactMap({ $0 })))
                 }
             
             case .nowPlaying:

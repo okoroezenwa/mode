@@ -439,7 +439,7 @@ extension Arrangeable {
             
             case .album:
             
-                let props = collections.flatMap({ $0.representativeItem }).map({ $0.validAlbum }).map({ !CharacterSet.letters.contains(String($0.prefix(1)).unicodeScalars.first!) ? "#" : String($0.prefix(1)).uppercased() }).map({ $0.folding(options: .diacriticInsensitive, locale: .current) })
+                let props = collections.compactMap({ $0.representativeItem }).map({ $0.validAlbum }).map({ !CharacterSet.letters.contains(String($0.prefix(1)).unicodeScalars.first!) ? "#" : String($0.prefix(1)).uppercased() }).map({ $0.folding(options: .diacriticInsensitive, locale: .current) })
                 let orderedProps = Set(props).sorted(by: { (ascending ? $0 < $1 : $0 > $1) })
                 let numeric = orderedProps.filter({ $0 == "#" })
                 let alpha = orderedProps.filter({ $0 != "#" })

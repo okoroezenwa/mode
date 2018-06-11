@@ -63,7 +63,7 @@ class PresentedContainerViewController: UIViewController {
     var transitionStart: (() -> ())?
     var transitionAnimation: (() -> ())?
     var transitionCancellation: (() -> ())?
-    lazy var optionsContext = InfoViewController.Context.song(location: .queue(loaded: true, index: musicPlayer.nowPlayingItemIndex), at: 0, within: [musicPlayer.nowPlayingItem].flatMap({ $0 }))
+    lazy var optionsContext = InfoViewController.Context.song(location: .queue(loaded: true, index: musicPlayer.nowPlayingItemIndex), at: 0, within: [musicPlayer.nowPlayingItem].compactMap({ $0 }))
     override var transitioningDelegate: UIViewControllerTransitioningDelegate? {
         
         get { return self.altAnimator ?? self.animator }
@@ -334,13 +334,13 @@ class PresentedContainerViewController: UIViewController {
         let gr = UILongPressGestureRecognizer.init(target: self, action: #selector(unwindToMain(_:)))
         gr.minimumPressDuration = longPressDuration
         leftButton.addGestureRecognizer(gr)
-        LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: gr))
+        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: gr))
         
         let edgeGR = UILongPressGestureRecognizer.init(target: self, action: #selector(unwindToMain(_:)))
         edgeGR.minimumPressDuration = longPressDuration
         edgeGR.delegate = self
         view.addGestureRecognizer(edgeGR)
-        LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: edgeGR))
+        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: edgeGR))
     }
     
     @objc func updateTextField() {
@@ -603,12 +603,12 @@ class PresentedContainerViewController: UIViewController {
         if let inActiveVC = inactiveViewController {
             
             // call before removing child view controller's view from hierarchy
-            inActiveVC.willMove(toParentViewController: nil)
+            inActiveVC.willMove(toParent: nil)
             
             inActiveVC.view.removeFromSuperview()
             
             // call after removing child view controller's view from hierarchy
-            inActiveVC.removeFromParentViewController()
+            inActiveVC.removeFromParent()
         }
     }
     
@@ -617,10 +617,10 @@ class PresentedContainerViewController: UIViewController {
         if let activeVC = activeViewController {
             
             // call before adding child view controller's view as subview
-            addChildViewController(activeVC)
+            addChild(activeVC)
             
             // call before adding child view controller's view as subview
-            activeVC.didMove(toParentViewController: self)
+            activeVC.didMove(toParent: self)
             containerView.addSubview(activeVC.view)
             activeVC.view.frame = containerView.bounds
         }
@@ -630,9 +630,9 @@ class PresentedContainerViewController: UIViewController {
         
         guard let activeVC = activeViewController, let inActiveVC = vc else { return }
         
-        inActiveVC.willMove(toParentViewController: nil)
+        inActiveVC.willMove(toParent: nil)
         
-        addChildViewController(activeVC)
+        addChild(activeVC)
         
         activeVC.view.alpha = 0
         activeVC.view.frame = containerView.bounds
@@ -640,7 +640,7 @@ class PresentedContainerViewController: UIViewController {
         containerView.addSubview(activeVC.view)
         
         // call before adding child view controller's view as subview
-        activeVC.didMove(toParentViewController: self)
+        activeVC.didMove(toParent: self)
         
         UIView.animateKeyframes(withDuration: 0.3, delay: 0, options: .calculationModeCubic, animations: {
             
@@ -662,7 +662,7 @@ class PresentedContainerViewController: UIViewController {
                 inActiveVC.view.removeFromSuperview()
                 
                 // call after removing child view controller's view from hierarchy
-                inActiveVC.removeFromParentViewController()
+                inActiveVC.removeFromParent()
         })
     }
     

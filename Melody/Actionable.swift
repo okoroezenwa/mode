@@ -367,7 +367,7 @@ class SongActionManager: NSObject {
             
             if sender is UIAlertAction, isEditing {
                 
-                container.handleLeftSwipe(actionable.editButton)
+                container.handleLeftSwipe(actionable.editButton as Any)
                 
             } else if sender is UIButton, !(container is CollectorViewController || container is NewPlaylistViewController), isEditing {
                 
@@ -442,7 +442,7 @@ class SongActionManager: NSObject {
         
         if let indexPaths = container.tableView.indexPathsForVisibleRows {
             
-            let views = Set(indexPaths.map({ $0.section })).map({ container.tableView.headerView(forSection: $0) as? TableHeaderView }).flatMap({ $0 })
+            let views = Set(indexPaths.map({ $0.section })).map({ container.tableView.headerView(forSection: $0) as? TableHeaderView }).compactMap({ $0 })
             
             for view in views {
                 

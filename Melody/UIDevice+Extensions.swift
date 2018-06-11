@@ -11,7 +11,7 @@ extension UIDevice {
     
     @objc public var isBlurAvailable: Bool {
         
-        if UIAccessibilityIsReduceTransparencyEnabled() {
+        if UIAccessibility.isReduceTransparencyEnabled {
             
             return false
         }

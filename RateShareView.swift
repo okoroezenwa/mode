@@ -41,7 +41,7 @@ class RateShareView: UIView {
         let tapGR = UITapGestureRecognizer.init(target: self, action: #selector(tap(_:)))
         ratingStackView.addGestureRecognizer(tapGR)
         
-        notifier.addObserver(self, selector: #selector(update), name: .UIApplicationWillEnterForeground, object: UIApplication.shared)
+        notifier.addObserver(self, selector: #selector(update), name: UIApplication.willEnterForegroundNotification, object: UIApplication.shared)
     }
     
     func determineOverrides() {
@@ -165,22 +165,22 @@ class RateShareView: UIView {
             
             if let _ = nowPlayingVC {
                 
-                return [UIImage.from(nowPlayingVC?.view)].flatMap({ $0 })
+                return [UIImage.from(nowPlayingVC?.view)].compactMap({ $0 })
             }
             
             if let item = entity as? MPMediaItem {
                 
-                return [item.actualArtwork?.image(at: item.artwork?.bounds.size ?? .zero)].flatMap({ $0 })
+                return [item.actualArtwork?.image(at: item.artwork?.bounds.size ?? .zero)].compactMap({ $0 })
                 
             } else if let collection = entity as? MPMediaItemCollection {
                 
-                return collection.items.flatMap({ $0.actualArtwork?.image(at: $0.artwork?.bounds.size ?? .zero) })
+                return collection.items.compactMap({ $0.actualArtwork?.image(at: $0.artwork?.bounds.size ?? .zero) })
             }
             
             return []
         }
         
-        let activity = UIActivityViewController.init(activityItems: images.flatMap({ $0 }), applicationActivities: nil)
+        let activity = UIActivityViewController.init(activityItems: images.compactMap({ $0 }), applicationActivities: nil)
         
         if let actionsVC = topViewController as? ActionsViewController {
             

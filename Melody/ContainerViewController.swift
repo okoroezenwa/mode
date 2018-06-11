@@ -40,7 +40,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
     @IBOutlet weak var artistAndAlbum: MELLabel!
     @IBOutlet weak var albumArt: UIImageView!
     @IBOutlet weak var collectedButton: MELButton!
-    @IBOutlet weak var altPlayPauseButton: MELButton!
+    @IBOutlet weak var altPlayPauseButton: MELButton?
     @IBOutlet weak var playPauseButton: MELButton!
     @IBOutlet weak var playPauseButtonBorder: UIView!
     @IBOutlet weak var playShuffleButton: MELButton!
@@ -55,7 +55,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
     @IBOutlet weak var collectedView: UIView!
     @IBOutlet weak var clearButton: MELButton!
     @IBOutlet weak var altQueueView: UIView!
-    @IBOutlet weak var addButtonLeadingConstraint: NSLayoutConstraint!
+    @IBOutlet weak var addButtonLeadingConstraint: NSLayoutConstraint?
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var bottomEffectViewBottomConstraint: NSLayoutConstraint!
     @IBOutlet weak var collectedUpNextViewEqualWidthConstraint: NSLayoutConstraint!
@@ -81,13 +81,13 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             let gr = UILongPressGestureRecognizer.init(target: self, action: #selector(showSettings(with:)))
             gr.minimumPressDuration = longPressDuration
             actionsButton.addGestureRecognizer(gr)
-            LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: gr))
+            LongPressManager.shared.gestureRecognisers.append(Weak.init(value: gr))
         }
     }
     
     enum CollectorActions { case play, queue, shuffleSongs, shuffleAlbums, existingPlaylist, newPlaylist, clear }
     
-    @objc var actionableSongs: [MPMediaItem] { return [musicPlayer.nowPlayingItem].flatMap({ $0 }) }
+    @objc var actionableSongs: [MPMediaItem] { return [musicPlayer.nowPlayingItem].compactMap({ $0 }) }
     var applicableActions: [SongAction] {
         
         var actions = [SongAction.collect, .newPlaylist, .addTo]
@@ -271,17 +271,17 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         let clear = UILongPressGestureRecognizer.init(target: self, action: #selector(clearItemsImmediately(_:)))
         clear.minimumPressDuration = longPressDuration
         clearButton.addGestureRecognizer(clear)
-        LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: clear))
+        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: clear))
         
         let optionsHold = UILongPressGestureRecognizer.init(target: self, action: #selector(showOptions(_:)))
         optionsHold.minimumPressDuration = longPressDuration
         nowPlayingButton.addGestureRecognizer(optionsHold)
-        LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: optionsHold))
+        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: optionsHold))
         
         let altOptionsHold = UILongPressGestureRecognizer.init(target: self, action: #selector(showNowPlayingActions(_:)))
         altOptionsHold.minimumPressDuration = longPressDuration
         altNowPlayingButton.addGestureRecognizer(altOptionsHold)
-        LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: altOptionsHold))
+        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: altOptionsHold))
         
         let swipeLeft = UISwipeGestureRecognizer.init(target: self, action: #selector(goTo))
         swipeLeft.direction = .left
@@ -380,11 +380,11 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         
         switch sender.direction {
             
-            case UISwipeGestureRecognizerDirection.right: NowPlaying.shared.changePlaybackState()
+            case UISwipeGestureRecognizer.Direction.right: NowPlaying.shared.changePlaybackState()
             
-            case UISwipeGestureRecognizerDirection.left: showOptions(self)
+            case UISwipeGestureRecognizer.Direction.left: showOptions(self)
             
-            case UISwipeGestureRecognizerDirection.up: guardQueue(using: UIAlertController.withTitle(nil, message: nil, style: .actionSheet, actions: .stop, .cancel()), onCondition: true, fallBack: { NowPlaying.shared.stopPlayback() })
+            case UISwipeGestureRecognizer.Direction.up: guardQueue(using: UIAlertController.withTitle(nil, message: nil, style: .actionSheet, actions: .stop, .cancel()), onCondition: true, fallBack: { NowPlaying.shared.stopPlayback() })
             
             default: break
         }
@@ -590,7 +590,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         
         }) as! NSObject)
         
-        lifetimeObservers.insert(notifier.addObserver(forName: .UIApplicationWillEnterForeground, object: UIApplication.shared, queue: nil, using: { [weak self] _ in
+        lifetimeObservers.insert(notifier.addObserver(forName: UIApplication.willEnterForegroundNotification, object: UIApplication.shared, queue: nil, using: { [weak self] _ in
             
             guard let weakSelf = self else { return }
             
@@ -645,7 +645,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             
         }) as! NSObject)
         
-        lifetimeObservers.insert(notifier.addObserver(forName: .UIApplicationWillChangeStatusBarFrame, object: nil, queue: nil, using: { [weak self] _ in
+        lifetimeObservers.insert(notifier.addObserver(forName: UIApplication.willChangeStatusBarFrameNotification, object: nil, queue: nil, using: { [weak self] _ in
             
             guard let weakSelf = self, let window = appDelegate.window else { return }
             
@@ -791,7 +791,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
     
     @IBAction func showOptions(_ sender: Any) {
         
-//        musicPlayer.play(persistentIDs.map({ MPMediaQuery.init(filterPredicates: [.for(.song, using: $0)]) }).flatMap({ $0.items?.first }), startingFrom: nil, from: self, withTitle: "Play", alertTitle: "All Songs")
+//        musicPlayer.play(persistentIDs.map({ MPMediaQuery.init(filterPredicates: [.for(.song, using: $0)]) }).compactMap({ $0.items?.first }), startingFrom: nil, from: self, withTitle: "Play", alertTitle: "All Songs")
         
         if let sender = sender as? UILongPressGestureRecognizer {
             
@@ -800,7 +800,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         
         guard musicPlayer.nowPlayingItem != nil else { return }
         
-        Transitioner.shared.showInfo(from: self, with: .song(location: .queue(loaded: false, index: musicPlayer.nowPlayingItemIndex), at: 0, within: [musicPlayer.nowPlayingItem].flatMap({ $0 })))
+        Transitioner.shared.showInfo(from: self, with: .song(location: .queue(loaded: false, index: musicPlayer.nowPlayingItemIndex), at: 0, within: [musicPlayer.nowPlayingItem].compactMap({ $0 })))
     }
     
     @IBAction func clearItems(_ sender: Any) {
@@ -835,7 +835,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         if let inActiveVC = inactiveViewController {
             
             // call before removing child view controller's view from hierarchy
-            inActiveVC.willMove(toParentViewController: nil)
+            inActiveVC.willMove(toParent: nil)
             
             UIView.animate(withDuration: 0.3, animations: {
             
@@ -848,7 +848,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
                 inActiveVC.view.removeFromSuperview()
                 
                 // call after removing child view controller's view from hierarchy
-                inActiveVC.removeFromParentViewController()
+                inActiveVC.removeFromParent()
             })
         }
     }
@@ -1092,9 +1092,9 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         
         if let activeVC = activeViewController {
             
-            addChildViewController(activeVC)
+            addChild(activeVC)
             activeVC.view.frame = contentView.bounds
-            activeVC.didMove(toParentViewController: self)
+            activeVC.didMove(toParent: self)
             contentView.addSubview(activeVC.view)
         }
     }
@@ -1103,8 +1103,8 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         
         guard let activeVC = activeViewController, let inActiveVC = vc else { return }
         
-        addChildViewController(activeVC)
-        inActiveVC.willMove(toParentViewController: nil)
+        addChild(activeVC)
+        inActiveVC.willMove(toParent: nil)
         
         activeVC.view.alpha = 0
         contentView.addSubview(activeVC.view)
@@ -1156,12 +1156,12 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             self.view.layoutIfNeeded()
         })
         
-        inActiveVC.removeFromParentViewController()
-        activeVC.didMove(toParentViewController: self)
+        inActiveVC.removeFromParent()
+        activeVC.didMove(toParent: self)
         notifier.post(name: .resetInsets, object: nil)
     }
     
-    func update(_ button: UIButton?, to state: UIButton.State, animated: Bool = true) {
+    func update(_ button: UIButton?, to state: UIButton.SelectionState, animated: Bool = true) {
         
         guard let button: MELButton = {
             

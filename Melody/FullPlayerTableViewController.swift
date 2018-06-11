@@ -354,7 +354,7 @@ class FullPlayerTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         
-        return isInDebugMode.inverted && section == 0 ? 0.00001 : UITableViewAutomaticDimension
+        return isInDebugMode.inverted && section == 0 ? 0.00001 : UITableView.automaticDimension
     }
     
     override func tableView(_ tableView: UITableView, estimatedHeightForFooterInSection section: Int) -> CGFloat {

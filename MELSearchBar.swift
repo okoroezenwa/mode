@@ -79,8 +79,8 @@ class MELSearchBar: UISearchBar {
         
         textField?.defaultTextAttributes = [
             
-            NSAttributedStringKey.font.rawValue: UIFont.myriadPro(ofWeight: .regular, size: 17),
-            NSAttributedStringKey.foregroundColor.rawValue: Themer.textColour(for: .title)
+            NSAttributedString.Key.font: UIFont.myriadPro(ofWeight: .regular, size: 17),
+            NSAttributedString.Key.foregroundColor: Themer.textColour(for: .title)
         ]
         
         textField?.attributedPlaceholder = NSAttributedString.init(string: placeholder, attributes: [

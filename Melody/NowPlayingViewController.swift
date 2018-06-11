@@ -29,8 +29,8 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
     @IBOutlet weak var previous: MELButton!
     @IBOutlet weak var nextButton: MELButton!
     @IBOutlet weak var shuffle: MELButton!
-    @IBOutlet weak var startTime: MELLabel!
-    @IBOutlet weak var stopTime: MELLabel!
+    @IBOutlet weak var startTime: MELLabel?
+    @IBOutlet weak var stopTime: MELLabel?
     @IBOutlet weak var timeSlider: MELSlider!
     @IBOutlet weak var queue: MELButton!
     @IBOutlet weak var lyricsButton: MELButton!
@@ -63,7 +63,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
     @IBOutlet var volumeViewContainerEqualHeightConstraint: NSLayoutConstraint!
     @IBOutlet var volumeViewContainerHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var timeViewHeightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var addButtonLeadingConstraint: NSLayoutConstraint!
+    @IBOutlet weak var addButtonLeadingConstraint: NSLayoutConstraint?
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var actionsButton: MELButton! {
         
@@ -72,7 +72,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
             let gr = UILongPressGestureRecognizer.init(target: self, action: #selector(showSettings(with:)))
             gr.minimumPressDuration = longPressDuration
             actionsButton.addGestureRecognizer(gr)
-            LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: gr))
+            LongPressManager.shared.gestureRecognisers.append(Weak.init(value: gr))
         }
     }
     @IBOutlet weak var repeatView: UIView!
@@ -101,7 +101,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         set { }
     }
     
-    @objc var actionableSongs: [MPMediaItem] { return [activeItem].flatMap({ $0 }) }
+    @objc var actionableSongs: [MPMediaItem] { return [activeItem].compactMap({ $0 }) }
     var applicableActions: [SongAction] {
         
         var actions = [SongAction.collect, .newPlaylist, .addTo]
@@ -225,12 +225,12 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         let artistHold = UILongPressGestureRecognizer.init(target: self, action: #selector(showArtistOptions(_:)))
         artistHold.minimumPressDuration = longPressDuration
         artistButton.addGestureRecognizer(artistHold)
-        LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: artistHold))
+        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: artistHold))
         
         let albumHold = UILongPressGestureRecognizer.init(target: self, action: #selector(showAlbumOptions(_:)))
         albumHold.minimumPressDuration = longPressDuration
         albumButton.addGestureRecognizer(albumHold)
-        LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: albumHold))
+        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: albumHold))
         
         let doubleTap = UITapGestureRecognizer.init(target: self, action: #selector(changeArtworkSize(_:)))
         doubleTap.numberOfTapsRequired = 2
@@ -239,7 +239,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         let optionsHold = UILongPressGestureRecognizer.init(target: self, action: #selector(showOptions(_:)))
         optionsHold.minimumPressDuration = longPressDuration
         songName.addGestureRecognizer(optionsHold)
-        LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: optionsHold))
+        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: optionsHold))
         
         let edge = UIScreenEdgePanGestureRecognizer.init(target: self, action: #selector(goToQueue))
         edge.edges = .right
@@ -278,7 +278,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
     
     @objc func prepareLifetimeObservers() {
         
-        lifetimeObservers.insert(notifier.addObserver(forName: .UIApplicationWillEnterForeground, object: UIApplication.shared, queue: nil, using: { [weak self] _ in
+        lifetimeObservers.insert(notifier.addObserver(forName: UIApplication.willEnterForegroundNotification, object: UIApplication.shared, queue: nil, using: { [weak self] _ in
             
             guard let weakSelf = self else { return }
             
@@ -312,7 +312,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
             
         }) as! NSObject)
         
-        [Notification.Name.compressOnPauseChanged, .separationMethodChanged, .avoidDoubleHeightBarChanged, .UIApplicationDidChangeStatusBarFrame, .cornerRadiusChanged].forEach({
+        [Notification.Name.compressOnPauseChanged, .separationMethodChanged, .avoidDoubleHeightBarChanged, UIApplication.didChangeStatusBarFrameNotification, .cornerRadiusChanged].forEach({
             
             lifetimeObservers.insert(notifier.addObserver(forName: $0, object: nil, queue: nil, using: { [weak self] _ in
                 
@@ -1141,7 +1141,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
                 if let presentedVC = segue.destination as? PresentedContainerViewController {
                     
                     presentedVC.context = .info
-                    presentedVC.optionsContext = .song(location: .queue(loaded: false, index: musicPlayer.nowPlayingItemIndex), at: 0, within: [activeItem].flatMap({ $0 }))
+                    presentedVC.optionsContext = .song(location: .queue(loaded: false, index: musicPlayer.nowPlayingItemIndex), at: 0, within: [activeItem].compactMap({ $0 }))
                 }
             
             case "toArtistOptions":
@@ -1164,7 +1164,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
             
             case "toLibraryOptions":
                 
-                let options = LibraryOptions.init(fromVC: self, configuration: .nowPlaying, context: .song(location: .queue(loaded: false, index: musicPlayer.nowPlayingItemIndex), at: 0, within: [activeItem].flatMap({ $0 })))
+                let options = LibraryOptions.init(fromVC: self, configuration: .nowPlaying, context: .song(location: .queue(loaded: false, index: musicPlayer.nowPlayingItemIndex), at: 0, within: [activeItem].compactMap({ $0 })))
                 
                 Transitioner.shared.transition(to: segue.destination, using: options, sourceView: actionsButton)
             
@@ -1176,7 +1176,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
                     
                     presentedVC.showLyrics = true
                     presentedVC.context = .info
-                    presentedVC.optionsContext = .song(location: .queue(loaded: false, index: musicPlayer.nowPlayingItemIndex), at: 0, within: [musicPlayer.nowPlayingItem].flatMap({ $0 }))
+                    presentedVC.optionsContext = .song(location: .queue(loaded: false, index: musicPlayer.nowPlayingItemIndex), at: 0, within: [musicPlayer.nowPlayingItem].compactMap({ $0 }))
                 }
             
             default: break

@@ -236,7 +236,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         let hold = UILongPressGestureRecognizer.init(target: self, action: #selector(showOptions(_:)))
         hold.minimumPressDuration = longPressDuration
         tableView.addGestureRecognizer(hold)
-        LongPressManager.shared.gestureRecognisers.insert(Weak.init(value: hold))
+        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: hold))
         
         let edge = UIScreenEdgePanGestureRecognizer.init(target: self, action: #selector(updateSections))
         edge.edges = .right
@@ -305,8 +305,8 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         
         super.viewDidAppear(animated)
         
-        notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillHideNotification, object: nil)
         
         container?.shouldUseNowPlayingArt = true
         container?.updateBackgroundWithNowPlaying()
@@ -326,8 +326,8 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         
         super.viewDidDisappear(animated)
         
-        notifier.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        notifier.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        notifier.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        notifier.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
         
         unregisterAll(from: transientObservers)
     }
@@ -466,9 +466,9 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
     
     @objc func adjustKeyboard(with notification: Notification) {
         
-        guard let keyboardHeightAtEnd = ((notification as NSNotification).userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.size.height, searchBar?.isFirstResponder == true else { return }
+        guard let keyboardHeightAtEnd = ((notification as NSNotification).userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.size.height, searchBar?.isFirstResponder == true else { return }
         
-        let keyboardWillShow = notification.name == NSNotification.Name.UIKeyboardWillShow
+        let keyboardWillShow = notification.name == UIResponder.keyboardWillShowNotification
         
         filterViewContainer.filterView.filterInputViewBottomConstraint.constant = keyboardWillShow ? keyboardHeightAtEnd - 50 - (container?.collectedView.isHidden == true ? 0 : 44) : 0
         
@@ -1060,7 +1060,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
         return true
     }
     
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         
         switch editingStyle {
             
@@ -1097,7 +1097,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
         return filtering ? 72 : 57
     }
     
-    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         
         return filtering ? .insert : .none
     }
@@ -1211,7 +1211,7 @@ extension SearchViewController: UISearchBarDelegate {
         
         if !filtering {
             
-            unfilteredPoint = .init(x: 0, y: tableView.contentOffset.y)
+            unfilteredPoint = CGPoint.init(x: 0, y: tableView.contentOffset.y)
         }
     }
     

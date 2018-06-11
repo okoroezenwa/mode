@@ -12,7 +12,7 @@ class NoAccessView: UIView {
 
     @IBAction func openSettings() {
     
-        if let appSettings = URL.init(string: UIApplicationOpenSettingsURLString) {
+        if let appSettings = URL.init(string: UIApplication.openSettingsURLString) {
             
             UIApplication.shared.openURL(appSettings)
         }

@@ -28,8 +28,8 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell, TimerBased {
     @IBOutlet weak var explicitView: UIView!
     @IBOutlet weak var artworkContainer: UIView!
     @IBOutlet weak var playingView: UIView!
-    @IBOutlet weak var startTime: MELLabel!
-    @IBOutlet weak var stopTime: MELLabel!
+    @IBOutlet weak var startTime: MELLabel?
+    @IBOutlet weak var stopTime: MELLabel?
     @IBOutlet weak var timeSlider: MELSlider!
     @IBOutlet weak var playPauseBorder: UIView!
     @IBOutlet weak var optionsView: UIView!

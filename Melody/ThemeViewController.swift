@@ -102,7 +102,7 @@ extension ThemeViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         
-        guard let currentConstraint = currentConstraint, let vc = childViewControllers.first as? ThemeTableViewController, currentConstraint == vc.constraint(for: vc.selectedButton) else { return }
+        guard let currentConstraint = currentConstraint, let vc = children.first as? ThemeTableViewController, currentConstraint == vc.constraint(for: vc.selectedButton) else { return }
         
         let selectedHour = pickerView.selectedRow(inComponent: 0)
         let selectedMinute = pickerView.selectedRow(inComponent: 1)

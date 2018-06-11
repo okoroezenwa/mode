@@ -11,7 +11,7 @@ import UIKit
 @objc protocol EntityVerifiable {
     
     @objc optional var updateableView: UIView? { get }
-    @objc optional var addButtonLeadingConstraint: NSLayoutConstraint! { get set }
+    @objc optional var addButtonLeadingConstraint: NSLayoutConstraint? { get set }
     //    @objc optional var titleButton: MELButton? { get }
     @objc optional var albumButton: MELButton! { get }
     @objc optional var artistButton: MELButton! { get }
@@ -285,7 +285,7 @@ extension EntityVerifiable {
     
     func updateAddButton(hidden: Bool, animated: Bool) {
         
-        addButtonLeadingConstraint?.constant = hidden ? -44 : 0
+        addButtonLeadingConstraint??.constant = hidden ? -44 : 0
         
         if animated {
             

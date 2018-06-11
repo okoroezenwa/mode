@@ -121,10 +121,10 @@ class VerticalPresentationContainerViewController: UIViewController {
         if let activeVC = activeViewController {
             
             // call before adding child view controller's view as subview
-            addChildViewController(activeVC)
+            addChild(activeVC)
             
             // call before adding child view controller's view as subview
-            activeVC.didMove(toParentViewController: self)
+            activeVC.didMove(toParent: self)
             containerView.addSubview(activeVC.view)
             activeVC.view.frame = containerView.bounds
         }

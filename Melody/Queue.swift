@@ -23,7 +23,17 @@ class Queue {
         
         guard !useSystemPlayer, #available(iOS 10.3, *), let _ = musicPlayer as? MPMusicPlayerApplicationController, let queue = notification.userInfo?[String.queueItems] as? [MPMediaItem] else { return }
         
-        let savedData = NSKeyedArchiver.archivedData(withRootObject: queue)
+        var finalQueue: [MPMediaItem] {
+            
+            if forceOldStyleQueue, let data = prefs.object(forKey: .queueItems) as? Data, let items = NSKeyedUnarchiver.unarchiveObject(with: data) as? [MPMediaItem], !items.isEmpty {
+                
+                return items + queue
+            }
+            
+            return queue
+        }
+        
+        let savedData = NSKeyedArchiver.archivedData(withRootObject: finalQueue)
         prefs.set(savedData, forKey: .queueItems)
         prefs.set(musicPlayer.repeatMode.rawValue, forKey: .repeatMode)
     }

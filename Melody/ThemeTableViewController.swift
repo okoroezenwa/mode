@@ -79,7 +79,7 @@ class ThemeTableViewController: UITableViewController {
         brightnessSlider.value = brightnessValue
         
         [Notification.Name.toTimeConstraintChanged, .fromTimeConstraintChanged].forEach({ notifier.addObserver(self, selector: #selector(updateButtons(with:)), name: $0, object: nil) })
-        notifier.addObserver(self, selector: #selector(updateBrightness), name: .UIScreenBrightnessDidChange, object: UIScreen.main)
+        notifier.addObserver(self, selector: #selector(updateBrightness), name: UIScreen.brightnessDidChangeNotification, object: UIScreen.main)
         notifier.addObserver(self, selector: #selector(updateNightToggle), name: .themeChanged, object: nil)
     }
     
