@@ -20,16 +20,7 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
     @IBOutlet weak var artworkImageView: UIImageView!
     @IBOutlet weak var artworkImageViewContainer: UIView!
     @IBOutlet weak var containerView: UIView!
-    @IBOutlet weak var topView: UIView! /*{
-        
-        didSet {
-            
-            let gr = UILongPressGestureRecognizer.init(target: self, action: #selector(popToRoot(_:)))
-            gr.minimumPressDuration = longPressDuration
-            topView.addGestureRecognizer(gr)
-            LongPressManager.shared.gestureRecognisers.append(Weak.init(value: gr))
-        }
-    }*/
+    @IBOutlet weak var topView: UIView!
     
     enum EntityContainerType {
         
