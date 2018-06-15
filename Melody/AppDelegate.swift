@@ -31,17 +31,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         case none, iTunesMatch, appleMusic(libraryAccess: Bool)
         
-        static func ==(lhs: Subscription, rhs: Subscription) -> Bool {
-
-            switch lhs {
-
-                case .none: if case .none = rhs { return true } else { return false }
-
-                case .iTunesMatch: if case .iTunesMatch = rhs { return true } else { return false }
-
-                case .appleMusic(libraryAccess: let allowed): if case .appleMusic(let alsoAllowed) = rhs, allowed == alsoAllowed { return true } else { return false }
-            }
-        }
+//        static func ==(lhs: Subscription, rhs: Subscription) -> Bool {
+//
+//            switch lhs {
+//
+//                case .none: if case .none = rhs { return true } else { return false }
+//
+//                case .iTunesMatch: if case .iTunesMatch = rhs { return true } else { return false }
+//
+//                case .appleMusic(libraryAccess: let allowed): if case .appleMusic(let alsoAllowed) = rhs, allowed == alsoAllowed { return true } else { return false }
+//            }
+//        }
     }
     
     enum Actions: String {

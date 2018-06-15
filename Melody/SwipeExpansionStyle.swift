@@ -207,16 +207,16 @@ extension SwipeExpansionStyle {
 
 extension SwipeExpansionStyle.Target: Equatable {
     /// :nodoc:
-    public static func ==(lhs: SwipeExpansionStyle.Target, rhs: SwipeExpansionStyle.Target) -> Bool {
-        switch (lhs, rhs) {
-        case (.percentage(let lhs), .percentage(let rhs)):
-            return lhs == rhs
-        case (.edgeInset(let lhs), .edgeInset(let rhs)):
-            return lhs == rhs
-        default:
-            return false
-        }
-    }
+//    public static func ==(lhs: SwipeExpansionStyle.Target, rhs: SwipeExpansionStyle.Target) -> Bool {
+//        switch (lhs, rhs) {
+//        case (.percentage(let lhs), .percentage(let rhs)):
+//            return lhs == rhs
+//        case (.edgeInset(let lhs), .edgeInset(let rhs)):
+//            return lhs == rhs
+//        default:
+//            return false
+//        }
+//    }
 }
 
 extension SwipeExpansionStyle.CompletionAnimation: Equatable {

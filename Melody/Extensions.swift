@@ -162,37 +162,14 @@ extension UIColor {
 // MARK: - Array
 extension Array {
     
-    mutating func shuffle() {
-        
-        for i in 0..<(count - 1) {
-            
-            let j = Int(arc4random_uniform(UInt32(count - i))) + i
-            
-            guard i != j else { continue }
-            
-            self.swapAt(i, j)
-        }
-    }
-    
-    func shuffled(_ condition: Bool = true) -> [Iterator.Element] {
-        
-        guard !self.isEmpty else { return [] }
-        
-        guard condition else { return self }
-        
-        var list = Array(self)
-        list.shuffle()
-        return list
-    }
-    
-    func firstRemoved() -> [Element] {
-        
-        guard !self.isEmpty else { return [] }
-        
-        var newArray = self
-        newArray.remove(at: 0)
-        return newArray
-    }
+//    func firstRemoved() -> [Element] {
+//
+//        guard !self.isEmpty else { return [] }
+//
+//        var newArray = self
+//        newArray.remove(at: 0)
+//        return newArray
+//    }
     
     func value(at index: Int) -> Element? {
         
@@ -241,11 +218,18 @@ extension Array where Element: Hashable {
 
 extension Array where Element: MPMediaItem {
     
-    var albumsShuffled: [Element] {
+    var albumsShuffled: [MPMediaItem] {
         
-        let albums = self.map({ $0.validAlbum })
-        
-        return Set(albums).map({ value in return self.filter({ $0.validAlbum == value }).sorted(by: { $0.albumTrackNumber < $1.albumTrackNumber }) }).shuffled().reduce([], +)
+        var albumsDict = [String: [MPMediaItem]]()
+
+        for song in self {
+
+            var array = albumsDict[song.validAlbum] ?? []
+            array.append(song)
+            albumsDict[song.validAlbum] = array
+        }
+
+        return albumsDict.shuffled().map({ $0.value.sorted(by: { $0.albumTrackNumber < $1.albumTrackNumber }) }).reduce([], +)
     }
     
     var canShuffleAlbums: Bool { return first(where: { $0.validAlbum != first?.validAlbum }) != nil }

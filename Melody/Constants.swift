@@ -23,7 +23,7 @@ struct FileSize: Hashable, Comparable {
     let actualSize: Int64
     let suffix: String
     
-    var hashValue: Int { return size.hashValue ^ suffix.hashValue }
+//    var hashValue: Int { return size.hashValue ^ suffix.hashValue }
     
     init(size: Int64, suffix: String, actualSize: Int64) {
         
@@ -39,10 +39,10 @@ struct FileSize: Hashable, Comparable {
         suffix = actualSize.fileSizeSuffix
     }
     
-    static func ==(lhs: FileSize, rhs: FileSize) -> Bool {
-        
-        return lhs.size == rhs.size && lhs.suffix == rhs.suffix
-    }
+//    static func ==(lhs: FileSize, rhs: FileSize) -> Bool {
+//
+//        return lhs.size == rhs.size && lhs.suffix == rhs.suffix
+//    }
     
     static func >(lhs: FileSize, rhs: FileSize) -> Bool {
         
@@ -124,7 +124,7 @@ struct TimeComponents: Hashable {
     let hour: Int
     let minute: Int
     
-    var hashValue: Int { return hour.hashValue ^ minute.hashValue }
+//    var hashValue: Int { return hour.hashValue ^ minute.hashValue }
     
     init(hour: Int, minute: Int) {
         
@@ -132,8 +132,8 @@ struct TimeComponents: Hashable {
         self.minute = minute
     }
     
-    static func ==(lhs: TimeComponents, rhs: TimeComponents) -> Bool {
-        
-        return lhs.hour == rhs.hour && lhs.minute == rhs.minute
-    }
+//    static func ==(lhs: TimeComponents, rhs: TimeComponents) -> Bool {
+//
+//        return lhs.hour == rhs.hour && lhs.minute == rhs.minute
+//    }
 }

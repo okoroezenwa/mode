@@ -25,7 +25,7 @@ class Queue {
         
         var finalQueue: [MPMediaItem] {
             
-            if forceOldStyleQueue, let data = prefs.object(forKey: .queueItems) as? Data, let items = NSKeyedUnarchiver.unarchiveObject(with: data) as? [MPMediaItem], !items.isEmpty {
+            if queue.isEmpty.inverted, forceOldStyleQueue, let data = prefs.object(forKey: .queueItems) as? Data, let items = NSKeyedUnarchiver.unarchiveObject(with: data) as? [MPMediaItem], items.isEmpty.inverted {
                 
                 return items + queue
             }

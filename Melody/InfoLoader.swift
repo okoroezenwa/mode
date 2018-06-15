@@ -416,5 +416,11 @@ class InfoKey: NSObject {
         return id == object.id && index == object.index
     }
     
+//    override func hash(into hasher: inout Hasher) {
+//
+//        hasher.combine(index)
+//        hasher.combine(id)
+//    }
+    
     override var hash: Int { return index.hashValue ^ id.hashValue }
 }

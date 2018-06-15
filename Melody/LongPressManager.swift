@@ -47,7 +47,7 @@ class LongPressManager: NSObject {
     }
 }
 
-class Weak<Element: NSObject>: Hashable {
+class Weak<Element: NSObject> {
     
     weak var value: Element?
     
@@ -58,10 +58,10 @@ class Weak<Element: NSObject>: Hashable {
         notifier.post(name: NSNotification.Name(rawValue: "reap"), object: nil)
     }
     
-    static func ==(lhs: Weak, rhs: Weak) -> Bool {
-        
-        return lhs.value == rhs.value
-    }
-    
-    var hashValue: Int { return value?.hashValue ?? 0 }
+//    static func ==(lhs: Weak, rhs: Weak) -> Bool {
+//        
+//        return lhs.value == rhs.value
+//    }
+//    
+//    var hashValue: Int { return value?.hashValue ?? 0 }
 }

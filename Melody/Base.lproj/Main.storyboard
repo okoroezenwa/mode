@@ -1,21 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="OFs-Yz-tlH">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14269.12" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="OFs-Yz-tlH">
     <device id="retina4_0" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
-        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14252.5"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
-    <customFonts key="customFonts">
-        <array key="MyriadPro-Regular.otf">
-            <string>MyriadPro-Regular</string>
-        </array>
-    </customFonts>
     <scenes>
         <!--Container View Controller-->
         <scene sceneID="laS-7D-kz8">
@@ -305,7 +297,7 @@
                                                                             </connections>
                                                                         </button>
                                                                         <view hidden="YES" tag="1" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ASx-Tv-aPE" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="44.5" y="7" width="4" height="4"/>
+                                                                            <rect key="frame" x="44" y="7" width="4" height="4"/>
                                                                             <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                             <constraints>
                                                                                 <constraint firstAttribute="height" constant="4" id="AAF-6l-xPr"/>
@@ -344,7 +336,7 @@
                                                                             </connections>
                                                                         </button>
                                                                         <view hidden="YES" tag="1" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0b0-ne-9JX" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="44.5" y="7" width="4" height="4"/>
+                                                                            <rect key="frame" x="44" y="7" width="4" height="4"/>
                                                                             <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                             <constraints>
                                                                                 <constraint firstAttribute="width" constant="4" id="kbM-Jv-LMA"/>
@@ -422,7 +414,7 @@
                                                                             </connections>
                                                                         </button>
                                                                         <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GBj-iI-9sT">
-                                                                            <rect key="frame" x="18.5" y="11" width="28" height="28"/>
+                                                                            <rect key="frame" x="18" y="11" width="28" height="28"/>
                                                                             <subviews>
                                                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Myn-QD-0fQ" customClass="InvertIgnoringImageView" customModule="Mode" customModuleProvider="target">
                                                                                     <rect key="frame" x="0.0" y="0.0" width="28" height="28"/>
@@ -523,7 +515,7 @@
                                                                             </connections>
                                                                         </button>
                                                                         <view userInteractionEnabled="NO" alpha="0.050000000000000003" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="oXC-Xx-hXv" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="9.5" y="7" width="30" height="30"/>
+                                                                            <rect key="frame" x="9" y="7" width="30" height="30"/>
                                                                             <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                             <constraints>
                                                                                 <constraint firstAttribute="height" priority="900" constant="30" id="Svd-7E-jV1"/>
@@ -547,10 +539,10 @@
                                                                     </constraints>
                                                                 </view>
                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zTK-ur-FGA" userLabel="Add To View">
-                                                                    <rect key="frame" x="96" y="0.0" width="48.5" height="44"/>
+                                                                    <rect key="frame" x="96" y="0.0" width="48" height="44"/>
                                                                     <subviews>
                                                                         <button opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="751" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KIw-PE-nav" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="0.0" y="0.0" width="48.5" height="44"/>
+                                                                            <rect key="frame" x="0.0" y="0.0" width="48" height="44"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="15"/>
                                                                             <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                             <state key="normal" image="AddSong"/>
@@ -584,7 +576,7 @@
                                                                     </constraints>
                                                                 </view>
                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aaW-Qe-k8Z">
-                                                                    <rect key="frame" x="144.5" y="0.0" width="48" height="44"/>
+                                                                    <rect key="frame" x="144" y="0.0" width="48" height="44"/>
                                                                     <subviews>
                                                                         <button opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0LP-kw-qnh" customClass="MELButton" customModule="Mode" customModuleProvider="target">
                                                                             <rect key="frame" x="0.0" y="0.0" width="48" height="44"/>
@@ -596,7 +588,7 @@
                                                                             </connections>
                                                                         </button>
                                                                         <view userInteractionEnabled="NO" alpha="0.050000000000000003" tag="1" contentMode="scaleToFill" horizontalHuggingPriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="XWU-Ma-s6T" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="8.5" y="7" width="30" height="30"/>
+                                                                            <rect key="frame" x="9" y="7" width="30" height="30"/>
                                                                             <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                             <constraints>
                                                                                 <constraint firstAttribute="width" constant="30" id="7Oi-iJ-Qt2"/>
@@ -621,10 +613,10 @@
                                                                     </constraints>
                                                                 </view>
                                                                 <view contentMode="scaleToFill" horizontalCompressionResistancePriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="3bg-4w-5Jl" userLabel="Play View">
-                                                                    <rect key="frame" x="192.5" y="0.0" width="127.5" height="44"/>
+                                                                    <rect key="frame" x="192" y="0.0" width="128" height="44"/>
                                                                     <subviews>
                                                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Z7q-dq-FbR" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="0.0" y="0.0" width="127.5" height="44"/>
+                                                                            <rect key="frame" x="0.0" y="0.0" width="128" height="44"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="20"/>
                                                                             <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                             <state key="normal" title="0"/>
@@ -633,7 +625,7 @@
                                                                             </connections>
                                                                         </button>
                                                                         <view userInteractionEnabled="NO" alpha="0.050000000000000003" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3hj-nf-Xpq" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="8" y="7" width="111.5" height="30"/>
+                                                                            <rect key="frame" x="8" y="7" width="112" height="30"/>
                                                                             <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                             <constraints>
                                                                                 <constraint firstAttribute="height" priority="900" constant="30" id="Iqj-2K-OXT"/>
