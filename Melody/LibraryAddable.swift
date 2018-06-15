@@ -308,6 +308,8 @@ extension EntityVerifiable {
             return
         }
         
+        useAlternateAnimation = true
+        
         if let containerVC = vc as? ContainerViewController {
             
             switch entity {

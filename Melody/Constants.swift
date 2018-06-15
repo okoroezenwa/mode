@@ -124,16 +124,9 @@ struct TimeComponents: Hashable {
     let hour: Int
     let minute: Int
     
-//    var hashValue: Int { return hour.hashValue ^ minute.hashValue }
-    
     init(hour: Int, minute: Int) {
         
         self.hour = hour
         self.minute = minute
     }
-    
-//    static func ==(lhs: TimeComponents, rhs: TimeComponents) -> Bool {
-//
-//        return lhs.hour == rhs.hour && lhs.minute == rhs.minute
-//    }
 }

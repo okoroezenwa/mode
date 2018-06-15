@@ -27,22 +27,7 @@ public let musicLibrary = MPMediaLibrary.default()
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
-    enum Subscription: Equatable {
-        
-        case none, iTunesMatch, appleMusic(libraryAccess: Bool)
-        
-//        static func ==(lhs: Subscription, rhs: Subscription) -> Bool {
-//
-//            switch lhs {
-//
-//                case .none: if case .none = rhs { return true } else { return false }
-//
-//                case .iTunesMatch: if case .iTunesMatch = rhs { return true } else { return false }
-//
-//                case .appleMusic(libraryAccess: let allowed): if case .appleMusic(let alsoAllowed) = rhs, allowed == alsoAllowed { return true } else { return false }
-//            }
-//        }
-    }
+    enum Subscription: Equatable { case none, iTunesMatch, appleMusic(libraryAccess: Bool) }
     
     enum Actions: String {
         

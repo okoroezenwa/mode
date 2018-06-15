@@ -57,11 +57,4 @@ class Weak<Element: NSObject> {
         
         notifier.post(name: NSNotification.Name(rawValue: "reap"), object: nil)
     }
-    
-//    static func ==(lhs: Weak, rhs: Weak) -> Bool {
-//        
-//        return lhs.value == rhs.value
-//    }
-//    
-//    var hashValue: Int { return value?.hashValue ?? 0 }
 }
