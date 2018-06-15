@@ -162,15 +162,6 @@ extension UIColor {
 // MARK: - Array
 extension Array {
     
-//    func firstRemoved() -> [Element] {
-//
-//        guard !self.isEmpty else { return [] }
-//
-//        var newArray = self
-//        newArray.remove(at: 0)
-//        return newArray
-//    }
-    
     func value(at index: Int) -> Element? {
         
         guard count > index else { return nil }
@@ -389,12 +380,6 @@ extension UIView {
         color.duration = duration
         color.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.linear)
         layer.add(color, forKey: "cornerRadius")
-        
-//        CATransaction.begin()
-//        CATransaction.setAnimationDuration(duration)
-//        CATransaction.setAnimationTimingFunction(CAMediaTimingFunction.init(name: CAMediaTimingFunctionName.easeInEaseOut))
-//        layer.cornerRadius = newRadius
-//        CATransaction.commit()
     }
     
     func animateShadowOpacity(to newOpacity: Float, duration: CFTimeInterval) {
@@ -968,16 +953,6 @@ extension Int {
     }
     
     func fullCountText(for entity: Entity, filteredCount: Int? = nil, compilationOverride: Bool = false, capitalised: Bool = false, withInsert insert: String = "") -> String {
-        
-//        let string: String = {
-//            
-//            if let count = filteredCount {
-//                
-//                return count.formatted + " "
-//            }
-//            
-//            return ""
-//        }()
         
         return (filteredCount?.formatted ?+ " of ") + formatted + " " + insert + countText(for: entity, compilationOverride: compilationOverride, capitalised: capitalised)
     }
