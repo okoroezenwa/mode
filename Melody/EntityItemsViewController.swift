@@ -302,15 +302,20 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         
         ([artworkImageView] as [UIImageView]).forEach({ imageView in
             
-            imageView.layer.cornerRadius = {
-                
-                switch cornerRadius {
-                    
-                    case .automatic: return (listsCornerRadius ?? cornerRadius).radius(for: entityContainerType.entity, width: imageView.bounds.width)
-                    
-                    default: return cornerRadius.radius(for: entityContainerType.entity, width: imageView.bounds.width)
-                }
-            }()
+            (listsCornerRadius ?? cornerRadius).updateCornerRadius(on: imageView.layer, width: imageView.bounds.width, entityType: entityContainerType.entity, globalRadiusType: cornerRadius)
+            
+//            let details: RadiusDetails = {
+//
+//                switch cornerRadius {
+//
+//                    case .automatic: return ((listsCornerRadius ?? cornerRadius).radius(for: entityContainerType.entity, width: imageView.bounds.width), listsCornerRadius != .rounded)
+//
+//                    default: return (cornerRadius.radius(for: entityContainerType.entity, width: imageView.bounds.width), cornerRadius != .rounded)
+//                }
+//            }()
+//
+//            imageView.layer.setRadiusTypeIfNeeded(to: details.useSmoothCorners)
+//            imageView.layer.cornerRadius = details.radius
         })
         
         UniversalMethods.addShadow(to: artworkImageViewContainer, radius: 8, opacity: 0.35, shouldRasterise: true)

@@ -365,6 +365,22 @@ enum CornerRadius: Int {
         }
     }
     
+    func updateCornerRadius(on layer: CALayer?, width: CGFloat, entityType: Entity, globalRadiusType: CornerRadius) {
+        
+        let details: RadiusDetails = {
+            
+            switch globalRadiusType {
+                
+                case .automatic: return (self.radius(for: entityType, width: width), self != .rounded)
+                
+                default: return (globalRadiusType.radius(for: entityType, width: width), globalRadiusType != .rounded)
+            }
+        }()
+        
+        layer?.setRadiusTypeIfNeeded(to: details.useSmoothCorners)
+        layer?.cornerRadius = details.radius
+    }
+    
     var description: String {
         
         switch self {

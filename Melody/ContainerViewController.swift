@@ -666,15 +666,22 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         
         ([albumArt, altAlbumArt] as [UIImageView]).forEach({ imageView in
             
-            imageView.layer.cornerRadius = {
-                
-                switch cornerRadius {
-                    
-                    case .automatic: return (imageView == albumArt ? miniPlayerCornerRadius ?? .square : compactCornerRadius ?? .rounded).radius(for: .song, width: imageView.bounds.width)
-                    
-                    default: return cornerRadius.radius(for: .song, width: imageView.bounds.width)
-                }
-            }()
+            let appropriateRadius = imageView == albumArt ? miniPlayerCornerRadius ?? .square : compactCornerRadius ?? .large
+            
+            appropriateRadius.updateCornerRadius(on: imageView.layer, width: imageView.bounds.width, entityType: .song, globalRadiusType: cornerRadius)
+            
+//            let details: RadiusDetails = {
+//                
+//                switch cornerRadius {
+//                    
+//                    case .automatic: return (appropriateRadius.radius(for: .song, width: imageView.bounds.width), appropriateRadius != .rounded)
+//                    
+//                    default: return (cornerRadius.radius(for: .song, width: imageView.bounds.width), cornerRadius != .rounded)
+//                }
+//            }()
+//            
+//            imageView.layer.setRadiusTypeIfNeeded(to: details.useSmoothCorners)
+//            imageView.layer.cornerRadius = details.radius
         })
         
         UniversalMethods.addShadow(to: altNowPlayingView, radius: 6, opacity: 0.25, shouldRasterise: true)

@@ -69,15 +69,17 @@ class PlaylistCollectionViewCell: UICollectionViewCell, ArtworkContainingCell {
         
         [artworkImageView, selectedView].forEach({
             
-            $0?.layer.cornerRadius = {
-                
-                switch cornerRadius {
-                    
-                    case .automatic: return (listsCornerRadius ?? cornerRadius).radius(for: details.entity, width: (details.width ?? artworkImageView.bounds.width) - 16)
-                    
-                    default: return cornerRadius.radius(for: details.entity, width: (details.width ?? artworkImageView.bounds.width) - 16)
-                }
-            }()
+            (listsCornerRadius ?? cornerRadius).updateCornerRadius(on: $0?.layer, width: (details.width ?? artworkImageView.bounds.width) - 16, entityType: details.entity, globalRadiusType: cornerRadius)
+            
+//            $0?.layer.cornerRadius = {
+//
+//                switch cornerRadius {
+//
+//                    case .automatic: return (listsCornerRadius ?? cornerRadius).radius(for: details.entity, width: (details.width ?? artworkImageView.bounds.width) - 16)
+//
+//                    default: return cornerRadius.radius(for: details.entity, width: (details.width ?? artworkImageView.bounds.width) - 16)
+//                }
+//            }()
         })
         
         UniversalMethods.addShadow(to: artworkContainer, radius: 4, opacity: 0.3, shouldRasterise: true)

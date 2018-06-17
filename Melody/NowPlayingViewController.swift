@@ -134,6 +134,16 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
     var viewHeirachy: UIImage?
     var activeItem: MPMediaItem? { return alternateItem ?? musicPlayer.nowPlayingItem }
     
+    var useSmoothCorners: Bool {
+        
+        switch cornerRadius {
+            
+            case .automatic: return fullPlayerCornerRadius != .rounded
+            
+            default: return cornerRadius != .rounded
+        }
+    }
+    
     var boldableLabels: [TextContaining?] { return [albumButton.titleLabel, songName.titleLabel, artistButton.titleLabel, divider] }
     
     override func viewDidLoad() {
@@ -150,7 +160,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
             container?.deferToNowPlayingViewController = true
         }
         
-        artworkIntermediaryView.layer.setRadiusTypeIfNeeded()
+        artworkIntermediaryView.layer.setRadiusTypeIfNeeded(to: useSmoothCorners)
         
         useAlternateAnimation = false
         shouldReturnToContainer = false
@@ -314,9 +324,14 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         
         [Notification.Name.compressOnPauseChanged, .separationMethodChanged, .avoidDoubleHeightBarChanged, UIApplication.didChangeStatusBarFrameNotification, .cornerRadiusChanged].forEach({
             
-            lifetimeObservers.insert(notifier.addObserver(forName: $0, object: nil, queue: nil, using: { [weak self] _ in
+            lifetimeObservers.insert(notifier.addObserver(forName: $0, object: nil, queue: nil, using: { [weak self] notification in
                 
                 guard let weakSelf = self else { return }
+                
+                if notification.name == .cornerRadiusChanged {
+                    
+                    weakSelf.artworkIntermediaryView.layer.setRadiusTypeIfNeeded(to: weakSelf.useSmoothCorners)
+                }
                 
                 weakSelf.updateArtworkImageView(changingArt: true, animated: true)
                 

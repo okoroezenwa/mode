@@ -403,15 +403,17 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
     
     @objc func updateCornersAndShadows() {
         
-        artworkImageView.layer.cornerRadius = {
-            
-            switch cornerRadius {
-                
-                case .automatic: return (infoCornerRadius ?? cornerRadius).radius(for: context.entity, width: artworkImageView.bounds.width)
-                
-                default: return cornerRadius.radius(for: context.entity, width: artworkImageView.bounds.width)
-            }
-        }()
+        (infoCornerRadius ?? cornerRadius).updateCornerRadius(on: artworkImageView.layer, width: artworkImageView.bounds.width, entityType: context.entity, globalRadiusType: cornerRadius)
+        
+//        artworkImageView.layer.cornerRadius = {
+//
+//            switch cornerRadius {
+//
+//                case .automatic: return (infoCornerRadius ?? cornerRadius).radius(for: context.entity, width: artworkImageView.bounds.width)
+//
+//                default: return cornerRadius.radius(for: context.entity, width: artworkImageView.bounds.width)
+//            }
+//        }()
         
         UniversalMethods.addShadow(to: artworkContainer, radius: 8, opacity: 0.2, shouldRasterise: true)
     }

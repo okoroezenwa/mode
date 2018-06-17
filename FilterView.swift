@@ -42,6 +42,7 @@ class FilterView: UIView {
             filterTestButton.imageEdgeInsets.right = 1
         }
     }
+    @IBOutlet var filterTestBorderView: MELBorderView!
     @IBOutlet weak var collectionView: MELCollectionView!
     @IBOutlet weak var filterInputViewBottomConstraint: NSLayoutConstraint!
     @IBOutlet weak var filterInputViewHeightConstraint: NSLayoutConstraint!
@@ -351,11 +352,15 @@ class FilterView: UIView {
             
             case .filter(filter: let filter, container: _) where !self.withinSearchTerm:
                 
+                self.filterTestBorderView.layer.setRadiusTypeIfNeeded(to: true)
+                self.filterTestBorderView.layer.cornerRadius = 14
                 self.filterTestButton.setTitle(filter?.testTitle, for: .normal)
                 self.filterTestButton.setImage(nil, for: .normal)
     
             default:
                 
+                self.filterTestBorderView.layer.setRadiusTypeIfNeeded(to: false)
+                self.filterTestBorderView.layer.cornerRadius = 14
                 self.filterTestButton.setTitle(nil, for: .normal)
                 self.filterTestButton.setImage(#imageLiteral(resourceName: "Filter"), for: .normal)
         }

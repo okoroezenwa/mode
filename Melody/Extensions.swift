@@ -1020,14 +1020,14 @@ extension Bool {
 
 extension CALayer {
     
-    func setRadiusTypeIfNeeded() {
+    func setRadiusTypeIfNeeded(to value: Bool = true) {
         
         let string = String.init(format: "%@%@%@%@", "conti", "nuous", "Cor", "ners")
         let sel = NSSelectorFromString(string)
         
         guard responds(to: sel) else { return }
         
-        setValue(true, forKey: string)
+        setValue(value, forKey: string)
     }
 }
 

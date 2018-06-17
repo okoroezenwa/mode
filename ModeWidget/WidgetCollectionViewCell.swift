@@ -55,17 +55,36 @@ class WidgetCollectionViewCell: UICollectionViewCell {
         
         [artworkImageView, selectedView].forEach({
             
-            $0?.layer.cornerRadius = {
-                
-                let cornerRadius = CornerRadius(rawValue: sharedCornerRadius) ?? .small
-                
-                switch cornerRadius {
-                    
-                    case .automatic: return  (CornerRadius(rawValue: sharedWidgetCornerRadius) ?? cornerRadius).radius(width: artworkImageView.bounds.width)
-                    
-                    default: return cornerRadius.radius(width: artworkImageView.bounds.width)
-                }
-            }()
+            let cornerRadius = CornerRadius(rawValue: sharedCornerRadius) ?? .large
+            
+            (CornerRadius(rawValue: sharedWidgetCornerRadius) ?? cornerRadius).updateCornerRadius(on: $0?.layer, using: artworkImageView.bounds.width, globalRadiusType: cornerRadius)
+            
+//            let details: (radius: CGFloat, useSmoothCorners: Bool) = {
+//
+//                let cornerRadius = CornerRadius(rawValue: sharedCornerRadius) ?? .small
+//
+//                switch cornerRadius {
+//
+//                    case .automatic: return ((CornerRadius(rawValue: sharedWidgetCornerRadius) ?? cornerRadius).radius(width: artworkImageView.bounds.width), (CornerRadius(rawValue: sharedWidgetCornerRadius) ?? cornerRadius) != .rounded)
+//
+//                    default: return (cornerRadius.radius(width: artworkImageView.bounds.width), cornerRadius != .rounded)
+//                }
+//            }()
+//
+//            $0?.layer.setRadiusTypeIfNeeded(to: details.useSmoothCorners)
+//            $0?.layer.cornerRadius = details.radius
+            
+//            $0?.layer.cornerRadius = {
+//                
+//                let cornerRadius = CornerRadius(rawValue: sharedCornerRadius) ?? .small
+//                
+//                switch cornerRadius {
+//                    
+//                    case .automatic: return  (CornerRadius(rawValue: sharedWidgetCornerRadius) ?? cornerRadius).radius(width: artworkImageView.bounds.width)
+//                    
+//                    default: return cornerRadius.radius(width: artworkImageView.bounds.width)
+//                }
+//            }()
         })
         
         artworkContainer.addShadow(radius: 4, opacity: 0.3, shouldRasterise: true)

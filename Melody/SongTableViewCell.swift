@@ -142,15 +142,17 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell, TimerBased {
         
         [artworkImageView, playingView].forEach({
             
-            $0?.layer.cornerRadius = {
-                
-                switch cornerRadius {
-                    
-                    case .automatic: return (listsCornerRadius ?? cornerRadius).radius(for: entity, width: width)
-                    
-                    default: return cornerRadius.radius(for: entity, width: width)
-                }
-            }()
+            (listsCornerRadius ?? cornerRadius).updateCornerRadius(on: $0?.layer, width: width, entityType: entity, globalRadiusType: cornerRadius)
+            
+//            $0?.layer.cornerRadius = {
+//                
+//                switch cornerRadius {
+//                    
+//                    case .automatic: return (listsCornerRadius ?? cornerRadius).radius(for: entity, width: width)
+//                    
+//                    default: return cornerRadius.radius(for: entity, width: width)
+//                }
+//            }()
         })
         
         UniversalMethods.addShadow(to: artworkContainer, shouldRasterise: true)

@@ -41,7 +41,7 @@ class BorderedButtonView: UIView {
         
         super.awakeFromNib()
         
-        UniversalMethods.setRadiusType(for: borderView.layer)
+        borderView.layer.setRadiusTypeIfNeeded()
         borderView.layer.cornerRadius = 19
     }
     

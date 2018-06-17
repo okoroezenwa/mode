@@ -139,6 +139,8 @@
 		BE7E73B720ADF7B2008A52B7 /* ActionsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7E73B620ADF7B2008A52B7 /* ActionsManager.swift */; };
 		BE8328651D8B4D38001F015E /* NewPlaylistViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8328641D8B4D38001F015E /* NewPlaylistViewController.swift */; };
 		BE89790E1E30C22B008634E6 /* NowPlaying.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE89790D1E30C22B008634E6 /* NowPlaying.swift */; };
+		BE8B6A6420D5963000A823A1 /* SharedTypeAliases.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8B6A6320D5963000A823A1 /* SharedTypeAliases.swift */; };
+		BE8B6A6520D5964400A823A1 /* SharedTypeAliases.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8B6A6320D5963000A823A1 /* SharedTypeAliases.swift */; };
 		BE9481341EA4085000AAE895 /* Filterable.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9481331EA4085000AAE895 /* Filterable.swift */; };
 		BE99B5361ED6CF130033B796 /* MELLayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE99B5351ED6CF130033B796 /* MELLayerView.swift */; };
 		BE99D5481E2222E200D54E14 /* EntityItemsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE99D5471E2222E200D54E14 /* EntityItemsViewController.swift */; };
@@ -431,6 +433,7 @@
 		BE7E73B620ADF7B2008A52B7 /* ActionsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionsManager.swift; sourceTree = "<group>"; };
 		BE8328641D8B4D38001F015E /* NewPlaylistViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewPlaylistViewController.swift; sourceTree = "<group>"; };
 		BE89790D1E30C22B008634E6 /* NowPlaying.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NowPlaying.swift; sourceTree = "<group>"; };
+		BE8B6A6320D5963000A823A1 /* SharedTypeAliases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedTypeAliases.swift; sourceTree = "<group>"; };
 		BE9481331EA4085000AAE895 /* Filterable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Filterable.swift; sourceTree = "<group>"; };
 		BE99B5351ED6CF130033B796 /* MELLayerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MELLayerView.swift; sourceTree = "<group>"; };
 		BE99D5471E2222E200D54E14 /* EntityItemsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityItemsViewController.swift; sourceTree = "<group>"; };
@@ -664,6 +667,7 @@
 		BE156F801E4F79CE00B48DB2 /* Managers & Files */ = {
 			isa = PBXGroup;
 			children = (
+				BE8B6A6320D5963000A823A1 /* SharedTypeAliases.swift */,
 				BE15DA291E81179500E44CE2 /* Extensions */,
 				BE5574691E7D025F00E870A5 /* Protocols */,
 				BE2861EB1E8CCFA8000AADB9 /* Delegates & Handlers */,
@@ -1357,6 +1361,7 @@
 			files = (
 				BE2232FB1F320F5000918580 /* MPMusicPlayerController+MPMusicPlayerController_Other.m in Sources */,
 				BEF426881F4DF2D900DA9BF8 /* InvertIgnoringView.swift in Sources */,
+				BE8B6A6520D5964400A823A1 /* SharedTypeAliases.swift in Sources */,
 				BE0CE59C1ED8473E00D8DF6D /* TodayViewController.swift in Sources */,
 				BEB47B591F614C4800CAD2C4 /* SharedGlobals.swift in Sources */,
 				BE3AADCF1F29D74A00559D9C /* MarqueeLabel.swift in Sources */,
@@ -1415,6 +1420,7 @@
 				BEE7F6501E6391E1005927C7 /* Themer.swift in Sources */,
 				BE47B9781D317B9500503E20 /* InteractionController.swift in Sources */,
 				BE5191991F9398FC0001DD94 /* SectionIndexCollectionViewCell.swift in Sources */,
+				BE8B6A6420D5963000A823A1 /* SharedTypeAliases.swift in Sources */,
 				BE7314F01E2638A30050A46B /* EffectBanner.swift in Sources */,
 				BE63F56B1D5862F600D03019 /* MPMusicPlayerController+Other.m in Sources */,
 				BE55746D1E7D02EF00E870A5 /* InfoLoader.swift in Sources */,

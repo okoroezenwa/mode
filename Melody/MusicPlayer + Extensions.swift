@@ -430,7 +430,7 @@ public extension MPMusicPlayerController {
                         completion?()
                     }
                     
-                    notifier.post(name: .saveQueue, object: musicPlayer, userInfo: [String.queueItems: itemDescriptor.query.items ?? itemDescriptor.itemCollection.items])
+                    notifier.post(name: .saveQueue, object: musicPlayer, userInfo: [String.queueItems: itemDescriptor.query.items ?? itemDescriptor.itemCollection.items, "reset": false])
                     
                     return
                 }

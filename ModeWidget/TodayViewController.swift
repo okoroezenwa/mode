@@ -177,17 +177,24 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         
         guard let artwork = artwork else { return }
         
-        artwork.layer.cornerRadius = {
-            
-            let cornerRadius = CornerRadius(rawValue: sharedCornerRadius) ?? .small
-            
-            switch cornerRadius {
-                
-                case .automatic: return  (CornerRadius(rawValue: sharedWidgetCornerRadius) ?? cornerRadius).radius(width: artwork.bounds.width)
-                
-                default: return cornerRadius.radius(width: artwork.bounds.width)
-            }
-        }()
+        let cornerRadius = CornerRadius(rawValue: sharedCornerRadius) ?? .large
+        
+        (CornerRadius(rawValue: sharedWidgetCornerRadius) ?? cornerRadius).updateCornerRadius(on: artwork.layer, using: artwork.bounds.width, globalRadiusType: cornerRadius)
+        
+//        let details: (radius: CGFloat, useSmoothCorners: Bool) = {
+//
+//            let cornerRadius = CornerRadius(rawValue: sharedCornerRadius) ?? .small
+//
+//            switch cornerRadius {
+//
+//                case .automatic: return ((CornerRadius(rawValue: sharedWidgetCornerRadius) ?? cornerRadius).radius(width: artwork.bounds.width), (CornerRadius(rawValue: sharedWidgetCornerRadius) ?? cornerRadius) != .rounded)
+//
+//                default: return (cornerRadius.radius(width: artwork.bounds.width), cornerRadius != .rounded)
+//            }
+//        }()
+//
+//        artwork.layer.setRadiusTypeIfNeeded(to: details.useSmoothCorners)
+//        artwork.layer.cornerRadius = details.radius
         
         guard updateShadow else { return }
         
