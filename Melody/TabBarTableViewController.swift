@@ -10,113 +10,53 @@ import UIKit
 
 class TabBarTableViewController: UITableViewController {
     
-    @IBOutlet var cells: [UITableViewCell]!
-    @IBOutlet var nothingImageView: MELImageView!
-    @IBOutlet var topImageView: MELImageView!
-    @IBOutlet var startImageView: MELImageView!
-    @IBOutlet var startScrollImageView: MELImageView!
-    @IBOutlet weak var miniCompactSwitch: MELSwitch! {
+    var sections: SectionDictionary = [
         
-        didSet {
-            
-            miniCompactSwitch.action = { [weak self] in
-                
-                guard let weakSelf = self else { return }
-                
-                weakSelf.toggleCompactPlayer()
-            }
-        }
-    }
-    @IBOutlet weak var duplicatesSwitch: MELSwitch! {
+        0: ("selected tab behaviour", "A tap on the already selected tab will trigger a return to the starting view if not on it, otherwise scroll to the top of the main view when tapped."),
+        1: ("mini player", "Press and hold on the playing song to view song options."),
+        2: ("collector", nil)
+    ]
+    
+    lazy var settings: SettingsDictionary = [
         
-        didSet {
-            
-            duplicatesSwitch.action = { [weak self] in
-                
-                guard let weakSelf = self else { return }
-                
-                weakSelf.toggleDuplicates()
-            }
-        }
-    }
-    @IBOutlet weak var collectorCompactSwitch: MELSwitch! {
-        
-        didSet {
-            
-            collectorCompactSwitch.action = { [weak self] in
-                
-                guard let weakSelf = self else { return }
-                
-                weakSelf.toggleCompactCollector()
-            }
-        }
-    }
+        .init(0, 0): .init(title: "Do Nothing", accessoryType: .check({ tabBarTapBehaviour == .nothing })),
+        .init(0, 1): .init(title: "Scroll to Top", accessoryType: .check({ tabBarTapBehaviour == .scrollToTop })),
+        .init(0, 2): .init(title: "Return to Start", accessoryType: .check({ tabBarTapBehaviour == .returnToStart })),
+        .init(0, 3): .init(title: "Return, then Scroll to Top", accessoryType: .check({ tabBarTapBehaviour == .returnThenScroll })),
+        .init(1, 0): .init(title: "Compact", accessoryType: .onOff(isOn: { useMicroPlayer }, action: { [weak self] in self?.toggleCompactPlayer() })),
+        .init(2, 0): .init(title: "Compact", accessoryType: .onOff(isOn: { useCompactCollector }, action: { [weak self] in self?.toggleCompactCollector() })),
+        .init(2, 1): .init(title: "Prevent Duplicates", accessoryType: .onOff(isOn: { collectorPreventsDuplicates }, action: { [weak self] in self?.toggleDuplicates() })),
+    ]
     
     override func viewDidLoad() {
         
         super.viewDidLoad()
         
-        cells.forEach({ $0.selectedBackgroundView = MELBorderView.init() })
-        
-        prepareSwitches()
-        updateImageViews()
-        
         tableView.scrollIndicatorInsets.bottom = 14
     }
     
-    func prepareSwitches() {
-        
-        miniCompactSwitch.setOn(useMicroPlayer, animated: false)
-        collectorCompactSwitch.setOn(useCompactCollector, animated: false)
-        duplicatesSwitch.setOn(collectorPreventsDuplicates, animated: false)
-    }
-    
-    func updateImageViews() {
-        
-        nothingImageView.isHidden = tabBarTapBehaviour != .nothing
-        topImageView.isHidden = tabBarTapBehaviour != .scrollToTop
-        startImageView.isHidden = tabBarTapBehaviour != .returnToStart
-        startScrollImageView.isHidden = tabBarTapBehaviour != .returnThenScroll
-    }
-    
-//    @IBAction func toggleFilter() {
-//
-//        let bool = !filterShortcutEnabled
-//        prefs.set(bool, forKey: .filterShortcutEnabled)
-//    }
-//
-//    @IBAction func toggleReturn() {
-//
-//        prefs.set(!backToStartEnabled, forKey: .backToStart)
-//    }
-    
-    @IBAction func toggleCompactPlayer() {
+    func toggleCompactPlayer() {
         
         prefs.set(!useMicroPlayer, forKey: .microPlayer)
         notifier.post(name: .microPlayerChanged, object: nil)
     }
     
-    @IBAction func toggleCompactCollector() {
+    func toggleCompactCollector() {
         
         prefs.set(!useCompactCollector, forKey: .useCompactCollector)
         notifier.post(name: .collectorSizeChanged, object: nil)
     }
     
-    @IBAction func toggleDuplicates() {
+    func toggleDuplicates() {
         
         prefs.set(!collectorPreventsDuplicates, forKey: .collectorPreventsDuplicates)
     }
-    
-//    @IBAction func toggleScrollToTop() {
-//
-//        prefs.set(!tabBarScrollToTop, forKey: .tabBarScrollToTop)
-//    }
     
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         
-        return 3
+        return sections.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -133,62 +73,57 @@ class TabBarTableViewController: UITableViewController {
         }
     }
     
-    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        cell.preservesSuperviewLayoutMargins = false
-        cell.contentView.preservesSuperviewLayoutMargins = false
-    }
-    
-    override func tableView(_ tableView: UITableView, willDisplayFooterView view: UIView, forSection section: Int) {
+        let cell = tableView.settingCell(for: indexPath)
         
-        let footer = view as? UITableViewHeaderFooterView
-        footer?.textLabel?.text = nil
-    }
-    
-    override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        if let setting = settings[indexPath.settingsSection] {
+            
+            cell.prepare(with: setting)
+        }
         
-        let header = view as? UITableViewHeaderFooterView
-        header?.textLabel?.text = nil
+        return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        guard indexPath.row != tabBarTapBehaviour.rawValue, let behaviour = TabBarTapBehaviour(rawValue: indexPath.row) else { return }
+//        switch indexPath.section {
+//
+//            case 0:
         
-        prefs.set(behaviour.rawValue, forKey: .tabBarTapBehaviour)
-        updateImageViews()
+                guard indexPath.row != tabBarTapBehaviour.rawValue, let behaviour = TabBarTapBehaviour(rawValue: indexPath.row) else { return }
+                
+                prefs.set(behaviour.rawValue, forKey: .tabBarTapBehaviour)
+                tableView.reloadSections(indexPath.indexSet, with: .fade)
+            
+//            case 1, 2:
+//
+//                guard let cell = tableView.cellForRow(at: indexPath) as? SettingsTableViewCell else { return }
+//
+//                cell.itemSwitch.changeValue(self)
+//
+//            default: break
+//        }
         
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         
-        return /*Set([3, 4]).contains(section) ? */.textHeaderHeight + 20// : .tableHeader + 10
+        return .textHeaderHeight + 20
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         
         let header = tableView.sectionHeader
         
-        header?.label.text = {
-            
-            switch section {
-                
-                case 0: return "selected tab behaviour"
-                
-                case 1: return "mini player"
-                
-                case 2: return "collector"
-                
-                default: return nil
-            }
-        }()
+        header?.label.text = sections[section]?.header
         
         return header
     }
     
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        
+
         return indexPath.section == 0
     }
     
@@ -196,19 +131,7 @@ class TabBarTableViewController: UITableViewController {
         
         let footer = tableView.sectionFooter
         
-        var footerText: String? {
-            
-            switch section {
-                
-                case 0: return "A tap on the already selected tab will trigger a return to the starting view if not on it, otherwise scroll to the top of the main view when tapped."
-                
-                case 1: return "Press and hold on the playing song to view song options."
-                    
-                default: return nil
-            }
-        }
-        
-        if let text = footerText {
+        if let text = sections[section]?.footer {
             
             let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.lineHeightMultiple = 1.5
@@ -225,6 +148,11 @@ class TabBarTableViewController: UITableViewController {
         return footer
     }
     
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        
+        return 54
+    }
+    
     override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         
         return UITableView.automaticDimension
@@ -233,5 +161,13 @@ class TabBarTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, estimatedHeightForFooterInSection section: Int) -> CGFloat {
         
         return 50
+    }
+    
+    deinit {
+        
+        if isInDebugMode, deinitBannersEnabled {
+            
+            UniversalMethods.banner(withTitle: "TBVC going away...").show(for: 0.3)
+        }
     }
 }

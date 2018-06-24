@@ -46,9 +46,8 @@ enum Position { case leading, middle(single: Bool), trailing }
 
 enum RefreshMode: Int { case ask, offline, theme, filter, refresh }
 
-enum GestureDuration: Double { case short = 0.3, medium = 0.6, long = 1 }
-
 enum BackgroundArtwork: Int { case none, sectionAdaptive, nowPlayingAdaptive }
+#warning("Artwork handling needs to be improved")
 
 enum AnimationOrientation { case horizontal, vertical }
 
@@ -73,6 +72,23 @@ enum PlaylistType: Int { case folder, smart, genius, manual, appleMusic }
 enum TabBarTapBehaviour: Int { case nothing, scrollToTop, returnToStart, returnThenScroll }
 
 // MARK: - Well-Defined
+
+enum GestureDuration: Int {
+    
+    case short, medium, long
+    
+    var duration: Double {
+        
+        switch self {
+            
+            case .short: return 1/3
+            
+            case .medium: return 2/3
+            
+            case .long: return 3/3
+        }
+    }
+}
 
 enum AlbumBasedCollectionKind {
     
@@ -463,7 +479,7 @@ enum Location {
     }
 }
 
-enum Property: Int, TitleContaining {
+enum Property: Int, TitleContaining, CaseIterable {
     
     case title, artist, album, dateAdded, lastPlayed, genre, composer, plays, duration, year, rating, status, size, trackCount, albumCount, isCloud, artwork, isExplicit, isCompilation
     

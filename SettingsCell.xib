@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14269.12" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14252.5"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="MyriadPro-Regular.otf">
+            <string>MyriadPro-Regular</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="SettingsCell" rowHeight="57" id="inR-PG-oo7" customClass="SettingsTableViewCell" customModule="Mode" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="449" height="57"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="inR-PG-oo7" id="D5e-dF-uL4">
+                <rect key="frame" x="0.0" y="0.0" width="449" height="56.5"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="R8u-gM-F8F">
+                        <rect key="frame" x="0.0" y="0.0" width="449" height="56.5"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="pll-Ol-btG">
+                                <rect key="frame" x="0.0" y="0.0" width="261" height="56.5"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bzo-CQ-Evv" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                        <rect key="frame" x="10" y="8" width="251" height="21.5"/>
+                                        <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" alpha="0.69999998807907104" contentMode="left" verticalHuggingPriority="252" verticalCompressionResistancePriority="752" text="Subtitle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YJ0-eh-FZG" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                        <rect key="frame" x="10" y="34.5" width="251" height="14"/>
+                                        <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="14"/>
+                                        <nil key="highlightedColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="boolean" keyPath="greyOverride" value="YES"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </label>
+                                </subviews>
+                                <edgeInsets key="layoutMargins" top="8" left="10" bottom="8" right="0.0"/>
+                            </stackView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="14g-jt-ZW3">
+                                <rect key="frame" x="261" y="0.0" width="50" height="56.5"/>
+                                <subviews>
+                                    <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" text="30s" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MCQ-MI-aT5" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                        <rect key="frame" x="10" y="21" width="40" height="15"/>
+                                        <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="15"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="boolean" keyPath="greyOverride" value="YES"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="MCQ-MI-aT5" secondAttribute="trailing" id="4BM-D0-X2p"/>
+                                    <constraint firstItem="MCQ-MI-aT5" firstAttribute="centerY" secondItem="14g-jt-ZW3" secondAttribute="centerY" id="rmb-ia-njF"/>
+                                    <constraint firstItem="MCQ-MI-aT5" firstAttribute="leading" secondItem="14g-jt-ZW3" secondAttribute="leading" constant="10" id="xoY-wa-GGa"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6TC-T8-XV1">
+                                <rect key="frame" x="311" y="0.0" width="34" height="56.5"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ForwardArrow" translatesAutoresizingMaskIntoConstraints="NO" id="fRa-mc-9q2" customClass="MELImageView" customModule="Mode" customModuleProvider="target">
+                                        <rect key="frame" x="10" y="21.5" width="14" height="14"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="14" id="5IJ-GY-nl7"/>
+                                            <constraint firstAttribute="width" secondItem="fRa-mc-9q2" secondAttribute="height" multiplier="1:1" id="aBY-8X-enn"/>
+                                        </constraints>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="boolean" keyPath="greyOverride" value="YES"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </imageView>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="fRa-mc-9q2" secondAttribute="trailing" constant="10" id="QFK-uT-FY7"/>
+                                    <constraint firstItem="fRa-mc-9q2" firstAttribute="leading" secondItem="6TC-T8-XV1" secondAttribute="leading" constant="10" id="WoX-mK-DDJ"/>
+                                    <constraint firstItem="fRa-mc-9q2" firstAttribute="centerY" secondItem="6TC-T8-XV1" secondAttribute="centerY" id="piV-bb-q07"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sbq-aq-BSq">
+                                <rect key="frame" x="345" y="0.0" width="40" height="56.5"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Check15" translatesAutoresizingMaskIntoConstraints="NO" id="Rxu-ef-fDp" customClass="MELImageView" customModule="Mode" customModuleProvider="target">
+                                        <rect key="frame" x="10" y="18.5" width="20" height="20"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="Rxu-ef-fDp" secondAttribute="height" multiplier="1:1" id="Qsv-7y-nSw"/>
+                                            <constraint firstAttribute="width" constant="20" id="gQc-V3-4Ec"/>
+                                        </constraints>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="boolean" keyPath="greyOverride" value="YES"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </imageView>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="Rxu-ef-fDp" secondAttribute="trailing" constant="10" id="GcM-sb-dIV"/>
+                                    <constraint firstItem="Rxu-ef-fDp" firstAttribute="centerY" secondItem="sbq-aq-BSq" secondAttribute="centerY" id="wN4-eV-NTE"/>
+                                    <constraint firstItem="Rxu-ef-fDp" firstAttribute="leading" secondItem="sbq-aq-BSq" secondAttribute="leading" constant="10" id="wcC-LS-hKV"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RV6-ND-n0R" customClass="MELSwitch" customModule="Mode" customModuleProvider="target">
+                                <rect key="frame" x="385" y="0.0" width="64" height="56.5"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="64" placeholder="YES" id="FVt-R5-ea8"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                    </stackView>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ShW-pF-68O" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
+                        <rect key="frame" x="0.0" y="0.0" width="449" height="1"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.050000000000000003" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="height" priority="900" constant="1" id="VUZ-t5-aUQ"/>
+                        </constraints>
+                    </view>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uYZ-fp-GfV" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
+                        <rect key="frame" x="0.0" y="55.5" width="449" height="1"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.050000000000000003" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="height" priority="900" constant="1" id="D3U-GW-SB7"/>
+                        </constraints>
+                    </view>
+                </subviews>
+                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                <constraints>
+                    <constraint firstItem="uYZ-fp-GfV" firstAttribute="leading" secondItem="ShW-pF-68O" secondAttribute="leading" id="0xh-xb-Mdc"/>
+                    <constraint firstItem="R8u-gM-F8F" firstAttribute="top" secondItem="D5e-dF-uL4" secondAttribute="top" id="2lj-9g-3Bn"/>
+                    <constraint firstItem="ShW-pF-68O" firstAttribute="top" secondItem="D5e-dF-uL4" secondAttribute="top" id="5GQ-I2-A9S"/>
+                    <constraint firstAttribute="bottom" secondItem="uYZ-fp-GfV" secondAttribute="bottom" id="6vg-Dr-ahY"/>
+                    <constraint firstItem="R8u-gM-F8F" firstAttribute="leading" secondItem="D5e-dF-uL4" secondAttribute="leading" id="ASq-uo-exC"/>
+                    <constraint firstAttribute="trailing" secondItem="R8u-gM-F8F" secondAttribute="trailing" id="BBe-Mn-xMh"/>
+                    <constraint firstItem="uYZ-fp-GfV" firstAttribute="trailing" secondItem="ShW-pF-68O" secondAttribute="trailing" id="IiJ-FW-zJT"/>
+                    <constraint firstAttribute="trailing" secondItem="ShW-pF-68O" secondAttribute="trailing" id="qNl-z8-mNl"/>
+                    <constraint firstItem="ShW-pF-68O" firstAttribute="leading" secondItem="D5e-dF-uL4" secondAttribute="leading" id="rN1-vY-e6R"/>
+                    <constraint firstAttribute="bottom" secondItem="R8u-gM-F8F" secondAttribute="bottom" id="xhQ-gA-c1c"/>
+                </constraints>
+            </tableViewCellContentView>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <connections>
+                <outlet property="check" destination="Rxu-ef-fDp" id="UqH-k8-hB1"/>
+                <outlet property="chevron" destination="fRa-mc-9q2" id="Zk6-8a-Au9"/>
+                <outlet property="itemSwitch" destination="RV6-ND-n0R" id="gf1-nG-Wnz"/>
+                <outlet property="subtitleLabel" destination="YJ0-eh-FZG" id="p42-bp-WSc"/>
+                <outlet property="tertiaryLabel" destination="MCQ-MI-aT5" id="Lr0-Kw-Rko"/>
+                <outlet property="titleLabel" destination="Bzo-CQ-Evv" id="Ahm-aP-NWR"/>
+                <outletCollection property="borderViews" destination="ShW-pF-68O" collectionClass="NSMutableArray" id="Ofi-RN-cmG"/>
+                <outletCollection property="borderViews" destination="uYZ-fp-GfV" collectionClass="NSMutableArray" id="Yet-fS-dDn"/>
+            </connections>
+            <point key="canvasLocation" x="83" y="70"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="Check15" width="17" height="12"/>
+        <image name="ForwardArrow" width="8" height="14"/>
+    </resources>
+</document>

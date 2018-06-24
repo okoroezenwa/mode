@@ -68,9 +68,9 @@ class MELSwitch: UIView {
         self.isOn = isOn
     }
     
-    @objc func changeValue(_ gr: UITapGestureRecognizer) {
+    @objc func changeValue(_ sender: Any) {
         
-        guard gr.state == .ended else { return }
+        if let gr = sender as? UITapGestureRecognizer, gr.state != .ended { return }
         
         setOn(!isOn, animated: true)
         action?()
@@ -108,25 +108,11 @@ class Switch: UIView {
         
         super.awakeFromNib()
         
-//        if #available(iOS 11, *) {
-//
-//            let maskLayer = CAShapeLayer()
-//            maskLayer.path = UIBezierPath.init(roundedRect: bounds, cornerRadius: 14).cgPath
-//            layer.mask = maskLayer
-//
-//            innerViewConstraints.forEach({ $0.constant = 1.7 })
-//
-//            let otherMaskLayer = CAShapeLayer()
-//            otherMaskLayer.path = UIBezierPath.init(roundedRect: bounds, cornerRadius: (28 - 1.7) / 2).cgPath
-//            innerView.layer.mask = otherMaskLayer
-//
-//        } else {
-            layer.setRadiusTypeIfNeeded()
-            layer.cornerRadius = 14
-            layer.borderWidth = 1.7
-            
-            innerView.isHidden = true
-//        }
+        layer.setRadiusTypeIfNeeded()
+        layer.cornerRadius = 14
+        layer.borderWidth = 1.7
+        
+        innerView.isHidden = true
     
         changeThemeColor(knob)
         
@@ -135,17 +121,9 @@ class Switch: UIView {
     
     @objc func changeThemeColor(_ sender: Any) {
         
-//        if #available(iOS 11, *) {
-//
-//            innerView.backgroundColor = isOn ? Themer.themeColour(alpha: isUserInteractionEnabled ? 1 : 0.2) : .clear
-//            backgroundColor = isOn ? Themer.themeColour(alpha: isUserInteractionEnabled ? 1 : 0.2) : .clear
-//
-//        } else {
+        animateBorderColor(sender is Switch)
         
-            animateBorderColor(sender is Switch)
-            
-            backgroundColor = isOn ? Themer.themeColour(alpha: isUserInteractionEnabled ? 1 : 0.2) : .clear
-//        }
+        backgroundColor = isOn ? Themer.themeColour(alpha: isUserInteractionEnabled ? 1 : 0.2) : .clear
         
         knob.backgroundColor = Themer.themeColour(reversed: isOn, alpha: isUserInteractionEnabled ? 1 : 0.2)
     }

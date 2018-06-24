@@ -9,43 +9,32 @@
 import UIKit
 
 class IconSelectionTableViewController: UITableViewController {
-
-    @IBOutlet weak var thinImageView: MELImageView!
-    @IBOutlet weak var mediumImageView: MELImageView!
-    @IBOutlet weak var wideImageView: MELImageView!
-    @IBOutlet weak var darkImageView: MELImageView!
-    @IBOutlet weak var lightImageView: MELImageView!
-    @IBOutlet weak var matchImageView: MELImageView!
-    @IBOutlet var cells: [UITableViewCell]!
+    
+    var sections: SectionDictionary = [
+        
+        0: ("line width", nil),
+        1: ("theme", nil)
+    ]
+    var settings: SettingsDictionary = [
+        
+        .init(0, 0): .init(title: "Thin", accessoryType: .check({ iconLineWidth == .thin })),
+        .init(0, 1): .init(title: "Medium", accessoryType: .check({ iconLineWidth == .medium })),
+        .init(0, 2): .init(title: "Wide", accessoryType: .check({ iconLineWidth == .wide })),
+        .init(1, 0): .init(title: "Dark", accessoryType: .check({ iconTheme == .dark })),
+        .init(1, 1): .init(title: "Light", accessoryType: .check({ iconTheme == .light })),
+        .init(1, 2): .init(title: "Match Current Theme", accessoryType: .check({ iconTheme == .match }))
+    ]
     
     override func viewDidLoad() {
         
         super.viewDidLoad()
 
-        cells.forEach({ $0.selectedBackgroundView = MELBorderView.init() })
         tableView.scrollIndicatorInsets.bottom = 14
-        
-        prepareWidthImageViews()
-        prepareThemeImageViews()
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
-    }
-    
-    func prepareWidthImageViews() {
-        
-        thinImageView.isHidden = iconLineWidth != .thin
-        mediumImageView.isHidden = iconLineWidth != .medium
-        wideImageView.isHidden = iconLineWidth != .wide
-    }
-    
-    func prepareThemeImageViews() {
-        
-        darkImageView.isHidden = iconTheme != .dark
-        lightImageView.isHidden = iconTheme != .light
-        matchImageView.isHidden = iconTheme != .match
     }
     
     func updateIconIfNeeded() {
@@ -61,7 +50,7 @@ class IconSelectionTableViewController: UITableViewController {
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         
-        return 2
+        return sections.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -69,20 +58,28 @@ class IconSelectionTableViewController: UITableViewController {
         return 3
     }
     
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        let cell = tableView.settingCell(for: indexPath)
+        
+        if let setting = settings[indexPath.settingsSection] {
+            
+            cell.prepare(with: setting)
+        }
+        
+        return cell
+    }
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        if indexPath.section == 0 ? indexPath.row != iconLineWidth.rawValue : indexPath.row != iconTheme.rawValue {
+        let value = indexPath.section == 0 ? iconLineWidth.rawValue : iconTheme.rawValue
+        
+        if indexPath.row != value, let oldCell = tableView.cellForRow(at: IndexPath.init(row: value, section: indexPath.section)) as? SettingsTableViewCell, let newCell = tableView.cellForRow(at: indexPath) as? SettingsTableViewCell, let oldSetting = settings[IndexPath.init(row: value, section: indexPath.section).settingsSection], let newSetting = settings[indexPath.settingsSection] {
             
-            if indexPath.section == 0 {
-                
-                prefs.set(indexPath.row, forKey: .iconLineWidth)
-                prepareWidthImageViews()
-                
-            } else {
-                
-                prefs.set(indexPath.row, forKey: .iconTheme)
-                prepareThemeImageViews()
-            }
+            prefs.set(indexPath.row, forKey: indexPath.section == 0 ? .iconLineWidth : .iconTheme)
+            
+            oldCell.prepare(with: oldSetting)
+            newCell.prepare(with: newSetting)
             
             updateIconIfNeeded()
         }
@@ -90,33 +87,11 @@ class IconSelectionTableViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
-    override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-        
-        let header = view as? UITableViewHeaderFooterView
-        header?.textLabel?.text = nil
-    }
-    
-    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        
-        cell.preservesSuperviewLayoutMargins = false
-        cell.contentView.preservesSuperviewLayoutMargins = false
-    }
-    
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         
         let header = tableView.sectionHeader
         
-        header?.label.text = {
-            
-            switch section {
-                
-                case 0: return "line width"
-                
-                case 1: return "theme"
-                
-                default: return nil
-            }
-        }()
+        header?.label.text = sections[section]?.header
         
         return header
     }
@@ -136,5 +111,10 @@ class IconSelectionTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         
         return 0.00001
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        
+        return 54
     }
 }

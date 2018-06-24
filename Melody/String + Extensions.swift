@@ -74,6 +74,7 @@ public extension String {
     static let albumCell = "AlbumCell"
     static let otherCell = "otherCell"
     static let recentCell = "RecentCell"
+    static let settingsCell = "SettingsCell"
     static let sectionHeader = "TableHeaderView"
     static let sectionFooter = "TableFooterView"
     

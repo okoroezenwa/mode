@@ -14,71 +14,47 @@ class GesturesTableViewController: UITableViewController {
     @IBOutlet weak var mediumImageView: MELImageView!
     @IBOutlet weak var longImageView: MELImageView!
     @IBOutlet var cells: [UITableViewCell]!
+    
+    var sections: SectionDictionary = [
+        
+        0: ("duration", "Applies to hold gestures.")
+    ]
+    var settings: SettingsDictionary = [
+        
+        .init(0, 0): .init(title: "Short", accessoryType: .check({ gestureDuration == .short })),
+        .init(0, 1): .init(title: "Medium", accessoryType: .check({ gestureDuration == .medium })),
+        .init(0, 2): .init(title: "Long", accessoryType: .check({ gestureDuration == .long }))
+    ]
 
     override func viewDidLoad() {
         
         super.viewDidLoad()
-
-        cells.forEach({ $0.selectedBackgroundView = MELBorderView.init() })
-        
-        updateImageViews()
         
         tableView.scrollIndicatorInsets.bottom = 14
-        
-        notifier.addObserver(self, selector: #selector(updateImageViews), name: .longPressDurationChanged, object: nil)
-    }
-    
-    @objc func updateImageViews() {
-        
-        if let duration = GestureDuration(rawValue: longPressDuration) {
-            
-            let imageView: MELImageView = {
-                
-                switch duration {
-                    
-                    case .short: return shortImageView
-                    
-                    case .medium: return mediumImageView
-                    
-                    case .long: return longImageView
-                }
-            }()
-            
-            for view in [shortImageView, mediumImageView, longImageView] {
-                
-                view?.isHidden = view != imageView
-            }
-        }
     }
 
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         
-        return 1
+        return sections.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return 3
+        return settings.filter({ $0.key.section == section }).count
     }
     
-    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        cell.preservesSuperviewLayoutMargins = false
-        cell.contentView.preservesSuperviewLayoutMargins = false
-    }
-    
-    override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        let cell = tableView.settingCell(for: indexPath)
         
-        let header = view as? UITableViewHeaderFooterView
-        header?.textLabel?.text = nil
-    }
-    
-    override func tableView(_ tableView: UITableView, willDisplayFooterView view: UIView, forSection section: Int) {
+        if let setting = settings[indexPath.settingsSection] {
+            
+            cell.prepare(with: setting)
+        }
         
-        let footer = view as? UITableViewHeaderFooterView
-        footer?.textLabel?.text = nil
+        return cell
     }
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -90,7 +66,7 @@ class GesturesTableViewController: UITableViewController {
         
         let view = tableView.sectionHeader
         
-        view?.label.text = "duration"
+        view?.label.text = sections[section]?.header
         
         return view
     }
@@ -99,17 +75,7 @@ class GesturesTableViewController: UITableViewController {
         
         let footer = tableView.sectionFooter
         
-        var footerText: String? {
-            
-            switch section {
-                
-                case 0: return "Applies to hold gestures."
-                    
-                default: return nil
-            }
-        }
-        
-        if let text = footerText {
+        if let text = sections[section]?.footer {
             
             let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.lineHeightMultiple = 1.5
@@ -138,25 +104,20 @@ class GesturesTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        if indexPath.section == 0 {
+        if indexPath.section == 0, gestureDuration.rawValue != indexPath.row, let oldCell = tableView.cellForRow(at: IndexPath.init(row: gestureDuration.rawValue, section: indexPath.section)) as? SettingsTableViewCell, let newCell = tableView.cellForRow(at: indexPath) as? SettingsTableViewCell, let oldSetting = settings[IndexPath.init(row: gestureDuration.rawValue, section: indexPath.section).settingsSection], let newSetting = settings[indexPath.settingsSection] {
             
-            if indexPath.row == 0 && longPressDuration != GestureDuration.short.rawValue {
-                
-                prefs.set(GestureDuration.short.rawValue, forKey: .longPressDuration)
-                notifier.post(name: .longPressDurationChanged, object: nil)
+            prefs.set(indexPath.row, forKey: .longPressDuration)
+            notifier.post(name: .longPressDurationChanged, object: nil)
             
-            } else if indexPath.row == 1 && longPressDuration != GestureDuration.medium.rawValue {
-                
-                prefs.set(GestureDuration.medium.rawValue, forKey: .longPressDuration)
-                notifier.post(name: .longPressDurationChanged, object: nil)
-                
-            } else if indexPath.row == 2 && longPressDuration != GestureDuration.long.rawValue {
-                
-                prefs.set(GestureDuration.long.rawValue, forKey: .longPressDuration)
-                notifier.post(name: .longPressDurationChanged, object: nil)
-            }
+            oldCell.prepare(with: oldSetting)
+            newCell.prepare(with: newSetting)
         }
         
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        
+        return 54
     }
 }

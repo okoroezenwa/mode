@@ -605,18 +605,18 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             weakSelf.verifyLibraryStatus(of: musicPlayer.nowPlayingItem, itemProperty: .song, animated: true)
         
         }) as! NSObject)
-        
-        lifetimeObservers.insert(notifier.addObserver(forName: .nowPlayingBackgroundUsageChanged, object: nil, queue: nil, using: { [weak self] _ in
+    
+        lifetimeObservers.insert(notifier.addObserver(forName: .backgroundArtworkAdaptivityChanged, object: nil, queue: nil, using: { [weak self] _ in
             
             guard let weakSelf = self else { return }
             
-            if nowPlayingAsBackground {
+            switch backgroundArtworkAdaptivity {
                 
-                weakSelf.updateBackgroundWithNowPlaying()
+                case .none: break
                 
-            } else {
+                case .nowPlayingAdaptive: weakSelf.updateBackgroundWithNowPlaying()
                 
-                weakSelf.updateBackgroundViaModifier()
+                case .sectionAdaptive: weakSelf.updateBackgroundViaModifier()
             }
         
         }) as! NSObject)
@@ -1069,7 +1069,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
     
     @objc func updateBackgroundWithNowPlaying(animated: Bool = true) {
         
-        guard nowPlayingAsBackground || shouldUseNowPlayingArt else { return }
+        guard backgroundArtworkAdaptivity == .nowPlayingAdaptive || shouldUseNowPlayingArt else { return }
         
         UIView.transition(with: imageView, duration: animated ? 0.45 : 0, options: [.transitionCrossDissolve], animations: { self.imageView.image = musicPlayer.nowPlayingItem?.actualArtwork?.image(at: .init(width: 20, height: 20)) ?? #imageLiteral(resourceName: "NoArt") }, completion: { [weak self] finished in
             
@@ -1090,7 +1090,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
     
     @objc func updateBackgroundViaModifier(with imageOverride: UIImage? = nil) {
         
-        guard !nowPlayingAsBackground && !shouldUseNowPlayingArt else { return }
+        guard backgroundArtworkAdaptivity == .sectionAdaptive && !shouldUseNowPlayingArt else { return }
         
         UIView.transition(with: imageView, duration: 0.45, options: .transitionCrossDissolve, animations: { self.imageView.image = imageOverride ?? self.currentModifier?.artwork }, completion: nil)
     }

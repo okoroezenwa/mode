@@ -27,3 +27,7 @@ typealias TimeConstraintComponents = (hour: Int, minute: Int)
 typealias ReducedPlaylist = (containers: [PlaylistContainer], arrangeable: [MPMediaPlaylist], dataSource: [MPMediaPlaylist])
 
 typealias ActionDetails = (action: SongAction, title: String, style: UIAlertAction.Style, handler: (() -> Void))
+
+typealias SettingsDictionary = [SettingSection: Setting]
+
+typealias SectionDictionary = [Int: (header: String?, footer: String?)]

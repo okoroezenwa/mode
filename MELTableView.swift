@@ -23,14 +23,16 @@ class MELTableView: UITableView {
     @objc var playlist = false { didSet { register(UINib.init(nibName: .playlistCell, bundle: nil), forCellReuseIdentifier: .playlistCell) } }
     
     @objc var regular = false { didSet { register(MELTableViewCell.self, forCellReuseIdentifier: .otherCell) } }
+    
+    @objc var settings = false { didSet { register(UINib.init(nibName: .settingsCell, bundle: nil), forCellReuseIdentifier: .settingsCell) } }
 
     override func awakeFromNib() {
         
         super.awakeFromNib()
         
         sectionIndexBackgroundColor = .clear
-        sectionIndexMinimumDisplayRowCount = Int.max//30
-        keyboardDismissMode = .onDrag//interactive
+        sectionIndexMinimumDisplayRowCount = Int.max
+        keyboardDismissMode = .onDrag
         
         changeThemeColor()
         

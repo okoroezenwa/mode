@@ -10,57 +10,24 @@ import UIKit
 
 class PlaybackTableViewController: UITableViewController {
     
-    @IBOutlet weak var playOnlySwitch: MELSwitch! {
+    var sections: SectionDictionary = [
         
-        didSet {
-            
-            playOnlySwitch.action = { [weak self] in
-                
-                guard let weakSelf = self else { return }
-                
-                weakSelf.togglePlayOnly()
-            }
-        }
-    }
-    @IBOutlet weak var shuffleSwitch: MELSwitch! {
+        0: (nil, "Tap an item's artwork to play just that item."),
+        1: (nil, "When disabled, any active shuffle mode will be discarded when the queue is reset."),
+        2: (nil, "When disabled, any active repeat mode will be discarded when the queue is reset.")
+    ]
+    lazy var settings: SettingsDictionary = [
         
-        didSet {
-            
-            shuffleSwitch.action = { [weak self] in
-                
-                guard let weakSelf = self else { return }
-                
-                weakSelf.toggleKeepShuffleState()
-            }
-        }
-    }
-    @IBOutlet weak var repeatSwitch: MELSwitch! {
-        
-        didSet {
-            
-            repeatSwitch.action = { [weak self] in
-                
-                guard let weakSelf = self else { return }
-                
-                weakSelf.toggleKeepRepeatState()
-            }
-        }
-    }
+        .init(0, 0): .init(title: "Single Play", accessoryType: .onOff(isOn: { allowPlayOnly }, action: { [weak self] in self?.togglePlayOnly() })),
+        .init(1, 0): .init(title: "Preserve Shuffle State", accessoryType: .onOff(isOn: { keepShuffleState }, action: { [weak self] in self?.toggleKeepShuffleState() })),
+        .init(2, 0): .init(title: "Preserve Repeat State", accessoryType: .onOff(isOn: { preserveRepeatState }, action: { [weak self] in self?.toggleKeepRepeatState() }))
+    ]
 
     override func viewDidLoad() {
         
         super.viewDidLoad()
         
-        prepareSwitches()
-        
         tableView.scrollIndicatorInsets.bottom = 14
-    }
-
-    @objc func prepareSwitches() {
-        
-        playOnlySwitch.setOn(allowPlayOnly, animated: false)
-        shuffleSwitch.setOn(keepShuffleState, animated: false)
-        repeatSwitch.setOn(preserveRepeatState, animated: false)
     }
     
     func togglePlayOnly() {
@@ -83,50 +50,36 @@ class PlaybackTableViewController: UITableViewController {
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         
-        return 3
+        return sections.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return 1
+        return settings.filter({ $0.key.section == section }).count
     }
     
-    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        cell.preservesSuperviewLayoutMargins = false
-        cell.contentView.preservesSuperviewLayoutMargins = false
-    }
-    
-    override func tableView(_ tableView: UITableView, willDisplayFooterView view: UIView, forSection section: Int) {
+        let cell = tableView.settingCell(for: indexPath)
         
-        let footer = view as? UITableViewHeaderFooterView
-        footer?.textLabel?.text = nil
+        if let setting = settings[indexPath.settingsSection] {
+            
+            cell.prepare(with: setting)
+        }
+        
+        return cell
     }
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         
-        return /*section == 0 ?*/ .tableHeader + 8
+        return .tableHeader + 8
     }
     
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         
         let footer = tableView.sectionFooter
         
-        var footerText: String? {
-            
-            switch section {
-                
-                case 0: return "Tap an item's artwork to play just that item."
-                
-                case 1: return "When disabled, any active shuffle mode will be discarded when the queue is reset."
-                
-                case 2: return "When disabled, any active repeat mode will be discarded when the queue is reset."
-                
-                default: return nil
-            }
-        }
-        
-        if let text = footerText {
+        if let text = sections[section]?.footer {
             
             let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.lineHeightMultiple = 1.5
@@ -151,5 +104,10 @@ class PlaybackTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, estimatedHeightForFooterInSection section: Int) -> CGFloat {
         
         return 50
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        
+        return 54
     }
 }

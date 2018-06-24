@@ -742,25 +742,6 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
         
         super.viewDidAppear(animated)
         
-//        if artworkSet, peeker == nil {
-//            
-//            container?.currentModifier = self
-//            
-//            if container?.deferToNowPlayingViewController == false, !nowPlayingAsBackground {
-//                
-//                if let _ = artwork {
-//                    
-//                    container?.shouldUseNowPlayingArt = false
-//                    container?.updateBackgroundViaModifier()
-//                    
-//                } else {
-//                    
-//                    container?.shouldUseNowPlayingArt = true
-//                    container?.updateBackgroundWithNowPlaying()
-//                }
-//            }
-//        }
-        
         prepareTransientObservers()
         
         if needsUpdating {
@@ -952,8 +933,6 @@ extension PlaylistItemsViewController: UITableViewDelegate, UITableViewDataSourc
         let cell = tableView.songCell(for: indexPath)
         let song = getSong(from: indexPath)
         
-//        cell.delegate = songDelegate
-//        cell.scrollDelegate = songDelegate
         cell.prepare(with: song, highlightedSong: entityVC?.highlightedEntities?.song)
         updateImageView(using: song, in: cell, indexPath: indexPath, reusableView: tableView)
         

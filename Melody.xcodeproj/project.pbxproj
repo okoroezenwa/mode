@@ -80,6 +80,7 @@
 		BE31DDB01FE41DB00029CC41 /* ArtworkTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE31DDAF1FE41DB00029CC41 /* ArtworkTableViewController.swift */; };
 		BE3445D51E5729BB00E6AE3B /* Transitioner.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3445D41E5729BB00E6AE3B /* Transitioner.swift */; };
 		BE34A4901DDEDCCF0023A0EB /* CollectionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE34A48F1DDEDCCF0023A0EB /* CollectionsViewController.swift */; };
+		BE381D5420DA7B6A00D6C2F3 /* SettingsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = BE381D5320DA7B6A00D6C2F3 /* SettingsCell.xib */; };
 		BE3A5FAB1D81B01500F4F2F2 /* LibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3A5FAA1D81B01500F4F2F2 /* LibraryViewController.swift */; };
 		BE3AADCF1F29D74A00559D9C /* MarqueeLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3AADCE1F29D74A00559D9C /* MarqueeLabel.swift */; };
 		BE3AE1301D77235E00B9DC47 /* AlbumItemsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3AE12F1D77235E00B9DC47 /* AlbumItemsViewController.swift */; };
@@ -134,6 +135,7 @@
 		BE7A19BB1ECB470200825303 /* MusicPlayer + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7A19BA1ECB470200825303 /* MusicPlayer + Extensions.swift */; };
 		BE7A66941E6253120091A216 /* MELLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7A66931E6253120091A216 /* MELLabel.swift */; };
 		BE7A66961E62C91E0091A216 /* MELSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7A66951E62C91E0091A216 /* MELSlider.swift */; };
+		BE7B424120DABD0800EB7CD5 /* SettingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7B424020DABD0800EB7CD5 /* SettingsTableViewCell.swift */; };
 		BE7C425F1E84499600974EF2 /* String + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7C425E1E84499600974EF2 /* String + Extensions.swift */; };
 		BE7C42611E846D3300974EF2 /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7C42601E846D3200974EF2 /* Queue.swift */; };
 		BE7E73B720ADF7B2008A52B7 /* ActionsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7E73B620ADF7B2008A52B7 /* ActionsManager.swift */; };
@@ -373,6 +375,7 @@
 		BE31DDAF1FE41DB00029CC41 /* ArtworkTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtworkTableViewController.swift; sourceTree = "<group>"; };
 		BE3445D41E5729BB00E6AE3B /* Transitioner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Transitioner.swift; sourceTree = "<group>"; };
 		BE34A48F1DDEDCCF0023A0EB /* CollectionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionsViewController.swift; sourceTree = "<group>"; };
+		BE381D5320DA7B6A00D6C2F3 /* SettingsCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SettingsCell.xib; sourceTree = "<group>"; };
 		BE3A5FAA1D81B01500F4F2F2 /* LibraryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibraryViewController.swift; sourceTree = "<group>"; };
 		BE3AADCE1F29D74A00559D9C /* MarqueeLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MarqueeLabel.swift; sourceTree = "<group>"; };
 		BE3AE12F1D77235E00B9DC47 /* AlbumItemsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbumItemsViewController.swift; sourceTree = "<group>"; };
@@ -428,6 +431,7 @@
 		BE7A19BA1ECB470200825303 /* MusicPlayer + Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MusicPlayer + Extensions.swift"; sourceTree = "<group>"; };
 		BE7A66931E6253120091A216 /* MELLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MELLabel.swift; sourceTree = "<group>"; };
 		BE7A66951E62C91E0091A216 /* MELSlider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MELSlider.swift; sourceTree = "<group>"; };
+		BE7B424020DABD0800EB7CD5 /* SettingsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTableViewCell.swift; sourceTree = "<group>"; };
 		BE7C425E1E84499600974EF2 /* String + Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String + Extensions.swift"; sourceTree = "<group>"; };
 		BE7C42601E846D3200974EF2 /* Queue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Queue.swift; sourceTree = "<group>"; };
 		BE7E73B620ADF7B2008A52B7 /* ActionsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionsManager.swift; sourceTree = "<group>"; };
@@ -849,6 +853,7 @@
 		BE2715351D5A7584001F01FF /* Table View Cells */ = {
 			isa = PBXGroup;
 			children = (
+				BE7B424020DABD0800EB7CD5 /* SettingsTableViewCell.swift */,
 				BEBF0E7520461B2F001C29CC /* RecentSearchTableViewCell.swift */,
 				BEDC53AC1EBCECFD00566424 /* SongDetailsTableViewCell.swift */,
 				BE73B1E41D96D9C20059D084 /* SongTableViewCell.swift */,
@@ -1016,6 +1021,7 @@
 		BEB3AC711DD881B900682854 /* XIBS */ = {
 			isa = PBXGroup;
 			children = (
+				BE381D5320DA7B6A00D6C2F3 /* SettingsCell.xib */,
 				BED9BBFE202D96F2007FEC65 /* Switch.xib */,
 				BE2A69261F1D561300DEE878 /* VolumeView.xib */,
 				BECDEBFF1EF024BE0037892B /* RateShareView.xib */,
@@ -1287,6 +1293,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE381D5420DA7B6A00D6C2F3 /* SettingsCell.xib in Resources */,
 				BE2A69271F1D561300DEE878 /* VolumeView.xib in Resources */,
 				BEC0B16A2021D506008CBEB5 /* Light App Icon Medium@2x.png in Resources */,
 				BE573CF31E669E0B0021DCBD /* Popovers.storyboard in Resources */,
@@ -1521,6 +1528,7 @@
 				BE25606A1E74189700858C02 /* MELTextField.swift in Sources */,
 				BEFA28061D330BA600DE7018 /* ContainerViewController.swift in Sources */,
 				BE21DB041F233DBC00441BF6 /* TabBarTableViewController.swift in Sources */,
+				BE7B424120DABD0800EB7CD5 /* SettingsTableViewCell.swift in Sources */,
 				BE66DF891DC3E5D300CF59CD /* TipsViewController.swift in Sources */,
 				BE2E6EEA205F9CB30004ABC1 /* FilterContainer.swift in Sources */,
 				BE21DB021F22C2CF00441BF6 /* PlaybackTableViewController.swift in Sources */,

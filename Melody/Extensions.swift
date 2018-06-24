@@ -692,6 +692,11 @@ extension UITableView {
         return dequeueReusableCell(withIdentifier: .recentCell, for: indexPath) as! RecentSearchTableViewCell
     }
     
+    func settingCell(for indexPath: IndexPath) -> SettingsTableViewCell {
+        
+        return dequeueReusableCell(withIdentifier: .settingsCell, for: indexPath) as! SettingsTableViewCell
+    }
+    
     var sectionHeader: TableHeaderView? {
         
         return dequeueReusableHeaderFooterView(withIdentifier: .sectionHeader) as? TableHeaderView
@@ -1031,3 +1036,16 @@ extension CALayer {
     }
 }
 
+extension IndexPath {
+    
+    var settingsSection: SettingSection { return .from(self) }
+    var indexSet: IndexSet { return .init(integer: self.section) }
+}
+
+extension Range where Element == Int {
+    
+    func indexPaths(in section: Int) -> [IndexPath] {
+        
+        return self.map({ IndexPath.init(row: $0, section: section) })
+    }
+}

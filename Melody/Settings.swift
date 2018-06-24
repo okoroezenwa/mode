@@ -43,7 +43,6 @@ var showRecentAlbums: Bool { return prefs.bool(forKey: .showRecentAlbums) }
 var showRecentSongs: Bool { return prefs.bool(forKey: .showRecentSongs) }
 var showRecentCompilations: Bool { return prefs.bool(forKey: .showRecentCompilations) }
 var showRecentGenres: Bool { return prefs.bool(forKey: .showRecentGenres) }
-var nowPlayingAsBackground: Bool { return prefs.bool(forKey: .useNowPlayingAsBackground) }
 var strictAlbumBackground: Bool { return prefs.bool(forKey: .strictAlbumBackground) }
 var artistItemsStartingPoint: Int { return prefs.integer(forKey: .artistStartingPoint) }
 var useSmallerArt: Bool { return prefs.bool(forKey: .prefersSmallerArt) }
@@ -67,7 +66,8 @@ var refreshMode: Int { return prefs.integer(forKey: .refreshMode) }
 var backToStartEnabled: Bool { return prefs.bool(forKey: .backToStart) }
 var showUnaddedMusic: Bool { return prefs.bool(forKey: .showUnaddedMusic) }
 var useSystemPlayer: Bool { return prefs.bool(forKey: .systemPlayer) }
-var longPressDuration: Double { return prefs.double(forKey: .longPressDuration) }
+var gestureDuration: GestureDuration { return GestureDuration(rawValue: prefs.integer(forKey: .longPressDuration)) ?? Settings.defaultGestureDuration }
+var longPressDuration: Double { return gestureDuration.duration }
 var timeConstraintEnabled: Bool { return prefs.bool(forKey: .darkTimeConstraintEnabled) }
 var brightnessConstraintEnabled: Bool { return prefs.bool(forKey: .darkBrightnessConstraintEnabled) }
 var brightnessValue: Float { return prefs.float(forKey: .brightnessValue) }
@@ -117,6 +117,7 @@ var libraryRefreshInterval: LibraryRefreshInterval { return LibraryRefreshInterv
 var recentlyUpdatedPlaylistSorts: Set<PlaylistView> { return Set((prefs.array(forKey: .recentlyUpdatedPlaylistSorts) as? [Int])?.compactMap({ PlaylistView(rawValue: $0) }) ?? Settings.defaultRecentlyUpdatedPlaylistSorts) }
 var showPlaylistFolders: Bool { return prefs.bool(forKey: .showPlaylistFolders) }
 var tabBarTapBehaviour: TabBarTapBehaviour { return TabBarTapBehaviour(rawValue: prefs.integer(forKey: .tabBarTapBehaviour)) ?? Settings.defaultTabBarBehaviour }
+var backgroundArtworkAdaptivity: BackgroundArtwork { return BackgroundArtwork(rawValue: prefs.integer(forKey: .backgroundArtworkAdaptivity)) ?? .sectionAdaptive }
 
 class Settings {
     
@@ -172,7 +173,6 @@ class Settings {
             .showRecentCompilations: isInDebugMode.inverted,
             .keepShuffleState: !isInDebugMode,
             .numbersBelowLetters: true,
-            .useNowPlayingAsBackground: !isInDebugMode,
             .strictAlbumBackground: false,
             .artistStartingPoint: 1,
             .prefersSmallerArt: isiPhoneX,
@@ -196,7 +196,7 @@ class Settings {
             .backToStart: !isInDebugMode,
             .showUnaddedMusic: false, // not set
             .systemPlayer: useSystemMusicPlayer,
-            .longPressDuration: GestureDuration.medium.rawValue,
+            .longPressDuration: defaultGestureDuration.rawValue,
             .darkTimeConstraintEnabled: false,
             .darkBrightnessConstraintEnabled: false,
             .brightnessValue: 0.1,
@@ -220,7 +220,7 @@ class Settings {
             .primarySizeSuffix: Int64.FileSize.megabyte.rawValue,
             .secondarySizeSuffix: Int64.FileSize.megabyte.rawValue,
             .cornerRadius: CornerRadius.automatic.rawValue,
-            .filterProperties: Array(Property.title.rawValue...Property.isCompilation.rawValue),
+            .filterProperties: Property.allCases.map({ $0.rawValue }),
             .librarySections: [LibrarySection.playlists, .songs, .artists, .albums, .genres, .composers, .compilations].map({ $0.rawValue }),
             .useCompactCollector: true,
             .widgetCornerRadius: CornerRadius.large.rawValue,
@@ -244,7 +244,8 @@ class Settings {
             .libraryRefreshInterval: LibraryRefreshInterval.fiveMinutes.rawValue,
             .recentlyUpdatedPlaylistSorts: defaultRecentlyUpdatedPlaylistSorts.map({ $0.rawValue }),
             .showPlaylistFolders: false,
-            .tabBarTapBehaviour: defaultTabBarBehaviour.rawValue
+            .tabBarTapBehaviour: defaultTabBarBehaviour.rawValue,
+            .backgroundArtworkAdaptivity: BackgroundArtwork.sectionAdaptive.rawValue
         ])
         
         sharedDefaults.register(defaults: [
@@ -362,6 +363,7 @@ class Settings {
     static var defaultRefreshInterval: LibraryRefreshInterval = .none // { return isInDebugMode ? .none : .fiveMinutes }
     static var defaultRecentlyUpdatedPlaylistSorts: [PlaylistView] { return isInDebugMode ? [.appleMusic] : [] }
     static var defaultTabBarBehaviour: TabBarTapBehaviour { return isInDebugMode ? .scrollToTop : .returnThenScroll }
+    static var defaultGestureDuration: GestureDuration { return isInDebugMode ? .short : .medium }
     
     static func components(from date: Date) -> TimeConstraintComponents {
         
@@ -414,7 +416,6 @@ extension String {
     static let darkTheme = "darkThemeEnabled"
     static let keepShuffleState = "keepShuffleState"
     static let numbersBelowLetters = "numbersBelowLetters"
-    static let useNowPlayingAsBackground = "useNowPlayingAsBackground"
     static let strictAlbumBackground = "strictAlbumBackground" // not even sure
     static let artistStartingPoint = "artistStartingPoint"
     static let prefersSmallerArt = "prefersSmallerArt"
@@ -481,6 +482,7 @@ extension String {
     static let recentlyUpdatedPlaylistSorts = "recentlyUpdatedPlaylistSorts"
     static let showPlaylistFolders = "showPlaylistFolders"
     static let tabBarTapBehaviour = "tabBarTapBehaviour"
+    static let backgroundArtworkAdaptivity = "backgroundArtworkAdaptivity"
 }
 
 // MARK: - Notification Settings Constants
@@ -497,7 +499,7 @@ extension NSNotification.Name {
     static let playOnlyChanged = Notification.Name.init("playOnlyChanged")
     static let settingsDismissed = Notification.Name.init("settingsVCDismissed")
     static let emptyPlaylistsVisibilityChanged = Notification.Name.init("emptyPlaylistsChanged")
-    static let nowPlayingBackgroundUsageChanged = Notification.Name.init("nowPlayingBackgroundUsageChanged")
+    static let backgroundArtworkAdaptivityChanged = Notification.Name.init("backgroundArtworkAdaptivityChanged")
     static let themeChanged = Notification.Name.init("themeChanged")
     static let songCellCategoriesChanged = Notification.Name.init("songCellCategoriesChanged")
     static let microPlayerChanged = Notification.Name.init("microPlayerChanged")

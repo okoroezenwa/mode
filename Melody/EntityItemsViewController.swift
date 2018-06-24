@@ -347,7 +347,7 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         container?.currentModifier = self
         setCurrentOptions()
         
-        if container?.deferToNowPlayingViewController == false, !nowPlayingAsBackground {
+        if container?.deferToNowPlayingViewController == false, backgroundArtworkAdaptivity == .sectionAdaptive {
             
             if let _ = artwork {
                 

@@ -10,248 +10,63 @@ import UIKit
 
 class SettingsTableViewController: UITableViewController {
     
-    @IBOutlet weak var offlineSwitch: MELSwitch! {
+    var sections: SectionDictionary = [
         
-        didSet {
-            
-            offlineSwitch.action = { [weak self] in
-                
-                guard let weakSelf = self else { return }
-                
-                weakSelf.toggleCloud()
-            }
-        }
-    }
-    @IBOutlet weak var countsSwitch: MELSwitch! {
+        0: (nil, nil),
+        1: ("general", nil),
+        2: ("player", nil),
+        3: ("now playing", nil),
+        4: ("temporary", nil),
+        5: ("sleep prevention", nil),
+        6: (nil, nil),
+        7: (nil, nil)
+    ]
+    lazy var settings: SettingsDictionary = [
         
-        didSet {
-            
-            countsSwitch.action = { [weak self] in
-                
-                guard let weakSelf = self else { return }
-                
-                weakSelf.toggleCounts()
-            }
-        }
-    }
-    @IBOutlet weak var numbersSwitch: MELSwitch! {
-        
-        didSet {
-            
-            numbersSwitch.action = { [weak self] in
-                
-                guard let weakSelf = self else { return }
-                
-                weakSelf.toggleNumbersBelow()
-            }
-        }
-    }
-    @IBOutlet weak var explicitSwitch: MELSwitch! {
-        
-        didSet {
-            
-            explicitSwitch.action = { [weak self] in
-                
-                guard let weakSelf = self else { return }
-                
-                weakSelf.toggleExplicit()
-            }
-        }
-    }
-    @IBOutlet weak var artistStartPointSwitch: MELSwitch! {
-        
-        didSet {
-            
-            artistStartPointSwitch.action = { [weak self] in
-                
-                guard let weakSelf = self else { return }
-                
-                weakSelf.toggleArtistStartPoint()
-            }
-        }
-    }
-    @IBOutlet weak var deinitSwitch: MELSwitch! {
-        
-        didSet {
-            
-            deinitSwitch.action = { [weak self] in
-                
-                guard let weakSelf = self else { return }
-                
-                weakSelf.toggleDeinit()
-            }
-        }
-    }
-    @IBOutlet weak var infoSwitch: MELSwitch! {
-        
-        didSet {
-            
-            infoSwitch.action = { [weak self] in
-                
-                guard let weakSelf = self else { return }
-                
-                weakSelf.toggleInfoButtons()
-            }
-        }
-    }
-    @IBOutlet weak var volumeSwitch: MELSwitch! {
-        
-        didSet {
-            
-            volumeSwitch.action = { [weak self] in
-                
-                guard let weakSelf = self else { return }
-                
-                weakSelf.toggleVolumeViews()
-            }
-        }
-    }
-    @IBOutlet weak var themeLabel: MELLabel!
-    @IBOutlet weak var chooserSwitch: MELSwitch! {
-        
-        didSet {
-            
-            chooserSwitch.action = { [weak self] in
-                
-                guard let weakSelf = self else { return }
-                
-                weakSelf.toggleChooser()
-            }
-        }
-    }
-    @IBOutlet weak var fasterSwitch: MELSwitch! {
-        
-        didSet {
-            
-            fasterSwitch.action = { [weak self] in
-                
-                guard let weakSelf = self else { return }
-                
-                weakSelf.toggleFasterStartup()
-            }
-        }
-    }
-    @IBOutlet weak var lighterSwitch: MELSwitch! {
-        
-        didSet {
-            
-            lighterSwitch.action = { [weak self] in
-                
-                guard let weakSelf = self else { return }
-                
-                weakSelf.toggleLighterBorders()
-            }
-        }
-    }
-    @IBOutlet weak var descriptorSwitch: MELSwitch! {
-        
-        didSet {
-            
-            descriptorSwitch.action = { [weak self] in
-                
-                guard let weakSelf = self else { return }
-                
-                weakSelf.toggleDescriptor()
-            }
-        }
-    }
-    @IBOutlet weak var mediaItemsSwitch: MELSwitch! {
-        
-        didSet {
-            
-            mediaItemsSwitch.action = { [weak self] in
-                
-                guard let weakSelf = self else { return }
-                
-                weakSelf.toggleMediaItems()
-            }
-        }
-    }
-    @IBOutlet weak var manualSwitch: MELSwitch! {
-        
-        didSet {
-            
-            manualSwitch.action = { [weak self] in
-                
-                guard let weakSelf = self else { return }
-                
-                weakSelf.toggleManual()
-            }
-        }
-    }
-    @IBOutlet weak var nightSwitch: MELSwitch! {
-        
-        didSet {
-            
-            nightSwitch.action = { [weak self] in
-                
-                guard let weakSelf = self else { return }
-                
-                weakSelf.toggleNightMode()
-            }
-        }
-    }
-    @IBOutlet weak var neverImageView: MELImageView!
-    @IBOutlet weak var pluggedImageView: MELImageView!
-    @IBOutlet weak var alwaysImageView: MELImageView!
-    @IBOutlet weak var refreshLabel: MELLabel!
-    @IBOutlet var cells: [UITableViewCell]!
+        .init(0, 0): .init(title: "Rate and Review", accessoryType: .none),
+        .init(1, 0): .init(title: "Offline Mode", accessoryType: .onOff(isOn: { showiCloudItems.inverted }, action: { [weak self] in self?.toggleCloud() })),
+        .init(1, 1): .init(title: "Night Mode", accessoryType: .onOff(isOn: { darkTheme }, action: { [weak self] in self?.toggleNightMode() })),
+        .init(1, 2): .init(title: "Library Refresh", accessoryType: .chevron),
+        .init(1, 3): .init(title: "Tab Bar", accessoryType: .chevron),
+        .init(1, 4): .init(title: "Gestures", accessoryType: .chevron),
+        .init(1, 5): .init(title: "Artwork", accessoryType: .chevron),
+        .init(1, 6): .init(title: "Background", accessoryType: .chevron),
+        .init(1, 7): .init(title: "App Icon", accessoryType: .chevron),
+        .init(1, 8): .init(title: "Theme", accessoryType: .chevron),
+        .init(2, 0): .init(title: "Queue", accessoryType: .chevron),
+        .init(2, 1): .init(title: "Playback", accessoryType: .chevron),
+        .init(2, 2): .init(title: "Fullscreen Player", accessoryType: .chevron),
+        .init(3, 0): .init(title: "Volume Slider", accessoryType: .onOff(isOn: { showVolumeViews }, action: { [weak self] in self?.toggleVolumeViews() })),
+        .init(3, 1): .init(title: "Faster Startup", accessoryType: .onOff(isOn: { fasterNowPlayingStartup }, action: { [weak self] in self?.toggleFasterStartup() })),
+        .init(4, 0): .init(title: "Always Show Counts", accessoryType: .onOff(isOn: { songCountVisible }, action: { [weak self] in self?.toggleCounts() })),
+        .init(4, 1): .init(title: "Show Explicit Marker", accessoryType: .onOff(isOn: { showExplicit }, action: { [weak self] in self?.toggleExplicit() })),
+        .init(4, 2): .init(title: "Artists Open With Songs", accessoryType: .onOff(isOn: { artistItemsStartingPoint == EntityItemsViewController.StartPoint.songs.rawValue }, action: { [weak self] in self?.toggleArtistStartPoint() })),
+        .init(4, 3): .init(title: "Secondary Song Info", accessoryType: .chevron),
+        .init(4, 4): .init(title: "Recents", accessoryType: .chevron),
+        .init(4, 5): .init(title: "Section Picker Everywhere", accessoryType: .onOff(isOn: { showSectionChooserEverywhere }, action: { [weak self] in self?.toggleVolumeViews() })),
+        .init(4, 6): .init(title: "Lighter Borders and Lines", accessoryType: .onOff(isOn: { useLighterBorders }, action: { [weak self] in self?.toggleFasterStartup() })),
+        .init(4, 7): .init(title: "Numbers Below Letters", accessoryType: .onOff(isOn: { numbersBelowLetters }, action: { [weak self] in self?.toggleCounts() })),
+        .init(4, 8): .init(title: "Show Info Buttons", accessoryType: .onOff(isOn: { showInfoButtons }, action: { [weak self] in self?.toggleExplicit() })),
+        .init(5, 0): .init(title: "Never", accessoryType: .check({ screenLockPreventionMode == InsomniaMode.disabled.rawValue })),
+        .init(5, 1): .init(title: "Always", accessoryType: .check({ screenLockPreventionMode == InsomniaMode.always.rawValue })),
+        .init(5, 2): .init(title: "While Charging", accessoryType: .check({ screenLockPreventionMode == InsomniaMode.whenCharging.rawValue })),
+        .init(6, 0): .init(title: "Reset All Settings", accessoryType: .none),
+        .init(7, 0): .init(title: "Show Deinit Banner", accessoryType: .onOff(isOn: { deinitBannersEnabled }, action: { [weak self] in self?.toggleDeinit() })),
+        .init(7, 1): .init(title: "Use Descriptor", accessoryType: .onOff(isOn: { useDescriptor }, action: { [weak self] in self?.toggleDescriptor() })),
+        .init(7, 2): .init(title: "Use Media Items", accessoryType: .onOff(isOn: { useMediaItems }, action: { [weak self] in self?.toggleMediaItems() })),
+        .init(7, 3): .init(title: "Manual Queue Insertion", accessoryType: .onOff(isOn: { useOldStyleQueue }, action: { [weak self] in self?.toggleManual() }))
+    ]
 
     override func viewDidLoad() {
         
         super.viewDidLoad()
         
-        cells.forEach({ $0.selectedBackgroundView = MELBorderView.init() })
-        
         tableView.scrollIndicatorInsets.bottom = 14
-        
-        prepareSwitches(animated: false)
-        
-        notifier.addObserver(self, selector: #selector(updateThemeLabel), name: .themeChanged, object: nil)
     }
 
     override func didReceiveMemoryWarning() {
         
         super.didReceiveMemoryWarning()
-    }
-    
-    @objc func prepareSwitches(animated: Bool) {
-        
-        offlineSwitch.setOn(!showiCloudItems, animated: animated)
-        countsSwitch.setOn(songCountVisible, animated: animated)
-        numbersSwitch.setOn(numbersBelowLetters, animated: animated)
-        explicitSwitch.setOn(showExplicit, animated: animated)
-        artistStartPointSwitch.setOn(artistItemsStartingPoint == EntityItemsViewController.StartPoint.songs.rawValue, animated: animated)
-        deinitSwitch.setOn(deinitBannersEnabled, animated: animated)
-        infoSwitch.setOn(showInfoButtons, animated: animated)
-        volumeSwitch.setOn(showVolumeViews, animated: animated)
-        chooserSwitch.setOn(showSectionChooserEverywhere, animated: animated)
-        fasterSwitch.setOn(fasterNowPlayingStartup, animated: animated)
-        lighterSwitch.setOn(useLighterBorders, animated: animated)
-        descriptorSwitch.setOn(useDescriptor, animated: animated)
-        mediaItemsSwitch.setOn(useMediaItems, animated: animated)
-        manualSwitch.setOn(useOldStyleQueue, animated: animated)
-        nightSwitch.setOn(darkTheme, animated: animated)
-        updateThemeLabel()
-        prepareImageViews()
-    }
-    
-    @objc func updateThemeLabel() {
-        
-        themeLabel.text = (darkTheme && manualNightMode) || (!brightnessConstraintEnabled && !timeConstraintEnabled) ? nil : "Scheduled"
-    }
-    
-    func prepareImageViews(at row: Int? = nil) {
-        
-        if let row = row {
-            
-            prefs.set(row, forKey: .screenLockPreventionMode)
-            appDelegate.screenLocker.mode = InsomniaMode.init(rawValue: row) ?? .disabled
-        }
-        
-        neverImageView.isHidden = screenLockPreventionMode != InsomniaMode.disabled.rawValue
-        alwaysImageView.isHidden = screenLockPreventionMode != InsomniaMode.always.rawValue
-        pluggedImageView.isHidden = screenLockPreventionMode != InsomniaMode.whenCharging.rawValue
     }
     
     func toggleCloud() {
@@ -371,17 +186,18 @@ class SettingsTableViewController: UITableViewController {
             let wasDynamic = dynamicStatusBar
             let wasBold = nowPlayingBoldTextEnabled
             let wasSinglePlay = allowPlayOnly
+            let backgroundWasSectionAdaptive = backgroundArtworkAdaptivity == .sectionAdaptive
             
             Settings.resetDefaults()
+            self.tableView.reloadData()
+//            self.prepareSwitches(animated: true)
             
-            self.prepareSwitches(animated: true)
-            
-            if !wasCloud {
+            if wasCloud.inverted {
                 
                 notifier.post(name: .iCloudVisibilityChanged, object: nil)
             }
             
-            if !wasDynamic {
+            if wasDynamic.inverted {
                 
                 notifier.post(name: .dynamicStatusBarChanged, object: nil)
             }
@@ -391,7 +207,7 @@ class SettingsTableViewController: UITableViewController {
                 notifier.post(name: .nowPlayingTextSizesChanged, object: nil)
             }
             
-            if !wasSinglePlay {
+            if wasSinglePlay.inverted {
                 
                 notifier.post(name: .playOnlyChanged, object: nil)
             }
@@ -404,9 +220,9 @@ class SettingsTableViewController: UITableViewController {
                 }
             }
             
-            if nowPlayingAsBackground {
+            if backgroundWasSectionAdaptive.inverted {
                 
-                notifier.post(name: .nowPlayingBackgroundUsageChanged, object: nil)
+                notifier.post(name: .backgroundArtworkAdaptivityChanged, object: nil)
             }
         })
         
@@ -453,6 +269,18 @@ class SettingsTableViewController: UITableViewController {
             
             default: return 1
         }
+    }
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        let cell = tableView.settingCell(for: indexPath)
+        
+        if let setting = settings[indexPath.settingsSection] {
+            
+            cell.prepare(with: setting)
+        }
+        
+        return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -517,7 +345,11 @@ class SettingsTableViewController: UITableViewController {
         
         } else if indexPath.section == 5, screenLockPreventionMode != indexPath.row {
             
-            prepareImageViews(at: indexPath.row)
+//            prepareImageViews(at: indexPath.row)
+            prefs.set(indexPath.row, forKey: .screenLockPreventionMode)
+            appDelegate.screenLocker.mode = InsomniaMode.init(rawValue: indexPath.row) ?? .disabled
+            
+            tableView.reloadSections(indexPath.indexSet, with: .none)
         
         } else if indexPath.section == 6 {
             
@@ -532,45 +364,11 @@ class SettingsTableViewController: UITableViewController {
         return indexPath.section == 0 || (indexPath.section == 1 && Set([0, 1]).contains(indexPath.row).inverted) || indexPath.section == 2 || (indexPath.section == 4 && Set([3, 4]).contains(indexPath.row)) || indexPath.section == 5 || indexPath.section == 6
     }
     
-    override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-        
-        let header = view as? UITableViewHeaderFooterView
-        header?.textLabel?.text = nil
-    }
-    
-    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        
-        cell.preservesSuperviewLayoutMargins = false
-        cell.contentView.preservesSuperviewLayoutMargins = false
-    }
-    
-    override func tableView(_ tableView: UITableView, willDisplayFooterView view: UIView, forSection section: Int) {
-        
-        let footer = view as? UITableViewHeaderFooterView
-        footer?.textLabel?.text = nil
-    }
-    
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         
         let header = tableView.sectionHeader
         
-        header?.label.text = {
-            
-            switch section {
-                
-                case 1: return "general"
-                
-                case 2: return "player"
-                
-                case 3: return "now playing"
-                
-                case 4: return "temporary"
-                
-                case 5: return "sleep prevention"
-                
-                default: return nil
-            }
-        }()
+        header?.label.text = sections[section]?.header
         
         return header
     }
@@ -586,17 +384,7 @@ class SettingsTableViewController: UITableViewController {
         
         let footer = tableView.sectionFooter
         
-        var footerText: String? {
-            
-            switch section {
-                
-                case 4: return "Enable or disable extra song info in lists."
-                
-                default: return nil
-            }
-        }
-        
-        if let text = footerText {
+        if let text = sections[section]?.footer {
             
             let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.lineHeightMultiple = 1.5
@@ -621,6 +409,11 @@ class SettingsTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, estimatedHeightForFooterInSection section: Int) -> CGFloat {
         
         return 50
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        
+        return 54
     }
     
     deinit {
