@@ -60,10 +60,12 @@ enum IconLineWidth: Int { case thin, medium, wide }
 enum IconTheme: Int { case dark, light, match }
 
 enum Font: Int { case myriadPro, avenirNext }
+#warning("Fonts need completing")
 
 enum SeparationMethod: Int { case overlay, smaller, below }
 
 enum SupplementaryItems: Int { case star, liked, share, volume }
+#warning("Now Playing Supplementary view need completing")
 
 enum SelectionAction { case remove, keep }
 
@@ -387,13 +389,13 @@ enum CornerRadius: Int {
             
             switch globalRadiusType {
                 
-                case .automatic: return (self.radius(for: entityType, width: width), self != .rounded)
+                case .automatic: return (self.radius(for: entityType, width: width), (self == .rounded || self == .automatic && Set([Entity.artist, .albumArtist, .genre, .composer]).contains(entityType)).inverted)
                 
                 default: return (globalRadiusType.radius(for: entityType, width: width), globalRadiusType != .rounded)
             }
         }()
         
-        layer?.setRadiusTypeIfNeeded(to: details.useSmoothCorners)
+        layer?.setRadiusTypeIfNeeded(to: details.useContinuousCorners)
         layer?.cornerRadius = details.radius
     }
     

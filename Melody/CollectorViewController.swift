@@ -11,11 +11,8 @@ import UIKit
 class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable, EntityContainer, Peekable, SingleItemActionable, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, GenreTransitionable, ComposerTransitionable, EntityVerifiable, BorderButtonContaining, Detailing {
     
     @IBOutlet weak var tableView: MELTableView!
-//    @IBOutlet weak var editingStackViewHeightConstraint: NSLayoutConstraint!
-//    @IBOutlet weak var actionsViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var bottomView: UIView!
     @IBOutlet weak var actionsView: UIView!
-//    @IBOutlet weak var editingStackView: UIStackView!
     @IBOutlet weak var actionsButton: MELButton! {
         
         didSet {
@@ -48,7 +45,6 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
                 view.button.contentEdgeInsets.bottom = 0
                 view.borderViewBottomConstraint.constant = 2
                 view.borderViewTopConstraint.constant = 10
-//                view.borderView.layer.cornerRadius = 8
                 stackView.addArrangedSubview(view)
             }
         }

@@ -160,7 +160,7 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
         
         let keyboardWillShow = notification.name == UIResponder.keyboardWillShowNotification
         
-        bottomViewBottomConstraint.constant = keyboardWillShow ? keyboardHeightAtEnd - 8 : 0
+        bottomViewBottomConstraint.constant = keyboardWillShow ? keyboardHeightAtEnd - 6 : 0
         
         UIView.animate(withDuration: duration, animations: { self.view.layoutIfNeeded() })
     }

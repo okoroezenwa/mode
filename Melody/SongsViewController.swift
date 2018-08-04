@@ -20,7 +20,8 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
         view.collectionView.isHidden = true
         self.collectionView = view.collectionView
         view.viewController = self
-        [view.header.button, view.header.altButton].forEach({ $0?.addTarget(self, action: #selector(backToStart), for: .touchUpInside) })
+        view.header.button.addTarget(self, action: #selector(backToStart), for: .touchUpInside)
+        view.header.altButton.addTarget(self.tableDelegate, action: #selector(tableDelegate.viewSections), for: .touchUpInside)
         
         return view
     }()
@@ -104,7 +105,7 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
     var ignorePropertyChange = false
     var songsQuery: MPMediaQuery = {
         
-        let query = showiCloudItems ? MPMediaQuery.songs() : MPMediaQuery.init(filterPredicates: [.offline])
+        let query = showiCloudItems ? MPMediaQuery.songs() : MPMediaQuery.init(filterPredicates: [.offline, MPMediaPropertyPredicate.init(value: MPMediaType.music.rawValue, forProperty: MPMediaItemPropertyMediaType)])
         
         if showUnaddedMusic {
             
@@ -599,7 +600,7 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
             
             array.append(shuffleAlbums)
             
-            present(UIAlertController.withTitle(nil, message: libraryVC?.titleButton.titleLabel?.text, style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
+            present(UIAlertController.withTitle(nil, message: libraryVC?.titleButton.titleLabel?.text?.lowercased(), style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
             
         } else {
             

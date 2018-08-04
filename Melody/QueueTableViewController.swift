@@ -17,9 +17,9 @@ class QueueTableViewController: UITableViewController {
     
     lazy var sections: SectionDictionary = [
 
-        0: ("active queue", self.firstSectionHeader),
+        0: ("active queue", self.firstSectionFooter),
         1: (nil, "When enabled, a confirmation alert will be shown for the selected criteria before the queue is modified."),
-        2: ("show alert", nil)
+        2: ("show alert on...", nil)
     ]
     lazy var settings: SettingsDictionary = [
 
@@ -34,7 +34,7 @@ class QueueTableViewController: UITableViewController {
         .init(2, 5): .init(title: "Playback Stop", accessoryType: .onOff(isOn: { stopGuard }, action: { [weak self] in self?.toggleCriteria(.stop) }), inactive: { warnForQueueInterruption.inverted })
     ]
     
-    let firstSectionHeader: String = {
+    let firstSectionFooter: String = {
         
         if #available(iOS 11, *) {
             

@@ -95,7 +95,7 @@ class HeaderView: UIView, InfoLoading {
                 
                 if let label = header.label {
                     
-                    label.text = "recently added"
+                    label.text = "recent"
                 }
             }
         }

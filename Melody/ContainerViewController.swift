@@ -680,7 +680,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
 //                }
 //            }()
 //            
-//            imageView.layer.setRadiusTypeIfNeeded(to: details.useSmoothCorners)
+//            imageView.layer.setRadiusTypeIfNeeded(to: details.useContinuousCorners)
 //            imageView.layer.cornerRadius = details.radius
         })
         

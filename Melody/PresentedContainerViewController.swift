@@ -26,22 +26,13 @@ class PresentedContainerViewController: UIViewController {
         }
     }
     @IBOutlet weak var rightBorderView: MELBorderView!
-    @IBOutlet weak var textField: UITextField!
     @IBOutlet weak var parentViewLeadingConstraint: NSLayoutConstraint!
     @IBOutlet weak var parentViewTrailingConstraint: NSLayoutConstraint!
     @IBOutlet weak var largeActivityIndicator: MELActivityIndicatorView!
     
-    enum ChildContext { case items, playlists, upNext, newPlaylist, settings, tips, queue, playlistDetails, info, songDetails, queueGuard, theme, gestures, playback, tabBar, background, filter, artwork, icon, fullPlayer, libraryRefresh, recents }
-    enum Value: String { case property = "P", selector = "S" }
+    enum ChildContext { case items, playlists, upNext, newPlaylist, settings, tips, queue, playlistDetails, info, songDetails, queueGuard, theme, gestures, playback, tabBar, background, filter, artwork, icon, fullPlayer, libraryRefresh, recents, properties }
     
     var context = ChildContext.items
-    var valueFor = Value.property {
-        
-        didSet {
-            
-            updateRightButton()
-        }
-    }
     var manager: QueueManager?
     @objc var query: MPMediaQuery?
     @objc var itemsToAdd = [MPMediaItem]()
@@ -230,6 +221,12 @@ class PresentedContainerViewController: UIViewController {
         
         return vc
     }()
+    @objc lazy var propertiesVC: PropertiesViewController = {
+        
+        let vc = presentedChilrenStoryboard.instantiateViewController(withIdentifier: String.init(describing: PropertiesViewController.self)) as! PropertiesViewController
+        
+        return vc
+    }()
     @objc var activeViewController: UIViewController? {
         
         didSet {
@@ -313,20 +310,10 @@ class PresentedContainerViewController: UIViewController {
                 case .libraryRefresh: return libraryRefreshVC
                 
                 case .recents: return recentsVC
+                
+                case .properties: return propertiesVC
             }
         }()
-        
-        if context == .info, Settings.isInDebugMode {
-        
-            textField.isHidden = true
-            textField.delegate = self
-            
-            let button = MELButton.init(frame: .init(x: 0, y: 0, width: 30, height: 30))
-            button.setImage(#imageLiteral(resourceName: "More13"), for: .normal)
-            button.addTarget(self, action: #selector(changeValue), for: .touchUpInside)
-            textField.rightView = button
-            textField.rightViewMode = .always
-        }
         
         notifier.addObserver(self, selector: #selector(unwindToStart), name: .endQueueModification, object: nil)
         notifier.addObserver(self, selector: #selector(updateStatusBar), name: .themeChanged, object: nil)
@@ -341,12 +328,6 @@ class PresentedContainerViewController: UIViewController {
         edgeGR.delegate = self
         view.addGestureRecognizer(edgeGR)
         LongPressManager.shared.gestureRecognisers.append(Weak.init(value: edgeGR))
-    }
-    
-    @objc func updateTextField() {
-        
-        textField.isHidden = !textField.isHidden
-        titleLabel.isHidden = !titleLabel.isHidden
     }
     
     @objc func updateStatusBar() {
@@ -379,18 +360,6 @@ class PresentedContainerViewController: UIViewController {
         }
         
         modalIndex = max(modalIndex - 1, 0)
-    }
-    
-    @objc func changeValue() {
-        
-        let oldValue = valueFor
-        
-        switch oldValue {
-            
-            case .property: valueFor = .selector
-                
-            case .selector: valueFor = .property
-        }
     }
     
     @objc func unwindToMain(_ gr: UILongPressGestureRecognizer) {
@@ -443,7 +412,7 @@ class PresentedContainerViewController: UIViewController {
         
         if updateConstraintsAndButtons {
             
-            topConstraint.constant = 12 + (index * 10)
+            topConstraint.constant = 6 + (index * 10)
         }
         
         let text: String = {
@@ -518,6 +487,8 @@ class PresentedContainerViewController: UIViewController {
                 case .libraryRefresh: return "Library Refresh"
                 
                 case .recents: return "Recents"
+                
+                case .properties: return title ?? ""
             }
         }()
         
@@ -548,8 +519,7 @@ class PresentedContainerViewController: UIViewController {
                     
                     if isInDebugMode {
                         
-                        rightButton.setImage(nil, for: .normal)
-                        updateRightButton()
+                        rightButton.setImage(#imageLiteral(resourceName: "More13"), for: .normal)
                         
                     } else {
                         
@@ -571,8 +541,7 @@ class PresentedContainerViewController: UIViewController {
                     
                     rightButton.setImage(#imageLiteral(resourceName: "Lightbulb"), for: .normal)
                 }
-            
-            case .tips, .playlists, .songDetails, .queueGuard, .theme, .gestures, .playback, .tabBar, .background, .artwork, .icon, .fullPlayer, .libraryRefresh, .recents, .items:
+        case .tips, .playlists, .songDetails, .queueGuard, .theme, .gestures, .playback, .tabBar, .background, .artwork, .icon, .fullPlayer, .libraryRefresh, .recents, .items, .properties:
                 
                 if updateConstraintsAndButtons {
                     
@@ -591,11 +560,6 @@ class PresentedContainerViewController: UIViewController {
                     rightButton.imageEdgeInsets.bottom = 1
                 }
         }
-    }
-    
-    func updateRightButton() {
-        
-        rightButton.setTitle(valueFor.rawValue, for: .normal)
     }
     
     private func removeInactiveViewController(inactiveViewController: UIViewController?) {
@@ -684,7 +648,7 @@ class PresentedContainerViewController: UIViewController {
             
                 guard isInDebugMode else { break }
             
-                updateTextField()
+                Transitioner.shared.showProperties(of: entity(), entityType: newOptionsVC.context.entity, title: titleLabel.text?.replacingOccurrences(of: "Info", with: "Properties") ?? "", from: self)
             
             case .playlistDetails:
             
@@ -693,7 +657,7 @@ class PresentedContainerViewController: UIViewController {
             
                 dismissVC()
             
-            case .songDetails, .tips, .queueGuard, .theme, .gestures, .playback, .tabBar, .background, .artwork, .icon, .fullPlayer, .libraryRefresh, .recents, .items: break
+            case .songDetails, .tips, .queueGuard, .theme, .gestures, .playback, .tabBar, .background, .artwork, .icon, .fullPlayer, .libraryRefresh, .recents, .items, .properties: break
             
             case /*.items,*/ .upNext:
                 
@@ -730,17 +694,7 @@ extension PresentedContainerViewController: UIGestureRecognizerDelegate {
     }
 }
 
-extension PresentedContainerViewController: UITextFieldDelegate {
-    
-    @objc func value() -> String? {
-        
-        switch valueFor {
-            
-            case .property: return entity().value(forProperty: textField.text!).debugDescription
-            
-            case .selector: return entity().responds(to: NSSelectorFromString(textField.text!)) ? String(describing: entity().value(forKey: textField.text!)!) : nil
-        }
-    }
+extension PresentedContainerViewController {
     
     @objc func entity() -> MPMediaEntity {
         
@@ -754,20 +708,5 @@ extension PresentedContainerViewController: UITextFieldDelegate {
             
             case .collection(kind: _, at: let index, within: let collections): return collections[index]
         }
-    }
-    
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        
-        let newBanner = Banner.init(title: value(), subtitle: nil, image: nil, backgroundColor: .black, didTapBlock: {
-        
-            if let link = URL.init(string: self.value()!) {
-                
-                UIApplication.shared.openURL(link)
-            }
-        })
-        newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
-        newBanner.show(duration: 0.7)
-        
-        return true
     }
 }

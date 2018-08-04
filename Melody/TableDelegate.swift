@@ -845,12 +845,12 @@ extension TableDelegate {
         
         header.button.tag = section
         header.button.addTarget(self, action: #selector(collectFromSection(_:)), for: .touchUpInside)
+        header.altButton.addTarget(self, action: #selector(viewSections), for: .touchUpInside)
         
-        let shouldHideRightButton = container!.tableView.numberOfSections < 2
+        let shouldHideRightButton = true
         
         header.rightButtonViewConstraint.constant = shouldHideRightButton ? 0 : 44
         header.rightButton.superview?.alpha = shouldHideRightButton ? 0 : 1
-        header.rightButton.addTarget(self, action: #selector(viewSections), for: .touchUpInside)
         
         return header
     }
@@ -994,7 +994,7 @@ extension TableDelegate: EntityCellDelegate {
         
         }(), count > 0, let vc: UIViewController = container.filterContainer ?? container, let actionable = vc as? SingleItemActionable else { return }
         
-        var actions = [SongAction.collect, .info(context: infoContext(from: indexPath, filtering: container.filterContainer != nil)), .queue(name: cell.nameLabel.text, query: query(at: indexPath)), .newPlaylist, .addTo].map({ actionable.singleItemAlertAction(for: $0, entity: .song, using: item, from: vc) })
+        var actions = [SongAction.collect, .info(context: infoContext(from: indexPath, filtering: container.filterContainer != nil)), .queue(name: cell.nameLabel.text, query: query(at: indexPath, filtering: container.filterContainer != nil)), .newPlaylist, .addTo].map({ actionable.singleItemAlertAction(for: $0, entity: .song, using: item, from: vc) })
         
         if let item = item as? MPMediaItem, item.existsInLibrary.inverted {
             

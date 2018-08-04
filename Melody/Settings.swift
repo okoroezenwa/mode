@@ -283,7 +283,7 @@ class Settings {
         
         #if targetEnvironment(simulator)
         
-        return true
+        return false
         
         #else
         

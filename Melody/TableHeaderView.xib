@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14101" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14295.6" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14086"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14270.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -74,7 +73,7 @@
                                     </userDefinedRuntimeAttributes>
                                 </label>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vZL-Z0-HOO">
-                                    <rect key="frame" x="0.0" y="0.0" width="132" height="44"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="282" height="44"/>
                                 </button>
                             </subviews>
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -82,9 +81,9 @@
                                 <constraint firstAttribute="bottom" secondItem="vZL-Z0-HOO" secondAttribute="bottom" id="9Es-L4-2du"/>
                                 <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="pd0-qL-KSC" secondAttribute="trailing" constant="10" id="9s9-LC-ORh"/>
                                 <constraint firstItem="vZL-Z0-HOO" firstAttribute="top" secondItem="G6s-Sf-cN2" secondAttribute="top" id="HOQ-Fh-XNF"/>
-                                <constraint firstItem="vZL-Z0-HOO" firstAttribute="trailing" secondItem="pd0-qL-KSC" secondAttribute="trailing" id="OUw-rS-ZMd"/>
                                 <constraint firstItem="vZL-Z0-HOO" firstAttribute="leading" secondItem="G6s-Sf-cN2" secondAttribute="leading" id="VNF-86-vD9"/>
                                 <constraint firstItem="pd0-qL-KSC" firstAttribute="leading" secondItem="G6s-Sf-cN2" secondAttribute="leading" constant="10" id="Vcr-WA-HBD"/>
+                                <constraint firstAttribute="trailing" secondItem="vZL-Z0-HOO" secondAttribute="trailing" id="ZKP-N4-6fA"/>
                                 <constraint firstAttribute="bottom" secondItem="pd0-qL-KSC" secondAttribute="bottom" priority="900" constant="4" id="hUp-fQ-Xkv"/>
                             </constraints>
                         </view>

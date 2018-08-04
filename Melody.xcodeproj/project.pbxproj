@@ -87,6 +87,7 @@
 		BE3BC1072025A627004B0FB1 /* ActionsButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3BC1062025A627004B0FB1 /* ActionsButton.swift */; };
 		BE3BF6BD1E7554B400667D4C /* TipsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3BF6BC1E7554B400667D4C /* TipsTableViewController.swift */; };
 		BE3F63211DCE2E71009173AB /* PlaylistCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3F63201DCE2E71009173AB /* PlaylistCollectionViewCell.swift */; };
+		BE43524C2101EEBA0027C02C /* SwiperTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE43524B2101EEBA0027C02C /* SwiperTableViewCell.swift */; };
 		BE47B9781D317B9500503E20 /* InteractionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE47B9771D317B9500503E20 /* InteractionController.swift */; };
 		BE494D301D2F1310007DE1F6 /* PlaylistItemsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE494D2F1D2F1310007DE1F6 /* PlaylistItemsViewController.swift */; };
 		BE49B0CF1EAA99AA000C3F7D /* PropertyTestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE49B0CE1EAA99AA000C3F7D /* PropertyTestViewController.swift */; };
@@ -138,6 +139,7 @@
 		BE7B424120DABD0800EB7CD5 /* SettingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7B424020DABD0800EB7CD5 /* SettingsTableViewCell.swift */; };
 		BE7C425F1E84499600974EF2 /* String + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7C425E1E84499600974EF2 /* String + Extensions.swift */; };
 		BE7C42611E846D3300974EF2 /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7C42601E846D3200974EF2 /* Queue.swift */; };
+		BE7D96DE2104784E00A0F5D4 /* PropertiesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7D96DD2104784E00A0F5D4 /* PropertiesViewController.swift */; };
 		BE7E73B720ADF7B2008A52B7 /* ActionsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7E73B620ADF7B2008A52B7 /* ActionsManager.swift */; };
 		BE8328651D8B4D38001F015E /* NewPlaylistViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8328641D8B4D38001F015E /* NewPlaylistViewController.swift */; };
 		BE89790E1E30C22B008634E6 /* NowPlaying.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE89790D1E30C22B008634E6 /* NowPlaying.swift */; };
@@ -382,6 +384,7 @@
 		BE3BC1062025A627004B0FB1 /* ActionsButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionsButton.swift; sourceTree = "<group>"; };
 		BE3BF6BC1E7554B400667D4C /* TipsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TipsTableViewController.swift; sourceTree = "<group>"; };
 		BE3F63201DCE2E71009173AB /* PlaylistCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaylistCollectionViewCell.swift; sourceTree = "<group>"; };
+		BE43524B2101EEBA0027C02C /* SwiperTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiperTableViewCell.swift; sourceTree = "<group>"; };
 		BE47B9771D317B9500503E20 /* InteractionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InteractionController.swift; sourceTree = "<group>"; };
 		BE494D2F1D2F1310007DE1F6 /* PlaylistItemsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaylistItemsViewController.swift; sourceTree = "<group>"; };
 		BE49B0CE1EAA99AA000C3F7D /* PropertyTestViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PropertyTestViewController.swift; sourceTree = "<group>"; };
@@ -434,6 +437,7 @@
 		BE7B424020DABD0800EB7CD5 /* SettingsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTableViewCell.swift; sourceTree = "<group>"; };
 		BE7C425E1E84499600974EF2 /* String + Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String + Extensions.swift"; sourceTree = "<group>"; };
 		BE7C42601E846D3200974EF2 /* Queue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Queue.swift; sourceTree = "<group>"; };
+		BE7D96DD2104784E00A0F5D4 /* PropertiesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertiesViewController.swift; sourceTree = "<group>"; };
 		BE7E73B620ADF7B2008A52B7 /* ActionsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionsManager.swift; sourceTree = "<group>"; };
 		BE8328641D8B4D38001F015E /* NewPlaylistViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewPlaylistViewController.swift; sourceTree = "<group>"; };
 		BE89790D1E30C22B008634E6 /* NowPlaying.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NowPlaying.swift; sourceTree = "<group>"; };
@@ -753,6 +757,7 @@
 				BEAEF61B1D5DB09D00156271 /* CollectorViewController.swift */,
 				BE63F5671D57C50200D03019 /* QueueViewController.swift */,
 				BE67095C1EB475B40066E515 /* InfoViewController.swift */,
+				BE7D96DD2104784E00A0F5D4 /* PropertiesViewController.swift */,
 				BE061E2D1F8BF04500371062 /* FilterViewController.swift */,
 				BE15DA341E8122D700E44CE2 /* Tips */,
 				BE15DA351E8122DE00E44CE2 /* Settings */,
@@ -857,6 +862,7 @@
 				BEBF0E7520461B2F001C29CC /* RecentSearchTableViewCell.swift */,
 				BEDC53AC1EBCECFD00566424 /* SongDetailsTableViewCell.swift */,
 				BE73B1E41D96D9C20059D084 /* SongTableViewCell.swift */,
+				BE43524B2101EEBA0027C02C /* SwiperTableViewCell.swift */,
 			);
 			name = "Table View Cells";
 			path = Melody;
@@ -1403,6 +1409,7 @@
 				BE04F0C31D8D6275002372F4 /* PresentedContainerViewController.swift in Sources */,
 				BE99B5361ED6CF130033B796 /* MELLayerView.swift in Sources */,
 				BE7A66941E6253120091A216 /* MELLabel.swift in Sources */,
+				BE43524C2101EEBA0027C02C /* SwiperTableViewCell.swift in Sources */,
 				BEC933D91F6D9B2400FB5984 /* SwipeAnimator.swift in Sources */,
 				BE53A9A61DD0D77000FB3073 /* TableHeaderView.swift in Sources */,
 				BEC933D71F6D9B1E00FB5984 /* SwipeActionsView.swift in Sources */,
@@ -1420,6 +1427,7 @@
 				BE3A5FAB1D81B01500F4F2F2 /* LibraryViewController.swift in Sources */,
 				BE2E7CD11E6238C900FD69C4 /* MELVisualEffectView.swift in Sources */,
 				BE0D84AB1D5FD27800A737FB /* Extensions.swift in Sources */,
+				BE7D96DE2104784E00A0F5D4 /* PropertiesViewController.swift in Sources */,
 				BEE614F91DAFC0B200E057DA /* Formatter.swift in Sources */,
 				BE14BB311EF3BF4E008BDA7B /* MELRefreshControl.swift in Sources */,
 				BE99D5481E2222E200D54E14 /* EntityItemsViewController.swift in Sources */,

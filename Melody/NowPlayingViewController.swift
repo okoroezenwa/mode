@@ -134,7 +134,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
     var viewHeirachy: UIImage?
     var activeItem: MPMediaItem? { return alternateItem ?? musicPlayer.nowPlayingItem }
     
-    var useSmoothCorners: Bool {
+    var useContinuousCorners: Bool {
         
         switch cornerRadius {
             
@@ -160,7 +160,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
             container?.deferToNowPlayingViewController = true
         }
         
-        artworkIntermediaryView.layer.setRadiusTypeIfNeeded(to: useSmoothCorners)
+        artworkIntermediaryView.layer.setRadiusTypeIfNeeded(to: useContinuousCorners)
         
         useAlternateAnimation = false
         shouldReturnToContainer = false
@@ -330,7 +330,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
                 
                 if notification.name == .cornerRadiusChanged {
                     
-                    weakSelf.artworkIntermediaryView.layer.setRadiusTypeIfNeeded(to: weakSelf.useSmoothCorners)
+                    weakSelf.artworkIntermediaryView.layer.setRadiusTypeIfNeeded(to: weakSelf.useContinuousCorners)
                 }
                 
                 weakSelf.updateArtworkImageView(changingArt: true, animated: true)
@@ -1018,6 +1018,11 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         
         modifyShuffleState(changingMusicPlayer: true)
         modifyQueueLabel()
+        
+        if #available(iOS 11.3, *) {
+        
+            UniversalMethods.performOnMainThread({ self.modifyQueueLabel() }, afterDelay: 1)
+        }
         
         if #available(iOS 10.3, *), !useSystemPlayer, let musicPlayer = musicPlayer as? MPMusicPlayerApplicationController {
             

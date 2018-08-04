@@ -8,4 +8,4 @@
 
 import UIKit
 
-typealias RadiusDetails = (radius: CGFloat, useSmoothCorners: Bool)
+typealias RadiusDetails = (radius: CGFloat, useContinuousCorners: Bool)

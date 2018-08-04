@@ -60,7 +60,7 @@ class MELSwitch: UIView {
         
         UIView.animate(withDuration: animated ? 0.7 : 0, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .allowUserInteraction, animations: {
             
-            self.mainSwitch.changeThemeColor(self.mainSwitch)
+            self.mainSwitch.changeThemeColor(animated)
             self.mainSwitch.layoutIfNeeded()
             
         }, completion: nil)
@@ -100,7 +100,7 @@ class Switch: UIView {
         
         didSet {
             
-            changeThemeColor(self)
+            changeThemeColor(false)
         }
     }
     
@@ -114,21 +114,28 @@ class Switch: UIView {
         
         innerView.isHidden = true
     
-        changeThemeColor(knob)
+        changeThemeColor(false)
         
         notifier.addObserver(self, selector: #selector(changeThemeColor), name: .themeChanged, object: nil)
     }
     
-    @objc func changeThemeColor(_ sender: Any) {
+    @objc func changeThemeColor(_ animated: Bool) {
         
-        animateBorderColor(sender is Switch)
+        if animated {
+            
+            animateBorderColor()
+            
+        } else {
+            
+            layer.borderColor = Themer.themeColour(alpha: isUserInteractionEnabled ? 1 : isOn ? 0 : 0.2).cgColor
+        }
         
         backgroundColor = isOn ? Themer.themeColour(alpha: isUserInteractionEnabled ? 1 : 0.2) : .clear
         
         knob.backgroundColor = Themer.themeColour(reversed: isOn, alpha: isUserInteractionEnabled ? 1 : 0.2)
     }
     
-    @objc func animateBorderColor(_ animated: Bool) {
+    @objc func animateBorderColor() {
 
         let fromValue = layer.borderColor
         layer.borderColor = Themer.themeColour(alpha: isUserInteractionEnabled ? 1 : isOn ? 0 : 0.2).cgColor
@@ -136,7 +143,7 @@ class Switch: UIView {
         let color = CABasicAnimation.init(keyPath: "borderColor")
         color.fromValue = fromValue
         color.toValue = Themer.themeColour(alpha: isUserInteractionEnabled ? 1 : isOn ? 0 : 0.2).cgColor
-        color.duration = animated ? 0.27 : 0
+        color.duration = 0.27
         color.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.linear)
         layer.add(color, forKey: "borderColor")
     }

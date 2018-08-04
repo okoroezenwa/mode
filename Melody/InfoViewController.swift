@@ -257,6 +257,13 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
             self.context = context
         }
         
+//        if case .song(location: _, at: let index, within: let songs) = context, let song = songs.value(at: index), song.title == "Non Believer" {
+//
+//            song.set(property: "playCountSinceSync", to: -2)
+//
+//            UniversalMethods.banner(withTitle: "Plays set").show(for: 0.5)
+//        }
+        
         if case .song = context {
             
             notifier.addObserver(self, selector: #selector(updateForGeneralChange), name: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer)

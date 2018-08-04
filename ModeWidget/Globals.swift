@@ -131,7 +131,7 @@ enum CornerRadius: Int {
             }
         }()
         
-        layer?.setRadiusTypeIfNeeded(to: details.useSmoothCorners)
+        layer?.setRadiusTypeIfNeeded(to: details.useContinuousCorners)
         layer?.cornerRadius = details.radius
     }
 }

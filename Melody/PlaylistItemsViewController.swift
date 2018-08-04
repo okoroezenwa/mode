@@ -829,14 +829,14 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
             
             let shuffle = UIAlertAction.init(title: .shuffle(.songs), style: .default, handler: { _ in
                 
-                musicPlayer.play(songs, startingFrom: nil, shuffleMode: .songs, from: self, withTitle: self.playlist?.name ??? "Untitled Playlist", alertTitle: .shuffle(.songs), queueGuardCriteria: false)
+                musicPlayer.play(songs, startingFrom: nil, shuffleMode: .songs, from: self, withTitle: self.playlist?.name ??? "Untitled Playlist", alertTitle: .shuffle(.songs))
             })
             
             array.append(shuffle)
             
             let shuffleAlbums = UIAlertAction.init(title: .shuffle(.albums), style: .default, handler: { _ in
                 
-                musicPlayer.play(songs.albumsShuffled, startingFrom: nil, from: self, withTitle: self.playlist?.name ??? "Untitled Playlist", alertTitle: .shuffle(.albums), queueGuardCriteria: false)
+                musicPlayer.play(songs.albumsShuffled, startingFrom: nil, from: self, withTitle: self.playlist?.name ??? "Untitled Playlist", alertTitle: .shuffle(.albums))
             })
             
             array.append(shuffleAlbums)

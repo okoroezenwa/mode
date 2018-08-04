@@ -68,15 +68,16 @@ class CollectionsViewController: UIViewController, InfoLoading, ArtistTransition
         
         self.collectionView = view.collectionView
         view.viewController = self
-        [view.header.button, view.header.altButton].forEach({ $0?.addTarget(self, action: #selector(backToStart), for: .touchUpInside) })
+        view.header.button.addTarget(self, action: #selector(backToStart), for: .touchUpInside)
+        view.header.altButton.addTarget(self.tableDelegate, action: #selector(tableDelegate.viewSections), for: .touchUpInside)
         
-        updateHeaderViewLabel(view)
-        updateHeaderViewButton(view)
-        
-        view.header.rightButton.setImage(#imageLiteral(resourceName: "More13"), for: .normal)
-        view.header.rightButton.contentEdgeInsets.bottom = 15
-        view.header.rightButton.contentEdgeInsets.right = 0
-        view.header.rightButton.addTarget(self, action: #selector(changeRecentsType), for: .touchUpInside)
+//        updateHeaderViewLabel(view)
+//        updateHeaderViewButton(view)
+//
+//        view.header.rightButton.setImage(#imageLiteral(resourceName: "More13"), for: .normal)
+//        view.header.rightButton.contentEdgeInsets.bottom = 15
+//        view.header.rightButton.contentEdgeInsets.right = 0
+//        view.header.rightButton.addTarget(self, action: #selector(changeRecentsType), for: .touchUpInside)
         
         return view
     }()
@@ -1203,7 +1204,7 @@ class CollectionsViewController: UIViewController, InfoLoading, ArtistTransition
             array.append(shuffleAlbums)
         }
         
-        present(UIAlertController.withTitle(nil, message: libraryVC?.titleButton.titleLabel?.text, style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
+        present(UIAlertController.withTitle(nil, message: libraryVC?.titleButton.titleLabel?.text?.lowercased(), style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
     }
     
     @objc func getCollection(inSection section: Int, row: Int, filtering: Bool = false) -> MPMediaItemCollection {

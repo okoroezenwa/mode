@@ -1,19 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14295.6" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina5_9" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14270.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
         <array key="MyriadPro-Light.otf">
             <string>MyriadPro-Light</string>
-        </array>
-        <array key="MyriadPro-Regular.otf">
-            <string>MyriadPro-Regular</string>
         </array>
     </customFonts>
     <scenes>
@@ -120,22 +117,11 @@
                                                             <rect key="frame" x="331" y="12" width="20" height="20"/>
                                                             <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                         </activityIndicatorView>
-                                                        <textField hidden="YES" opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="F92-HS-ruj" customClass="MELTextField" customModule="Mode" customModuleProvider="target">
-                                                            <rect key="frame" x="52" y="7" width="259" height="30"/>
-                                                            <nil key="textColor"/>
-                                                            <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="15"/>
-                                                            <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="go"/>
-                                                            <userDefinedRuntimeAttributes>
-                                                                <userDefinedRuntimeAttribute type="boolean" keyPath="bordered" value="YES"/>
-                                                            </userDefinedRuntimeAttributes>
-                                                        </textField>
                                                     </subviews>
                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                     <constraints>
                                                         <constraint firstItem="ocE-Yg-Hlm" firstAttribute="leading" secondItem="rSP-qP-tm4" secondAttribute="leading" constant="10" id="1QJ-w9-AoD"/>
                                                         <constraint firstItem="y7R-9t-1tT" firstAttribute="centerY" secondItem="7kP-HA-DyU" secondAttribute="centerY" id="2C2-n7-sUY"/>
-                                                        <constraint firstItem="F92-HS-ruj" firstAttribute="leading" secondItem="a5S-FY-eFj" secondAttribute="trailing" constant="8" id="4do-lt-Lvz"/>
-                                                        <constraint firstItem="rSP-qP-tm4" firstAttribute="leading" secondItem="F92-HS-ruj" secondAttribute="trailing" constant="8" id="7yc-Kp-gIR"/>
                                                         <constraint firstItem="ocE-Yg-Hlm" firstAttribute="bottom" secondItem="rSP-qP-tm4" secondAttribute="bottom" constant="-10" id="8Jt-ec-r26"/>
                                                         <constraint firstItem="t0h-LU-f6e" firstAttribute="bottom" secondItem="a5S-FY-eFj" secondAttribute="bottom" constant="-10" id="9lS-qN-dTe"/>
                                                         <constraint firstItem="ts5-i7-xxd" firstAttribute="top" secondItem="a5S-FY-eFj" secondAttribute="top" id="EW9-3p-gXb"/>
@@ -147,7 +133,6 @@
                                                         <constraint firstItem="ocE-Yg-Hlm" firstAttribute="trailing" secondItem="rSP-qP-tm4" secondAttribute="trailing" constant="-10" id="NRd-eZ-cy3"/>
                                                         <constraint firstItem="t0h-LU-f6e" firstAttribute="leading" secondItem="a5S-FY-eFj" secondAttribute="leading" constant="10" id="WBk-Zr-Gjs"/>
                                                         <constraint firstAttribute="trailing" secondItem="Ymt-Wm-2e6" secondAttribute="trailing" id="ac9-br-043"/>
-                                                        <constraint firstItem="F92-HS-ruj" firstAttribute="centerY" secondItem="a5S-FY-eFj" secondAttribute="centerY" id="dDD-qR-SkT"/>
                                                         <constraint firstItem="y7R-9t-1tT" firstAttribute="centerX" secondItem="7kP-HA-DyU" secondAttribute="centerX" id="eQ8-cY-odg"/>
                                                         <constraint firstItem="agQ-Ri-6PA" firstAttribute="centerY" secondItem="rSP-qP-tm4" secondAttribute="centerY" id="fYA-Ld-vYK"/>
                                                         <constraint firstItem="rSP-qP-tm4" firstAttribute="top" secondItem="a5S-FY-eFj" secondAttribute="top" id="fki-4C-Ci2"/>
@@ -215,7 +200,6 @@
                         <outlet property="parentViewTrailingConstraint" destination="jAc-jB-QSq" id="AJO-Bu-mR4"/>
                         <outlet property="rightBorderView" destination="ocE-Yg-Hlm" id="3kW-BZ-VbX"/>
                         <outlet property="rightButton" destination="rSP-qP-tm4" id="PqG-Mb-mMT"/>
-                        <outlet property="textField" destination="F92-HS-ruj" id="znH-cd-RG9"/>
                         <outlet property="titleLabel" destination="ts5-i7-xxd" id="kKF-68-MUJ"/>
                         <outlet property="topConstraint" destination="7MB-Pb-l1F" id="S4W-Kx-bap"/>
                         <segue destination="aze-Lj-L9L" kind="unwind" identifier="unwind" unwindAction="unwind:" id="n88-1i-mg7"/>

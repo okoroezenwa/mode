@@ -134,7 +134,7 @@ class TextViewController: UIViewController {
         
         let keyboardWillShow = notification.name == UIResponder.keyboardWillShowNotification
         
-        searchBarBottomConstraint.constant = keyboardWillShow && searchBar.isFirstResponder ? keyboardHeightAtEnd - 8 : 0
+        searchBarBottomConstraint.constant = keyboardWillShow && searchBar.isFirstResponder ? keyboardHeightAtEnd - 6 : 0
         
         UIView.animate(withDuration: 0.3, animations: { self.view.layoutIfNeeded() })
     }

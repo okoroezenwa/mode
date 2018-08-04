@@ -24,6 +24,7 @@ public extension String {
     static let repeatMode = "repeatMode"
     static let primarySizeSuffix = "primarySizeSuffix"
     static let secondarySizeSuffix = "secondarySizeSuffix"
+    static let modeURL = "modeapp://"
     
     static func shuffle(_ suffix: ShuffleSuffix = .none) -> String {
         
@@ -143,4 +144,11 @@ public extension String {
 public extension String {
     
     enum ShuffleSuffix { case none, songs, albums }
+    
+    enum URLAction: String {
+        
+        case nowPlayingInfo = "openNowPlayingInfo"
+        case nowPlaying = "openNowPlaying"
+        case queue = "openQueue"
+    }
 }

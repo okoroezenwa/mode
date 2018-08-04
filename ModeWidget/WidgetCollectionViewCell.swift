@@ -59,7 +59,7 @@ class WidgetCollectionViewCell: UICollectionViewCell {
             
             (CornerRadius(rawValue: sharedWidgetCornerRadius) ?? cornerRadius).updateCornerRadius(on: $0?.layer, using: artworkImageView.bounds.width, globalRadiusType: cornerRadius)
             
-//            let details: (radius: CGFloat, useSmoothCorners: Bool) = {
+//            let details: (radius: CGFloat, useContinuousCorners: Bool) = {
 //
 //                let cornerRadius = CornerRadius(rawValue: sharedCornerRadius) ?? .small
 //
@@ -71,7 +71,7 @@ class WidgetCollectionViewCell: UICollectionViewCell {
 //                }
 //            }()
 //
-//            $0?.layer.setRadiusTypeIfNeeded(to: details.useSmoothCorners)
+//            $0?.layer.setRadiusTypeIfNeeded(to: details.useContinuousCorners)
 //            $0?.layer.cornerRadius = details.radius
             
 //            $0?.layer.cornerRadius = {

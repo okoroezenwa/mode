@@ -622,6 +622,17 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         }
     }
     
+    @objc func viewSections() {
+        
+        guard let sectionVC = popoverStoryboard.instantiateViewController(withIdentifier: String.init(describing: SectionIndexViewController.self)) as? SectionIndexViewController, let sections = self.sectionIndexTitles(for: tableView), !sections.isEmpty else { return }
+        
+        sectionVC.array = sections.map({ SectionIndexViewController.IndexKind.text($0) })
+        sectionVC.container = self
+        sectionIndexViewController = sectionVC
+        
+        present(sectionVC, animated: true, completion: nil)
+    }
+    
     @objc func updateSections(_ gr: UIScreenEdgePanGestureRecognizer) {
         
         guard filtering else { return }
@@ -1165,13 +1176,14 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
         
         if filtering {
             
-            let view = tableView.sectionHeader
+            let header = tableView.sectionHeader
             
-            view?.attributor = self
-            view?.section = section
-            updateAttributedText(for: view, inSection: section)
+            header?.attributor = self
+            header?.section = section
+            updateAttributedText(for: header, inSection: section)
+            header?.altButton.addTarget(self, action: #selector(viewSections), for: .touchUpInside)
             
-            return view
+            return header
         }
         
         return nil

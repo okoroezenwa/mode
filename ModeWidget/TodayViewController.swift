@@ -163,11 +163,11 @@ class TodayViewController: UIViewController, NCWidgetProviding {
     
     @objc func open(_ sender: UIGestureRecognizer) {
         
-        if sender is UITapGestureRecognizer, let url = URL.init(string: "modeapp://") {
+        if sender is UITapGestureRecognizer, let url = URL.init(string: .modeURL) {
             
             extensionContext?.open(url, completionHandler: nil)
         
-        } else if let sender = sender as? UILongPressGestureRecognizer, sender.state == .began, let url = URL.init(string: "modeapp://openNowPlaying") {
+        } else if let sender = sender as? UILongPressGestureRecognizer, sender.state == .began, let url = URL.init(string: .modeURL + String.URLAction.nowPlaying.rawValue) {
             
             extensionContext?.open(url, completionHandler: nil)
         }
@@ -181,7 +181,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         
         (CornerRadius(rawValue: sharedWidgetCornerRadius) ?? cornerRadius).updateCornerRadius(on: artwork.layer, using: artwork.bounds.width, globalRadiusType: cornerRadius)
         
-//        let details: (radius: CGFloat, useSmoothCorners: Bool) = {
+//        let details: (radius: CGFloat, useContinuousCorners: Bool) = {
 //
 //            let cornerRadius = CornerRadius(rawValue: sharedCornerRadius) ?? .small
 //
@@ -193,7 +193,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
 //            }
 //        }()
 //
-//        artwork.layer.setRadiusTypeIfNeeded(to: details.useSmoothCorners)
+//        artwork.layer.setRadiusTypeIfNeeded(to: details.useContinuousCorners)
 //        artwork.layer.cornerRadius = details.radius
         
         guard updateShadow else { return }
@@ -203,7 +203,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
     
     @IBAction func openInfo() {
         
-        if let url = URL.init(string: "modeapp://openNowPlayingInfo") {
+        if let url = URL.init(string: .modeURL + String.URLAction.nowPlayingInfo.rawValue) {
             
             extensionContext?.open(url, completionHandler: nil)
         }
@@ -211,7 +211,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
     
     @IBAction func openQueue() {
         
-        if let url = URL.init(string: "modeapp://openQueue") {
+        if let url = URL.init(string: .modeURL + String.URLAction.queue.rawValue) {
             
             extensionContext?.open(url, completionHandler: nil)
         }
@@ -282,9 +282,9 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         
         label?.text = {
             
-            let title = musicPlayer.nowPlayingItem?.title ??? "Untitled Song"
-            let artist = musicPlayer.nowPlayingItem?.artist ??? "Unknown Artist"
-            let album = musicPlayer.nowPlayingItem?.albumTitle ??? "Untitled Album"
+            let title = musicPlayer.nowPlayingItem?.title ??? .untitledSong
+            let artist = musicPlayer.nowPlayingItem?.artist ??? .unknownArtist
+            let album = musicPlayer.nowPlayingItem?.albumTitle ??? .untitledAlbum
             
             return [title, artist, album].joined(separator: "  •  ")
         }()

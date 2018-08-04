@@ -245,7 +245,7 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         
         let keyboardWillShow = notification.name == UIResponder.keyboardWillShowNotification
         
-        bottomViewBottomConstraint.constant = keyboardWillShow ? keyboardHeightAtEnd - 8 : 0
+        bottomViewBottomConstraint.constant = keyboardWillShow ? keyboardHeightAtEnd - 6 : 0
         updateActivityViewConstraint(keyboardShowing: keyboardWillShow)
         
         UIView.animate(withDuration: duration, animations: { self.view.layoutIfNeeded() })

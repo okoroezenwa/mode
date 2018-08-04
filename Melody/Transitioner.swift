@@ -41,7 +41,7 @@ class Transitioner: NSObject {
                 
                 case .album, .song: return rep?.validAlbum
                     
-                case .artist: return rep?.validAlbumArtist
+                case .artist: return rep?.validArtist
                     
                 case .composer: return rep?.validComposer
                     
@@ -178,6 +178,18 @@ class Transitioner: NSObject {
         vc.newOptionsVC.filterContainer = (sender as? FilterContaining)?.filterContainer ?? sender as? FilterViewController
         
         sender.present(vc, animated: true, completion: completion)
+    }
+    
+    func showProperties(of entity: MPMediaEntity, entityType: Entity, title: String, from sender: UIViewController) {
+        
+        guard let vc = presentedStoryboard.instantiateViewController(withIdentifier: "presentedVC") as? PresentedContainerViewController else { return }
+        
+        vc.title = title
+        vc.context = .properties
+        vc.propertiesVC.entity = entity
+        vc.propertiesVC.entityType = entityType
+        
+        sender.present(vc, animated: true, completion: nil)
     }
     
     func addToQueue(from sender: UIViewController, kind: MPMusicPlayerController.QueueKind, context: QueueInsertViewController.Context, index: CGFloat = -1, title: String? = nil) {

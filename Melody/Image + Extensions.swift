@@ -93,8 +93,8 @@ extension UIImage {
         assert(context != nil)
         
         // correctly rotate image
-        context.translateBy(x: 0, y: size.height);
-        context.scaleBy(x: 1.0, y: -1.0);
+        context.translateBy(x: 0, y: size.height)
+        context.scaleBy(x: 1.0, y: -1.0)
         
         let rect = CGRect(x: 0.0, y: 0.0, width: size.width, height: size.height)
         

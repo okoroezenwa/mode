@@ -163,7 +163,6 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         }
         
         updateActiveViewController()
-        prepareTransientObservers()
         prepareLifetimeObservers()
         titleScrollView.scrollsToTop = false
         
@@ -300,23 +299,7 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
     
     @objc func updateCornersAndShadows() {
         
-        ([artworkImageView] as [UIImageView]).forEach({ imageView in
-            
-            (listsCornerRadius ?? cornerRadius).updateCornerRadius(on: imageView.layer, width: imageView.bounds.width, entityType: entityContainerType.entity, globalRadiusType: cornerRadius)
-            
-//            let details: RadiusDetails = {
-//
-//                switch cornerRadius {
-//
-//                    case .automatic: return ((listsCornerRadius ?? cornerRadius).radius(for: entityContainerType.entity, width: imageView.bounds.width), listsCornerRadius != .rounded)
-//
-//                    default: return (cornerRadius.radius(for: entityContainerType.entity, width: imageView.bounds.width), cornerRadius != .rounded)
-//                }
-//            }()
-//
-//            imageView.layer.setRadiusTypeIfNeeded(to: details.useSmoothCorners)
-//            imageView.layer.cornerRadius = details.radius
-        })
+        (listsCornerRadius ?? cornerRadius).updateCornerRadius(on: artworkImageView.layer, width: artworkImageView.bounds.width, entityType: entityContainerType.entity, globalRadiusType: cornerRadius)
         
         UniversalMethods.addShadow(to: artworkImageViewContainer, radius: 8, opacity: 0.35, shouldRasterise: true)
     }
@@ -343,6 +326,8 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
     override func viewDidAppear(_ animated: Bool) {
         
         super.viewDidAppear(animated)
+        
+        prepareTransientObservers()
         
         container?.currentModifier = self
         setCurrentOptions()

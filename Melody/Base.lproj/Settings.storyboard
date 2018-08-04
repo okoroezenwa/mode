@@ -702,7 +702,7 @@
                                                     </userDefinedRuntimeAttributes>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YoC-VB-ZOO" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="41" y="18.5" width="38.5" height="17"/>
+                                                    <rect key="frame" x="41" y="17" width="42" height="20"/>
                                                     <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -1340,7 +1340,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Automatic" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gpv-ey-3aW" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="18" y="17" width="256" height="20"/>
+                                                    <rect key="frame" x="18" y="18.5" width="256" height="17"/>
                                                     <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -1372,7 +1372,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="None" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OPu-OP-e8B" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="18" y="17" width="256" height="20"/>
+                                                    <rect key="frame" x="18" y="18.5" width="256" height="17"/>
                                                     <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -1404,7 +1404,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Slight" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ISs-CD-ZM6" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="18" y="17" width="256" height="20"/>
+                                                    <rect key="frame" x="18" y="18.5" width="256" height="17"/>
                                                     <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -1436,7 +1436,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Prominent" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gNS-yh-CLL" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="18" y="17" width="256" height="20"/>
+                                                    <rect key="frame" x="18" y="18.5" width="256" height="17"/>
                                                     <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -1468,7 +1468,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Full" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ioe-Sb-Yxq" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="18" y="17" width="256" height="20"/>
+                                                    <rect key="frame" x="18" y="18.5" width="256" height="17"/>
                                                     <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -1504,7 +1504,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Lists" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TgM-h8-1fm" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="18" y="17" width="196.5" height="20"/>
+                                                    <rect key="frame" x="18" y="18.5" width="202" height="17"/>
                                                     <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -1520,7 +1520,7 @@
                                                     </userDefinedRuntimeAttributes>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" text="By Type" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pX5-F4-SyJ" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="224.5" y="18.5" width="53.5" height="17.5"/>
+                                                    <rect key="frame" x="230" y="19.5" width="48" height="15"/>
                                                     <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="15"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -1549,7 +1549,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Widget" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GYY-kF-k8W" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="18" y="17" width="211.5" height="20"/>
+                                                    <rect key="frame" x="18" y="18.5" width="213.5" height="17"/>
                                                     <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -1565,7 +1565,7 @@
                                                     </userDefinedRuntimeAttributes>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" text="Slight" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kQ9-2d-gl8" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="239.5" y="18.5" width="38.5" height="17.5"/>
+                                                    <rect key="frame" x="241.5" y="19.5" width="36.5" height="15"/>
                                                     <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="15"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -1594,7 +1594,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Info View" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NcV-Kf-5MN" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="18" y="17" width="196.5" height="20"/>
+                                                    <rect key="frame" x="18" y="18.5" width="202" height="17"/>
                                                     <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -1610,7 +1610,7 @@
                                                     </userDefinedRuntimeAttributes>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" text="By Type" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LMy-Mr-ho3" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="224.5" y="18.5" width="53.5" height="17.5"/>
+                                                    <rect key="frame" x="230" y="19.5" width="48" height="15"/>
                                                     <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="15"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -1639,7 +1639,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Mini Player" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HEP-cE-U9C" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="18" y="17" width="214" height="20"/>
+                                                    <rect key="frame" x="18" y="18.5" width="216" height="17"/>
                                                     <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -1655,7 +1655,7 @@
                                                     </userDefinedRuntimeAttributes>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" text="None" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NzG-wf-Ygn" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="242" y="18.5" width="36" height="17.5"/>
+                                                    <rect key="frame" x="244" y="19.5" width="34" height="15"/>
                                                     <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="15"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -1684,7 +1684,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Compact Player" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="n8b-LH-RXU" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="18" y="17" width="226" height="20"/>
+                                                    <rect key="frame" x="18" y="18.5" width="227.5" height="17"/>
                                                     <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -1700,7 +1700,7 @@
                                                     </userDefinedRuntimeAttributes>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" text="Full" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HCu-cj-bfV" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="254" y="18.5" width="24" height="17.5"/>
+                                                    <rect key="frame" x="255.5" y="19.5" width="22.5" height="15"/>
                                                     <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="15"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -1729,7 +1729,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Fullscreen Player" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pvo-Mc-p2K" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="18" y="17" width="211.5" height="20"/>
+                                                    <rect key="frame" x="18" y="18.5" width="213.5" height="17"/>
                                                     <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -1745,7 +1745,7 @@
                                                     </userDefinedRuntimeAttributes>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" text="Slight" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aa3-3z-G8a" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="239.5" y="18.5" width="38.5" height="17.5"/>
+                                                    <rect key="frame" x="241.5" y="19.5" width="36.5" height="15"/>
                                                     <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="15"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -1885,339 +1885,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="750"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                        <sections>
-                            <tableViewSection headerTitle="show..." id="8uk-UG-EiL">
-                                <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="CKq-eT-GSI">
-                                        <rect key="frame" x="0.0" y="55.5" width="320" height="54"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="CKq-eT-GSI" id="WU2-w7-kI9">
-                                            <rect key="frame" x="0.0" y="0.0" width="320" height="54"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Songs" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zKf-xY-IQc" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="18" y="18.5" width="238" height="17"/>
-                                                    <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gag-l9-o54" customClass="MELSwitch" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="256" y="0.0" width="64" height="54"/>
-                                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="64" placeholder="YES" id="bHa-id-4iu"/>
-                                                    </constraints>
-                                                </view>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstAttribute="bottom" secondItem="gag-l9-o54" secondAttribute="bottom" id="Nrb-12-1zi"/>
-                                                <constraint firstItem="gag-l9-o54" firstAttribute="leading" secondItem="zKf-xY-IQc" secondAttribute="trailing" id="WIC-Pb-Emo"/>
-                                                <constraint firstItem="zKf-xY-IQc" firstAttribute="centerY" secondItem="WU2-w7-kI9" secondAttribute="centerY" id="hua-zM-NVp"/>
-                                                <constraint firstItem="zKf-xY-IQc" firstAttribute="leading" secondItem="WU2-w7-kI9" secondAttribute="leadingMargin" constant="2" id="pt2-y9-uAv"/>
-                                                <constraint firstAttribute="trailing" secondItem="gag-l9-o54" secondAttribute="trailing" id="yKo-Ep-GdA"/>
-                                                <constraint firstItem="gag-l9-o54" firstAttribute="top" secondItem="WU2-w7-kI9" secondAttribute="top" id="zmC-Vb-dcu"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                    </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="erd-cp-jAQ">
-                                        <rect key="frame" x="0.0" y="109.5" width="320" height="54"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="erd-cp-jAQ" id="JFe-Ae-XBk">
-                                            <rect key="frame" x="0.0" y="0.0" width="320" height="54"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Artists" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fsh-rV-Xaj" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="18" y="18.5" width="238" height="17"/>
-                                                    <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iHN-zO-RMb" customClass="MELSwitch" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="256" y="0.0" width="64" height="54"/>
-                                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="64" placeholder="YES" id="u9C-nB-54E"/>
-                                                    </constraints>
-                                                </view>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstItem="iHN-zO-RMb" firstAttribute="leading" secondItem="fsh-rV-Xaj" secondAttribute="trailing" id="DFa-Da-sNh"/>
-                                                <constraint firstAttribute="bottom" secondItem="iHN-zO-RMb" secondAttribute="bottom" id="HDE-bu-lzb"/>
-                                                <constraint firstItem="iHN-zO-RMb" firstAttribute="top" secondItem="JFe-Ae-XBk" secondAttribute="top" id="JuX-1p-azH"/>
-                                                <constraint firstAttribute="trailing" secondItem="iHN-zO-RMb" secondAttribute="trailing" id="ZWD-gb-7ZT"/>
-                                                <constraint firstItem="fsh-rV-Xaj" firstAttribute="centerY" secondItem="JFe-Ae-XBk" secondAttribute="centerY" id="prr-oN-dH2"/>
-                                                <constraint firstItem="fsh-rV-Xaj" firstAttribute="leading" secondItem="JFe-Ae-XBk" secondAttribute="leadingMargin" constant="2" id="ukG-56-YzQ"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                    </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="lBR-Cw-g98">
-                                        <rect key="frame" x="0.0" y="163.5" width="320" height="54"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="lBR-Cw-g98" id="TT2-cb-it4">
-                                            <rect key="frame" x="0.0" y="0.0" width="320" height="54"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Genres" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JkI-P2-OtM" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="18" y="18.5" width="238" height="17"/>
-                                                    <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bhy-hN-Eq2" customClass="MELSwitch" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="256" y="0.0" width="64" height="54"/>
-                                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="64" placeholder="YES" id="zIT-XK-v97"/>
-                                                    </constraints>
-                                                </view>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstItem="bhy-hN-Eq2" firstAttribute="leading" secondItem="JkI-P2-OtM" secondAttribute="trailing" id="5Tr-F9-EIR"/>
-                                                <constraint firstAttribute="trailing" secondItem="bhy-hN-Eq2" secondAttribute="trailing" id="6qq-4y-PoI"/>
-                                                <constraint firstItem="bhy-hN-Eq2" firstAttribute="top" secondItem="TT2-cb-it4" secondAttribute="top" id="TdP-JV-7cT"/>
-                                                <constraint firstAttribute="bottom" secondItem="bhy-hN-Eq2" secondAttribute="bottom" id="TkS-n5-LeT"/>
-                                                <constraint firstItem="JkI-P2-OtM" firstAttribute="leading" secondItem="TT2-cb-it4" secondAttribute="leadingMargin" constant="2" id="jiR-RV-498"/>
-                                                <constraint firstItem="JkI-P2-OtM" firstAttribute="centerY" secondItem="TT2-cb-it4" secondAttribute="centerY" id="sgQ-Dd-z1A"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                    </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="ija-wm-nc3">
-                                        <rect key="frame" x="0.0" y="217.5" width="320" height="54"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ija-wm-nc3" id="QID-55-MQi">
-                                            <rect key="frame" x="0.0" y="0.0" width="320" height="54"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Albums" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ado-wf-elj" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="18" y="18.5" width="238" height="17"/>
-                                                    <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eLz-uq-7D6" customClass="MELSwitch" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="256" y="0.0" width="64" height="54"/>
-                                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="64" placeholder="YES" id="FEG-uT-Kr2"/>
-                                                    </constraints>
-                                                </view>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstItem="eLz-uq-7D6" firstAttribute="leading" secondItem="ado-wf-elj" secondAttribute="trailing" id="Kia-Mh-5UR"/>
-                                                <constraint firstAttribute="bottom" secondItem="eLz-uq-7D6" secondAttribute="bottom" id="X30-Sy-80E"/>
-                                                <constraint firstAttribute="trailing" secondItem="eLz-uq-7D6" secondAttribute="trailing" id="bgO-2L-9cm"/>
-                                                <constraint firstItem="ado-wf-elj" firstAttribute="leading" secondItem="QID-55-MQi" secondAttribute="leadingMargin" constant="2" id="euA-PI-cck"/>
-                                                <constraint firstItem="ado-wf-elj" firstAttribute="centerY" secondItem="QID-55-MQi" secondAttribute="centerY" id="kFu-7i-RIY"/>
-                                                <constraint firstItem="eLz-uq-7D6" firstAttribute="top" secondItem="QID-55-MQi" secondAttribute="top" id="rP4-34-Pyz"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                    </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="OV3-gm-AAV">
-                                        <rect key="frame" x="0.0" y="271.5" width="320" height="54"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="OV3-gm-AAV" id="EsD-3u-SOL">
-                                            <rect key="frame" x="0.0" y="0.0" width="320" height="54"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Playlists" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pgl-Ic-Dgq" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="18" y="18.5" width="238" height="17"/>
-                                                    <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0Sh-Z7-aP7" customClass="MELSwitch" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="256" y="0.0" width="64" height="54"/>
-                                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="64" placeholder="YES" id="OSj-zH-0fp"/>
-                                                    </constraints>
-                                                </view>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstItem="Pgl-Ic-Dgq" firstAttribute="leading" secondItem="EsD-3u-SOL" secondAttribute="leadingMargin" constant="2" id="35s-mJ-Mdm"/>
-                                                <constraint firstItem="0Sh-Z7-aP7" firstAttribute="top" secondItem="EsD-3u-SOL" secondAttribute="top" id="806-yW-YEC"/>
-                                                <constraint firstAttribute="trailing" secondItem="0Sh-Z7-aP7" secondAttribute="trailing" id="Ika-T2-giU"/>
-                                                <constraint firstItem="0Sh-Z7-aP7" firstAttribute="leading" secondItem="Pgl-Ic-Dgq" secondAttribute="trailing" id="ViD-3q-HUw"/>
-                                                <constraint firstAttribute="bottom" secondItem="0Sh-Z7-aP7" secondAttribute="bottom" id="oXn-4k-uhx"/>
-                                                <constraint firstItem="Pgl-Ic-Dgq" firstAttribute="centerY" secondItem="EsD-3u-SOL" secondAttribute="centerY" id="qsz-Q2-IDI"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                    </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="xXJ-tl-biJ">
-                                        <rect key="frame" x="0.0" y="325.5" width="320" height="54"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="xXJ-tl-biJ" id="vL2-Ax-W0k">
-                                            <rect key="frame" x="0.0" y="0.0" width="320" height="54"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Composers" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7MP-v6-Km5" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="18" y="18.5" width="238" height="17"/>
-                                                    <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Qec-dH-36H" customClass="MELSwitch" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="256" y="0.0" width="64" height="54"/>
-                                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="64" placeholder="YES" id="duU-YS-Zf4"/>
-                                                    </constraints>
-                                                </view>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstAttribute="bottom" secondItem="Qec-dH-36H" secondAttribute="bottom" id="2tl-eL-2az"/>
-                                                <constraint firstItem="7MP-v6-Km5" firstAttribute="centerY" secondItem="vL2-Ax-W0k" secondAttribute="centerY" id="AvL-6Z-dD1"/>
-                                                <constraint firstAttribute="trailing" secondItem="Qec-dH-36H" secondAttribute="trailing" id="Izj-uW-tgo"/>
-                                                <constraint firstItem="7MP-v6-Km5" firstAttribute="leading" secondItem="vL2-Ax-W0k" secondAttribute="leadingMargin" constant="2" id="Lx1-AT-ter"/>
-                                                <constraint firstItem="Qec-dH-36H" firstAttribute="top" secondItem="vL2-Ax-W0k" secondAttribute="top" id="Omr-Hx-yyT"/>
-                                                <constraint firstItem="Qec-dH-36H" firstAttribute="leading" secondItem="7MP-v6-Km5" secondAttribute="trailing" id="W2E-oR-vRZ"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                    </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="dnj-4F-K1w">
-                                        <rect key="frame" x="0.0" y="379.5" width="320" height="54"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="dnj-4F-K1w" id="ZAN-k9-eKs">
-                                            <rect key="frame" x="0.0" y="0.0" width="320" height="54"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Compilations" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="V34-NU-bu8" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="18" y="18.5" width="238" height="17"/>
-                                                    <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0Hp-0W-uka" customClass="MELSwitch" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="256" y="0.0" width="64" height="54"/>
-                                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="64" placeholder="YES" id="fIj-Jv-NHF"/>
-                                                    </constraints>
-                                                </view>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstAttribute="bottom" secondItem="0Hp-0W-uka" secondAttribute="bottom" id="11j-jO-LWP"/>
-                                                <constraint firstItem="0Hp-0W-uka" firstAttribute="top" secondItem="ZAN-k9-eKs" secondAttribute="top" id="5er-rh-sKg"/>
-                                                <constraint firstItem="V34-NU-bu8" firstAttribute="centerY" secondItem="ZAN-k9-eKs" secondAttribute="centerY" id="I2K-6A-5cG"/>
-                                                <constraint firstAttribute="trailing" secondItem="0Hp-0W-uka" secondAttribute="trailing" id="Ncl-S5-eRa"/>
-                                                <constraint firstItem="0Hp-0W-uka" firstAttribute="leading" secondItem="V34-NU-bu8" secondAttribute="trailing" id="RZK-HI-g2k"/>
-                                                <constraint firstItem="V34-NU-bu8" firstAttribute="leading" secondItem="ZAN-k9-eKs" secondAttribute="leadingMargin" constant="2" id="SwA-ig-KOF"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                    </tableViewCell>
-                                </cells>
-                            </tableViewSection>
-                            <tableViewSection headerTitle="use recently updated for..." id="yTh-LP-Ly6">
-                                <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="KRJ-VY-Bh6">
-                                        <rect key="frame" x="0.0" y="489.5" width="320" height="54"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KRJ-VY-Bh6" id="50n-8O-ghH">
-                                            <rect key="frame" x="0.0" y="0.0" width="320" height="54"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="All Playlists" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qXQ-vQ-oU8" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="18" y="18.5" width="238" height="17"/>
-                                                    <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ojc-s5-4AQ" customClass="MELSwitch" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="256" y="0.0" width="64" height="54"/>
-                                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="64" placeholder="YES" id="hi2-J3-68g"/>
-                                                    </constraints>
-                                                </view>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstItem="qXQ-vQ-oU8" firstAttribute="leading" secondItem="50n-8O-ghH" secondAttribute="leadingMargin" constant="2" id="8Z8-Dz-h9R"/>
-                                                <constraint firstItem="Ojc-s5-4AQ" firstAttribute="top" secondItem="50n-8O-ghH" secondAttribute="top" id="CNB-5d-cKx"/>
-                                                <constraint firstAttribute="trailing" secondItem="Ojc-s5-4AQ" secondAttribute="trailing" id="ajF-xo-1Uw"/>
-                                                <constraint firstAttribute="bottom" secondItem="Ojc-s5-4AQ" secondAttribute="bottom" id="fLe-9k-sbz"/>
-                                                <constraint firstItem="Ojc-s5-4AQ" firstAttribute="leading" secondItem="qXQ-vQ-oU8" secondAttribute="trailing" id="hJA-Wy-QRC"/>
-                                                <constraint firstItem="qXQ-vQ-oU8" firstAttribute="centerY" secondItem="50n-8O-ghH" secondAttribute="centerY" id="oqL-5S-U2I"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                    </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="2k6-Sa-Aq1">
-                                        <rect key="frame" x="0.0" y="543.5" width="320" height="54"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="2k6-Sa-Aq1" id="zOQ-HD-Oiw">
-                                            <rect key="frame" x="0.0" y="0.0" width="320" height="54"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="My Playlists" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lKr-3X-oc7" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="18" y="18.5" width="238" height="17"/>
-                                                    <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="B5d-mh-40p" customClass="MELSwitch" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="256" y="0.0" width="64" height="54"/>
-                                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="64" placeholder="YES" id="Qfc-0c-3VA"/>
-                                                    </constraints>
-                                                </view>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstItem="lKr-3X-oc7" firstAttribute="centerY" secondItem="zOQ-HD-Oiw" secondAttribute="centerY" id="7Rb-i2-JOx"/>
-                                                <constraint firstItem="B5d-mh-40p" firstAttribute="leading" secondItem="lKr-3X-oc7" secondAttribute="trailing" id="A10-Vn-yZi"/>
-                                                <constraint firstItem="B5d-mh-40p" firstAttribute="top" secondItem="zOQ-HD-Oiw" secondAttribute="top" id="AHQ-nX-m4G"/>
-                                                <constraint firstItem="lKr-3X-oc7" firstAttribute="leading" secondItem="zOQ-HD-Oiw" secondAttribute="leadingMargin" constant="2" id="Aia-sn-NSw"/>
-                                                <constraint firstAttribute="trailing" secondItem="B5d-mh-40p" secondAttribute="trailing" id="QTu-QK-nR9"/>
-                                                <constraint firstAttribute="bottom" secondItem="B5d-mh-40p" secondAttribute="bottom" id="mlR-tl-8I0"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                    </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="50T-uw-p9B">
-                                        <rect key="frame" x="0.0" y="597.5" width="320" height="54"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="50T-uw-p9B" id="pa8-Hq-hQF">
-                                            <rect key="frame" x="0.0" y="0.0" width="320" height="54"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Apple Music Playlists" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="z8z-Pt-eon" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="18" y="18.5" width="238" height="17"/>
-                                                    <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xs0-wA-eU6" customClass="MELSwitch" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="256" y="0.0" width="64" height="54"/>
-                                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="64" placeholder="YES" id="gk8-nh-tkm"/>
-                                                    </constraints>
-                                                </view>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstAttribute="bottom" secondItem="xs0-wA-eU6" secondAttribute="bottom" id="0cD-97-gqB"/>
-                                                <constraint firstItem="z8z-Pt-eon" firstAttribute="leading" secondItem="pa8-Hq-hQF" secondAttribute="leadingMargin" constant="2" id="U8B-zB-ZQb"/>
-                                                <constraint firstItem="z8z-Pt-eon" firstAttribute="centerY" secondItem="pa8-Hq-hQF" secondAttribute="centerY" id="aC5-dw-6WT"/>
-                                                <constraint firstItem="xs0-wA-eU6" firstAttribute="leading" secondItem="z8z-Pt-eon" secondAttribute="trailing" id="iSG-JH-noS"/>
-                                                <constraint firstAttribute="trailing" secondItem="xs0-wA-eU6" secondAttribute="trailing" id="juS-4e-mTf"/>
-                                                <constraint firstItem="xs0-wA-eU6" firstAttribute="top" secondItem="pa8-Hq-hQF" secondAttribute="top" id="kzN-VJ-BcJ"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                    </tableViewCell>
-                                </cells>
-                            </tableViewSection>
-                        </sections>
+                        <sections/>
                         <userDefinedRuntimeAttributes>
                             <userDefinedRuntimeAttribute type="boolean" keyPath="header" value="YES"/>
                             <userDefinedRuntimeAttribute type="boolean" keyPath="footer" value="YES"/>
+                            <userDefinedRuntimeAttribute type="boolean" keyPath="settings" value="YES"/>
                         </userDefinedRuntimeAttributes>
                         <connections>
                             <outlet property="dataSource" destination="Ecp-t4-sRW" id="4l1-BI-v1v"/>
@@ -2225,18 +1897,6 @@
                         </connections>
                     </tableView>
                     <size key="freeformSize" width="320" height="750"/>
-                    <connections>
-                        <outlet property="albumsSwitch" destination="eLz-uq-7D6" id="qze-eD-UK7"/>
-                        <outlet property="allSwitch" destination="Ojc-s5-4AQ" id="JZe-GG-6mx"/>
-                        <outlet property="appleMusicSwitch" destination="xs0-wA-eU6" id="rNh-U6-0LU"/>
-                        <outlet property="artistsSwitch" destination="iHN-zO-RMb" id="Omj-kM-o0l"/>
-                        <outlet property="compilationsSwitch" destination="0Hp-0W-uka" id="vGb-w5-lJx"/>
-                        <outlet property="composersSwitch" destination="Qec-dH-36H" id="i8f-IZ-f7U"/>
-                        <outlet property="genresSwitch" destination="bhy-hN-Eq2" id="DOL-oK-dIm"/>
-                        <outlet property="mineSwitch" destination="B5d-mh-40p" id="ahh-BE-Zkc"/>
-                        <outlet property="playlistsSwitch" destination="0Sh-Z7-aP7" id="yEZ-pZ-oD7"/>
-                        <outlet property="songsSwitch" destination="gag-l9-o54" id="73y-Ap-2EK"/>
-                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="w5F-D2-e5r" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

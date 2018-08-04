@@ -27,7 +27,7 @@ extension SongActionable {
         
         var selection: [UIAlertAction] {
             
-            if sender is UIButton, let container = self as? EntityContainer {
+            if let container = self as? EntityContainer, (sender is UIButton || (sender is UILongPressGestureRecognizer && container.tableView.isEditing)) {
                 
                 return [UIAlertAction.init(title: "End Editing", style: .default, handler: { [weak self] action in
                 
@@ -282,7 +282,7 @@ class SongActionManager: NSObject {
             
             if let collectionActionable = actionable as? CollectionActionable {
                 
-                guard collectionActionable.collectionKind != .playlist else { return }
+//                guard collectionActionable.collectionKind != .playlist else { return }
                 
                 if collectionActionable.actionableSongs.isEmpty || collectionActionable.actionableOperation?.isExecuting == true {
                     

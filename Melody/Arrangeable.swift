@@ -334,6 +334,7 @@ extension Arrangeable {
         return descriptors
     }
     
+    /// Sort descriptors for each sort category.
     var sortDescriptors: [NSSortDescriptor] {
         
         get {
@@ -405,15 +406,25 @@ extension Arrangeable {
         }
     }
     
-    func getSectionDetails<T: Comparable>(from array: [T], withOrderedArray ordered: [T], sectionTitles: [String], indexTitles: [String]) -> [SortSectionDetails] {
+    /**
+     
+     Generates section titles and indices from a sorted array of songs or collections.
+     
+     - Parameters:
+        - items: the sorted entities to generate sections from.
+        - mappedArray: an array generated from the **items** array which contains all section titles. This array is used to generate the item count per section.
+        - sectionTitles: section titles to use.
+        - indexTitles: index titles to use for the section index tableView property.
+     */
+    func getSectionDetails<T: Comparable>(from items: [T], withOrderedArray mappedArray: [T], sectionTitles: [String], indexTitles: [String]) -> [SortSectionDetails] {
         
         var details = [SortSectionDetails]()
         
         // for each item (array) in the unique items array
-        for thing in ordered.enumerated() {
+        for thing in mappedArray.enumerated() {
             
             // count for each array within + starting point
-            let count = array.filter({ $0 == thing.element }).count
+            let count = items.filter({ $0 == thing.element }).count
             let startingPoint = thing.offset == 0 ? 0 : details[thing.offset - 1].count + details[thing.offset - 1].startingPoint
             
             details.append(SortSectionDetails(title: sectionTitles[thing.offset], count: count, startingPoint: startingPoint, indexTitle: indexTitles[thing.offset]))

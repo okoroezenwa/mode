@@ -1633,9 +1633,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             header?.label.text = "now playing"
         }
         
-        header?.rightButtonViewConstraint.constant = 44
-        header?.rightButton.superview?.alpha = 1
-        header?.rightButton.addTarget(self, action: #selector(viewSections), for: .touchUpInside)
+        header?.altButton.addTarget(self, action: #selector(viewSections), for: .touchUpInside)
         
         return header
     }

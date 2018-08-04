@@ -9,154 +9,34 @@
 import UIKit
 
 class RecentsTableViewController: UITableViewController {
-
-    @IBOutlet var songsSwitch: MELSwitch! {
+    
+    var sections: SectionDictionary = [
         
-        didSet {
-            
-            songsSwitch.action = { [weak self] in
-                
-                guard let weakSelf = self else { return }
-                
-                weakSelf.toggleSongs()
-            }
-        }
-    }
-    @IBOutlet var artistsSwitch: MELSwitch! {
+        0: (nil, nil),
+        1: ("recently updated", "Selected playlists will instead be sorted by recently updated over recently added.")
+    ]
+    
+    lazy var settings: SettingsDictionary = [
         
-        didSet {
-            
-            artistsSwitch.action = { [weak self] in
-                
-                guard let weakSelf = self else { return }
-                
-                weakSelf.toggleArtists()
-            }
-        }
-    }
-    @IBOutlet var genresSwitch: MELSwitch! {
-        
-        didSet {
-            
-            genresSwitch.action = { [weak self] in
-                
-                guard let weakSelf = self else { return }
-                
-                weakSelf.toggleGenres()
-            }
-        }
-    }
-    @IBOutlet var albumsSwitch: MELSwitch! {
-        
-        didSet {
-            
-            albumsSwitch.action = { [weak self] in
-                
-                guard let weakSelf = self else { return }
-                
-                weakSelf.toggleAlbums()
-            }
-        }
-    }
-    @IBOutlet var playlistsSwitch: MELSwitch! {
-        
-        didSet {
-            
-            playlistsSwitch.action = { [weak self] in
-                
-                guard let weakSelf = self else { return }
-                
-                weakSelf.togglePlaylists()
-            }
-        }
-    }
-    @IBOutlet var composersSwitch: MELSwitch! {
-        
-        didSet {
-            
-            composersSwitch.action = { [weak self] in
-                
-                guard let weakSelf = self else { return }
-                
-                weakSelf.toggleComposers()
-            }
-        }
-    }
-    @IBOutlet var compilationsSwitch: MELSwitch! {
-        
-        didSet {
-            
-            compilationsSwitch.action = { [weak self] in
-                
-                guard let weakSelf = self else { return }
-                
-                weakSelf.toggleCompilations()
-            }
-        }
-    }
-    @IBOutlet var allSwitch: MELSwitch! {
-        
-        didSet {
-            
-            allSwitch.action = { [weak self] in
-                
-                guard let weakSelf = self else { return }
-                
-                weakSelf.toggleRecentlyUpdated(with: .all)
-            }
-        }
-    }
-    @IBOutlet var mineSwitch: MELSwitch! {
-        
-        didSet {
-            
-            mineSwitch.action = { [weak self] in
-                
-                guard let weakSelf = self else { return }
-                
-                weakSelf.toggleRecentlyUpdated(with: .user)
-            }
-        }
-    }
-    @IBOutlet var appleMusicSwitch: MELSwitch! {
-        
-        didSet {
-            
-            appleMusicSwitch.action = { [weak self] in
-                
-                guard let weakSelf = self else { return }
-                
-                weakSelf.toggleRecentlyUpdated(with: .appleMusic)
-            }
-        }
-    }
+        .init(0, 0): .init(title: "Songs", accessoryType: .onOff(isOn: { showRecentSongs }, action: { [weak self] in self?.toggleSongs() })),
+        .init(0, 1): .init(title: "Artists", accessoryType: .onOff(isOn: { showRecentArtists }, action: { [weak self] in self?.toggleArtists() })),
+        .init(0, 2): .init(title: "Genres", accessoryType: .onOff(isOn: { showRecentGenres }, action: { [weak self] in self?.toggleGenres() })),
+        .init(0, 3): .init(title: "Albums", accessoryType: .onOff(isOn: { showRecentAlbums }, action: { [weak self] in self?.toggleAlbums() })),
+        .init(0, 4): .init(title: "Playlists", accessoryType: .onOff(isOn: { showRecentPlaylists }, action: { [weak self] in self?.togglePlaylists() })),
+        .init(0, 5): .init(title: "Composers", accessoryType: .onOff(isOn: { showRecentComposers }, action: { [weak self] in self?.toggleComposers() })),
+        .init(0, 6): .init(title: "Compilations", accessoryType: .onOff(isOn: { showRecentCompilations }, action: { [weak self] in self?.toggleCompilations() })),
+        .init(1, 0): .init(title: "All Playlists", accessoryType: .onOff(isOn: { recentlyUpdatedPlaylistSorts.contains(.all) }, action: { [weak self] in self?.toggleRecentlyUpdated(with: .all) })),
+        .init(1, 1): .init(title: "My Playlists", accessoryType: .onOff(isOn: { recentlyUpdatedPlaylistSorts.contains(.user) }, action: { [weak self] in self?.toggleRecentlyUpdated(with: .user) })),
+        .init(1, 2): .init(title: "Apple Music Playlists", accessoryType: .onOff(isOn: { recentlyUpdatedPlaylistSorts.contains(.appleMusic) }, action: { [weak self] in self?.toggleRecentlyUpdated(with: .appleMusic) }))
+    ]
     
     override func viewDidLoad() {
         
         super.viewDidLoad()
         
         tableView.scrollIndicatorInsets.bottom = 14
-
-        prepareSwitches(animated: false)
         
         notifier.addObserver(tableView, selector: #selector(UITableView.reloadData), name: .appleMusicStatusChecked, object: nil)
-    }
-    
-    func prepareSwitches(animated: Bool) {
-        
-        songsSwitch.setOn(showRecentSongs, animated: animated)
-        playlistsSwitch.setOn(showRecentPlaylists, animated: animated)
-        artistsSwitch.setOn(showRecentArtists, animated: animated)
-        albumsSwitch.setOn(showRecentAlbums, animated: animated)
-        genresSwitch.setOn(showRecentGenres, animated: animated)
-        compilationsSwitch.setOn(showRecentCompilations, animated: animated)
-        composersSwitch.setOn(showRecentComposers, animated: animated)
-        
-        let set = recentlyUpdatedPlaylistSorts
-        
-        appleMusicSwitch.setOn(set.contains(.appleMusic), animated: animated)
-        mineSwitch.setOn(set.contains(.user), animated: animated)
-        allSwitch.setOn(set.contains(.all), animated: animated)
     }
     
     func toggleSongs() {
@@ -226,24 +106,24 @@ class RecentsTableViewController: UITableViewController {
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         
-        return appDelegate.appleMusicStatus == .appleMusic(libraryAccess: true) ? 2 : 1
+        return sections.count - (appDelegate.appleMusicStatus == .appleMusic(libraryAccess: true) ? 0 : 1)
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return section == 0 ? 7 : 3
+        return settings.filter({ $0.key.section == section }).count// section == 0 ? 7 : 3
     }
     
-    override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let header = view as? UITableViewHeaderFooterView
-        header?.textLabel?.text = nil
-    }
-    
-    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        let cell = tableView.settingCell(for: indexPath)
         
-        cell.preservesSuperviewLayoutMargins = false
-        cell.contentView.preservesSuperviewLayoutMargins = false
+        if let setting = settings[indexPath.settingsSection] {
+            
+            cell.prepare(with: setting)
+        }
+        
+        return cell
     }
     
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
@@ -255,24 +135,50 @@ class RecentsTableViewController: UITableViewController {
         
         let header = tableView.sectionHeader
         
-        header?.label.text = {
-            
-            switch section {
-                
-                case 0: return "show..."
-                
-                case 1: return "use recently updated for..."
-                
-                default: return nil
-            }
-        }()
+        header?.label.text = sections[section]?.header
         
         return header
     }
     
+    override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        
+        let footer = tableView.sectionFooter
+        
+        if let text = sections[section]?.footer {
+            
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.lineHeightMultiple = 1.5
+            
+            footer?.label.text = text
+            footer?.label.attributes = [.init(name: .paragraphStyle, value: .other(paragraphStyle), range: text.nsRange())]
+            
+        } else {
+            
+            footer?.label.text = nil
+            footer?.label.attributes = nil
+        }
+        
+        return footer
+    }
+    
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         
-        return .textHeaderHeight + 8
+        return (section == 0 ? .tableHeader : .textHeaderHeight) + 8
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        
+        return 54
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        
+        return UITableView.automaticDimension
+    }
+    
+    override func tableView(_ tableView: UITableView, estimatedHeightForFooterInSection section: Int) -> CGFloat {
+        
+        return 50
     }
     
     deinit {

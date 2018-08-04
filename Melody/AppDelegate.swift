@@ -36,13 +36,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         case shuffleAllAlbums = "ShuffleAllAlbums"
         case search = "SearchLibrary"
     }
-    
-    enum URLAction: String {
-        
-        case nowPlayingInfo = "openNowPlayingInfo"
-        case nowPlaying = "openNowPlaying"
-        case queue = "openQueue"
-    }
 
     var window: UIWindow?
     @objc var storeIdentifier: String?
@@ -174,7 +167,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         
-        guard let string = url.absoluteString.components(separatedBy: "/").last, let urlAction = URLAction.init(rawValue: string), let topVC = topViewController else { return false }
+        guard let string = url.absoluteString.components(separatedBy: "/").last, let urlAction = String.URLAction.init(rawValue: string), let topVC = topViewController else { return false }
         
         switch urlAction {
             
