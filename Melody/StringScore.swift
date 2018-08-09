@@ -123,4 +123,9 @@ public extension String {
         
         return finalScore
     }
+    
+    func similarityTo(_ string: String, fuzziness: Double) -> Double {
+        
+        return self.score(word: string, fuzziness: fuzziness)
+    }
 }

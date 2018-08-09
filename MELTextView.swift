@@ -24,5 +24,6 @@ class MELTextView: UITextView {
         textColor = darkTheme ? .white : .black
         tintColor = darkTheme ? .white : .black
         keyboardAppearance = darkTheme ? .dark : .light
+        indicatorStyle = darkTheme ? .white : .black
     }
 }

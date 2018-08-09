@@ -8,6 +8,8 @@
 
 enum BackgroundViewState { case visible, removed }
 
+enum VisibilityState { case hidden, visible }
+
 enum QueueViewState { case invoked, dismissed }
 
 enum DisplayArea { case smaller, typical }

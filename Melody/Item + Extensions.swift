@@ -67,6 +67,7 @@ extension MPMediaItem {
     @objc var validComposer: String { return composer ??? .unknownComposer }
     @objc var sortComposer: String { return validComposer.diacritic }
     @objc var validLastPlayed: Date { return lastPlayedDate ?? .distantPast }
+    @objc var validLyrics: String { return lyrics ??? "" }
     
     @objc var existsInLibrary: Bool {
         

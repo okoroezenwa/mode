@@ -118,6 +118,7 @@ var recentlyUpdatedPlaylistSorts: Set<PlaylistView> { return Set((prefs.array(fo
 var showPlaylistFolders: Bool { return prefs.bool(forKey: .showPlaylistFolders) }
 var tabBarTapBehaviour: TabBarTapBehaviour { return TabBarTapBehaviour(rawValue: prefs.integer(forKey: .tabBarTapBehaviour)) ?? Settings.defaultTabBarBehaviour }
 var backgroundArtworkAdaptivity: BackgroundArtwork { return BackgroundArtwork(rawValue: prefs.integer(forKey: .backgroundArtworkAdaptivity)) ?? .sectionAdaptive }
+var lyricsTextAlignment: NSTextAlignment { return NSTextAlignment(rawValue: prefs.integer(forKey: .lyricsTextAlignment)) ?? .center }
 
 class Settings {
     
@@ -245,7 +246,8 @@ class Settings {
             .recentlyUpdatedPlaylistSorts: defaultRecentlyUpdatedPlaylistSorts.map({ $0.rawValue }),
             .showPlaylistFolders: false,
             .tabBarTapBehaviour: defaultTabBarBehaviour.rawValue,
-            .backgroundArtworkAdaptivity: BackgroundArtwork.sectionAdaptive.rawValue
+            .backgroundArtworkAdaptivity: BackgroundArtwork.sectionAdaptive.rawValue,
+            .lyricsTextAlignment: NSTextAlignment.center.rawValue
         ])
         
         sharedDefaults.register(defaults: [
@@ -483,6 +485,7 @@ extension String {
     static let showPlaylistFolders = "showPlaylistFolders"
     static let tabBarTapBehaviour = "tabBarTapBehaviour"
     static let backgroundArtworkAdaptivity = "backgroundArtworkAdaptivity"
+    static let lyricsTextAlignment = "lyricsTextAlignment"
 }
 
 // MARK: - Notification Settings Constants
@@ -534,4 +537,5 @@ extension NSNotification.Name {
     static let showPlaylistFoldersChanged = Notification.Name.init("showPlaylistFoldersChanged")
     static let entityCountVisibilityChanged = Notification.Name.init("entityCountVisibilityChanged")
     static let numbersBelowLettersChanged = Notification.Name.init("numbersBelowLettersChanged")
+    static let lyricsTextAlignmentChanged = Notification.Name.init("lyricsTextAlignmentChanged")
 }

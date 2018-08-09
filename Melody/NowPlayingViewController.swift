@@ -35,7 +35,6 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
     @IBOutlet weak var queue: MELButton!
     @IBOutlet weak var lyricsButton: MELButton!
     @IBOutlet weak var lyricsVisualEffectView: MELVisualEffectView!
-    @IBOutlet weak var lyricsTextView: MELTextView!
     @IBOutlet weak var nowPlayingView: UIView!
     @IBOutlet var horizontalConstraints: [NSLayoutConstraint]!
     @IBOutlet weak var songNameWidthConstraint: NSLayoutConstraint!
@@ -181,9 +180,6 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
             
             view.accessibilityIgnoresInvertColors = darkTheme
         }
-        
-        lyricsTextView.textContainerInset = UIEdgeInsets.init(top: 10, left: 5, bottom: 10, right: 5)
-        lyricsTextView.scrollIndicatorInsets = UIEdgeInsets.init(top: 10, left: 5, bottom: 10, right: 5)
         
         modifyShuffleState(changingMusicPlayer: false)
         modifyRepeatButton(changingMusicPlayer: false)
@@ -902,14 +898,13 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
                 albumWidthConstraint.priority = UILayoutPriority(rawValue: 249)
             }
             
-            if lyricsVisible && currentItem.lyrics?.isEmpty == true {
-                
-                modifyLyricsView(hidden: true)
-            }
+//            if lyricsVisible && currentItem.lyrics?.isEmpty == true {
+//                
+//                modifyLyricsView(hidden: true)
+//            }
             
-            lyricsButton.alpha = currentItem.lyrics?.isEmpty == true ? 0 : 1
-            lyricsButton.isUserInteractionEnabled = currentItem.lyrics?.isEmpty == false
-            lyricsTextView.text = currentItem.lyrics
+//            lyricsButton.alpha = currentItem.lyrics?.isEmpty == true ? 0 : 1
+//            lyricsButton.isUserInteractionEnabled = currentItem.lyrics?.isEmpty == false
             
             modifyQueueLabel()
             modifyPlayPauseButton()
@@ -918,6 +913,11 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
             verifyLibraryStatus(of: currentItem, itemProperty: .song)
             verifyLibraryStatus(of: currentItem, itemProperty: .artist)
             verifyLibraryStatus(of: currentItem, itemProperty: .album)
+            
+            if let lyricsVC = children.first as? LyricsViewController {
+                
+                lyricsVC.item = currentItem
+            }
         
         } else {
             
@@ -1199,6 +1199,12 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
                     presentedVC.optionsContext = .song(location: .queue(loaded: false, index: musicPlayer.nowPlayingItemIndex), at: 0, within: [musicPlayer.nowPlayingItem].compactMap({ $0 }))
                 }
             
+            case "embed":
+            
+                guard let lyricsVC = segue.destination as? LyricsViewController else { return }
+            
+                lyricsVC.textAlignment = lyricsTextAlignment
+            
             default: break
         }
     }
@@ -1351,7 +1357,7 @@ extension NowPlayingViewController: UIGestureRecognizerDelegate {
         
         guard let gr = gestureRecognizer as? UIPanGestureRecognizer else { return true }
         
-        if fabs(gr.translation(in: view).y) < fabs(gr.translation(in: view).x) {
+        if abs(gr.translation(in: view).y) < abs(gr.translation(in: view).x) {
             
             return false
         }

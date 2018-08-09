@@ -125,7 +125,11 @@ class NowPlaying: NSObject {
             
         } else {
             
-            invalidateTimer()
+            if musicPlayer.nowPlayingItem == nil {
+                
+                invalidateTimer()
+            }
+            
             registered.forEach({ $0?.updateTimes(setValue: true, seeking: false) })
         }
     }

@@ -20,7 +20,6 @@ class ThemeViewController: UIViewController {
     lazy var meridianPeriods = ["am", "pm"]
     var currentConstraint: TimeConstraint?
     
-    enum State { case hidden, visible }
     enum TimeConstraint { case from, to }
     
     override func viewDidLoad() {
@@ -30,7 +29,7 @@ class ThemeViewController: UIViewController {
         updatePickerView(animated: false)
     }
     
-    func updateBottomView(to state: State, components: TimeConstraintComponents?, constraint: TimeConstraint? = nil) {
+    func updateBottomView(to state: VisibilityState, components: TimeConstraintComponents?, constraint: TimeConstraint? = nil) {
         
         let details: (constant: CGFloat, alpha: CGFloat) = {
             

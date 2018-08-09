@@ -519,7 +519,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
             
             case .song(location: _, at: let index, within: let items):
         
-//                guard items[index] == musicPlayer.nowPlayingItem else { return }
+                guard isInDebugMode || (isInDebugMode.inverted && items[index] == musicPlayer.nowPlayingItem) else { return }
                 
                 let base = basePresentedOrNowPlayingViewController(from: parent)
                 

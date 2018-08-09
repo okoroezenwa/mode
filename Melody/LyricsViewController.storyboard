@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.3.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.1"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="MyriadPro-Light.otf">
+            <string>MyriadPro-Light</string>
+        </array>
+        <array key="MyriadPro-Regular.otf">
+            <string>MyriadPro-Regular</string>
+        </array>
+    </customFonts>
+    <scenes>
+        <!--Lyrics View Controller-->
+        <scene sceneID="s2O-u5-q5A">
+            <objects>
+                <viewController storyboardIdentifier="LyricsViewController" id="RDg-fQ-vwW" customClass="LyricsViewController" customModule="Mode" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="u5y-e9-eCq">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="oLA-d5-LR0" customClass="MELActivityIndicatorView" customModule="Mode" customModuleProvider="target">
+                                <rect key="frame" x="177.5" y="333.5" width="20" height="20"/>
+                            </activityIndicatorView>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="M7G-tz-CYP">
+                                <rect key="frame" x="92" y="328.5" width="191.5" height="30"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Lyrics Found" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cVn-3g-3wa" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="0.0" width="191.5" height="30"/>
+                                        <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="30"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="boolean" keyPath="greyOverride" value="YES"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </label>
+                                </subviews>
+                            </stackView>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="Xcq-81-pba">
+                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3fh-d4-3Kp" customClass="GradientView" customModule="Mode" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="611"/>
+                                        <subviews>
+                                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" editable="NO" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="3bZ-5Y-Vw4" customClass="MELTextView" customModule="Mode" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="0.0" width="375" height="611"/>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
+                                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                            </textView>
+                                        </subviews>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstAttribute="trailing" secondItem="3bZ-5Y-Vw4" secondAttribute="trailing" id="FoF-C8-YME"/>
+                                            <constraint firstItem="3bZ-5Y-Vw4" firstAttribute="top" secondItem="3fh-d4-3Kp" secondAttribute="top" id="GyZ-6N-gYx"/>
+                                            <constraint firstAttribute="bottom" secondItem="3bZ-5Y-Vw4" secondAttribute="bottom" id="LHD-Ux-TcR"/>
+                                            <constraint firstItem="3bZ-5Y-Vw4" firstAttribute="leading" secondItem="3fh-d4-3Kp" secondAttribute="leading" id="aRs-br-CfR"/>
+                                        </constraints>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="boolean" keyPath="horizontal" value="NO"/>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="midStart">
+                                                <real key="value" value="0.040000000000000001"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="midEnd">
+                                                <real key="value" value="0.95999999999999996"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                    </view>
+                                    <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jfU-S6-B6Y">
+                                        <rect key="frame" x="0.0" y="611" width="375" height="36"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BS8-4S-GUq" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="0.0" width="123" height="36"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" priority="900" constant="36" id="JJH-a2-Fgc"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
+                                                <inset key="contentEdgeInsets" minX="16" minY="0.0" maxX="10" maxY="0.0"/>
+                                                <inset key="imageEdgeInsets" minX="-6" minY="0.0" maxX="3" maxY="0.0"/>
+                                                <state key="normal" title="genius.com" image="Web"/>
+                                            </button>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EUF-Si-zG8">
+                                                <rect key="frame" x="123" y="0.0" width="126" height="36"/>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            </view>
+                                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7zQ-av-YWA" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                                <rect key="frame" x="249" y="0.0" width="126" height="36"/>
+                                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
+                                                <inset key="contentEdgeInsets" minX="16" minY="0.0" maxX="10" maxY="0.0"/>
+                                                <inset key="imageEdgeInsets" minX="-6" minY="0.0" maxX="3" maxY="2"/>
+                                                <state key="normal" title="lyrics details" image="Details13"/>
+                                            </button>
+                                        </subviews>
+                                    </stackView>
+                                </subviews>
+                            </stackView>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="Xcq-81-pba" firstAttribute="top" secondItem="ING-Kx-UVa" secondAttribute="top" id="6jS-cn-ZV7"/>
+                            <constraint firstItem="oLA-d5-LR0" firstAttribute="centerX" secondItem="ING-Kx-UVa" secondAttribute="centerX" id="9RN-JH-hlK"/>
+                            <constraint firstItem="M7G-tz-CYP" firstAttribute="centerY" secondItem="ING-Kx-UVa" secondAttribute="centerY" id="F1C-x3-4dj"/>
+                            <constraint firstItem="Xcq-81-pba" firstAttribute="leading" secondItem="ING-Kx-UVa" secondAttribute="leading" id="MYC-c6-ggI"/>
+                            <constraint firstItem="ING-Kx-UVa" firstAttribute="trailing" secondItem="Xcq-81-pba" secondAttribute="trailing" id="Ula-vv-zJ2"/>
+                            <constraint firstItem="M7G-tz-CYP" firstAttribute="centerX" secondItem="ING-Kx-UVa" secondAttribute="centerX" id="fSq-eq-Yyk"/>
+                            <constraint firstItem="oLA-d5-LR0" firstAttribute="centerY" secondItem="ING-Kx-UVa" secondAttribute="centerY" id="obC-Pw-Znk"/>
+                            <constraint firstItem="ING-Kx-UVa" firstAttribute="bottom" secondItem="Xcq-81-pba" secondAttribute="bottom" id="rnj-Ot-bsv"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="ING-Kx-UVa"/>
+                    </view>
+                    <connections>
+                        <outlet property="activityIndicator" destination="oLA-d5-LR0" id="JHA-Ll-6hg"/>
+                        <outlet property="bottomStackView" destination="jfU-S6-B6Y" id="XEF-qb-vJU"/>
+                        <outlet property="locationButton" destination="BS8-4S-GUq" id="G88-Uv-1fi"/>
+                        <outlet property="saveButton" destination="7zQ-av-YWA" id="cc1-MP-d3f"/>
+                        <outlet property="spacerView" destination="EUF-Si-zG8" id="LFr-d5-y0Q"/>
+                        <outlet property="textView" destination="3bZ-5Y-Vw4" id="AQA-rx-JEt"/>
+                        <outlet property="unavailableLabel" destination="cVn-3g-3wa" id="xAz-XG-BN7"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="UIJ-Xg-Aet" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="28" y="173.16341829085459"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="Details13" width="13" height="11"/>
+        <image name="Web" width="15" height="15"/>
+    </resources>
+    <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+</document>

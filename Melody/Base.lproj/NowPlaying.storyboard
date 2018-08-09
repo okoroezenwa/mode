@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.3.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_0" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
-        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -81,17 +78,18 @@
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="320"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
-                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" editable="NO" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="JoY-Vj-AOb" customClass="MELTextView" customModule="Mode" customModuleProvider="target">
+                                                <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9at-iL-EUC">
                                                     <rect key="frame" x="0.0" y="20" width="320" height="300"/>
-                                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                                    <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                                                </textView>
+                                                    <connections>
+                                                        <segue destination="oX2-Z6-6km" kind="embed" identifier="embed" id="kQd-fz-gf1"/>
+                                                    </connections>
+                                                </containerView>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="bottom" secondItem="JoY-Vj-AOb" secondAttribute="bottom" id="4o8-bw-9v8"/>
-                                                <constraint firstAttribute="trailing" secondItem="JoY-Vj-AOb" secondAttribute="trailing" id="5RK-P1-jvU"/>
-                                                <constraint firstItem="JoY-Vj-AOb" firstAttribute="leading" secondItem="9Wx-2L-c1E" secondAttribute="leading" id="eT7-0B-sK8"/>
+                                                <constraint firstItem="9at-iL-EUC" firstAttribute="top" secondItem="9Wx-2L-c1E" secondAttribute="top" constant="20" id="2BL-PA-uvR"/>
+                                                <constraint firstAttribute="bottom" secondItem="9at-iL-EUC" secondAttribute="bottom" id="Bq2-vV-pay"/>
+                                                <constraint firstItem="9at-iL-EUC" firstAttribute="leading" secondItem="9Wx-2L-c1E" secondAttribute="leading" id="OBl-nX-gqa"/>
+                                                <constraint firstAttribute="trailing" secondItem="9at-iL-EUC" secondAttribute="trailing" id="wgZ-Uz-jqg"/>
                                             </constraints>
                                         </view>
                                         <blurEffect style="light"/>
@@ -290,7 +288,7 @@
                                                 <state key="normal" image="AddNoBorder"/>
                                             </button>
                                             <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="IYO-NP-chM" customClass="MELActivityIndicatorView" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="17" y="9" width="20" height="20"/>
+                                                <rect key="frame" x="17" y="8.5" width="20" height="20"/>
                                                 <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                 <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                             </activityIndicatorView>
@@ -329,7 +327,7 @@
                                                                 </connections>
                                                             </button>
                                                             <view userInteractionEnabled="NO" alpha="0.05000000074505806" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yCe-PU-seI" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                                                <rect key="frame" x="17.5" y="8" width="30" height="30"/>
+                                                                <rect key="frame" x="17" y="8.5" width="30" height="30"/>
                                                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="width" constant="30" id="Kr6-dL-seg"/>
@@ -387,7 +385,7 @@
                                                                 </connections>
                                                             </button>
                                                             <view userInteractionEnabled="NO" alpha="0.050000000000000003" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="e09-X4-KyC" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                                                <rect key="frame" x="16.5" y="8" width="30" height="30"/>
+                                                                <rect key="frame" x="17" y="8.5" width="30" height="30"/>
                                                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="width" constant="30" id="BAR-4O-pMX"/>
@@ -587,7 +585,6 @@
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="3Ga-oI-rRe" firstAttribute="leading" secondItem="3dX-Nm-Sgg" secondAttribute="leading" id="5bH-tc-sEd"/>
-                            <constraint firstItem="JoY-Vj-AOb" firstAttribute="top" secondItem="8Rl-Ds-r6X" secondAttribute="bottom" id="CiH-gp-fXI"/>
                             <constraint firstItem="QiR-xC-ryb" firstAttribute="leading" secondItem="3dX-Nm-Sgg" secondAttribute="leading" id="De6-db-zLI"/>
                             <constraint firstItem="3Ga-oI-rRe" firstAttribute="top" secondItem="3dX-Nm-Sgg" secondAttribute="top" id="Dec-xd-92D"/>
                             <constraint firstAttribute="bottom" secondItem="QiR-xC-ryb" secondAttribute="bottom" id="N1q-iv-tud"/>
@@ -623,7 +620,6 @@
                         <outlet property="effectView" destination="QiR-xC-ryb" id="Rg7-Qp-6re"/>
                         <outlet property="imageView" destination="3Ga-oI-rRe" id="b9p-nW-7hX"/>
                         <outlet property="lyricsButton" destination="1YJ-UY-VNe" id="GzZ-FW-8it"/>
-                        <outlet property="lyricsTextView" destination="JoY-Vj-AOb" id="Bir-8R-Ocb"/>
                         <outlet property="lyricsVisualEffectView" destination="LGV-di-51k" id="D48-8S-oex"/>
                         <outlet property="nextButton" destination="17s-Fl-bZF" id="pbn-DX-CCq"/>
                         <outlet property="nowPlayingView" destination="3dX-Nm-Sgg" id="fbf-36-SqY"/>
@@ -682,13 +678,21 @@
             </objects>
             <point key="canvasLocation" x="-243" y="1120"/>
         </scene>
+        <!--LyricsViewController-->
+        <scene sceneID="cdc-En-gkj">
+            <objects>
+                <viewControllerPlaceholder storyboardName="LyricsViewController" referencedIdentifier="LyricsViewController" id="oX2-Z6-6km" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="8nN-Um-UqU" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="475" y="329"/>
+        </scene>
         <!--presentedVC-->
         <scene sceneID="BF2-qR-HJ5">
             <objects>
                 <viewControllerPlaceholder storyboardIdentifier="presentedVC" storyboardName="Presented" referencedIdentifier="presentedVC" id="vJL-YB-7qo" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="z87-uA-Cj6" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="489" y="613"/>
+            <point key="canvasLocation" x="526" y="614"/>
         </scene>
     </scenes>
     <resources>
@@ -703,7 +707,7 @@
         <image name="Shuffle" width="18" height="14"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="qyl-yL-uXW"/>
+        <segue reference="uhf-aL-3u9"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
 </document>

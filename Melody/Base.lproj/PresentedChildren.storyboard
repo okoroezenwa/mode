@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14295.6" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina3_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
-        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14270.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -466,13 +463,13 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Qen-R1-L51">
-                                            <rect key="frame" x="0.0" y="0.0" width="0.0" height="1500"/>
+                                            <rect key="frame" x="0.0" y="20" width="375" height="1480"/>
                                             <subviews>
                                                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="mbd-lQ-e6C">
-                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="1500"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="1480"/>
                                                     <subviews>
                                                         <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dHX-sg-XOD">
-                                                            <rect key="frame" x="0.0" y="0.0" width="0.0" height="166"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="375" height="166"/>
                                                             <subviews>
                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VLd-xB-4l6">
                                                                     <rect key="frame" x="0.0" y="0.0" width="156" height="166"/>
@@ -503,16 +500,16 @@
                                                                     </constraints>
                                                                 </view>
                                                                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="Xxl-ZJ-9BI">
-                                                                    <rect key="frame" x="156" y="0.0" width="0.0" height="166"/>
+                                                                    <rect key="frame" x="156" y="0.0" width="219" height="166"/>
                                                                     <subviews>
                                                                         <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1iK-Sl-kLD">
-                                                                            <rect key="frame" x="0.0" y="0.0" width="0.0" height="46"/>
+                                                                            <rect key="frame" x="0.0" y="0.0" width="219" height="46"/>
                                                                             <subviews>
                                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="E1F-BA-FrD" customClass="GradientView" customModule="Mode" customModuleProvider="target">
-                                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="46"/>
+                                                                                    <rect key="frame" x="0.0" y="0.0" width="219" height="46"/>
                                                                                     <subviews>
                                                                                         <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" horizontalHuggingPriority="253" verticalHuggingPriority="253" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Xda-hQ-0go">
-                                                                                            <rect key="frame" x="0.0" y="0.0" width="0.0" height="46"/>
+                                                                                            <rect key="frame" x="0.0" y="0.0" width="219" height="46"/>
                                                                                             <subviews>
                                                                                                 <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="253" verticalHuggingPriority="753" verticalCompressionResistancePriority="753" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CFL-Dy-6mH" customClass="MELButton" customModule="Mode" customModuleProvider="target">
                                                                                                     <rect key="frame" x="0.0" y="0.0" width="143" height="46"/>
@@ -547,10 +544,10 @@
                                                                             </constraints>
                                                                         </stackView>
                                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="IFq-Qq-Pj7" customClass="GradientView" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="0.0" y="46" width="0.0" height="40"/>
+                                                                            <rect key="frame" x="0.0" y="46" width="219" height="40"/>
                                                                             <subviews>
                                                                                 <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" horizontalHuggingPriority="253" verticalHuggingPriority="253" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EF1-AL-bAo">
-                                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="40"/>
+                                                                                    <rect key="frame" x="0.0" y="0.0" width="219" height="40"/>
                                                                                     <subviews>
                                                                                         <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="253" verticalHuggingPriority="753" verticalCompressionResistancePriority="753" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BCG-L6-D71" customClass="MELButton" customModule="Mode" customModuleProvider="target">
                                                                                             <rect key="frame" x="0.0" y="0.0" width="136" height="40"/>
@@ -581,10 +578,10 @@
                                                                             </constraints>
                                                                         </view>
                                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="K5z-gQ-3Ga" customClass="GradientView" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="0.0" y="86" width="0.0" height="40"/>
+                                                                            <rect key="frame" x="0.0" y="86" width="219" height="40"/>
                                                                             <subviews>
                                                                                 <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" horizontalHuggingPriority="253" verticalHuggingPriority="253" horizontalCompressionResistancePriority="751" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uEI-nE-Yvp">
-                                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="40"/>
+                                                                                    <rect key="frame" x="0.0" y="0.0" width="219" height="40"/>
                                                                                     <subviews>
                                                                                         <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="253" verticalHuggingPriority="753" verticalCompressionResistancePriority="753" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="99a-7G-naQ" customClass="MELButton" customModule="Mode" customModuleProvider="target">
                                                                                             <rect key="frame" x="0.0" y="0.0" width="136" height="40"/>
@@ -615,10 +612,10 @@
                                                                             </constraints>
                                                                         </view>
                                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wcV-Is-K5f" customClass="GradientView" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="0.0" y="126" width="0.0" height="40"/>
+                                                                            <rect key="frame" x="0.0" y="126" width="219" height="40"/>
                                                                             <subviews>
                                                                                 <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" horizontalHuggingPriority="253" verticalHuggingPriority="253" horizontalCompressionResistancePriority="751" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="M4g-wM-7hQ">
-                                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="40"/>
+                                                                                    <rect key="frame" x="0.0" y="0.0" width="219" height="40"/>
                                                                                     <subviews>
                                                                                         <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="253" verticalHuggingPriority="753" verticalCompressionResistancePriority="753" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oyk-Qv-ETu" customClass="MELButton" customModule="Mode" customModuleProvider="target">
                                                                                             <rect key="frame" x="0.0" y="0.0" width="136" height="40"/>
@@ -650,20 +647,20 @@
                                                             </subviews>
                                                         </stackView>
                                                         <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d1O-bS-Dt1">
-                                                            <rect key="frame" x="0.0" y="166" width="0.0" height="90"/>
+                                                            <rect key="frame" x="0.0" y="166" width="375" height="70"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" priority="900" constant="58" id="Pph-z8-jIv"/>
                                                             </constraints>
                                                         </stackView>
                                                         <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="0aL-we-kPU">
-                                                            <rect key="frame" x="0.0" y="256" width="0.0" height="62"/>
+                                                            <rect key="frame" x="0.0" y="236" width="375" height="62"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="62" placeholder="YES" id="8zM-qa-9zt"/>
                                                                 <constraint firstAttribute="height" priority="900" constant="62" id="ieI-tk-UJh"/>
                                                             </constraints>
                                                         </stackView>
                                                         <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Kot-PG-m3g">
-                                                            <rect key="frame" x="0.0" y="318" width="0.0" height="44"/>
+                                                            <rect key="frame" x="0.0" y="298" width="375" height="44"/>
                                                             <subviews>
                                                                 <view contentMode="scaleToFill" horizontalHuggingPriority="253" horizontalCompressionResistancePriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="Q7e-Pt-A0H">
                                                                     <rect key="frame" x="0.0" y="0.0" width="119" height="44"/>
@@ -693,10 +690,10 @@
                                                                     </constraints>
                                                                 </view>
                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5dh-Tc-byi">
-                                                                    <rect key="frame" x="119" y="0.0" width="0.0" height="44"/>
+                                                                    <rect key="frame" x="119" y="0.0" width="256" height="44"/>
                                                                     <subviews>
                                                                         <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="07Y-px-3iu" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="0.0" y="0.0" width="0.0" height="44"/>
+                                                                            <rect key="frame" x="0.0" y="0.0" width="256" height="44"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <inset key="contentEdgeInsets" minX="35" minY="14" maxX="0.0" maxY="10"/>
                                                                             <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="0.0" maxY="1"/>
@@ -725,13 +722,13 @@
                                                             </constraints>
                                                         </stackView>
                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="Eq5-OG-hLk">
-                                                            <rect key="frame" x="0.0" y="362" width="0.0" height="76"/>
+                                                            <rect key="frame" x="0.0" y="342" width="375" height="76"/>
                                                             <subviews>
                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VcJ-Gn-Abx" customClass="GradientView" customModule="Mode" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="76"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="76"/>
                                                                     <subviews>
                                                                         <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FvK-sP-R5C" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="0.0" y="0.0" width="0.0" height="76"/>
+                                                                            <rect key="frame" x="0.0" y="0.0" width="375" height="76"/>
                                                                             <subviews>
                                                                                 <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="253" verticalHuggingPriority="753" verticalCompressionResistancePriority="753" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1pA-G2-wv3" customClass="MELButton" customModule="Mode" customModuleProvider="target">
                                                                                     <rect key="frame" x="0.0" y="0.0" width="69" height="76"/>
@@ -752,7 +749,7 @@
                                                                             </constraints>
                                                                         </scrollView>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="genre" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QVn-4k-5FW" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="14" width="0.0" height="20"/>
+                                                                            <rect key="frame" x="10" y="14" width="355" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
@@ -783,13 +780,13 @@
                                                             </subviews>
                                                         </stackView>
                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="EgW-Ub-W5k">
-                                                            <rect key="frame" x="0.0" y="438" width="0.0" height="76"/>
+                                                            <rect key="frame" x="0.0" y="418" width="375" height="76"/>
                                                             <subviews>
                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="esZ-B6-V0t" customClass="GradientView" customModule="Mode" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="76"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="76"/>
                                                                     <subviews>
                                                                         <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="byO-6G-n5e" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="0.0" y="0.0" width="0.0" height="76"/>
+                                                                            <rect key="frame" x="0.0" y="0.0" width="375" height="76"/>
                                                                             <subviews>
                                                                                 <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="253" verticalHuggingPriority="753" verticalCompressionResistancePriority="753" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3tg-PD-d70" customClass="MELButton" customModule="Mode" customModuleProvider="target">
                                                                                     <rect key="frame" x="0.0" y="0.0" width="122" height="76"/>
@@ -811,7 +808,7 @@
                                                                             </constraints>
                                                                         </scrollView>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="composer" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iJp-Tc-pFS" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="14" width="0.0" height="20"/>
+                                                                            <rect key="frame" x="10" y="14" width="355" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
@@ -842,13 +839,13 @@
                                                             </subviews>
                                                         </stackView>
                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="M3i-XT-tIt">
-                                                            <rect key="frame" x="0.0" y="514" width="0.0" height="76"/>
+                                                            <rect key="frame" x="0.0" y="494" width="375" height="76"/>
                                                             <subviews>
                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hrH-PV-jHn" customClass="GradientView" customModule="Mode" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="76"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="76"/>
                                                                     <subviews>
                                                                         <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ar7-Je-6kl" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="0.0" y="0.0" width="0.0" height="76"/>
+                                                                            <rect key="frame" x="0.0" y="0.0" width="375" height="76"/>
                                                                             <subviews>
                                                                                 <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="253" verticalHuggingPriority="753" verticalCompressionResistancePriority="753" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XUb-F7-pIs" customClass="MELButton" customModule="Mode" customModuleProvider="target">
                                                                                     <rect key="frame" x="0.0" y="0.0" width="139" height="76"/>
@@ -870,7 +867,7 @@
                                                                             </constraints>
                                                                         </scrollView>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="album artist" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Es4-VN-Luo" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="14" width="0.0" height="20"/>
+                                                                            <rect key="frame" x="10" y="14" width="355" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
@@ -901,13 +898,13 @@
                                                             </subviews>
                                                         </stackView>
                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="yHN-Ih-cM1">
-                                                            <rect key="frame" x="0.0" y="590" width="0.0" height="76"/>
+                                                            <rect key="frame" x="0.0" y="570" width="375" height="76"/>
                                                             <subviews>
                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hbG-Rw-7Ke">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="40"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="40"/>
                                                                     <subviews>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="duration + size" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Rvc-Hj-1qZ" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="14" width="0.0" height="20"/>
+                                                                            <rect key="frame" x="10" y="14" width="355" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
@@ -925,7 +922,7 @@
                                                                     </constraints>
                                                                 </view>
                                                                 <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Cfx-Gk-Gcv" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="40" width="0.0" height="36"/>
+                                                                    <rect key="frame" x="0.0" y="40" width="375" height="36"/>
                                                                     <subviews>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="Song Duration + File Size" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RQQ-Gk-goI" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
                                                                             <rect key="frame" x="10" y="6" width="199.5" height="20"/>
@@ -948,13 +945,13 @@
                                                             </constraints>
                                                         </stackView>
                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="qnt-6D-Bwh">
-                                                            <rect key="frame" x="0.0" y="666" width="0.0" height="76"/>
+                                                            <rect key="frame" x="0.0" y="646" width="375" height="76"/>
                                                             <subviews>
                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qKN-hb-JVF">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="40"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="40"/>
                                                                     <subviews>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="plays" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cmd-8i-ALl" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="14" width="0.0" height="20"/>
+                                                                            <rect key="frame" x="10" y="14" width="355" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
@@ -972,7 +969,7 @@
                                                                     </constraints>
                                                                 </view>
                                                                 <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aew-Si-MG9" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="40" width="0.0" height="36"/>
+                                                                    <rect key="frame" x="0.0" y="40" width="375" height="36"/>
                                                                     <subviews>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="Plays + Last Played" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="D4Z-85-sll" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
                                                                             <rect key="frame" x="10" y="6" width="148.5" height="20"/>
@@ -992,13 +989,13 @@
                                                             </subviews>
                                                         </stackView>
                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="jtJ-pI-VCd">
-                                                            <rect key="frame" x="0.0" y="742" width="0.0" height="76"/>
+                                                            <rect key="frame" x="0.0" y="722" width="375" height="76"/>
                                                             <subviews>
                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vj9-0H-7eR">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="40"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="40"/>
                                                                     <subviews>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="added" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LKb-MW-vvk" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="14" width="0.0" height="20"/>
+                                                                            <rect key="frame" x="10" y="14" width="355" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
@@ -1016,7 +1013,7 @@
                                                                     </constraints>
                                                                 </view>
                                                                 <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Prl-Ij-Doa" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="40" width="0.0" height="36"/>
+                                                                    <rect key="frame" x="0.0" y="40" width="375" height="36"/>
                                                                     <subviews>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="Date Added" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wVr-4C-TvG" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
                                                                             <rect key="frame" x="10" y="6" width="96" height="20"/>
@@ -1036,13 +1033,13 @@
                                                             </subviews>
                                                         </stackView>
                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="b1S-oa-aRy">
-                                                            <rect key="frame" x="0.0" y="818" width="0.0" height="76"/>
+                                                            <rect key="frame" x="0.0" y="798" width="375" height="76"/>
                                                             <subviews>
                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OfC-Ar-RsR">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="40"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="40"/>
                                                                     <subviews>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="updated" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yEt-Om-hf2" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="14" width="0.0" height="20"/>
+                                                                            <rect key="frame" x="10" y="14" width="355" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
@@ -1060,7 +1057,7 @@
                                                                     </constraints>
                                                                 </view>
                                                                 <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="409-fZ-JV0" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="40" width="0.0" height="36"/>
+                                                                    <rect key="frame" x="0.0" y="40" width="375" height="36"/>
                                                                     <subviews>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="Date Updated" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qdy-YX-S4F" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
                                                                             <rect key="frame" x="10" y="6" width="112.5" height="20"/>
@@ -1080,13 +1077,13 @@
                                                             </subviews>
                                                         </stackView>
                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="xHU-eQ-XKg">
-                                                            <rect key="frame" x="0.0" y="894" width="0.0" height="76"/>
+                                                            <rect key="frame" x="0.0" y="874" width="375" height="76"/>
                                                             <subviews>
                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Uae-UX-srw">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="40"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="40"/>
                                                                     <subviews>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="album placement" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gdH-7s-moc" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="14" width="0.0" height="20"/>
+                                                                            <rect key="frame" x="10" y="14" width="355" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
@@ -1104,7 +1101,7 @@
                                                                     </constraints>
                                                                 </view>
                                                                 <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6bP-nA-Jc9" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="40" width="0.0" height="36"/>
+                                                                    <rect key="frame" x="0.0" y="40" width="375" height="36"/>
                                                                     <subviews>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="Track Count, Disc Count" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gUE-Hk-DYf" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
                                                                             <rect key="frame" x="10" y="6" width="190" height="20"/>
@@ -1124,13 +1121,13 @@
                                                             </subviews>
                                                         </stackView>
                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="qZx-1d-ekK">
-                                                            <rect key="frame" x="0.0" y="970" width="0.0" height="76"/>
+                                                            <rect key="frame" x="0.0" y="950" width="375" height="76"/>
                                                             <subviews>
                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xyS-Rd-8RL">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="40"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="40"/>
                                                                     <subviews>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="beats per minute" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="61c-14-GU0" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="14" width="0.0" height="20"/>
+                                                                            <rect key="frame" x="10" y="14" width="355" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
@@ -1148,7 +1145,7 @@
                                                                     </constraints>
                                                                 </view>
                                                                 <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="n36-cc-lNF" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="40" width="0.0" height="36"/>
+                                                                    <rect key="frame" x="0.0" y="40" width="375" height="36"/>
                                                                     <subviews>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="BPM" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WE9-4c-mXD" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
                                                                             <rect key="frame" x="10" y="6" width="35.5" height="20"/>
@@ -1168,13 +1165,13 @@
                                                             </subviews>
                                                         </stackView>
                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="yUX-Ey-xCv">
-                                                            <rect key="frame" x="0.0" y="1046" width="0.0" height="76"/>
+                                                            <rect key="frame" x="0.0" y="1026" width="375" height="76"/>
                                                             <subviews>
                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RWA-im-9fv">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="40"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="40"/>
                                                                     <subviews>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="skips" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="e2a-HO-Pxn" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="14" width="0.0" height="20"/>
+                                                                            <rect key="frame" x="10" y="14" width="355" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
@@ -1192,7 +1189,7 @@
                                                                     </constraints>
                                                                 </view>
                                                                 <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bnm-hb-X2A" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="40" width="0.0" height="36"/>
+                                                                    <rect key="frame" x="0.0" y="40" width="375" height="36"/>
                                                                     <subviews>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="Skip Count" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Y8H-ne-mu9" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
                                                                             <rect key="frame" x="10" y="6" width="87.5" height="20"/>
@@ -1212,13 +1209,13 @@
                                                             </subviews>
                                                         </stackView>
                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="Kuc-aR-GBN">
-                                                            <rect key="frame" x="0.0" y="1122" width="0.0" height="76"/>
+                                                            <rect key="frame" x="0.0" y="1102" width="375" height="76"/>
                                                             <subviews>
                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4mN-i8-3mE">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="40"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="40"/>
                                                                     <subviews>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="grouping" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9SU-oX-CRU" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="14" width="0.0" height="20"/>
+                                                                            <rect key="frame" x="10" y="14" width="355" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
@@ -1236,7 +1233,7 @@
                                                                     </constraints>
                                                                 </view>
                                                                 <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5tY-fs-Gf0" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="40" width="0.0" height="36"/>
+                                                                    <rect key="frame" x="0.0" y="40" width="375" height="36"/>
                                                                     <subviews>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="User Grouping" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IWJ-U8-94H" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
                                                                             <rect key="frame" x="10" y="6" width="116.5" height="20"/>
@@ -1256,13 +1253,13 @@
                                                             </subviews>
                                                         </stackView>
                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="n6u-D0-5Bk">
-                                                            <rect key="frame" x="0.0" y="1198" width="0.0" height="76"/>
+                                                            <rect key="frame" x="0.0" y="1178" width="375" height="76"/>
                                                             <subviews>
                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4f7-uy-BUf">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="40"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="40"/>
                                                                     <subviews>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="comments" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nZB-Gl-YA8" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="14" width="0.0" height="20"/>
+                                                                            <rect key="frame" x="10" y="14" width="355" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
@@ -1280,7 +1277,7 @@
                                                                     </constraints>
                                                                 </view>
                                                                 <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="he6-pV-WKH" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="40" width="0.0" height="36"/>
+                                                                    <rect key="frame" x="0.0" y="40" width="375" height="36"/>
                                                                     <subviews>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="User Comments" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Z3D-y3-AEG" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
                                                                             <rect key="frame" x="10" y="6" width="129" height="20"/>
@@ -1300,13 +1297,13 @@
                                                             </subviews>
                                                         </stackView>
                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="hOY-lQ-ugP">
-                                                            <rect key="frame" x="0.0" y="1274" width="0.0" height="76"/>
+                                                            <rect key="frame" x="0.0" y="1254" width="375" height="76"/>
                                                             <subviews>
                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6IJ-b5-N5b">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="40"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="40"/>
                                                                     <subviews>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="copyright" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ans-if-1JF" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="14" width="0.0" height="20"/>
+                                                                            <rect key="frame" x="10" y="14" width="355" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
@@ -1324,7 +1321,7 @@
                                                                     </constraints>
                                                                 </view>
                                                                 <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="COS-NO-QUm" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="40" width="0.0" height="36"/>
+                                                                    <rect key="frame" x="0.0" y="40" width="375" height="36"/>
                                                                     <subviews>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="Copyright Info" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lQX-eo-njJ" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
                                                                             <rect key="frame" x="10" y="6" width="115" height="20"/>
@@ -1344,13 +1341,13 @@
                                                             </subviews>
                                                         </stackView>
                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="C7p-gj-0jb">
-                                                            <rect key="frame" x="0.0" y="1350" width="0.0" height="100"/>
+                                                            <rect key="frame" x="0.0" y="1330" width="375" height="100"/>
                                                             <subviews>
                                                                 <view tag="1" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JAn-no-zNp">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="40"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="40"/>
                                                                     <subviews>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="lyrics" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Nep-fU-4zG" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="14" width="0.0" height="20"/>
+                                                                            <rect key="frame" x="10" y="14" width="355" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
@@ -1368,7 +1365,7 @@
                                                                     </constraints>
                                                                 </view>
                                                                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" editable="NO" text="Lyrics" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="WOf-Xd-ThM" customClass="MELTextView" customModule="Mode" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="40" width="0.0" height="60"/>
+                                                                    <rect key="frame" x="0.0" y="40" width="375" height="60"/>
                                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                                     <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
@@ -1379,10 +1376,10 @@
                                                             </constraints>
                                                         </stackView>
                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qtR-GL-WCY">
-                                                            <rect key="frame" x="0.0" y="1450" width="0.0" height="50"/>
+                                                            <rect key="frame" x="0.0" y="1430" width="375" height="50"/>
                                                             <subviews>
                                                                 <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="n9J-kS-CRx" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="50"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="50"/>
                                                                     <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                     <inset key="contentEdgeInsets" minX="38" minY="14" maxX="0.0" maxY="10"/>
                                                                     <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="0.0" maxY="1"/>
@@ -1656,7 +1653,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jYR-fz-bu9" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="FpX-xB-QXM" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="366.5625" y="1003.5211267605634"/>
+            <point key="canvasLocation" x="368" y="1158"/>
         </scene>
         <!--Collector View Controller-->
         <scene sceneID="uHl-S4-avK">

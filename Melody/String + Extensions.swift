@@ -138,6 +138,42 @@ public extension String {
     var folded: String { return self.folding(options: .diacriticInsensitive, locale: nil) }
     
     var nilIfEmpty: String? { return self.isEmpty ? nil : self }
+    
+    var roundedBracketsRemoved: String {
+        
+        if let startIndex = index(of: "("), let endIndex = index(of: ")") {
+            
+            var string = self
+            string.removeSubrange(startIndex...endIndex)
+            
+            return string
+        }
+        
+        return self
+    }
+    
+    var squareBracketsRemoved: String {
+        
+        if let startIndex = index(of: "["), let endIndex = index(of: "]") {
+            
+            var string = self
+            string.removeSubrange(startIndex...endIndex)
+            
+            return string
+        }
+        
+        return self
+    }
+    
+    var punctuationRemoved: String {
+        
+        return replacingOccurrences(of: ".", with: "").replacingOccurrences(of: ",", with: "").replacingOccurrences(of: "'", with: "")
+    }
+    
+    var censoredWordsReplaced: String {
+        
+        return replacingOccurrences(of: "f**k", with: "fuck").replacingOccurrences(of: "f*ck", with: "fuck").replacingOccurrences(of: "s**t", with: "shit").replacingOccurrences(of: "b*tch", with: "bitch")
+    }
 }
 
 // MARK: - Enums
