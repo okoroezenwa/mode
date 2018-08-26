@@ -29,11 +29,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     enum Subscription: Equatable { case none, iTunesMatch, appleMusic(libraryAccess: Bool) }
     
-    enum Actions: String {
+    enum HomeScreenAction: String {
         
         case playAll = "PlayAllSongs"
-        case shuffleAllSongs = "ShuffleAllSongs"
-        case shuffleAllAlbums = "ShuffleAllAlbums"
+        case shuffleSongs = "ShuffleAllSongs"
+        case shuffleAlbums = "ShuffleAllAlbums"
         case search = "SearchLibrary"
     }
 
@@ -59,6 +59,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         musicLibrary.beginGeneratingLibraryChangeNotifications()
         musicPlayer.beginGeneratingPlaybackNotifications()
         window?.tintColor = .black
+        
+        if #available(iOS 11, *) {
+            
+            window?.accessibilityIgnoresInvertColors = true
+        }
         
         notifier.addObserver(forName: .MPMediaLibraryDidChange, object: nil, queue: nil, using: { [weak self] _ in
             
@@ -216,11 +221,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
     
-    @objc func handleQuickActions(with shortcutItem: UIApplicationShortcutItem) -> Bool {
+    @discardableResult func perform(_ action: HomeScreenAction) -> Bool {
         
-        guard let type = shortcutItem.type.components(separatedBy: ".").last, let shortcutType = Actions.init(rawValue: type) else { return false }
-        
-        switch shortcutType {
+        switch action {
             
             case .search:
             
@@ -277,10 +280,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
                 return true
             
-            case .playAll, .shuffleAllSongs:
+            case .playAll, .shuffleSongs:
             
                 let songs = MPMediaQuery.songs().cloud.items ?? []
-                let shuffled = shortcutType == .shuffleAllSongs
+                let shuffled = action == .shuffleSongs
                 
                 if isInDebugMode {
                     
@@ -291,7 +294,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 
                 return true
             
-            case .shuffleAllAlbums:
+            case .shuffleAlbums:
                 
                 UniversalMethods.banner(withTitle: "Shuffling Albums...").show(for: 0.5)
             
@@ -300,6 +303,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
                 return true
         }
+    }
+    
+    @objc func handleQuickActions(with shortcutItem: UIApplicationShortcutItem) -> Bool {
+        
+        guard let type = shortcutItem.type.components(separatedBy: ".").last, let shortcutType = HomeScreenAction.init(rawValue: type) else { return false }
+        
+        return perform(shortcutType)
     }
     
     @objc func performLaunchChecks() {

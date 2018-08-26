@@ -42,6 +42,11 @@
     }
 }
 
+//-(nullable MPMediaItem *)getItemWithID:(NSInteger)persistentID
+//
+//    NSObject* object = [[[MPMediaItem alloc] performSelector:NSSelectorFromString(@"initWithPersistentID:") withObject:[[NSNumber alloc] initWithLongLong:1111111111111111]]];
+//}
+
 @end
 
 

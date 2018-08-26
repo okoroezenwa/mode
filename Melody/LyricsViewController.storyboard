@@ -76,26 +76,31 @@
                                     <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jfU-S6-B6Y">
                                         <rect key="frame" x="0.0" y="611" width="375" height="36"/>
                                         <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BS8-4S-GUq" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="0.0" width="123" height="36"/>
+                                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BS8-4S-GUq" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="0.0" width="89" height="36"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" priority="900" constant="36" id="JJH-a2-Fgc"/>
                                                 </constraints>
                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                 <inset key="contentEdgeInsets" minX="16" minY="0.0" maxX="10" maxY="0.0"/>
                                                 <inset key="imageEdgeInsets" minX="-6" minY="0.0" maxX="3" maxY="0.0"/>
-                                                <state key="normal" title="genius.com" image="Web"/>
+                                                <state key="normal" title="genius" image="Web"/>
                                             </button>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EUF-Si-zG8">
-                                                <rect key="frame" x="123" y="0.0" width="126" height="36"/>
-                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                            </view>
-                                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7zQ-av-YWA" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="249" y="0.0" width="126" height="36"/>
+                                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PQ9-cZ-PHN" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                                <rect key="frame" x="89" y="0.0" width="200" height="36"/>
+                                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
+                                                <inset key="imageEdgeInsets" minX="-3" minY="0.0" maxX="3" maxY="0.0"/>
+                                                <state key="normal" title="edit" image="Modify"/>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7zQ-av-YWA" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                                <rect key="frame" x="289" y="0.0" width="86" height="36"/>
                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                 <inset key="contentEdgeInsets" minX="16" minY="0.0" maxX="10" maxY="0.0"/>
                                                 <inset key="imageEdgeInsets" minX="-6" minY="0.0" maxX="3" maxY="2"/>
-                                                <state key="normal" title="lyrics details" image="Details13"/>
+                                                <state key="normal" title="details" image="Details13"/>
+                                                <connections>
+                                                    <action selector="viewLyricsDetails" destination="RDg-fQ-vwW" eventType="touchUpInside" id="N2u-WC-skd"/>
+                                                </connections>
                                             </button>
                                         </subviews>
                                     </stackView>
@@ -120,7 +125,6 @@
                         <outlet property="bottomStackView" destination="jfU-S6-B6Y" id="XEF-qb-vJU"/>
                         <outlet property="locationButton" destination="BS8-4S-GUq" id="G88-Uv-1fi"/>
                         <outlet property="saveButton" destination="7zQ-av-YWA" id="cc1-MP-d3f"/>
-                        <outlet property="spacerView" destination="EUF-Si-zG8" id="LFr-d5-y0Q"/>
                         <outlet property="textView" destination="3bZ-5Y-Vw4" id="AQA-rx-JEt"/>
                         <outlet property="unavailableLabel" destination="cVn-3g-3wa" id="xAz-XG-BN7"/>
                     </connections>
@@ -132,6 +136,7 @@
     </scenes>
     <resources>
         <image name="Details13" width="13" height="11"/>
+        <image name="Modify" width="11" height="15"/>
         <image name="Web" width="15" height="15"/>
     </resources>
     <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

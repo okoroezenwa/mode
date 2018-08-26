@@ -23,9 +23,9 @@ class NowPlayingAnimationController: NSObject, UIViewControllerAnimatedTransitio
         
         switch direction {
             
-            case .forward: return /*interactor.interactionInProgress ? 0.25 : */fasterNowPlayingStartup ? 0.3 : 0.65
+            case .forward: return fasterNowPlayingStartup ? 0.15 : 0.3
             
-            case .reverse: return useAlternateAnimation ? 0.25 : /*interactor.interactionInProgress ? 0.4 :*/ fasterNowPlayingStartup ? 0.3 : 0.65
+            case .reverse: return useAlternateAnimation ? 0.25 : fasterNowPlayingStartup ? 0.15 : 0.3
         }
     }
     
@@ -42,33 +42,41 @@ class NowPlayingAnimationController: NSObject, UIViewControllerAnimatedTransitio
                 let containerView = transitionContext.containerView
                 
                 fromVC.view.frame = containerView.bounds
-                toVC.view.frame = .init(x: 0, y: UIScreen.main.bounds.height, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+                toVC.view.frame = .init(x: 50, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+                toVC.view.alpha = 0
                 containerView.addSubview(fromVC.view)
                 containerView.addSubview(toVC.view)
             
                 let duration = transitionDuration(using: transitionContext)
                 
-                let animations: () -> Void = {
-
-                    toVC.view.frame = .init(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height - UIApplication.shared.statusBarFrame.height + 20)
-                    fromVC.contentView.alpha = 0
-                    fromVC.bottomEffectView.transform = .init(translationX: 0, y: fromVC.inset)
-                }
-                
-                let completion: (Bool) -> Void = { _ in
+                UIView.animateKeyframes(withDuration: duration, delay: 0, options: [.calculationModeCubic], animations: {
+                    
+                    UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 2.6/5, animations: {
+                        
+                        fromVC.contentView.alpha = 0
+                        fromVC.contentView.transform = .init(translationX: -50, y: 0)
+                        
+                        let inset = (fromVC.activeViewController?.topViewController as? Navigatable)?.inset ?? (10 + 34 + 10)
+                        fromVC.visualEffectNavigationBar.transform = .init(translationX: 0, y: -(inset + (UIApplication.shared.statusBarFrame.height == 40 ? 0 : UIApplication.shared.statusBarFrame.height)))
+                        fromVC.bottomEffectView.transform = .init(translationX: 0, y: fromVC.inset)
+                    })
+                    
+                    UIView.addKeyframe(withRelativeStartTime: 2.4/5, relativeDuration: 2.6/5, animations: {
+                        
+                        toVC.view.frame = .init(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height - UIApplication.shared.statusBarFrame.height + 20)
+                        toVC.view.alpha = 1
+                    })
+                    
+                }, completion: { _ in
                     
                     transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
                     toVC.view.frame = transitionContext.finalFrame(for: toVC)
-                    
-                    UniversalMethods.performOnMainThread({
                         
-                        fromVC.bottomEffectView.transform = .identity
-                        fromVC.contentView.alpha = 1
-                    
-                    }, afterDelay: 0.5)
-                }
-                    
-                UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: [.curveLinear, .allowUserInteraction, .beginFromCurrentState], animations: animations, completion: completion)
+//                    fromVC.bottomEffectView.transform = .identity
+//                    fromVC.visualEffectNavigationBar.transform = .identity
+                    fromVC.contentView.alpha = 0
+                    fromVC.contentView.transform = .identity
+                })
             
             case .reverse:
             
@@ -78,17 +86,21 @@ class NowPlayingAnimationController: NSObject, UIViewControllerAnimatedTransitio
                 
                 if useAlternateAnimation {
                     
-//                    toVC.bottomEffectView.transform = CGAffineTransform(translationX: 0, y: toVC.inset)
+                    toVC.visualEffectNavigationBar.alpha = 0
                     toVC.bottomEffectView.alpha = 0
-//
-//                    toVC.contentView.transform = CGAffineTransform.init(scaleX: 0.8, y: 0.8)
+
+                    toVC.visualEffectNavigationBar.transform = .identity
                     toVC.bottomEffectView.transform = .identity
                     toVC.contentView.alpha = 0
                     
                 } else {
                     
                     toVC.contentView.alpha = 0
-                    toVC.bottomEffectView.transform = .identity
+                    toVC.contentView.transform = .init(translationX: -50, y: 0)
+                    toVC.bottomEffectView.transform = .init(translationX: 0, y: toVC.inset)
+                    
+                    let inset = (toVC.activeViewController?.topViewController as? Navigatable)?.inset ?? (10 + 34 + 10)
+                    toVC.visualEffectNavigationBar.transform = .init(translationX: 0, y: -(inset + (UIApplication.shared.statusBarFrame.height == 40 ? 0 : UIApplication.shared.statusBarFrame.height)))
                 }
                 
                 containerView.addSubview(toVC.view)
@@ -107,7 +119,13 @@ class NowPlayingAnimationController: NSObject, UIViewControllerAnimatedTransitio
                             UIApplication.shared.keyWindow?.addSubview(toVC.view)
                             toVC.view.frame = keyWindow.frame.modifiedBy(width: 0, height: isiPhoneX ? 0 : -(UIApplication.shared.statusBarFrame.height - 20)).modifiedBy(x: 0, y: isiPhoneX ? 0 : UIApplication.shared.statusBarFrame.height - 20)
                         }
+                        
+                        toVC.bottomEffectView.transform = .identity
+                        toVC.visualEffectNavigationBar.transform = .identity
+                        toVC.contentView.alpha = 1
                     }
+                    
+                    toVC.contentView.transform = .identity
                     
                     transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
                 }
@@ -124,13 +142,12 @@ class NowPlayingAnimationController: NSObject, UIViewControllerAnimatedTransitio
                         
                         UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 1, animations: {
                             
-//                            toVC.bottomEffectView.transform = CGAffineTransform.identity
+                            toVC.visualEffectNavigationBar.alpha = 1
                             toVC.bottomEffectView.alpha = 1
                         })
                         
                         UIView.addKeyframe(withRelativeStartTime: 1/5, relativeDuration: 4/5, animations: {
                             
-//                            toVC.contentView.transform = CGAffineTransform.identity
                             toVC.contentView.alpha = 1
                         })
                         
@@ -138,20 +155,24 @@ class NowPlayingAnimationController: NSObject, UIViewControllerAnimatedTransitio
                     
                 } else {
                     
-                    let animations: () -> Void = {
+                    UIView.animateKeyframes(withDuration: duration, delay: 0, options: .calculationModeCubic, animations: {
                         
-                        fromVC.view.transform = .init(translationX: 0, y: UIScreen.main.bounds.height)
-                        toVC.contentView.alpha = 1
-                    }
-                    
-                    if interactor.interactionInProgress {
+                        UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 2.6/5, animations: {
+                            
+                            fromVC.view.alpha = 0
+                            fromVC.view.frame = .init(x: 50, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height - UIApplication.shared.statusBarFrame.height + 20)
+                        })
                         
-                        UIView.animate(withDuration: duration, delay: 0, options: .curveLinear, animations: animations, completion: completion)
+                        UIView.addKeyframe(withRelativeStartTime: 2.4/5, relativeDuration: 2.6/5, animations: {
+                            
+                            toVC.contentView.alpha = 1
+                            toVC.contentView.transform = .identity
+                            
+                            toVC.visualEffectNavigationBar.transform = .identity
+                            toVC.bottomEffectView.transform = .identity
+                        })
                         
-                    } else {
-                        
-                        UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .curveLinear, animations: animations, completion: completion)
-                    }
+                    }, completion: completion)
                 }
         }
     }

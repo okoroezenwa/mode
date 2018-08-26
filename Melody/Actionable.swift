@@ -352,16 +352,14 @@ class SongActionManager: NSObject {
             
             if isEditing {
                 
-                if sender is UIGestureRecognizer || sender is UIAlertAction || ((container is CollectorViewController || container is NewPlaylistViewController) && sender is UIButton) || sender is SwipeAction || sender is Notification {
+                if sender is UIGestureRecognizer || sender is UIAlertAction || ((container is CollectorViewController || container is NewPlaylistViewController || (container is FilterViewController && (container as? FilterViewController)?.filtering == false)) && sender is UIButton) || sender is SwipeAction || sender is Notification {
                     
                     actionable.editButton.setTitle(.inactiveEditButtonTitle, for: .normal)
+                    actionable.editButton.setImage(.inactiveEditImage, for: .normal)
                     
                     let view = container is NewPlaylistViewController ? actionable.editButton.superview?.superview : actionable.editButton.superview
                     
-//                    if !(container is CollectorViewController) {
-                    
-                        UIView.animate(withDuration: 0.3, animations: { view?.layoutIfNeeded() })
-//                    }
+                    UIView.animate(withDuration: 0.3, animations: { view?.layoutIfNeeded() })
                 }
             }
             
@@ -371,7 +369,11 @@ class SongActionManager: NSObject {
                 
             } else if sender is UIButton, !(container is CollectorViewController || container is NewPlaylistViewController), isEditing {
                 
-                if let collectionActionable = actionable as? CollectionActionable {
+                if let filterVC = actionable as? FilterViewController, filterVC.filtering.inverted {
+                    
+                    filterVC.handleLeftSwipe(sender)
+                
+                } else if let collectionActionable = actionable as? CollectionActionable {
                     
                     if collectionActionable.actionableSongs.isEmpty || collectionActionable.actionableOperation?.isExecuting == true {
                         
@@ -406,21 +408,19 @@ class SongActionManager: NSObject {
             
             if !isEditing {
                 
-                let title = container is CollectorViewController || container is NewPlaylistViewController ? "Done" : .activeEditButtonTitle
+                let details: (title: String, image: UIImage) = container is CollectorViewController || container is NewPlaylistViewController || (container is FilterViewController && (container as? FilterViewController)?.filtering == false) ? ("Done", .doneImage) : (.activeEditButtonTitle, .moreEditImage)
                 
                 if let vc = container as? NewPlaylistViewController {
                     
                     vc.nameSearchBar.resignFirstResponder()
                 }
                 
-                actionable.editButton.setTitle(title, for: .normal)
+                actionable.editButton.setTitle(details.title, for: .normal)
+                actionable.editButton.setImage(details.image, for: .normal)
                 
                 let view = container is NewPlaylistViewController ? actionable.editButton.superview?.superview : actionable.editButton.superview
                 
-//                if !(container is CollectorViewController) {
-                
-                    UIView.animate(withDuration: 0.3, animations: { view?.layoutIfNeeded() })
-//                }
+                UIView.animate(withDuration: 0.3, animations: { view?.layoutIfNeeded() })
             }
             
             container.handleRightSwipe(sender)
@@ -869,7 +869,7 @@ extension SingleItemActionable {
                             
                             UniversalMethods.banner(withTitle: "\(playlist.name ??? "Untitled Playlist")", subtitle: "Added \(items.count.fullCountText(for: .song))", image: nil, backgroundColor: .deepGreen, titleFont: .myriadPro(ofWeight: .light, size: 25), subtitleFont: .myriadPro(ofWeight: .light, size: 20), didTapBlock: nil).show(duration: .bannerInterval)
                             
-                            notifier.post(name: .songAddedToPlaylist, object: nil, userInfo: ["playlist": playlist.persistentID, "songs": items])
+                            notifier.post(name: .songsAddedToPlaylists, object: nil, userInfo: [String.addedPlaylists: [playlist.persistentID], String.addedSongs: items])
                             completions?.success()
                         }
                     })

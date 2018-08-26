@@ -99,16 +99,17 @@
 	<string>Mode would like to display and play your music library.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Mode needs to save artwork to your photo library.</string>
+	<key>UIFileSharingEnabled</key>
+	<true/>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Mode needs to save artwork to your photo library.</string>
 	<key>UIAppFonts</key>
 	<array>
-		<string>MyriadPro-LightIt.otf</string>
 		<string>MyriadPro-Semibold.otf</string>
 		<string>MyriadPro-Regular.otf</string>
-		<string>MyriadPro-SemiboldIt.otf</string>
 		<string>MyriadPro-It.otf</string>
 		<string>MyriadPro-Light.otf</string>
+		<string>MyriadPro-Bold.otf</string>
 	</array>
 	<key>UIApplicationShortcutItems</key>
 	<array>

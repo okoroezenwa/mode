@@ -27,7 +27,7 @@ class Transitioner: NSObject {
         guard let entityVC = vc as? EntityItemsViewController, let collection = sender as? MPMediaItemCollection else { return nil }
         
         entityVC.entityContainerType = entity.containerType
-        entityVC.backLabelText = title ?? source?.title
+        entityVC.backLabelText = title ?? (source as? Navigatable)?.preferredTitle
         entityVC.collection = collection
         entityVC.highlightedEntities = (item, highlightedAlbum)
         

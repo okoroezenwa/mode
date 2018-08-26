@@ -1,25 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14101" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.13.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14086"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.9"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
+        <array key="MyriadPro-Bold.otf">
+            <string>MyriadPro-Bold</string>
+        </array>
         <array key="MyriadPro-Light.otf">
             <string>MyriadPro-Light</string>
         </array>
     </customFonts>
     <scenes>
-        <!--Search View Controller-->
+        <!--Previous Searches-->
         <scene sceneID="bxz-Jj-abK">
             <objects>
-                <viewController automaticallyAdjustsScrollViewInsets="NO" id="vys-ey-0VG" customClass="SearchViewController" customModule="Mode" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Previous Searches" automaticallyAdjustsScrollViewInsets="NO" id="vys-ey-0VG" customClass="SearchViewController" customModule="Mode" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="EbB-7f-cf6"/>
                         <viewControllerLayoutGuide type="bottom" id="FE9-9B-csM"/>
@@ -47,7 +48,7 @@
                                     </label>
                                 </subviews>
                             </stackView>
-                            <view opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" translatesAutoresizingMaskIntoConstraints="NO" id="Lrx-qp-gV7">
+                            <view hidden="YES" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" translatesAutoresizingMaskIntoConstraints="NO" id="Lrx-qp-gV7">
                                 <rect key="frame" x="0.0" y="20" width="375" height="51"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="x3Z-ax-5vd">
@@ -60,8 +61,8 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="331" height="51"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Previous Searches" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qaT-fZ-dbh" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                <rect key="frame" x="10" y="16" width="178" height="25"/>
-                                                                <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="25"/>
+                                                                <rect key="frame" x="10" y="16" width="201" height="25"/>
+                                                                <fontDescription key="fontDescription" name="MyriadPro-Bold" family="Myriad Pro" pointSize="25"/>
                                                                 <nil key="highlightedColor"/>
                                                             </label>
                                                         </subviews>
@@ -102,7 +103,7 @@
                                                         </connections>
                                                     </button>
                                                     <view userInteractionEnabled="NO" alpha="0.050000000000000003" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MwX-2D-R0u" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                                        <rect key="frame" x="10" y="14" width="24" height="24"/>
+                                                        <rect key="frame" x="10" y="13.5" width="24" height="24"/>
                                                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="24" id="Wp5-mg-wsY"/>
@@ -193,7 +194,7 @@
                                         </userDefinedRuntimeAttributes>
                                     </visualEffectView>
                                     <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="iUs-e6-Me9" customClass="MELActivityIndicatorView" customModule="Mode" customModuleProvider="target">
-                                        <rect key="frame" x="11" y="11.5" width="37" height="37"/>
+                                        <rect key="frame" x="11.5" y="11.5" width="37" height="37"/>
                                     </activityIndicatorView>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -277,7 +278,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView hidden="YES" opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="LEA-7A-VHk">
-                                <rect key="frame" x="16" y="308.5" width="343" height="51"/>
+                                <rect key="frame" x="16" y="308" width="343" height="51"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Nothing Here . . ." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ghU-QW-ZS9" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="343" height="21"/>
@@ -295,7 +296,7 @@
                                     </label>
                                 </subviews>
                             </stackView>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vJF-QN-tMr">
+                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vJF-QN-tMr">
                                 <rect key="frame" x="0.0" y="20" width="375" height="51"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Qtg-qJ-x56" customClass="GradientView" customModule="Mode" customModuleProvider="target">
@@ -305,8 +306,8 @@
                                                 <rect key="frame" x="0.0" y="0.0" width="375" height="51"/>
                                                 <subviews>
                                                     <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" verticalHuggingPriority="254" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="751" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="clip" translatesAutoresizingMaskIntoConstraints="NO" id="aqu-vL-Krt" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                        <rect key="frame" x="0.0" y="0.0" width="96" height="51"/>
-                                                        <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="25"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="108" height="51"/>
+                                                        <fontDescription key="fontDescription" name="MyriadPro-Bold" family="Myriad Pro" pointSize="25"/>
                                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                         <inset key="contentEdgeInsets" minX="10" minY="16" maxX="0.0" maxY="10"/>
                                                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="0.0" maxY="3"/>
@@ -358,13 +359,13 @@
                                 </constraints>
                             </view>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="goR-T2-9VQ">
-                                <rect key="frame" x="0.0" y="71" width="375" height="596"/>
+                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
                             </containerView>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="trailingMargin" secondItem="LEA-7A-VHk" secondAttribute="trailing" id="1Jk-Pv-9ui"/>
-                            <constraint firstItem="goR-T2-9VQ" firstAttribute="top" secondItem="vJF-QN-tMr" secondAttribute="bottom" priority="900" id="1h4-iu-5DV"/>
+                            <constraint firstItem="goR-T2-9VQ" firstAttribute="top" secondItem="wOM-cu-8F6" secondAttribute="bottom" id="Inr-NK-yvA"/>
                             <constraint firstItem="vJF-QN-tMr" firstAttribute="top" secondItem="wOM-cu-8F6" secondAttribute="bottom" id="QNd-Dv-b9m"/>
                             <constraint firstAttribute="leadingMargin" secondItem="LEA-7A-VHk" secondAttribute="leading" id="TWJ-UC-O6r"/>
                             <constraint firstAttribute="trailing" secondItem="vJF-QN-tMr" secondAttribute="trailing" id="dnd-n2-i7J"/>

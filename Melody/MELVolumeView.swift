@@ -62,11 +62,13 @@ class MELVolumeView: MPVolumeView {
     }
     
     func modify(_ slider: UISlider) {
+        
+        let size: CGFloat = 11
 
         slider.tintColor = darkTheme ? .white : .black
         slider.minimumTrackTintColor = darkTheme ? .white : .black
         slider.maximumTrackTintColor = (darkTheme ? UIColor.white : UIColor.black).withAlphaComponent(0.1)
-        slider.setThumbImage(UIImage.new(withColour: darkTheme ? .white : .black, size: .square(of: 22)).at(.square(of: 11)).withCornerRadii(5.5), for: .normal)
+        slider.setThumbImage(UIImage.new(withColour: darkTheme ? .white : .black, size: .square(of: size * 2)).at(.square(of: size)).withCornerRadii(size / 2), for: .normal)
         
         if #available(iOS 11, *) {
             
@@ -86,11 +88,6 @@ class MELVolumeView: MPVolumeView {
                 slider.maximumValueImage = #imageLiteral(resourceName: "VolumeOn")
             }
         }
-        
-//        if #available(iOS 11, *) {
-//
-//            slider.accessibilityIgnoresInvertColors = false
-//        }
     }
     
     func modifyTint() {

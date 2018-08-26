@@ -34,20 +34,6 @@ extension BackgroundHideable {
                     
                     view.addConstraints([NSLayoutConstraint.init(item: view, attribute: .bottom, relatedBy: .equal, toItem: subview, attribute: .bottom, multiplier: 1, constant: 0), NSLayoutConstraint.init(item: view, attribute: .top, relatedBy: .equal, toItem: subview, attribute: .top, multiplier: 1, constant: 0), NSLayoutConstraint.init(item: view, attribute: .leading, relatedBy: .equal, toItem: subview, attribute: .leading, multiplier: 1, constant: 0), NSLayoutConstraint.init(item: view, attribute: .trailing, relatedBy: .equal, toItem: subview, attribute: .trailing, multiplier: 1, constant: 0)])
                 }
-                
-//                if let nowPlaying = musicPlayer.nowPlayingItem, let artwork = nowPlaying.artwork {
-//                    
-//                    temporaryImageView.image = artwork.image(at: CGSize.init(width: 20, height: 20))
-//                    
-//                } else {
-//                    
-//                    temporaryImageView.image = #imageLiteral(resourceName: "NoArt")
-//                }
-//                
-//                if !(self is EntityItemsViewController) {
-//                    
-//                    temporaryImageView.image = .from(appDelegate.window)
-//                }
             
             case .removed:
                 
@@ -124,6 +110,7 @@ protocol PlaylistTransitionable: class {
 
 protocol PreviewTransitionable: class {
     
+    var isCurrentlyTopViewController: Bool { get set }
     var viewController: UIViewController? { get set }
 }
 
@@ -163,20 +150,13 @@ protocol InteractivePresenter {
     var presenter: PresentationAnimationController { get }
 }
 
-protocol EntityContainer: class, UITableViewDelegate, TableViewContaining {
+protocol EntityContainer: UITableViewDelegate, TableViewContaining {
     
     func handleLeftSwipe(_ sender: Any)
     func handleRightSwipe(_ sender: Any)
 }
 
-protocol SongContainer: EntityContainer {
-    
-    func getSong(from indexPath: IndexPath, filtering: Bool) -> MPMediaItem
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath)
-    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle
-}
-
-protocol TableViewContainer: Arrangeable, InfoLoading, Filterable, SingleItemActionable {
+protocol TableViewContainer: FullySortable, InfoLoading, Filterable, SingleItemActionable {
     
     var tableDelegate: TableDelegate { get set }
     var collectionView: UICollectionView? { get set }
@@ -184,7 +164,6 @@ protocol TableViewContainer: Arrangeable, InfoLoading, Filterable, SingleItemAct
     var query: MPMediaQuery? { get }
     var filteredEntities: [MPMediaEntity] { get set }
     var highlightedEntity: MPMediaEntity? { get }
-    var cellDelegate: Any { get }
     func selectCell(in tableView: UITableView, at indexPath: IndexPath, filtering: Bool)
     func getEntity(at indexPath: IndexPath, filtering: Bool) -> MPMediaEntity
 }
@@ -192,73 +171,6 @@ protocol TableViewContainer: Arrangeable, InfoLoading, Filterable, SingleItemAct
 protocol FilterContaining: class {
     
     var filterContainer: (FilterContainer & UIViewController)? { get set }
-}
-
-@objc protocol TimerBased {
-    
-    @objc optional var startTime: MELLabel? { get set }
-    @objc optional var stopTime: MELLabel? { get set }
-    var playPauseButton: MELButton! { get set }
-    var timeSlider: MELSlider! { get set }
-    var playingImage: UIImage { get }
-    var pausedImage: UIImage { get }
-    @objc optional var playingInset: CGFloat { get }
-    @objc optional var altPlayPauseButton: MELButton? { get set }
-    @objc optional var pausedInset: CGFloat { get }
-}
-
-extension TimerBased {
-    
-    func updateTimes(setValue: Bool, seeking: Bool) {
-        
-        if let nowPlaying = musicPlayer.nowPlayingItem {
-            
-//            if let startTime = startTime, let stopTime = stopTime {
-            
-                startTime??.text = seeking ? TimeInterval(timeSlider.value).nowPlayingRepresentation : musicPlayer.currentPlaybackTime.nowPlayingRepresentation
-                stopTime??.text = (TimeInterval(seeking ? TimeInterval(timeSlider.value) : musicPlayer.currentPlaybackTime) - nowPlaying.playbackDuration).nowPlayingRepresentation
-//            }
-            
-            if setValue {
-                
-                timeSlider.setValue(Float(musicPlayer.currentPlaybackTime), animated: true)
-            }
-            
-            if musicPlayer.isPlaying && musicPlayer.currentPlaybackTime < 5 {
-                
-                modifyPlayPauseButton()
-            }
-            
-        } else {
-            
-            timeSlider.setValue(0, animated: true)
-        }
-    }
-    
-    func modifyPlayPauseButton() {
-        
-        let image: UIImage = {
-            
-            guard musicPlayer.playbackState != .interrupted else { return pausedImage }
-            
-            return musicPlayer.isPlaying ? playingImage : pausedImage
-        }()
-        
-        playPauseButton.setImage(image, for: .normal)
-        playPauseButton.imageEdgeInsets.left = musicPlayer.isPlaying ? playingInset ?? 0 : pausedInset ?? 0
-        altPlayPauseButton??.setImage(musicPlayer.isPlaying ? #imageLiteral(resourceName: "PauseFilled17") : #imageLiteral(resourceName: "PlayFilled17"), for: .normal)
-        
-        UIView.animate(withDuration: 0.65, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .allowUserInteraction, animations: {
-            
-            self.altPlayPauseButton??.superview?.layoutIfNeeded()
-            
-            if !(self is NowPlayingViewController) {
-                
-                self.playPauseButton.superview?.layoutIfNeeded()
-            }
-            
-        }, completion: nil)
-    }
 }
 
 protocol Dismissable {
@@ -437,7 +349,7 @@ protocol ScreenshotProviding {
     var view: UIView! { get set }
 }
 
-protocol LargeActivityIndicatorContaining: class, TableViewContaining {
+protocol LargeActivityIndicatorContaining: TableViewContaining {
     
     var largeActivityIndicator: MELActivityIndicatorView! { get set }
     var activityView: UIView! { get set }
@@ -463,18 +375,18 @@ extension LargeActivityIndicatorContaining {
     }
 }
 
-protocol TableViewContaining {
+protocol TableViewContaining: class {
     
     var tableView: MELTableView! { get set }
 }
 
-protocol TopScrollable: TableViewContaining { }
+protocol TopScrollable: IndexContaining { }
 
 extension TopScrollable {
     
     func scrollToTop() {
         
-        tableView.setContentOffset(.zero, animated: true)
+        tableView.setContentOffset(.init(x: 0, y: -(navigatable?.inset ?? 0)), animated: true)
     }
 }
 

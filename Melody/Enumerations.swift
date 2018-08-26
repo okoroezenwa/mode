@@ -302,7 +302,7 @@ enum LibrarySection: Int, TitleContaining {
         switch self {
             
             case .albums: return #imageLiteral(resourceName: "Albums")
-                 
+            
              case .compilations: return #imageLiteral(resourceName: "Compilations")
             
             case .composers: return #imageLiteral(resourceName: "Composers")
@@ -314,6 +314,26 @@ enum LibrarySection: Int, TitleContaining {
             case .playlists: return #imageLiteral(resourceName: "PlaylistsAltSmaller")
             
             case .songs: return #imageLiteral(resourceName: "Songs")
+        }
+    }
+    
+    var propertyImage: UIImage? {
+        
+        switch self {
+            
+            case .albums: return #imageLiteral(resourceName: "Albums17")
+            
+             case .compilations: return #imageLiteral(resourceName: "CompilationsSmall")
+            
+            case .composers: return #imageLiteral(resourceName: "ComposersSmall")
+            
+            case .artists: return #imageLiteral(resourceName: "Artists16")
+            
+            case .genres: return #imageLiteral(resourceName: "GenresSmall")
+            
+            case .playlists: return #imageLiteral(resourceName: "Playlists13")
+            
+            case .songs: return #imageLiteral(resourceName: "SongsSmall")
         }
     }
     
@@ -530,6 +550,8 @@ enum Property: Int, TitleContaining, CaseIterable {
             case .status: return "Status"
         }
     }
+    
+    var propertyImage: UIImage? { return nil }
 }
 
 enum Icon: String {
@@ -727,4 +749,5 @@ enum SongAction {
 protocol TitleContaining {
     
     var title: String { get }
+    var propertyImage: UIImage? { get }
 }

@@ -8,23 +8,11 @@
 
 import UIKit
 
-class CollectionsViewController: UIViewController, InfoLoading, ArtistTransitionable, AlbumArtistTransitionable, GenreTransitionable, PlaylistTransitionable, ComposerTransitionable, FilterContextDiscoverable, CellAnimatable, EntityContainer, BorderButtonContaining, Refreshable, QueryUpdateable, IndexContaining, LibrarySectionContainer, EntityVerifiable, TopScrollable {
+class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, GenreTransitionable, PlaylistTransitionable, ComposerTransitionable, FilterContextDiscoverable, CellAnimatable, EntityContainer, BorderButtonContaining, Refreshable, QueryUpdateable, IndexContaining, LibrarySectionContainer, EntityVerifiable, TopScrollable {
     
     @IBOutlet weak var tableView: MELTableView!
     @IBOutlet weak var bottomViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var bottomView: UIView!
-    @IBOutlet weak var checkViewContainer: CheckViewContainer!
-    @IBOutlet weak var emptyPlaylistsView: UIView! {
-        
-        didSet {
-            
-            guard collectionKind == .playlist, presented else { return }
-            
-            let tap = UITapGestureRecognizer.init(target: self, action: #selector(toggleEmptyPlaylists(_:)))
-            emptyPlaylistsView.addGestureRecognizer(tap)
-        }
-    }
-    
     @IBOutlet weak var actionsButton: MELButton!  {
         
         didSet {
@@ -69,15 +57,7 @@ class CollectionsViewController: UIViewController, InfoLoading, ArtistTransition
         self.collectionView = view.collectionView
         view.viewController = self
         view.header.button.addTarget(self, action: #selector(backToStart), for: .touchUpInside)
-        view.header.altButton.addTarget(self.tableDelegate, action: #selector(tableDelegate.viewSections), for: .touchUpInside)
-        
-//        updateHeaderViewLabel(view)
-//        updateHeaderViewButton(view)
-//
-//        view.header.rightButton.setImage(#imageLiteral(resourceName: "More13"), for: .normal)
-//        view.header.rightButton.contentEdgeInsets.bottom = 15
-//        view.header.rightButton.contentEdgeInsets.right = 0
-//        view.header.rightButton.addTarget(self, action: #selector(changeRecentsType), for: .touchUpInside)
+        view.header.altButton.addTarget(isInDebugMode ? self : self.tableDelegate, action: isInDebugMode ? #selector(backToStart) : #selector(tableDelegate.viewSections), for: .touchUpInside)
         
         return view
     }()
@@ -114,19 +94,15 @@ class CollectionsViewController: UIViewController, InfoLoading, ArtistTransition
         
         didSet {
             
+            let order = ScrollHeaderSubview.with(title: arrangementLabelText, image: #imageLiteral(resourceName: "Order10"))
+            orderLabel = order.label
+            
+            stackView.addArrangedSubview(order)
+            
             if collectionKind == .playlist {
                 
                 let view = ScrollHeaderSubview.with(title: playlistsViewText, image: #imageLiteral(resourceName: "List"))
                 playlistViewLabel = view.label
-                
-                stackView.addArrangedSubview(view)
-            }
-            
-            let order = ScrollHeaderSubview.with(title: arrangementLabelText, image: #imageLiteral(resourceName: "Order10"))
-            
-            orderLabel = order.label
-            
-            for view in [order] {
                 
                 stackView.addArrangedSubview(view)
             }
@@ -191,6 +167,8 @@ class CollectionsViewController: UIViewController, InfoLoading, ArtistTransition
     var ignorePropertyChange = false
     var highlightedIndex: Int?
     @objc var cellDelegate: Any { return self }
+
+    lazy var selectedPlaylists = [MPMediaPlaylist]()
     
     var showRecents: Bool {
         
@@ -212,6 +190,7 @@ class CollectionsViewController: UIViewController, InfoLoading, ArtistTransition
     
     @objc var collectionView: UICollectionView?
     var sectionIndexViewController: SectionIndexViewController?
+    var navigatable: Navigatable? { return libraryVC }
     var requiresLargerTrailingConstraint: Bool { return presented }
     
     @objc var collections = [MPMediaItemCollection]()
@@ -401,7 +380,7 @@ class CollectionsViewController: UIViewController, InfoLoading, ArtistTransition
         
         let queue = OperationQueue.init()
         queue.name = "Artwork Operation Queue"
-        queue.maxConcurrentOperationCount = 3
+        
         
         return queue
     }()
@@ -419,7 +398,7 @@ class CollectionsViewController: UIViewController, InfoLoading, ArtistTransition
         
         let queue = OperationQueue()
         queue.name = "Image Operation Queue"
-        queue.maxConcurrentOperationCount = 3
+        
         
         return queue
     }()
@@ -427,7 +406,6 @@ class CollectionsViewController: UIViewController, InfoLoading, ArtistTransition
         
         let queue = OperationQueue()
         queue.name = "Actionable Operation Queue"
-        queue.maxConcurrentOperationCount = 1
         
         return queue
     }()
@@ -443,7 +421,7 @@ class CollectionsViewController: UIViewController, InfoLoading, ArtistTransition
         
         let queue = OperationQueue()
         queue.name = "Sort Operation Queue"
-        queue.maxConcurrentOperationCount = 3
+        
         
         return queue
     }()
@@ -463,10 +441,14 @@ class CollectionsViewController: UIViewController, InfoLoading, ArtistTransition
             
             adjustInsets(context: .container)
             
+            tableView.contentInset.top = libraryVC?.inset ?? 0
+            tableView.scrollIndicatorInsets.top = libraryVC?.inset ?? 0
+            
         } else {
             
             bottomView.isHidden = false
             bottomViewHeightConstraint.constant = 44
+            tableView.allowsMultipleSelection = true
         }
         
         prepareLifetimeObservers()
@@ -542,23 +524,6 @@ class CollectionsViewController: UIViewController, InfoLoading, ArtistTransition
         parent?.performSegue(withIdentifier: "toNewPlaylist", sender: nil)
     }
     
-    func updateHeaderViewLabel(_ sender: Any) {
-        
-        let animated = (sender is HeaderView).inverted
-        let view = sender as? HeaderView ?? headerView
-        
-        UIView.transition(with: view.header.label, duration: animated ? 0.3 : 0, options: .transitionCrossDissolve, animations: {
-            
-            view.header.label.text = {
-                
-                guard self.collectionKind == .playlist, self.presented.inverted, recentlyUpdatedPlaylistSorts.contains(self.currentPlaylistsView) else { return "recently added" }
-                
-                return "recently updated"
-            }()
-            
-        }, completion: nil)
-    }
-    
     @objc func changeRecentsType() {
         
         let added = UIAlertAction.init(title: "Added", style: .default, handler: { [weak self] action in
@@ -586,23 +551,6 @@ class CollectionsViewController: UIViewController, InfoLoading, ArtistTransition
         present(UIAlertController.withTitle(nil, message: "Recently...", style: .actionSheet, actions: added, updated, .cancel()), animated: true, completion: nil)
     }
     
-    func updateHeaderViewButton(_ sender: Any) {
-        
-        guard collectionKind == .playlist, presented.inverted else { return }
-        
-        let view = sender as? HeaderView ?? headerView
-        
-        view.header.rightButtonViewConstraint.constant = 50
-        
-        let animated = (sender is HeaderView).inverted
-        
-        UIView.animate(withDuration: animated ? 0.3 : 0, animations: {
-            
-            view.header.layoutIfNeeded()
-            view.header.rightButton.superview?.alpha = 1
-        })
-    }
-    
     @IBAction func showOptions() {
         
         guard let vc: UIViewController = {
@@ -620,16 +568,6 @@ class CollectionsViewController: UIViewController, InfoLoading, ArtistTransition
     @IBAction func filterButtonTapped() {
         
         invokeSearch()
-    }
-    
-    @objc func toggleEmptyPlaylists(_ sender: UIGestureRecognizer) {
-        
-        guard sender.state == .ended else { return }
-        
-        presentedEmptyPlaylists = !presentedEmptyPlaylists
-        updateWithQuery()
-        
-        checkViewContainer.checkView.changeState()
     }
 
     @objc func showOptions(_ sender: Any) {
@@ -722,9 +660,6 @@ class CollectionsViewController: UIViewController, InfoLoading, ArtistTransition
     func updateTopLabels(withFilteredCount count: Int? = nil) {
         
         if collectionKind == .playlist, !playlistsLoaded {
-            
-            libraryVC?.titleButton.setTitle("  Playlists . . .", for: .normal)
-            libraryVC?.titleButton.setImage(#imageLiteral(resourceName: "PlaylistsAltSmaller"), for: .normal)
             
             return
         }
@@ -835,11 +770,6 @@ class CollectionsViewController: UIViewController, InfoLoading, ArtistTransition
                     
                     weakSelf.collectionsQuery = weakSelf.getCurrentQuery()
                     weakSelf.updateWithQuery()
-//                    let text = "There are no artists in your library"
-//                    let count = (weakSelf.query.items ?? []).count
-//                    weakSelf.libraryVC?.updateEmptyLabel(withCount: count, text: text)
-//                    weakSelf.updateHeaderView(withCount: count)
-//                    weakSelf.updateTopLabels()
                 }
             })
             
@@ -862,20 +792,9 @@ class CollectionsViewController: UIViewController, InfoLoading, ArtistTransition
             
             if presented.inverted {
                 
-                //            lifetimeObservers.insert(notifier.addObserver(forName: .appleMusicStatusChecked, object: nil, queue: nil, using: { [weak self] notification in
-                //
-                //                guard let weakSelf = self else { return }
-                //
-                //                weakSelf.updateHeaderViewLabel(notification)
-                //                weakSelf.updateHeaderViewButton(notification)
-                //
-                //            }) as! NSObject)
-                
                 lifetimeObservers.insert(notifier.addObserver(forName: .recentlyUpdatedPlaylistSortsChanged, object: nil, queue: nil, using: { [weak self] notification in
                     
                     guard let weakSelf = self, let rawValue = notification.userInfo?["playlistsView"] as? Int, rawValue == weakSelf.currentPlaylistsView.rawValue else { return }
-                    
-                    weakSelf.updateHeaderViewLabel(weakSelf)
                     
                     weakSelf.headerView.activityIndicatorView.startAnimating()
                     weakSelf.headerView.loadingEffectView.effect = weakSelf.headerView.collections.isEmpty ? nil : Themer.vibrancyContainingEffect
@@ -893,19 +812,24 @@ class CollectionsViewController: UIViewController, InfoLoading, ArtistTransition
                     
                 }) as! NSObject)
                 
-                lifetimeObservers.insert(notifier.addObserver(forName: .songAddedToPlaylist, object: nil, queue: nil, using: { [weak self] notification in
+                lifetimeObservers.insert(notifier.addObserver(forName: .songsAddedToPlaylists, object: nil, queue: nil, using: { [weak self] notification in
                     
-                    guard let weakSelf = self, let id = notification.userInfo?["playlist"] as? MPMediaEntityPersistentID else { return }
+                    guard let weakSelf = self, let ids = notification.userInfo?[String.addedPlaylists] as? [MPMediaEntityPersistentID] else { return }
                     
-                    if let indexPath = weakSelf.tableView.indexPathsForVisibleRows?.first(where: { weakSelf.getCollection(from: $0).persistentID == id }) {
+                    if let indexPaths = weakSelf.tableView.indexPathsForVisibleRows?.filter({ Set(ids).contains (weakSelf.getCollection(from: $0).persistentID) }), indexPaths.isEmpty.inverted {
                         
-                        weakSelf.tableView.reloadRows(at: [indexPath], with: .none)
+                        weakSelf.tableView.reloadRows(at: indexPaths, with: .none)
                     }
                     
-                    if let indexPath = weakSelf.collectionView?.indexPathsForVisibleItems.first(where: { weakSelf.headerView.playlists[$0.row].persistentID == id }), let collectionView = weakSelf.collectionView, let cell = collectionView.cellForItem(at: indexPath) {
+                    if let indexPaths = weakSelf.collectionView?.indexPathsForVisibleItems.filter({ Set(ids).contains (weakSelf.headerView.playlists[$0.row].persistentID) }), indexPaths.isEmpty.inverted {
                         
-                        weakSelf.collectionView?.reloadItems(at: [indexPath])
-                        weakSelf.headerView.collectionView(collectionView, willDisplay: cell, forItemAt: indexPath)
+                        weakSelf.collectionView?.reloadItems(at: indexPaths)
+                        indexPaths.forEach({
+                            
+                            guard let collectionView = weakSelf.collectionView, let cell = weakSelf.collectionView?.cellForItem(at: $0) else { return }
+                            
+                            weakSelf.headerView.collectionView(collectionView, willDisplay: cell, forItemAt: $0)
+                        })
                     }
                     
                 }) as! NSObject)
@@ -1280,6 +1204,104 @@ class CollectionsViewController: UIViewController, InfoLoading, ArtistTransition
         }
     }
     
+    @IBAction func addItemsToSelectedPlaylists() {
+        
+        guard selectedPlaylists.isEmpty.inverted else {
+            
+            UniversalMethods.banner(withTitle: "Select a playlist", titleFont: .myriadPro(ofWeight: .semibold, size: 17)).show(for: 1)
+            
+            return
+        }
+        
+        let duplicates = selectedPlaylists.reduce([], { $0 + Array(Set($1.items).intersection(Set(manager?.queue ?? itemsToAdd))) })
+        let duplicateText = duplicates.count == 1 ? "duplicate" : "duplicates"
+        let filtering = filterContainer != nil
+        
+        guard let parent = (filterContainer?.parent ?? parent?.parent) as? PresentedContainerViewController else { return }
+        
+        let addSongs: (Bool) -> () = { [weak self] allowDuplicates in
+            
+            guard let weakSelf = self else { return }
+            
+            let array: [MPMediaItem] = {
+                
+                if allowDuplicates {
+                    
+                    return weakSelf.manager?.queue ?? weakSelf.itemsToAdd
+                }
+                
+                return (weakSelf.manager?.queue ?? weakSelf.itemsToAdd).filter({ !duplicates.contains($0) })
+            }()
+            
+            let staticCount = weakSelf.selectedPlaylists.count
+            var errors = [(error: Error?, playlist: MPMediaPlaylist)]()
+            var count = staticCount {
+                
+                didSet {
+                    
+                    if count == 0 {
+                        
+                        var details: (title: String, subtitle: String?, colour: UIColor) {
+                            
+                            switch errors.count {
+                                
+                                case 0: return ("\(array.count.fullCountText(for: .song)) added to \(staticCount.fullCountText(for: .playlist))", nil, .deepGreen)
+                                
+                                case let y where (1..<staticCount).contains(y): return ("\(array.count.fullCountText(for: .song)) added to \((staticCount - y).fullCountText(for: .playlist)), unable to add to \(y.fullCountText(for: .playlist))", errors.first?.error?.localizedDescription, .yellow)
+                                
+                                default: return ("Unable to add \(array.count.fullCountText(for: .song)) to \(staticCount.fullCountText(for: .playlist))", errors.first?.error?.localizedDescription, .red)
+                            }
+                        }
+                        
+                        let newBanner = Banner.init(title: details.title, subtitle: details.subtitle, image: nil, backgroundColor: details.colour, didTapBlock: nil)
+                        newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+                        newBanner.detailLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+                        newBanner.show(duration: 1.5)
+                        
+                        if let _ = weakSelf.manager {
+                            
+                            notifier.post(name: .endQueueModification, object: nil)
+                            
+                        } else {
+                            
+                            weakSelf.performSegue(withIdentifier: "unwind", sender: nil)
+                        }
+                        
+                        notifier.post(name: .songsAddedToPlaylists, object: nil, userInfo: [String.addedPlaylists: Set(weakSelf.selectedPlaylists).subtracting(Set(errors.map({ $0.playlist }))).map({ $0.persistentID }), String.addedSongs: array])
+                    }
+                }
+            }
+            
+            parent.activityIndicator.startAnimating()
+            
+            if !filtering {
+                
+                parent.rightButton.isHidden = true
+                parent.rightBorderView.isHidden = true
+            }
+            
+            weakSelf.selectedPlaylists.forEach({ playlist in playlist.add(array, completionHandler: { error in
+                
+                UniversalMethods.performInMain {
+                    
+                    if let error = error { errors.append((error, playlist)) }
+                    
+                    count -= 1
+                }
+                
+            }) })
+        }
+        
+        let add = [UIAlertAction.init(title: duplicates.count > 0 ? "Add With \(duplicateText.capitalized)" : "Add \((manager?.queue ?? itemsToAdd).count.fullCountText(for: .song, capitalised: true))", style: .default, handler: { _ in
+            addSongs(true) })]
+        
+        let noDuplicates = duplicates.isEmpty ? [] : [UIAlertAction.init(title: "Add Without \(duplicateText.capitalized)", style: .default, handler: { _ in addSongs(false) })]
+        
+//        let review = duplicates.isEmpty ? [] : [UIAlertAction.init(title: "Review Duplicates", style: .default, handler: nil)]
+        
+        (filterContainer ?? self).present(UniversalMethods.alertController(withTitle: selectedPlaylists.count.fullCountText(for: .playlist, capitalised: true), message: !duplicates.isEmpty ? duplicates.count.formatted + " " + duplicateText : nil, preferredStyle: .actionSheet, actions: add + noDuplicates + [.cancel()]), animated: true, completion: nil)
+    }
+    
     @objc func addItems(to playlist: MPMediaPlaylist) {
         
         let duplicates = Set(playlist.items).intersection(Set(manager?.queue ?? itemsToAdd))
@@ -1348,7 +1370,7 @@ class CollectionsViewController: UIViewController, InfoLoading, ArtistTransition
                         weakSelf.performSegue(withIdentifier: "unwind", sender: nil)
                     }
                     
-                    notifier.post(name: .songAddedToPlaylist, object: nil, userInfo: ["playlist": playlist.persistentID, "songs": array])
+                    notifier.post(name: .songsAddedToPlaylists, object: nil, userInfo: [String.addedPlaylists: [playlist.persistentID], String.addedSongs: array])
                     
                     parent.activityIndicator.stopAnimating()
                 }
@@ -1396,8 +1418,22 @@ extension CollectionsViewController: TableViewContainer {
         
         if presented {
             
-            let playlist = getCollection(from: indexPath, filtering: filtering) as! MPMediaPlaylist
-            addItems(to: playlist)
+            guard let playlist = getCollection(from: indexPath, filtering: filtering) as? MPMediaPlaylist else { return }
+            
+            if selectedPlaylists.firstIndex(of: playlist) == nil {
+                
+                selectedPlaylists.append(playlist)
+                
+                if let selectedIndexPath = collectionView?.indexPathsForVisibleItems.first(where: { headerView.playlists.value(at: $0.row) == playlist }), let cell = collectionView?.cellForItem(at: selectedIndexPath), cell.isSelected.inverted {
+                    
+                    collectionView?.selectItem(at: selectedIndexPath, animated: false, scrollPosition: [])
+                }
+                
+                if filterContainer != nil, let selectedIndexPath = self.tableView.indexPathsForVisibleRows?.first(where: { getCollection(from: $0, filtering: false) == playlist }) {
+                    
+                    self.tableView.selectRow(at: selectedIndexPath, animated: false, scrollPosition: .none)
+                }
+            }
             
         } else {
             
@@ -1420,10 +1456,27 @@ extension CollectionsViewController: TableViewContainer {
             filterContainer?.saveRecentSearch(withTitle: filterContainer?.searchBar.text, resignFirstResponder: false)
         }
     }
+    
+    func deselectCell(in tableView: UITableView, at indexPath: IndexPath, filtering: Bool) {
+        
+        guard presented, let playlist = getCollection(from: indexPath, filtering: filtering) as? MPMediaPlaylist, let index = selectedPlaylists.firstIndex(of: playlist) else { return }
+        
+        selectedPlaylists.remove(at: index)
+        
+        if let selectedIndexPath = collectionView?.indexPathsForVisibleItems.first(where: { headerView.playlists.value(at: $0.row) == playlist }), let indexPaths = collectionView?.indexPathsForSelectedItems, Set(indexPaths).contains(selectedIndexPath) {
+            
+            collectionView?.deselectItem(at: selectedIndexPath, animated: false)
+        }
+        
+        if filterContainer != nil, let selectedIndexPath = self.tableView.indexPathsForVisibleRows?.first(where: { getCollection(from: $0, filtering: false) == playlist }) {
+            
+            self.tableView.deselectRow(at: selectedIndexPath, animated: false)
+        }
+    }
 }
 
 // MARK: - Arrangeable
-extension CollectionsViewController: Arrangeable {
+extension CollectionsViewController: FullySortable {
     
     @objc func getPlaylists(from playlists: [MPMediaPlaylist]) -> [MPMediaPlaylist] {
         
@@ -1955,6 +2008,22 @@ extension CollectionsViewController: UIViewControllerPreviewingDelegate {
         if let vc = viewControllerToCommit as? Peekable {
             
             vc.peeker = nil
+        }
+        
+        if let vc = viewControllerToCommit as? Navigatable, let indexer = vc.activeChildViewController as? IndexContaining {
+            
+            indexer.tableView.contentInset.top = vc.inset
+            indexer.tableView.scrollIndicatorInsets.top = vc.inset
+            
+            if let sortable = indexer as? FullySortable, sortable.highlightedIndex == nil {
+                
+                indexer.tableView.contentOffset.y = -vc.inset
+            }
+            
+            libraryVC?.container?.visualEffectNavigationBar.backBorderView.alpha = 1
+            libraryVC?.container?.visualEffectNavigationBar.backView.isHidden = false
+            libraryVC?.container?.visualEffectNavigationBar.backLabel.text = vc.backLabelText
+            libraryVC?.container?.visualEffectNavigationBar.titleLabel.text = vc.title
         }
         
         show(viewControllerToCommit, sender: nil)

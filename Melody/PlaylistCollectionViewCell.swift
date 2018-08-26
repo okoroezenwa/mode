@@ -23,6 +23,9 @@ class PlaylistCollectionViewCell: UICollectionViewCell, ArtworkContainingCell {
     @IBOutlet weak var artworkImageViewLeadingConstraint: NSLayoutConstraint!
     @IBOutlet weak var artworkImageViewTrailingConstraint: NSLayoutConstraint!
     @IBOutlet weak var artworkImageViewTopConstraint: NSLayoutConstraint!
+    @IBOutlet var playView: UIView!
+    @IBOutlet var accessoryView: UIView!
+    @IBOutlet var accessoryBorderView: UIView!
     
     var details: (entity: Entity, width: CGFloat?) = (.playlist, nil) {
 
@@ -55,14 +58,21 @@ class PlaylistCollectionViewCell: UICollectionViewCell, ArtworkContainingCell {
         super.awakeFromNib()
         
         updateCornersAndShadows()
-        UniversalMethods.addShadow(to: playButtonBorder, radius: 2, opacity: 0.5, path: playButtonBorder.shadowPath(cornerRadius: 12))
+        ([accessoryBorderView, playButtonBorder] as [UIView]).forEach({ UniversalMethods.addShadow(to: $0, radius: 2, opacity: 0.5, path: $0.shadowPath(cornerRadius: 12)) })
         
-        if #available(iOS 11, *) {
-            
-            artworkImageView.accessibilityIgnoresInvertColors = true
-        }
+//        if #available(iOS 11, *) {
+//            
+//            artworkImageView.accessibilityIgnoresInvertColors = true
+//        }
         
+        notifier.addObserver(self, selector: #selector(modifyInfoButton), name: .infoButtonVisibilityChanged, object: nil)
+
         notifier.addObserver(self, selector: #selector(updateCornersAndShadows), name: .cornerRadiusChanged, object: nil)
+    }
+    
+    @objc func modifyInfoButton() {
+        
+        accessoryView.isHidden = delegate == nil || showInfoButtons.inverted
     }
     
     @objc func updateCornersAndShadows() {
@@ -70,16 +80,6 @@ class PlaylistCollectionViewCell: UICollectionViewCell, ArtworkContainingCell {
         [artworkImageView, selectedView].forEach({
             
             (listsCornerRadius ?? cornerRadius).updateCornerRadius(on: $0?.layer, width: (details.width ?? artworkImageView.bounds.width) - 16, entityType: details.entity, globalRadiusType: cornerRadius)
-            
-//            $0?.layer.cornerRadius = {
-//
-//                switch cornerRadius {
-//
-//                    case .automatic: return (listsCornerRadius ?? cornerRadius).radius(for: details.entity, width: (details.width ?? artworkImageView.bounds.width) - 16)
-//
-//                    default: return cornerRadius.radius(for: details.entity, width: (details.width ?? artworkImageView.bounds.width) - 16)
-//                }
-//            }()
         })
         
         UniversalMethods.addShadow(to: artworkContainer, radius: 4, opacity: 0.3, shouldRasterise: true)
@@ -137,7 +137,8 @@ class PlaylistCollectionViewCell: UICollectionViewCell, ArtworkContainingCell {
         
         artworkImageView.image = image
         
-        [playButton, playButtonBorder].forEach({ $0?.isHidden = delegate == nil })
+        playView.isHidden = delegate == nil
+        modifyInfoButton()
         
         if delegate != nil {
             
@@ -165,7 +166,8 @@ class PlaylistCollectionViewCell: UICollectionViewCell, ArtworkContainingCell {
         
         artworkImageView.image = #imageLiteral(resourceName: "NoSong300")
         
-        [playButton, playButtonBorder].forEach({ $0?.isHidden = delegate == nil })
+        playView.isHidden = delegate == nil
+        modifyInfoButton()
         
         if delegate != nil {
             
@@ -193,7 +195,8 @@ class PlaylistCollectionViewCell: UICollectionViewCell, ArtworkContainingCell {
         
         artworkImageView.image = album.representativeItem?.isCompilation == true ? #imageLiteral(resourceName: "NoCompilation300") : #imageLiteral(resourceName: "NoAlbum300")
         
-        [playButton, playButtonBorder].forEach({ $0?.isHidden = delegate == nil })
+        playView.isHidden = delegate == nil
+        modifyInfoButton()
         
         if delegate != nil {
             
@@ -261,7 +264,8 @@ class PlaylistCollectionViewCell: UICollectionViewCell, ArtworkContainingCell {
             }
         }()
         
-        [playButton, playButtonBorder].forEach({ $0?.isHidden = delegate == nil })
+        playView.isHidden = delegate == nil
+        modifyInfoButton()
         
         if delegate != nil {
             
@@ -286,9 +290,15 @@ class PlaylistCollectionViewCell: UICollectionViewCell, ArtworkContainingCell {
         
         delegate?.playThrough(in: self)
     }
+    
+    @IBAction func rightButtonTapped() {
+        
+        delegate?.accessoryButtonTapped(in: self)
+    }
 }
 
 protocol PlaylistCollectionCellDelegate: class {
     
     func playThrough(in cell: PlaylistCollectionViewCell)
+    func accessoryButtonTapped(in cell: PlaylistCollectionViewCell)
 }

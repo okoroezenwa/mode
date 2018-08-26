@@ -33,6 +33,7 @@ class ScrollHeaderSubview: UIView {
         
         let view = Bundle.main.loadNibNamed("ScrollHeaderSubview", owner: nil, options: nil)?.first as! ScrollHeaderSubview
         view.label.text = title
+        view.label.font = UIFont.myriadPro(ofWeight: .regular, size: 17)
         view.imageView.image = image
         view.imageViewContainerWidthConstraint.constant = useSmallerImage ? 14 : 16
         

@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 import StoreKit
 
-class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, AlbumTransitionable, AlbumArtistTransitionable, GenreTransitionable, ComposerTransitionable, ArtistTransitionable, InfoLoading, SongContainer, QueryUpdateable, CellAnimatable, SingleItemActionable, BorderButtonContaining, Refreshable, IndexContaining, EntityVerifiable, TopScrollable {
+class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, AlbumTransitionable, AlbumArtistTransitionable, GenreTransitionable, ComposerTransitionable, ArtistTransitionable, InfoLoading, QueryUpdateable, CellAnimatable, SingleItemActionable, BorderButtonContaining, Refreshable, IndexContaining, EntityVerifiable, TopScrollable, EntityContainer {
 
     @IBOutlet weak var tableView: MELTableView!
     @IBOutlet weak var emptyStackView: UIStackView!
@@ -23,8 +23,14 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
         self.stackView = view.scrollStackView
         view.showTextView = true
         view.showLoved = true
+        view.showInfo = true
+        view.showInsert = playlist?.playlistAttributes == [] && playlist?.isAppleMusic == false
         self.descriptionTextView = view.descriptionTextView
-        self.likedImageView = view.likedStateImageView
+        view.infoButton.addTarget(entityVC, action: #selector(EntityItemsViewController.showOptions), for: .touchUpInside)
+        view.likedStateButton.addTarget(self, action: #selector(setLiked), for: .touchUpInside)
+        view.addButton.addTarget(self, action: #selector(addSongs), for: .touchUpInside)
+        
+        updateLikedButton(view.likedStateButton)
         
         return view
     }()
@@ -89,13 +95,14 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
     @objc var shuffleButton: MELButton!
     @objc var songCountLabel: MELLabel!
     @objc var orderLabel: MELLabel!
-    @objc var likedImageView: MELImageView!
+//    @objc var likedStateButton: MELButton!
     @objc var shuffleView: BorderedButtonView!
     @objc var arrangeBorderView: BorderedButtonView!
     @objc var editView: BorderedButtonView!
     
     var borderedButtons = [BorderedButtonView?]()
     var sectionIndexViewController: SectionIndexViewController?
+    var navigatable: Navigatable? { return entityVC }
     let requiresLargerTrailingConstraint = false
     
     @objc lazy var sorter: Sorter = { Sorter.init(operation: self.operation) }()
@@ -113,7 +120,6 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
     @objc var query: MPMediaQuery? { return albumQuery }
     @objc lazy var filteredEntities = [MPMediaEntity]()
     @objc var highlightedEntity: MPMediaEntity? { return entityVC?.highlightedEntities?.song }
-    @objc var cellDelegate: Any { return songDelegate }
     var filterContainer: (UIViewController & FilterContainer)?
     var filterEntities: FilterViewController.FilterEntities { return .songs(songs) }
     var collectionView: UICollectionView?
@@ -126,7 +132,6 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
     @objc var artistQuery: MPMediaQuery?
     @objc var albumArtistQuery: MPMediaQuery?
     
-    @objc lazy var songDelegate: SongDelegate = { SongDelegate.init(container: self) }()
     @objc var hasDescriptionText: Bool { return playlist?.descriptionText != nil && playlist?.descriptionText != "" }
     @objc var ascending = true {
         
@@ -222,7 +227,7 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
         
         let queue = OperationQueue()
         queue.name = "Image Operation Queue"
-        queue.maxConcurrentOperationCount = 3
+        
         
         return queue
     }()
@@ -238,7 +243,7 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
         
         let queue = OperationQueue()
         queue.name = "Sort Operation Queue"
-        queue.maxConcurrentOperationCount = 3
+        
         
         return queue
     }()
@@ -253,6 +258,12 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
         super.viewDidLoad()
         prepareLifetimeObservers()
         
+        adjustInsets(context: .container)
+        
+        let inset = entityVC?.peeker != nil ? 0 : entityVC?.inset ?? 0
+        tableView.contentInset.top = inset
+        tableView.scrollIndicatorInsets.top = inset
+        
         tableView.delegate = tableDelegate
         tableView.dataSource = tableDelegate
         tableView.tableHeaderView = headerView
@@ -266,8 +277,6 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
         
         UIView.performWithoutAnimation { self.descriptionTextView.layoutIfNeeded() }
         updateHeaderView(withCount: (playlistQuery?.items ?? []).count)
-        
-        adjustInsets(context: .container)
         
         updateEmptyLabel(withCount: (playlistQuery?.items ?? []).count)
         sortItems()
@@ -288,22 +297,22 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
             let dateCreated = weakSelf.playlist?.dateCreated.timeIntervalSinceNow.shortStringRepresentation
             let totalDuration = items.map({ $0.playbackDuration }).reduce(0, +).stringRepresentation(as: .short)
             
-            let image: UIImage? = {
-                
-                switch weakSelf.playlist?.likedState {
-                    
-                    case .some(.liked): return #imageLiteral(resourceName: "Loved")
-                    
-                    case .some(.disliked): return #imageLiteral(resourceName: "Unloved")
-                        
-                    case .some(.none): return #imageLiteral(resourceName: "NoLove")
-                        
-                    default:
-                        
-                        weakSelf.headerView.showLoved = false
-                        return nil
-                }
-            }()
+//            let image: UIImage? = {
+//
+//                switch weakSelf.playlist?.likedState {
+//
+//                    case .some(.liked): return #imageLiteral(resourceName: "Loved")
+//
+//                    case .some(.disliked): return #imageLiteral(resourceName: "Unloved")
+//
+//                    case .some(.none): return #imageLiteral(resourceName: "NoLove")
+//
+//                    default:
+//
+//                        weakSelf.headerView.showLoved = false
+//                        return nil
+//                }
+//            }()
             
             guard weakSelf.supplementaryOperation?.isCancelled == false else { return }
             
@@ -312,11 +321,73 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
                 weakSelf.dateCreatedLabel.text = dateCreated
                 weakSelf.songCountLabel.text = songCount
                 weakSelf.totalDurationLabel.text = totalDuration
-                weakSelf.likedImageView.image = image
+//                weakSelf.likedStateButton.setImage(image, for: .normal)
             })
         })
         
         sortOperationQueue.addOperation(supplementaryOperation!)
+    }
+    
+    func updateLikedButton(_ sender: UIButton) {
+        
+        guard let playlist = playlist else { return }
+        
+        sender.setImage(image(for: playlist.likedState), for: .normal)
+    }
+    
+    func image(for likedState: LikedState) -> UIImage {
+        
+        switch likedState {
+            
+            case .liked: return #imageLiteral(resourceName: "Loved13")
+
+            case .disliked: return #imageLiteral(resourceName: "Unloved13")
+
+            case .none: return #imageLiteral(resourceName: "NoLove13")
+        }
+    }
+    
+    @objc func setLiked() {
+        
+        guard let playlist = playlist else { return }
+        
+        var value: Int {
+            
+            switch playlist.likedState {
+                
+                case .none: return LikedState.liked.rawValue
+                
+                case .liked: return LikedState.disliked.rawValue
+                
+                case .disliked: return LikedState.none.rawValue
+            }
+        }
+        
+        playlist.set(property: .likedState, to: NSNumber.init(value: value))
+        
+        UIView.transition(with: headerView.likedStateButton, duration: 0.3, options: .transitionCrossDissolve, animations: { self.updateLikedButton(self.headerView.likedStateButton) }, completion: { [weak self] finished in
+            
+            guard finished, let weakSelf = self else { return }
+            
+            UniversalMethods.performOnMainThread({
+            
+                if weakSelf.headerView.likedStateButton.image(for: .normal) != weakSelf.image(for: playlist.likedState) {
+                    
+                    UIView.transition(with: weakSelf.headerView.likedStateButton, duration: 0.3, options: .transitionCrossDissolve, animations: { weakSelf.updateLikedButton(weakSelf.headerView.likedStateButton) }, completion: nil)
+                }
+            
+            }, afterDelay: 0.3)
+        })
+    }
+    
+    @objc func addSongs() {
+        
+        let picker = MPMediaPickerController.init(mediaTypes: .music)
+        picker.allowsPickingMultipleItems = true
+        picker.delegate = self
+        picker.modalPresentationStyle = .overFullScreen
+        
+        present(picker, animated: true, completion: nil)
     }
     
     @objc func updateHeaderView(withCount count: Int) {
@@ -664,9 +735,9 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
             
         }) as! NSObject)
         
-        lifetimeObservers.insert(notifier.addObserver(forName: .songAddedToPlaylist, object: nil, queue: nil, using: { [weak self] notification in
+        lifetimeObservers.insert(notifier.addObserver(forName: .songsAddedToPlaylists, object: nil, queue: nil, using: { [weak self] notification in
             
-            guard let weakSelf = self, let id = notification.userInfo?["playlist"] as? MPMediaEntityPersistentID, id == weakSelf.playlist?.persistentID else { return }
+            guard let weakSelf = self, let id = weakSelf.playlist?.persistentID, let ids = notification.userInfo?[String.addedPlaylists] as? [MPMediaEntityPersistentID], Set(ids).contains(id) else { return }
             
             if let query = weakSelf.getCurrentQuery() {
                 
@@ -887,159 +958,7 @@ extension PlaylistItemsViewController: TableViewContainer {
     }
 }
 
-extension PlaylistItemsViewController: UITableViewDelegate, UITableViewDataSource {
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
-        if filtering {
-            
-            return filteredSongs.count
-            
-        } else {
-            
-            switch sortCriteria {
-                
-                case .standard, .random: return songs.count
-                    
-                default: return sections[section].count
-            }
-        }
-    }
-    
-    func numberOfSections(in tableView: UITableView) -> Int {
-        
-        if filtering {
-            
-            return 1
-            
-        } else {
-            
-            switch sortCriteria {
-                
-                case .standard, .random: return 1
-                    
-                default: return sections.count
-            }
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        
-        operations[indexPath]?.cancel()
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        let cell = tableView.songCell(for: indexPath)
-        let song = getSong(from: indexPath)
-        
-        cell.prepare(with: song, highlightedSong: entityVC?.highlightedEntities?.song)
-        updateImageView(using: song, in: cell, indexPath: indexPath, reusableView: tableView)
-        
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        if tableView.isEditing {
-            
-            self.tableView(tableView, commit: self.tableView(tableView, editingStyleForRowAt: indexPath), forRowAt: indexPath)
-            
-        } else {
-            
-            let song: MPMediaItem = getSong(from: indexPath)
-            
-            musicPlayer.play(filtering ? filteredSongs : songs, startingFrom: song, from: self, withTitle: playlist?.name ??? "Unnamed Playlist", subtitle: "Starting from \(song.validTitle)", alertTitle: "Play")
-        }
-        
-        tableView.deselectRow(at: indexPath, animated: true)
-    }
-    
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        
-        guard !songs.isEmpty else { return nil }
-        
-        let header = tableView.sectionHeader
-        
-        if filtering {
-            
-            header?.label.text = nil
-            
-        } else {
-            
-            switch sortCriteria {
-                
-                case .standard, .random: header?.label.text = nil
-                    
-                default: header?.label.text = sections[section].title.uppercased()
-            }
-        }
-        
-        return header
-    }
-    
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        
-        if filtering {
-            
-            return 11
-            
-        } else {
-            
-            switch sortCriteria {
-                
-            case .standard, .random: return 11
-                
-            default:
-        
-                let height = ("eh" as NSString).boundingRect(with: CGSize(width: 100, height: CGFloat.greatestFiniteMagnitude), options: .usesLineFragmentOrigin, attributes: [.font: UIFont.myriadPro(ofWeight: .light, size: 20)], context: nil).height
-                
-                return height + 24
-            }
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        
-        return 0.001
-    }
-    
-    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        
-        return true
-    }
-    
-    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
-        
-        return .insert
-    }
-    
-    func sectionIndexTitles(for tableView: UITableView) -> [String]? {
-        
-        guard !filtering else { return nil }
-        
-        guard sections.count > 1 else { return nil }
-        
-        switch sortCriteria {
-            
-            case .standard, .random: return nil
-            
-            default: return sections.map({ $0.indexTitle })
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        
-        if editingStyle == .insert {
-            
-            let song: MPMediaItem = getSong(from: indexPath)
-            
-            notifier.post(name: .addedToQueue, object: nil, userInfo: [DictionaryKeys.queueItems: [song]])
-        }
-    }
-}
-
-extension PlaylistItemsViewController: Arrangeable {
+extension PlaylistItemsViewController: FullySortable {
     
     @objc func sortItems() {
         
@@ -1159,5 +1078,48 @@ extension PlaylistItemsViewController: UIGestureRecognizerDelegate {
         }
         
         return true
+    }
+}
+
+extension PlaylistItemsViewController: MPMediaPickerControllerDelegate {
+    
+    func mediaPicker(_ mediaPicker: MPMediaPickerController, didPickMediaItems mediaItemCollection: MPMediaItemCollection) {
+        
+        guard let playlist = playlist else { return }
+        
+        playlist.add(mediaItemCollection.items, completionHandler: { [weak self] error in
+            
+            guard let weakSelf = self else { return }
+            
+            guard error == nil else {
+                
+                UniversalMethods.performInMain {
+                    
+                    let banner = Banner.init(title: "Unable to add \(mediaItemCollection.items.count.fullCountText(for: .song))", subtitle: nil, image: nil, backgroundColor: .red, didTapBlock: nil)
+                    banner.titleLabel.font = .myriadPro(ofWeight: .regular, size: 20)
+                    banner.show(duration: 0.5)
+                    
+                    (weakSelf.parent as? PresentedContainerViewController)?.activityIndicator.stopAnimating()
+                }
+                
+                return
+            }
+            
+            UniversalMethods.performInMain {
+                
+                let banner = Banner.init(title: playlist.validName, subtitle: "Added \(mediaItemCollection.items.count.fullCountText(for: .song))", image: nil, backgroundColor: .deepGreen, didTapBlock: nil)
+                banner.titleLabel.font = .myriadPro(ofWeight: .semibold, size: 22)
+                banner.detailLabel.font = .myriadPro(ofWeight: .regular, size: 17)
+                banner.detailLabel.textColor = Themer.textColour(for: .subtitle)
+                banner.show(for: .bannerInterval)
+                
+                notifier.post(name: .songsAddedToPlaylists, object: nil, userInfo: [String.addedPlaylists: [playlist.persistentID], String.addedSongs: mediaItemCollection.items])
+            }
+        })
+    }
+    
+    func mediaPickerDidCancel(_ mediaPicker: MPMediaPickerController) {
+        
+        mediaPicker.dismiss(animated: true, completion: nil)
     }
 }

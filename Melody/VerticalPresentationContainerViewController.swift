@@ -77,10 +77,10 @@ class VerticalPresentationContainerViewController: UIViewController {
         swipe.direction = .down
         view.addGestureRecognizer(swipe)
         
-        if #available(iOS 11, *) {
-            
-            view.accessibilityIgnoresInvertColors = darkTheme
-        }
+//        if #available(iOS 11, *) {
+//            
+//            view.accessibilityIgnoresInvertColors = darkTheme
+//        }
         
         activeViewController = {
             

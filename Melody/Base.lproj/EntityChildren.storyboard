@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14101" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.13.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14086"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.9"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -16,6 +14,9 @@
         </array>
         <array key="MyriadPro-Regular.otf">
             <string>MyriadPro-Regular</string>
+        </array>
+        <array key="MyriadPro-Semibold.otf">
+            <string>MyriadPro-Semibold</string>
         </array>
     </customFonts>
     <scenes>
@@ -79,15 +80,15 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gKm-Ar-rMz" userLabel="Top View">
+                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gKm-Ar-rMz" userLabel="Top View">
                                 <rect key="frame" x="0.0" y="20" width="375" height="116"/>
                                 <subviews>
                                     <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Nf9-pX-JVJ" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="26" width="299" height="45"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="Entity Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kNL-e1-bO7" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="10" width="122.5" height="25"/>
-                                                <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="25"/>
+                                                <rect key="frame" x="10" y="10" width="133" height="25"/>
+                                                <fontDescription key="fontDescription" name="MyriadPro-Semibold" family="Myriad Pro" pointSize="25"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
@@ -154,7 +155,7 @@
                                         <rect key="frame" x="0.0" y="72" width="375" height="44"/>
                                         <subviews>
                                             <view alpha="0.050000000000000003" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7r9-hS-dl0" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="186.5" y="8" width="1" height="28"/>
+                                                <rect key="frame" x="187" y="8" width="1" height="28"/>
                                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="1" id="AeZ-tk-SYm"/>
@@ -216,10 +217,10 @@
                                         </userDefinedRuntimeAttributes>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uWe-Qq-6YM" userLabel="Artwork Container" customClass="InvertIgnoringView" customModule="Mode" customModuleProvider="target">
-                                        <rect key="frame" x="299.5" y="6" width="65.5" height="66"/>
+                                        <rect key="frame" x="299" y="6" width="66" height="66"/>
                                         <subviews>
                                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="NoAlbum75" translatesAutoresizingMaskIntoConstraints="NO" id="mvS-Lt-zoy" customClass="InvertIgnoringImageView" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="0.0" width="65" height="66"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="66" height="66"/>
                                             </imageView>
                                         </subviews>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -276,7 +277,7 @@
                                 </constraints>
                             </view>
                             <containerView opaque="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mer-vT-hgh">
-                                <rect key="frame" x="0.0" y="136" width="375" height="531"/>
+                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
                             </containerView>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -288,8 +289,8 @@
                             <constraint firstAttribute="trailing" secondItem="mer-vT-hgh" secondAttribute="trailing" id="O4G-dA-VYg"/>
                             <constraint firstItem="gKm-Ar-rMz" firstAttribute="top" secondItem="pmg-yy-dsq" secondAttribute="bottom" id="PDL-V8-Y3U"/>
                             <constraint firstItem="uWe-Qq-6YM" firstAttribute="top" secondItem="pmg-yy-dsq" secondAttribute="bottom" constant="6" id="RdC-3O-FPf"/>
+                            <constraint firstItem="mer-vT-hgh" firstAttribute="top" secondItem="pmg-yy-dsq" secondAttribute="bottom" id="SgL-om-yvG"/>
                             <constraint firstItem="gKm-Ar-rMz" firstAttribute="leading" secondItem="vUz-cM-mig" secondAttribute="leading" id="Teu-BI-Ts6"/>
-                            <constraint firstItem="mer-vT-hgh" firstAttribute="top" secondItem="gKm-Ar-rMz" secondAttribute="bottom" priority="900" id="bZ4-X9-rcY"/>
                             <constraint firstItem="1ir-lC-m3N" firstAttribute="top" secondItem="pmg-yy-dsq" secondAttribute="bottom" constant="10" id="mwV-wG-2J5"/>
                             <constraint firstItem="2yl-7X-Ce7" firstAttribute="top" secondItem="mer-vT-hgh" secondAttribute="bottom" id="wh2-fb-teC"/>
                             <constraint firstItem="ezu-Bh-h70" firstAttribute="top" secondItem="pmg-yy-dsq" secondAttribute="bottom" id="xRg-2w-9yz"/>
@@ -397,13 +398,14 @@
                     </view>
                     <connections>
                         <outlet property="tableView" destination="49f-ea-o7d" id="fr5-Jb-BDQ"/>
-                        <segue destination="oiy-3e-4Th" kind="unwind" identifier="toAlbumUnwind" unwindAction="albumUnwind:" id="K6a-up-tBZ"/>
                         <segue destination="iQl-VU-eem" kind="popoverPresentation" identifier="toArranger" popoverAnchorView="49f-ea-o7d" id="ZLV-BL-M1L">
                             <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
                         </segue>
                         <segue destination="oiy-3e-4Th" kind="unwind" identifier="toAlbumUnwind" unwindAction="albumUnwind:" id="uGr-p5-lPk"/>
                         <segue destination="oiy-3e-4Th" kind="unwind" identifier="toComposerUnwind" unwindAction="composerUnwind:" id="hsW-Pd-fXS"/>
                         <segue destination="oiy-3e-4Th" kind="unwind" identifier="toGenreUnwind" unwindAction="genreUnwind:" id="8sl-Pp-DMk"/>
+                        <segue destination="oiy-3e-4Th" kind="unwind" identifier="toAlbumArtistUnwind" unwindAction="albumArtistUnwind:" id="y3N-yM-bbc"/>
+                        <segue destination="oiy-3e-4Th" kind="unwind" identifier="toArtistUnwind" unwindAction="artistUnwind:" id="5a8-AK-gfA"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fRR-C7-FeX" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -424,7 +426,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView hidden="YES" opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="LqJ-G0-38I">
-                                <rect key="frame" x="16" y="296.5" width="343" height="75"/>
+                                <rect key="frame" x="16" y="296" width="343" height="75"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Nothing Here . . ." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="e98-gS-Rlt" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="343" height="21"/>
@@ -511,9 +513,9 @@
         <image name="NoAlbum75" width="75" height="75"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="cax-xd-96Q"/>
+        <segue reference="qNm-D6-Mwg"/>
         <segue reference="iEo-Cr-VKk"/>
-        <segue reference="qYa-QX-fEa"/>
+        <segue reference="Ndr-U8-zlU"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
 </document>

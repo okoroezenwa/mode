@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell, TimerBased {
+class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell {
     
     @IBOutlet weak var artworkImageView: UIImageView!
     @IBOutlet weak var nameLabel: MELLabel!
@@ -21,17 +21,13 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell, TimerBased {
             prepareSupplementaryView()
         }
     }
+    @IBOutlet weak var playButton: MELButton!
     @IBOutlet weak var cloudButton: UIImageView!
     @IBOutlet weak var durationLabel: MELLabel!
-    @IBOutlet weak var playButton: MELButton!
     @IBOutlet weak var trackNumberLabel: MELLabel!
     @IBOutlet weak var explicitView: UIView!
     @IBOutlet weak var artworkContainer: UIView!
     @IBOutlet weak var playingView: UIView!
-    @IBOutlet weak var startTime: MELLabel?
-    @IBOutlet weak var stopTime: MELLabel?
-    @IBOutlet weak var timeSlider: MELSlider!
-    @IBOutlet weak var playPauseBorder: UIView!
     @IBOutlet weak var optionsView: UIView!
     @IBOutlet weak var infoButton: MELButton!
     @IBOutlet weak var infoBorderView: MELBorderView!
@@ -40,13 +36,6 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell, TimerBased {
     @IBOutlet var mainView: UIView!
     @IBOutlet var editBorderView: MELBorderView!
     @IBOutlet var mainViewInnerViewLeadingConstraint: NSLayoutConstraint!
-    
-    var playPauseButton: MELButton! {
-        
-        get { return playButton }
-        
-        set { }
-    }
     
     @objc lazy var playsView = ScrollHeaderSubview.forCell(title: "-", image: #imageLiteral(resourceName: "Plays"))
     
@@ -71,11 +60,6 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell, TimerBased {
     @objc lazy var albumArtistView = ScrollHeaderSubview.forCell(title: "-", image: #imageLiteral(resourceName: "GenresSmall"))
     
     weak var delegate: EntityCellDelegate?
-    let playingImage = #imageLiteral(resourceName: "PauseFilled10")
-    let pausedImage = #imageLiteral(resourceName: "PlayFilledSmall")
-    let pausedInset: CGFloat = 3
-    let playingInset: CGFloat = 2
-    @objc var playPauseActive = false
     var width: CGFloat { return artworkContainer.frame.width }
     
     @objc lazy var indicator: ESTMusicIndicatorView = {
@@ -108,7 +92,6 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell, TimerBased {
         selectedBackgroundView = MELBorderView()
         
         updateCornersAndShadows()
-        UniversalMethods.addShadow(to: playPauseBorder, path: UIBezierPath.init(roundedRect: CGRect.init(x: 0, y: 0, width: 24, height: 24), cornerRadius: 12).cgPath)
         
         let tap = UITapGestureRecognizer.init(target: self, action: #selector(tapCell(_:)))
         supplemetaryScrollView.addGestureRecognizer(tap)
@@ -143,16 +126,6 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell, TimerBased {
         [artworkImageView, playingView].forEach({
             
             (listsCornerRadius ?? cornerRadius).updateCornerRadius(on: $0?.layer, width: width, entityType: entity, globalRadiusType: cornerRadius)
-            
-//            $0?.layer.cornerRadius = {
-//                
-//                switch cornerRadius {
-//                    
-//                    case .automatic: return (listsCornerRadius ?? cornerRadius).radius(for: entity, width: width)
-//                    
-//                    default: return cornerRadius.radius(for: entity, width: width)
-//                }
-//            }()
         })
         
         UniversalMethods.addShadow(to: artworkContainer, shouldRasterise: true)
@@ -182,7 +155,7 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell, TimerBased {
     
     @objc func modifyPlayOnly() {
         
-        playButton.isUserInteractionEnabled = (allowPlayOnly && delegate != nil) || playPauseActive
+        playButton.isUserInteractionEnabled = allowPlayOnly && delegate != nil
     }
     
     @objc func modifyBackground() {
@@ -195,7 +168,7 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell, TimerBased {
     
     @objc func modifyIndicator() {
         
-        guard !playingView.isHidden, !playPauseActive else { return }
+        guard !playingView.isHidden else { return }
         
         indicator.state = musicPlayer.isPlaying ? .playing : .paused
     }
@@ -224,13 +197,12 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell, TimerBased {
     
     @objc func tapCell(_ gr: UITapGestureRecognizer) {
         
-        delegate?.scrollViewTapped(in: self)//scrollDelegate?.handleScrollTap(in: self)
+        delegate?.scrollViewTapped(in: self)
     }
 
     func prepare(with song: MPMediaItem,
                  songNumber: Int? = nil,
                  highlightedSong: MPMediaItem? = nil,
-                 showsTimer: Bool = false,
                  hideOptionsView: Bool = !showInfoButtons) {
         
         entity = .song
@@ -241,9 +213,7 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell, TimerBased {
         
         playingView.isHidden = song != musicPlayer.nowPlayingItem
         
-        playPauseActive = showsTimer
-        
-        UniversalMethods.performOnMainThread({ self.indicator.state = musicPlayer.nowPlayingItem == song && !showsTimer ? (musicPlayer.isPlaying ? .playing : .paused) : .stopped }, afterDelay: 0.1)
+        UniversalMethods.performOnMainThread({ self.indicator.state = musicPlayer.nowPlayingItem == song ? (musicPlayer.isPlaying ? .playing : .paused) : .stopped }, afterDelay: 0.1)
         
         artistAlbumLabel.text = (song.artist ??? .unknownArtist) + " — " + (song.albumTitle ??? .untitledAlbum)
         
@@ -260,24 +230,6 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell, TimerBased {
         artworkImageView.image = #imageLiteral(resourceName: "NoSong75")
         
         cloudButton.isHidden = !song.isCloudItem
-        
-//        durationLabel.isHidden = showsTimer
-        ([startTime, stopTime, timeSlider, timeSlider.superview, playPauseBorder] as [UIView?]).forEach({ $0?.isHidden = !showsTimer })
-        
-        if showsTimer {
-            
-            updateSliderDuration()
-            modifyPlayPauseButton()
-            infoButton.imageEdgeInsets.bottom = 32
-        
-        } else {
-            
-            playButton.setImage(nil, for: .normal)
-            playButton.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
-            infoButton.imageEdgeInsets.bottom = 0
-        }
-        
-        indicator.isHidden = showsTimer
         
         modifyPlayOnly()
         
@@ -305,7 +257,6 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell, TimerBased {
         guard let playingView = playingView else { return }
         
         infoBorderView.alphaOverride = touched ? 0.05 : 0
-        playPauseBorder.backgroundColor = .white
         playingView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
         selectedBackgroundView?.backgroundColor = Themer.borderViewColor()
         (explicitView.viewWithTag(1) as? MELBorderView)?.changeThemeColor()
@@ -325,7 +276,7 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell, TimerBased {
         
         performSelectionOverrides(touched: highlighted)
     }
-    
+    /// for the custom edit button
 //    override func setEditing(_ editing: Bool, animated: Bool) {
 //
 //        super.setEditing(editing, animated: animated)
@@ -342,15 +293,6 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell, TimerBased {
 //            self.contentView.layoutIfNeeded()
 //        })
 //    }
-    
-    @objc func updateSliderDuration() {
-        
-        if let nowPlaying = musicPlayer.nowPlayingItem {
-            
-            timeSlider.minimumValue = 0
-            timeSlider.maximumValue = Float(nowPlaying.playbackDuration)
-        }
-    }
     
     override func addSubview(_ view: UIView) {
 
@@ -453,7 +395,7 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell, TimerBased {
         delegate?.editButtonTapped(in: self)
     }
     
-    /*@objc */func prepare(with playlist: MPMediaPlaylist, count: Int, number: Int? = nil) {
+    func prepare(with playlist: MPMediaPlaylist, count: Int, number: Int? = nil) {
         
         entity = .playlist
         
@@ -483,7 +425,7 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell, TimerBased {
         
         backgroundColor = .clear
         
-        updateSongOnlyViews(using: playlist, number: number)
+        updateViews(using: playlist, number: number)
     }
     
     func prepare(for kind: AlbumBasedCollectionKind, with collection: MPMediaItemCollection, number: Int? = nil) {
@@ -539,10 +481,10 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell, TimerBased {
         
         backgroundColor = .clear
         
-        updateSongOnlyViews(using: collection, number: number)
+        updateViews(using: collection, number: number)
     }
     
-    /*@objc */func prepare(with album: MPMediaItemCollection,
+    func prepare(with album: MPMediaItemCollection,
                        withinArtist: Bool,
                        highlightedAlbum: MPMediaItemCollection? = nil,
                        number: Int? = nil) {
@@ -565,14 +507,12 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell, TimerBased {
         //artistLabel.isHidden = withinArtist
         artistAlbumLabel.text = item.validAlbumArtist
         
-//        durationLabel.text = album.items.count.fullCountText(for: .song)
-        
         artworkImageView.image = album.representativeItem?.isCompilation == true ? #imageLiteral(resourceName: "NoCompilation75") : #imageLiteral(resourceName: "NoAlbum75")
         
-        updateSongOnlyViews(using: album, number: number)
+        updateViews(using: album, number: number)
     }
     
-    func updateSongOnlyViews(using collection: MPMediaItemCollection, number: Int? = nil) {
+    func updateViews(using collection: MPMediaItemCollection, number: Int? = nil) {
         
         playButton.isUserInteractionEnabled = allowPlayOnly
         
@@ -580,8 +520,6 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell, TimerBased {
         
         [optionsView, infoButton].forEach({ $0.isHidden = (collection as? MPMediaPlaylist)?.isFolder == true ? true : !showInfoButtons })
         
-        playButton.setImage(nil, for: .normal)
-        infoButton.imageEdgeInsets.bottom = 0
         explicitView.isHidden = true
         cloudButton.isHidden = true
         supplementaryStackView.isHidden = true
@@ -589,17 +527,15 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell, TimerBased {
         
         [playingView, indicator].forEach({ $0.isHidden = {
             
-//            if !(collection is MPMediaPlaylist), let nowPlaying = musicPlayer.nowPlayingItem, Set(collection.items).contains(nowPlaying) {
-//
-//                UniversalMethods.performOnMainThread({ self.indicator.state = musicPlayer.isPlaying ? .playing : .paused }, afterDelay: 0.1)
-//
-//                return false
-//            }
+            if !(collection is MPMediaPlaylist), let nowPlaying = musicPlayer.nowPlayingItem, Set(collection.items).contains(nowPlaying) {
+
+                UniversalMethods.performOnMainThread({ self.indicator.state = musicPlayer.isPlaying ? .playing : .paused }, afterDelay: 0.1)
+
+                return false
+            }
             
             return true
         }() })
-        
-        ([startTime, stopTime, timeSlider, timeSlider.superview, playPauseBorder] as [UIView?]).forEach({ $0?.isHidden = true })
         
         if let number = number, number != 0 {
             

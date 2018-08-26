@@ -8,7 +8,7 @@
 
 import UIKit
 
-class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkModifying, Contained, OptionsContaining, Peekable, ArtistTransitionable, AlbumArtistTransitionable {
+class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkModifying, Contained, OptionsContaining, Peekable, ArtistTransitionable, AlbumArtistTransitionable, Navigatable {
 
     @IBOutlet weak var titleLabel: MELLabel!
     @IBOutlet weak var backLabel: MELLabel!
@@ -65,7 +65,7 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         
         didSet {
             
-            if peeker == nil, let arrangeable = activeChildViewController as? Arrangeable, arrangeable.operation?.isFinished == true, let index = arrangeable.highlightedIndex {
+            if peeker == nil, let arrangeable = activeChildViewController as? FullySortable, arrangeable.operation?.isFinished == true, let index = arrangeable.highlightedIndex {
              
                 arrangeable.unhighlightRow(with: arrangeable.relevantIndexPath(using: index))
             }
@@ -105,6 +105,9 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
     }()
     
     @objc lazy var temporaryEffectView = MELVisualEffectView()
+    var requiresShadow = false
+    let inset: CGFloat = 10 + 15 + 10 + 34 + 10 + 1
+    lazy var preferredTitle: String? = title
     
     @objc lazy var artistSongsViewController: ArtistSongsViewController = {
         
@@ -168,12 +171,10 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         
         notifier.addObserver(self, selector: #selector(updateCornersAndShadows), name: .cornerRadiusChanged, object: nil)
         
-        topView.layoutIfNeeded()
-        
         updateCornersAndShadows()
         
         let collectionImage = collection?.customArtwork?.scaled(to: artworkImageView.frame.size, by: 2)
-        let image = query?.items?.shuffled().first(where: { $0.actualArtwork != nil })?.actualArtwork?.image(at: artworkImageView.frame.size)
+        let image = query?.items?.first(where: { $0.actualArtwork != nil })?.actualArtwork?.image(at: artworkImageView.frame.size)
         
         var noImage: UIImage {
             
@@ -284,7 +285,7 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
                 
                 if sectionVC.hasHeader, indexPath.row == 0 {
                     
-                    sectionVC.container?.tableView.setContentOffset(.zero, animated: false)
+                    sectionVC.container?.tableView.setContentOffset(.init(x: 0, y: -inset), animated: false)
                     
                 } else {
                     

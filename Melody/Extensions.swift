@@ -357,6 +357,8 @@ extension CGRect {
 // MARK: - UIView
 extension UIView {
     
+    enum PinDirection { case top, bottom }
+    
     func shadowPath(cornerRadius radius: CGFloat? = nil) -> CGPath {
         
         if let radius = radius {
@@ -394,6 +396,16 @@ extension UIView {
     }
     
     func fill(with view: UIView, withInsets insets: UIEdgeInsets = .zero) {
+        
+        addSubview(view)
+        
+        leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: insets.left).isActive = true
+        trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: insets.right).isActive = true
+        topAnchor.constraint(equalTo: view.topAnchor, constant: insets.top).isActive = true
+        bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: insets.bottom).isActive = true
+    }
+    
+    func constrain(_ view: UIView, to direction: PinDirection, of vc: UIViewController, withInsets insets: UIEdgeInsets = .zero) {
         
         addSubview(view)
         
@@ -731,6 +743,18 @@ extension MPMediaQuery {
         }
     }
     
+    func allShown() -> MPMediaQuery {
+        
+        let selector = NSSelectorFromString("setShouldIncludeNonLibraryEntities:")
+        
+        if responds(to: selector) {
+            
+            perform(selector, with: true)
+        }
+        
+        return self
+    }
+    
     var cloud: MPMediaQuery {
         
         if showiCloudItems.inverted {
@@ -873,6 +897,11 @@ extension UIViewController {
         
         present(vc, animated: true, completion: nil)
     }
+    
+    static var fromStoryboard: UIViewController {
+        print(self.storyboardName)
+        return UIStoryboard.init(name: self.storyboardName, bundle: nil).instantiateViewController(withIdentifier: self.storyboardName)
+    }
 }
 
 extension UIAlertAction {
@@ -998,6 +1027,19 @@ extension Optional {
         guard condition else { return nil }
         
         return self
+    }
+}
+
+extension Optional where Wrapped: Collection {
+    
+    static func ??? (lhs: Optional, rhs: Wrapped) -> Wrapped {
+        
+        if let left = lhs, left.isEmpty.inverted {
+            
+            return left
+        }
+        
+        return rhs
     }
 }
 

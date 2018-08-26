@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol Refreshable: class, TableViewContaining {
+protocol Refreshable: TableViewContaining {
     
     var refresher: Refresher { get }
 }
@@ -93,6 +93,13 @@ class Refresher: NSObject {
                 filter.invokeSearch()
             
             case .refresh:
+                
+                if let filterVC = refreshable as? FilterViewController {
+                    
+                    filterVC.filter(with: filterVC.searchBar.text ?? "")
+                    
+                    return
+                }
             
                 guard let sorter = refreshable as? Arrangeable else {
                     

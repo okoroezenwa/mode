@@ -17,6 +17,8 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, I
         let view = HeaderView.fresh
         self.actionsStackView = view.actionsStackView
         self.stackView = view.scrollStackView
+        view.showInfo = true
+        view.infoButton.addTarget(entityVC, action: #selector(EntityItemsViewController.showOptions), for: .touchUpInside)
         
         return view
     }()
@@ -89,6 +91,7 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, I
     var borderedButtons = [BorderedButtonView?]()
     var sectionIndexViewController: SectionIndexViewController?
     let requiresLargerTrailingConstraint = false
+    var navigatable: Navigatable? { return entityVC }
     
     @objc lazy var sorter: Sorter = { Sorter.init(operation: self.operation) }()
     
@@ -250,7 +253,7 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, I
         
         let queue = OperationQueue()
         queue.name = "Image Operation Queue"
-        queue.maxConcurrentOperationCount = 3
+        
         
         return queue
     }()
@@ -258,7 +261,7 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, I
         
         let queue = OperationQueue()
         queue.name = "Sort Operation Queue"
-        queue.maxConcurrentOperationCount = 3
+        
         
         return queue
     }()
@@ -266,7 +269,6 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, I
         
         let queue = OperationQueue()
         queue.name = "Actionable Operation Queue"
-        queue.maxConcurrentOperationCount = 1
         
         return queue
     }()
@@ -289,6 +291,10 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, I
         
         currentArtistQuery = entityVC?.query?.copy() as? MPMediaQuery
         currentArtistQuery?.groupingType = .album
+        
+        let inset = entityVC?.peeker != nil ? 0 : entityVC?.inset ?? 0
+        tableView.contentInset.top = inset
+        tableView.scrollIndicatorInsets.top = inset
         adjustInsets(context: .container)
         
         prepareLifetimeObservers()
@@ -692,12 +698,28 @@ extension ArtistAlbumsViewController: UIViewControllerPreviewingDelegate {
             vc.peeker = nil
         }
         
+        if let vc = viewControllerToCommit as? Navigatable, let indexer = vc.activeChildViewController as? IndexContaining {
+            
+            indexer.tableView.contentInset.top = vc.inset
+            indexer.tableView.scrollIndicatorInsets.top = vc.inset
+            
+            if let sortable = indexer as? FullySortable, sortable.highlightedIndex == nil {
+                
+                indexer.tableView.contentOffset.y = -vc.inset
+            }
+            
+            entityVC?.container?.visualEffectNavigationBar.backBorderView.alpha = 1
+            entityVC?.container?.visualEffectNavigationBar.backView.isHidden = false
+            entityVC?.container?.visualEffectNavigationBar.backLabel.text = vc.backLabelText
+            entityVC?.container?.visualEffectNavigationBar.titleLabel.text = vc.title
+        }
+        
         show(viewControllerToCommit, sender: nil)
     }
 }
 
 // MARK: - Arrangeable
-extension ArtistAlbumsViewController: Arrangeable {
+extension ArtistAlbumsViewController: FullySortable {
     
     @objc func sortItems() {
         

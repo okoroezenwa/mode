@@ -1,26 +1,103 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.3.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.13.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.9"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--Lyrics Info View Controller-->
         <scene sceneID="fgl-EJ-0tO">
             <objects>
-                <viewController id="1lB-Fm-ybx" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="LyricsInfoViewController" id="1lB-Fm-ybx" customClass="LyricsInfoViewController" customModule="Mode" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="fl5-Sf-8F4">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="2Vu-Ak-mUg">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="2Vu-Ak-mUg" customClass="MELTableView" customModule="Mode" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="20" width="375" height="647"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <inset key="separatorInset" minX="10" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="field" rowHeight="50" id="lkn-ad-O0k" customClass="TextFieldsTableViewCell" customModule="Mode" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="55.5" width="375" height="50"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="lkn-ad-O0k" id="tVy-eB-kfG">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="50"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="dXf-Ie-M2s">
+                                                    <rect key="frame" x="10" y="10" width="357" height="35"/>
+                                                    <subviews>
+                                                        <stackView opaque="NO" contentMode="scaleToFill" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="a6f-zp-CcU">
+                                                            <rect key="frame" x="0.0" y="0.0" width="357" height="35"/>
+                                                            <subviews>
+                                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aQg-8u-lbI">
+                                                                    <rect key="frame" x="0.0" y="0.0" width="17" height="35"/>
+                                                                    <subviews>
+                                                                        <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SongsSmall" translatesAutoresizingMaskIntoConstraints="NO" id="UTu-Jm-xv1" customClass="MELImageView" customModule="Mode" customModuleProvider="target">
+                                                                            <rect key="frame" x="0.0" y="0.0" width="17" height="35"/>
+                                                                            <constraints>
+                                                                                <constraint firstAttribute="width" constant="17" id="PSS-hu-tpi"/>
+                                                                            </constraints>
+                                                                            <userDefinedRuntimeAttributes>
+                                                                                <userDefinedRuntimeAttribute type="boolean" keyPath="greyOverride" value="YES"/>
+                                                                            </userDefinedRuntimeAttributes>
+                                                                        </imageView>
+                                                                    </subviews>
+                                                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                                    <constraints>
+                                                                        <constraint firstItem="UTu-Jm-xv1" firstAttribute="leading" secondItem="aQg-8u-lbI" secondAttribute="leading" id="6Q8-98-ub1"/>
+                                                                        <constraint firstAttribute="trailing" secondItem="UTu-Jm-xv1" secondAttribute="trailing" id="MMl-gG-KSE"/>
+                                                                        <constraint firstItem="UTu-Jm-xv1" firstAttribute="top" secondItem="aQg-8u-lbI" secondAttribute="top" id="hij-P4-hMS"/>
+                                                                        <constraint firstAttribute="bottom" secondItem="UTu-Jm-xv1" secondAttribute="bottom" id="l0I-sg-48y"/>
+                                                                    </constraints>
+                                                                </view>
+                                                                <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" verticalCompressionResistancePriority="751" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="pjE-nN-5te" customClass="MELTextField" customModule="Mode" customModuleProvider="target">
+                                                                    <rect key="frame" x="27" y="0.0" width="330" height="35"/>
+                                                                    <nil key="textColor"/>
+                                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no"/>
+                                                                    <userDefinedRuntimeAttributes>
+                                                                        <userDefinedRuntimeAttribute type="boolean" keyPath="bordered" value="YES"/>
+                                                                        <userDefinedRuntimeAttribute type="number" keyPath="fontSize">
+                                                                            <integer key="value" value="17"/>
+                                                                        </userDefinedRuntimeAttribute>
+                                                                    </userDefinedRuntimeAttributes>
+                                                                </textField>
+                                                            </subviews>
+                                                        </stackView>
+                                                    </subviews>
+                                                </stackView>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            <constraints>
+                                                <constraint firstItem="dXf-Ie-M2s" firstAttribute="leading" secondItem="tVy-eB-kfG" secondAttribute="leading" constant="10" id="0Q9-Or-mcG"/>
+                                                <constraint firstItem="dXf-Ie-M2s" firstAttribute="top" secondItem="tVy-eB-kfG" secondAttribute="top" constant="10" id="1qb-GR-M7E"/>
+                                                <constraint firstAttribute="bottom" secondItem="dXf-Ie-M2s" secondAttribute="bottom" constant="5" id="Nag-db-Fsd"/>
+                                                <constraint firstAttribute="trailing" secondItem="dXf-Ie-M2s" secondAttribute="trailing" constant="8" id="cc1-A4-JGU"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <connections>
+                                            <outlet property="itemImageView" destination="UTu-Jm-xv1" id="HRN-Pf-Cnx"/>
+                                            <outlet property="textField" destination="pjE-nN-5te" id="auD-VD-SeI"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="header" value="YES"/>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="footer" value="YES"/>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="settings" value="YES"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <outlet property="dataSource" destination="1lB-Fm-ybx" id="x5M-Cd-nFl"/>
+                                    <outlet property="delegate" destination="1lB-Fm-ybx" id="imu-4a-sx7"/>
+                                </connections>
                             </tableView>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -32,10 +109,17 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="OTF-NF-jTa"/>
                     </view>
+                    <connections>
+                        <outlet property="tableView" destination="2Vu-Ak-mUg" id="5Ka-gv-x6z"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7LX-WS-0Xs" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="28" y="161"/>
+            <point key="canvasLocation" x="28" y="160.56971514242881"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="SongsSmall" width="9" height="13"/>
+    </resources>
+    <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
 </document>

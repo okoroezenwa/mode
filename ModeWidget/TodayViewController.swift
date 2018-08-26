@@ -254,13 +254,13 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         
         guard musicPlayer.nowPlayingItemIndex != -1 else {
             
-            nextLabel.text = "Queue Unavailable"
+            nextLabel.text = "queue unavailable"
             
             return
         }
         
         let count = queueLocation == .upNext ? musicPlayer.queueCount() - (musicPlayer.nowPlayingItemIndex + 1) : musicPlayer.nowPlayingItemIndex
-        let text = (queueLocation == .upNext ? "Up Next (" : "Previous (") + count.formatted + ")"
+        let text = (queueLocation == .upNext ? "up next (" : "previous (") + count.formatted + ")"
         let attributed = NSMutableAttributedString.init(string: text)
         attributed.addAttribute(.foregroundColor, value: colour, range: text.nsRange(of: count.formatted))
         

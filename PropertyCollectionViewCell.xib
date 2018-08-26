@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13528" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.13.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13526"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.9"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -24,26 +24,62 @@
                 <rect key="frame" x="0.0" y="0.0" width="122" height="36"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Xmx-Cy-EUh" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                        <rect key="frame" x="0.0" y="14" width="122" height="17"/>
-                        <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                        <nil key="textColor"/>
-                        <nil key="highlightedColor"/>
-                    </label>
+                    <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yBR-NH-fv6">
+                        <rect key="frame" x="0.0" y="0.0" width="122" height="36"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XIi-CJ-klF">
+                                <rect key="frame" x="0.0" y="0.0" width="20" height="36"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="wSi-Hc-ghP" customClass="MELImageView" customModule="Mode" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="14" width="15" height="15"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="15" id="VT3-7d-o9c"/>
+                                            <constraint firstAttribute="height" constant="15" placeholder="YES" id="zbf-k2-huN"/>
+                                        </constraints>
+                                    </imageView>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="wSi-Hc-ghP" secondAttribute="bottom" constant="7" id="EY8-PD-ajU"/>
+                                    <constraint firstItem="wSi-Hc-ghP" firstAttribute="leading" secondItem="XIi-CJ-klF" secondAttribute="leading" id="Epp-lZ-O9S"/>
+                                    <constraint firstAttribute="trailing" secondItem="wSi-Hc-ghP" secondAttribute="trailing" priority="900" constant="5" id="Fpl-HK-ZAM"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="19B-gR-GoP">
+                                <rect key="frame" x="20" y="0.0" width="86" height="36"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Xmx-Cy-EUh" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="14" width="86" height="17"/>
+                                        <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="Xmx-Cy-EUh" secondAttribute="trailing" id="WQg-d4-LTy"/>
+                                    <constraint firstAttribute="bottom" secondItem="Xmx-Cy-EUh" secondAttribute="bottom" constant="5" id="rVQ-B3-eRY"/>
+                                    <constraint firstItem="Xmx-Cy-EUh" firstAttribute="leading" secondItem="19B-gR-GoP" secondAttribute="leading" id="zad-aY-B8C"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                    </stackView>
                 </subviews>
             </view>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
-                <constraint firstItem="Xmx-Cy-EUh" firstAttribute="leading" secondItem="HWm-tO-Ik6" secondAttribute="leading" id="0rc-ng-o53"/>
-                <constraint firstItem="HWm-tO-Ik6" firstAttribute="bottom" secondItem="Xmx-Cy-EUh" secondAttribute="bottom" constant="5" id="ANc-21-VeT"/>
-                <constraint firstItem="HWm-tO-Ik6" firstAttribute="trailing" secondItem="Xmx-Cy-EUh" secondAttribute="trailing" id="EI7-2S-KWb"/>
+                <constraint firstItem="HWm-tO-Ik6" firstAttribute="bottom" secondItem="yBR-NH-fv6" secondAttribute="bottom" id="7ve-2w-vna"/>
+                <constraint firstItem="yBR-NH-fv6" firstAttribute="top" secondItem="HWm-tO-Ik6" secondAttribute="top" id="XPp-c8-as6"/>
+                <constraint firstItem="HWm-tO-Ik6" firstAttribute="trailing" secondItem="yBR-NH-fv6" secondAttribute="trailing" id="eeC-QS-xZ8"/>
+                <constraint firstItem="yBR-NH-fv6" firstAttribute="leading" secondItem="HWm-tO-Ik6" secondAttribute="leading" constant="16" id="vbE-xc-Zgu"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="HWm-tO-Ik6"/>
-            <size key="customSize" width="122" height="148"/>
+            <size key="customSize" width="126" height="148"/>
             <connections>
+                <outlet property="imageView" destination="wSi-Hc-ghP" id="CYX-fF-GW2"/>
                 <outlet property="label" destination="Xmx-Cy-EUh" id="bFB-f2-auQ"/>
             </connections>
-            <point key="canvasLocation" x="-7" y="-85"/>
+            <point key="canvasLocation" x="-4.7999999999999998" y="-85.457271364317847"/>
         </collectionViewCell>
     </objects>
 </document>

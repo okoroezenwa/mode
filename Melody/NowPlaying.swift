@@ -92,6 +92,9 @@ class NowPlaying: NSObject {
         timerBased?.playPauseButton.addTarget(self, action: #selector(changePlaybackState), for: .touchUpInside)
         timerBased?.altPlayPauseButton??.addTarget(self, action: #selector(changePlaybackState), for: .touchUpInside)
         
+        timerBased?.shuffle??.addTarget(self, action: #selector(changeShuffle(_:)), for: .touchUpInside)
+        timerBased?.repeatButton??.addTarget(self, action: #selector(setRepeatMode(_:)), for: .touchUpInside)
+        
         let gr = UILongPressGestureRecognizer.init(target: self, action: #selector(stop(_:)))
         gr.minimumPressDuration = 1.0
         timerBased?.playPauseButton.addGestureRecognizer(gr)
@@ -166,6 +169,19 @@ class NowPlaying: NSObject {
     
     @objc func changePlaybackState() {
         
+        if musicPlayer.nowPlayingItem == nil {
+            
+            let playAll = UIAlertAction.init(title: "Play All", style: .default, handler: { _ in appDelegate.perform(.playAll) })
+            
+            let shuffleSongs = UIAlertAction.init(title: "Shuffle Songs", style: .default, handler: { _ in appDelegate.perform(.shuffleSongs) })
+            
+            let shuffleAlbums = UIAlertAction.init(title: "Shuffle Albums", style: .default, handler: { _ in appDelegate.perform(.shuffleAlbums) })
+            
+            topViewController?.present(UIAlertController.withTitle(nil, message: nil, style: .actionSheet, actions: playAll, shuffleSongs, shuffleAlbums, .cancel()), animated: true, completion: nil)
+            
+            return
+        }
+        
         musicPlayer.isPlaying ? musicPlayer.pause() : musicPlayer.play()
         appDelegate.saveQueue()
     }
@@ -196,6 +212,48 @@ class NowPlaying: NSObject {
             
             musicPlayer.setQueue(with: .init(items: []))
             musicPlayer.prepareToPlay()
+        }
+    }
+    
+    @objc func setRepeatMode(_ sender: MELButton) {
+        
+        for timerBased in registered {
+            
+            if sender == timerBased?.repeatButton {
+                
+                timerBased?.modifyRepeatButton(changingMusicPlayer: true)
+            
+            } else {
+                
+                timerBased?.modifyRepeatButton(changingMusicPlayer: false)
+            }
+        }
+    }
+    
+    @objc func changeShuffle(_ sender: MELButton) {
+        
+        for timerBased in registered {
+            
+            if sender == timerBased?.shuffle {
+                
+                timerBased?.modifyShuffleState(changingMusicPlayer: true)
+                
+            } else {
+                
+                timerBased?.modifyShuffleState(changingMusicPlayer: false)
+            }
+        }
+        
+        notifier.post(name: .shuffleInvoked, object: nil)
+        
+        if #available(iOS 11.3, *) {
+            
+            UniversalMethods.performOnMainThread({ notifier.post(name: .shuffleInvoked, object: nil) }, afterDelay: 1)
+        }
+        
+        if #available(iOS 10.3, *), !useSystemPlayer, let musicPlayer = musicPlayer as? MPMusicPlayerApplicationController {
+            
+            musicPlayer.perform(queueTransaction: { _ in }, completionHandler: { controller, _ in notifier.post(name: .saveQueue, object: nil, userInfo: [String.queueItems: controller.items]) })
         }
     }
     

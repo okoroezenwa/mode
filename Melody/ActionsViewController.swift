@@ -773,9 +773,6 @@ class ActionsViewController: UIViewController {
             }
         }
         
-        collectionsVC?.updateHeaderViewLabel(sender)
-        collectionsVC?.updateHeaderViewButton(self)
-        
         if !persistActionsView && !persistPopovers {
             
             dismiss(animated: true, completion: nil)

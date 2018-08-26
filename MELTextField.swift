@@ -12,6 +12,14 @@ class MELTextField: UITextField {
     
     @objc var bordered = false
     @objc var fontSize: CGFloat = 15
+    
+    override var placeholder: String? {
+        
+        didSet {
+            
+            preparePlaceholder()
+        }
+    }
 
     override func awakeFromNib() {
         
@@ -33,15 +41,20 @@ class MELTextField: UITextField {
         
         if bordered {
             
-            backgroundColor = darkTheme ? UIColor.black.withAlphaComponent(0.1) : UIColor.white.withAlphaComponent(0.1)
+            backgroundColor = UIColor.black.withAlphaComponent(darkTheme ? 0.2 : 0.05)// darkTheme ? UIColor.black.withAlphaComponent(0.1) : UIColor.white.withAlphaComponent(0.1)
         }
+        
+        preparePlaceholder()
+    }
+    
+    func preparePlaceholder() {
         
         guard let placeholder = placeholder else { return }
         
         attributedPlaceholder = NSAttributedString.init(string: placeholder, attributes: [
             
             .font: UIFont.myriadPro(ofWeight: .regular, size: fontSize),
-            .foregroundColor: Themer.themeColour(alpha: 0.3)//textColour(for: .subtitle)
+            .foregroundColor: Themer.themeColour(alpha: 0.3)
         ])
     }
 }

@@ -13,22 +13,24 @@ class HeaderView: UIView, InfoLoading {
     @IBOutlet weak var descriptionTextView: MELTextView!
     @IBOutlet weak var descriptionTextViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var scrollStackView: UIStackView!
-    @IBOutlet weak var scrollStackViewLeadingConstraint: NSLayoutConstraint!
-    @IBOutlet weak var artistViewWidthConstraint: NSLayoutConstraint!
-    @IBOutlet weak var likedStateImageViewWidthConstraint: NSLayoutConstraint!
-    @IBOutlet weak var likedStateImageViewLeadingConstraint: NSLayoutConstraint!
     @IBOutlet weak var collectionViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var collectionViewHeaderHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var artistView: UIView!
     @IBOutlet weak var artistButton: MELButton!
     @IBOutlet weak var actionsStackView: UIStackView!
+    @IBOutlet var likedView: UIView!
+    @IBOutlet var insertView: UIView!
+    @IBOutlet var infoView: UIView!
     @IBOutlet weak var chevron: MELImageView!
     @IBOutlet weak var chevronBorder: UIView!
-    @IBOutlet weak var likedStateImageView: MELImageView!
+    @IBOutlet weak var likedStateButton: MELButton!
     @IBOutlet weak var tableHeaderContainer: UIView!
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var loadingEffectView: MELVisualEffectView!
     @IBOutlet weak var activityIndicatorView: MELActivityIndicatorView!
+    @IBOutlet var buttonsStackView: UIStackView!
+    @IBOutlet var addButton: MELButton!
+    @IBOutlet var infoButton: MELButton!
     
     enum Context {
         
@@ -36,9 +38,35 @@ class HeaderView: UIView, InfoLoading {
         case albums([MPMediaItemCollection])
         case collections(kind: AlbumBasedCollectionKind, [MPMediaItemCollection])
         case playlists([MPMediaPlaylist])
+        
+        func infoContext(at indexPath: IndexPath) -> InfoViewController.Context {
+            
+            switch self {
+                
+                case .albums(let collections): return .album(at: indexPath.row, within: collections)
+                
+                case .collections(kind: let kind, let collections): return .collection(kind: kind, at: indexPath.row, within: collections)
+                
+                case .playlists(let playlists): return .playlist(at: indexPath.row, within: playlists)
+                
+                case .songs(let songs): return .song(location: .list, at: indexPath.row, within: songs)
+            }
+        }
     }
     
-    lazy var entity = Entity.playlist
+    lazy var entityType: Entity = {
+    
+        switch context {
+            
+            case .albums(let collections): return .album
+            
+            case .collections(kind: let kind, let collections): return kind.entity
+        
+            case .playlists(let playlists): return .playlist
+        
+            case .songs(let songs): return .song
+        }
+    }()
     var context = Context.playlists([])
     
     let width = screenWidth / 2.75
@@ -61,12 +89,8 @@ class HeaderView: UIView, InfoLoading {
         
         didSet {
             
-            if showArtistView {
-                
-                likedStateImageViewLeadingConstraint.constant = 0
-                artistView.isHidden = false
-                artistViewWidthConstraint.priority = UILayoutPriority(rawValue: 249)
-            }
+            artistView.isHidden = showArtistView.inverted
+            updateScrollStackView()
         }
     }
     
@@ -74,9 +98,26 @@ class HeaderView: UIView, InfoLoading {
         
         didSet {
             
-            likedStateImageView.isHidden = !showLoved
-            scrollStackViewLeadingConstraint.constant = showLoved ? 16 : 0
-            likedStateImageViewWidthConstraint.constant = showLoved ? 20 : 0
+            likedView.isHidden = !showLoved
+            updateScrollStackView()
+        }
+    }
+    
+    @objc var showInsert = false {
+        
+        didSet {
+            
+            insertView.isHidden = !showInsert
+            updateScrollStackView()
+        }
+    }
+    
+    @objc var showInfo = false {
+        
+        didSet {
+            
+            infoView.isHidden = !showInfo
+            updateScrollStackView()
         }
     }
     
@@ -86,7 +127,7 @@ class HeaderView: UIView, InfoLoading {
             
             collectionViewHeightConstraint.constant = showRecents ? ((UIScreen.main.bounds.width) / 2.75) + 17 + 4 + 14 : 0
             collectionView.isHidden = !showRecents
-            collectionViewHeaderHeightConstraint.constant = showRecents ? ("eh" as NSString).boundingRect(with: CGSize(width: 100, height: CGFloat.greatestFiniteMagnitude), options: .usesLineFragmentOrigin, attributes: [.font: UIFont.myriadPro(ofWeight: .light, size: 20)], context: nil).height + 24 : 0
+            collectionViewHeaderHeightConstraint.constant = showRecents ? .textHeaderHeight : 0
             tableHeaderContainer.isHidden = !showRecents
             
             if header.superview != tableHeaderContainer {
@@ -170,7 +211,7 @@ class HeaderView: UIView, InfoLoading {
         
         let queue = OperationQueue()
         queue.name = "Image Operation Queue"
-        queue.maxConcurrentOperationCount = 3
+        
         
         return queue
     }()
@@ -192,8 +233,26 @@ class HeaderView: UIView, InfoLoading {
                 collectionView.register(UINib.init(nibName: "PlaylistCollectionCell", bundle: nil), forCellWithReuseIdentifier: "playlistCell")
                 collectionView.delegate = self
                 collectionView.dataSource = self
+                
+                if let collectionsVC = viewController as? CollectionsViewController, collectionsVC.presented {
+                    
+                    collectionView.allowsMultipleSelection = true
+                }
             }
         }
+    }
+    
+    override func awakeFromNib() {
+        
+        super.awakeFromNib()
+        
+        updateScrollStackView()
+    }
+    
+    func updateScrollStackView() {
+        
+        scrollStackView.layoutMargins.left = showArtistView.inverted && showLoved.inverted && showInfo.inverted && showInsert.inverted ? 16 : 0
+        buttonsStackView.layoutMargins.left = showArtistView ? 0 : (showLoved || showInfo || showInsert) ? 16 : 0
     }
 }
 
@@ -271,6 +330,17 @@ extension HeaderView: UICollectionViewDelegate, UICollectionViewDataSource {
                     if !collectionsVC.presented {
                         
                         cell.delegate = self
+                    
+                    } else {
+                        
+                        if Set(collectionsVC.selectedPlaylists).contains(playlist), cell.isSelected.inverted {
+                            
+                            collectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                            
+                        } else if Set(collectionsVC.selectedPlaylists).contains(playlist).inverted, cell.isSelected {
+                            
+                            collectionView.deselectItem(at: indexPath, animated: false)
+                        }
                     }
                     
                     cell.prepare(with: playlist, count: playlist.count, editingMode: collectionsVC.tableView.isEditing)
@@ -358,7 +428,18 @@ extension HeaderView: UICollectionViewDelegate, UICollectionViewDataSource {
                 
                 if collectionsVC.presented, let playlist = collection as? MPMediaPlaylist {
                     
-                    collectionsVC.addItems(to: playlist)
+                    if collectionsVC.selectedPlaylists.firstIndex(of: playlist) == nil  {
+                        
+                        collectionsVC.selectedPlaylists.append(playlist)
+                        
+                        if let selectedIndexPath = collectionsVC.tableView.indexPathsForVisibleRows?.first(where: { collectionsVC.getCollection(from: $0) == playlist }), let cell = collectionsVC.tableView.cellForRow(at: selectedIndexPath), cell.isSelected.inverted {
+
+                            collectionsVC.tableView.selectRow(at: selectedIndexPath, animated: false, scrollPosition: .none)
+                        }
+                    }
+
+                    return
+//                    collectionsVC.addItems(to: playlist)
                     
                 } else {
                     
@@ -375,6 +456,19 @@ extension HeaderView: UICollectionViewDelegate, UICollectionViewDataSource {
         }
         
         collectionView.deselectItem(at: indexPath, animated: true)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        
+        if let collectionsVC = viewController as? CollectionsViewController, collectionsVC.presented, let playlist = playlists.value(at: indexPath.row), let index = collectionsVC.selectedPlaylists.firstIndex(of: playlist) {
+            
+            collectionsVC.selectedPlaylists.remove(at: index)
+            
+            if let selectedIndexPath = collectionsVC.tableView.indexPathsForVisibleRows?.first(where: { collectionsVC.getCollection(from: $0) == playlist }), let indexPaths = collectionsVC.tableView.indexPathsForSelectedRows, Set(indexPaths).contains(selectedIndexPath) {
+                
+                collectionsVC.tableView.deselectRow(at: selectedIndexPath, animated: false)
+            }
+        }
     }
 }
 
@@ -470,5 +564,50 @@ extension HeaderView: PlaylistCollectionCellDelegate {
                     }
                 }
         }
+    }
+    
+    func accessoryButtonTapped(in cell: PlaylistCollectionViewCell) {
+        
+        guard let indexPath = collectionView.indexPath(for: cell) else { return }
+        
+        var item: MPMediaEntity {
+            
+            switch context {
+                
+                case .albums(let collections): return collections[indexPath.row]
+                
+                case .playlists(let playlists): return playlists[indexPath.row]
+                
+                case .collections(kind: _, let collections): return collections[indexPath.row]
+                
+                case .songs(let songs): return songs[indexPath.row]
+            }
+        }
+        
+        guard let count: Int = {
+            
+            if let _ = item as? MPMediaItem {
+                
+                return 1
+                
+            } else if let collection = item as? MPMediaItemCollection {
+                
+                return collection.count
+            }
+            
+            return nil
+            
+        }(), count > 0, let vc = viewController as? UIViewController & SingleItemActionable else { return }
+        
+        var actions = [SongAction.collect, .info(context: context.infoContext(at: indexPath)), .queue(name: cell.nameLabel.text, query: .init(filterPredicates: [.for(entityType, using: item)])), .newPlaylist, .addTo].map({ vc.singleItemAlertAction(for: $0, entity: entityType, using: item, from: vc) })
+        
+        actions.insert(vc.singleItemAlertAction(for: .show(title: cell.nameLabel.text, context: context.infoContext(at: indexPath)), entity: entityType, using: item, from: vc, useAlternateTitle: true), at: 1)
+        
+        if let item = item as? MPMediaItem, item.existsInLibrary.inverted {
+            
+            actions.insert(vc.singleItemAlertAction(for: .library, entity: .song, using: item, from: vc), at: 4)
+        }
+        
+        vc.present(UIAlertController.withTitle(nil, message: cell.nameLabel.text, style: .actionSheet, actions: actions + [.cancel()] ), animated: true, completion: nil)
     }
 }

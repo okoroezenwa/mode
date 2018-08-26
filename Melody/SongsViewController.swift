@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, ComposerTransitionable, GenreTransitionable, InfoLoading, SongContainer, CellAnimatable, SingleItemActionable, BorderButtonContaining, Refreshable, IndexContaining, LibrarySectionContainer, EntityVerifiable, TopScrollable {
+class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, ComposerTransitionable, GenreTransitionable, InfoLoading, CellAnimatable, SingleItemActionable, BorderButtonContaining, Refreshable, IndexContaining, LibrarySectionContainer, EntityVerifiable, TopScrollable, EntityContainer {
 
     @IBOutlet weak var tableView: MELTableView!
     lazy var headerView: HeaderView = {
@@ -21,7 +21,7 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
         self.collectionView = view.collectionView
         view.viewController = self
         view.header.button.addTarget(self, action: #selector(backToStart), for: .touchUpInside)
-        view.header.altButton.addTarget(self.tableDelegate, action: #selector(tableDelegate.viewSections), for: .touchUpInside)
+        view.header.altButton.addTarget(isInDebugMode ? self : self.tableDelegate, action: isInDebugMode ? #selector(backToStart) : #selector(tableDelegate.viewSections), for: .touchUpInside)
         
         return view
     }()
@@ -81,6 +81,7 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
     
     var borderedButtons = [BorderedButtonView?]()
     var sectionIndexViewController: SectionIndexViewController?
+    var navigatable: Navigatable? { return libraryVC }
     let requiresLargerTrailingConstraint = false
     
     var actionableSongs: [MPMediaItem] { return filtering ? filteredSongs : songs }
@@ -94,7 +95,6 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
     var highlightedEntity: MPMediaEntity?
     var filterContainer: (UIViewController & FilterContainer)?
     var filterEntities: FilterViewController.FilterEntities { return .songs(songs) }
-    var cellDelegate: Any { return songDelegate }
     var highlightedIndex: Int?
     var collectionView: UICollectionView?
     
@@ -115,7 +115,6 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
         return query
     }()
     lazy var sections = [SortSectionDetails]()
-    lazy var songDelegate: SongDelegate = { SongDelegate.init(container: self) }()
     lazy var filtering = false
     var filterText: String?
     var entityCount: Int { return songs.count }
@@ -207,7 +206,7 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
         
         let queue = OperationQueue()
         queue.name = "Image Operation Queue"
-        queue.maxConcurrentOperationCount = 3
+        
         
         return queue
     }()
@@ -224,7 +223,7 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
         
         let queue = OperationQueue()
         queue.name = "Songs Sort Operation Queue"
-        queue.maxConcurrentOperationCount = 3
+        
         
         return queue
     }()
@@ -236,6 +235,8 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
         
         super.viewDidLoad()
         
+        tableView.contentInset.top = libraryVC?.inset ?? 0
+        tableView.scrollIndicatorInsets.top = libraryVC?.inset ?? 0
         adjustInsets(context: .container)
         
         updateTopLabels()
@@ -728,185 +729,7 @@ extension SongsViewController: TableViewContainer {
     }
 }
 
-extension SongsViewController: UITableViewDelegate, UITableViewDataSource {
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
-        if filtering {
-            
-            return filteredSongs.count
-            
-        } else {
-            
-            switch sortCriteria {
-                
-                case .standard: return !songs.isEmpty ? songsQuery.itemSections?[section].range.length ?? songs.count : songs.count
-                
-                case .random: return songs.count
-                
-                default: return sections[section].count
-            }
-        }
-    }
-    
-    func numberOfSections(in tableView: UITableView) -> Int {
-        
-        if filtering {
-            
-            return 1
-            
-        } else {
-            
-            switch sortCriteria {
-                
-                case .standard: return songsQuery.itemSections?.count ?? 1
-                
-                case .random: return 1
-                
-                default: return sections.count
-            }
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        
-        operations[indexPath]?.cancel()
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        let cell = tableView.songCell(for: indexPath)
-        
-//        cell.delegate = songDelegate
-//        cell.scrollDelegate = songDelegate
-        
-        let song = getSong(from: indexPath)
-        
-        cell.prepare(with: song)
-        updateImageView(using: song, in: cell, indexPath: indexPath, reusableView: tableView)
-
-        return cell
-    }
-    
-    func sectionIndexTitles(for tableView: UITableView) -> [String]? {
-        
-        guard !filtering else { return nil }
-        
-        switch sortCriteria {
-            
-            case .standard:
-                
-                let array = songsQuery.itemSections?.map({ $0.title })
-                
-                return ascending ? array : array?.reversed()
-            
-            case .random: return nil
-                
-            default: return sections.map({ $0.indexTitle })
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        if tableView.isEditing {
-            
-            self.tableView(tableView, commit: .insert, forRowAt: indexPath)
-        
-        } else {
-            
-            let song = getSong(from: indexPath)
-            
-            musicPlayer.play(filtering ? filteredSongs : songs, startingFrom: song, from: self, withTitle: "All Songs", subtitle: "Starting from \(song.validTitle)", alertTitle: "Play")
-        }
-        
-        tableView.deselectRow(at: indexPath, animated: true)
-    }
-    
-    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        
-        return true
-    }
-    
-    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
-        
-        return .insert
-    }
-    
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        
-        if editingStyle == .insert {
-            
-            let song = getSong(from: indexPath)
-            
-            notifier.post(name: .addedToQueue, object: nil, userInfo: [DictionaryKeys.queueItems: [song]])
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        
-        guard !songs.isEmpty else { return nil }
-        
-        let header = tableView.sectionHeader
-        
-        if filtering {
-            
-            header?.label.text = nil
-            
-        } else {
-            
-            switch sortCriteria {
-                
-                case .random: header?.label.text = nil
-                
-                case .standard:
-                    
-                    if let _ = songsQuery.itemSections {
-                        
-                        header?.label.text = self.sectionIndexTitles(for: tableView)?[section]
-                    
-                    } else {
-                        
-                        header?.label.text = nil
-                    }
-                    
-                default:
-                    
-                    header?.label.text = sections[section].title.uppercased()
-            }
-        }
-        
-        return header
-    }
-    
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        
-        if filtering {
-            
-            return 11
-            
-        } else {
-            
-            switch sortCriteria {
-                
-                case .random,
-                     .standard where songsQuery.itemSections == nil: return 11
-                    
-                default:
-                    
-                    let height = ("eh" as NSString).boundingRect(with: .init(width: 100, height: CGFloat.greatestFiniteMagnitude), options: .usesLineFragmentOrigin, attributes: [.font: UIFont.myriadPro(ofWeight: .light, size: 20)], context: nil).height
-                    
-                    return height + 24
-            }
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        
-        return 0.001
-    }
-}
-
-extension SongsViewController: Arrangeable {
+extension SongsViewController: FullySortable {
     
     func sortItems() {
         

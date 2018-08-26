@@ -119,6 +119,14 @@ var showPlaylistFolders: Bool { return prefs.bool(forKey: .showPlaylistFolders) 
 var tabBarTapBehaviour: TabBarTapBehaviour { return TabBarTapBehaviour(rawValue: prefs.integer(forKey: .tabBarTapBehaviour)) ?? Settings.defaultTabBarBehaviour }
 var backgroundArtworkAdaptivity: BackgroundArtwork { return BackgroundArtwork(rawValue: prefs.integer(forKey: .backgroundArtworkAdaptivity)) ?? .sectionAdaptive }
 var lyricsTextAlignment: NSTextAlignment { return NSTextAlignment(rawValue: prefs.integer(forKey: .lyricsTextAlignment)) ?? .center }
+var removeTitleBrackets: Bool { return prefs.bool(forKey: .removeTitleBrackets) }
+var removeTitleAmpersands: Bool { return prefs.bool(forKey: .removeTitleAmpersands) }
+var removeTitlePunctuation: Bool { return prefs.bool(forKey: .removeTitlePunctuation) }
+var removeArtistBrackets: Bool { return prefs.bool(forKey: .removeArtistBrackets) }
+var removeArtistPunctuation: Bool { return prefs.bool(forKey: .removeArtistPunctuation) }
+var removeArtistAmpersands: Bool { return prefs.bool(forKey: .removeArtistAmpersands) }
+var replaceTitleCensoredWords: Bool { return prefs.bool(forKey: .replaceTitleCensoredWords) }
+var replaceArtistCensoredWords: Bool { return prefs.bool(forKey: .replaceArtistCensoredWords) }
 
 class Settings {
     
@@ -247,7 +255,15 @@ class Settings {
             .showPlaylistFolders: false,
             .tabBarTapBehaviour: defaultTabBarBehaviour.rawValue,
             .backgroundArtworkAdaptivity: BackgroundArtwork.sectionAdaptive.rawValue,
-            .lyricsTextAlignment: NSTextAlignment.center.rawValue
+            .lyricsTextAlignment: NSTextAlignment.center.rawValue,
+            .removeTitleBrackets: true,
+            .removeTitleAmpersands: true,
+            .removeTitlePunctuation: true,
+            .replaceTitleCensoredWords: true,
+            .removeArtistBrackets: true,
+            .removeArtistPunctuation: true,
+            .removeArtistAmpersands: true,
+            .replaceArtistCensoredWords: true,
         ])
         
         sharedDefaults.register(defaults: [
@@ -486,6 +502,14 @@ extension String {
     static let tabBarTapBehaviour = "tabBarTapBehaviour"
     static let backgroundArtworkAdaptivity = "backgroundArtworkAdaptivity"
     static let lyricsTextAlignment = "lyricsTextAlignment"
+    static let removeArtistBrackets = "removeArtistBrackets"
+    static let removeArtistPunctuation = "removeArtistPunctuation"
+    static let removeArtistAmpersands = "removeArtistAmpersands"
+    static let replaceArtistCensoredWords = "replaceArtistCensoredWords"
+    static let removeTitleBrackets = "removeTitleBrackets"
+    static let removeTitlePunctuation = "removeTitlePunctuation"
+    static let removeTitleAmpersands = "removeTitleAmpersands"
+    static let replaceTitleCensoredWords = "replaceTitleCensoredWords"
 }
 
 // MARK: - Notification Settings Constants
@@ -537,5 +561,11 @@ extension NSNotification.Name {
     static let showPlaylistFoldersChanged = Notification.Name.init("showPlaylistFoldersChanged")
     static let entityCountVisibilityChanged = Notification.Name.init("entityCountVisibilityChanged")
     static let numbersBelowLettersChanged = Notification.Name.init("numbersBelowLettersChanged")
-    static let lyricsTextAlignmentChanged = Notification.Name.init("lyricsTextAlignmentChanged")
+    static let lyricsTextAlignmentChanged = nameByAppending(to: .lyricsTextAlignment)
+    static let lyricsTextOptionsChanged = nameByAppending(to: "lyricsTextOptions")
+    
+    static func nameByAppending(to text: String) -> Notification.Name {
+        
+        return Notification.Name.init(text + "Changed")
+    }
 }

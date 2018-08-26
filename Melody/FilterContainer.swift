@@ -127,7 +127,7 @@ extension FilterContainer where Self: UIViewController {
             
         } catch let error {
             
-            print(error.localizedDescription)
+            print(error)
         }
     }
     
@@ -144,7 +144,11 @@ extension FilterContainer where Self: UIViewController {
             
             recentSearches = Array(results.reversed())
             updateDeleteButton()
-            tableView.reloadData()
+            
+            if filtering.inverted {
+                
+                tableView.reloadData()
+            }
             
         } catch let error {
             

@@ -20,7 +20,7 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
             addButton = addView.button
             self.addView = addView
             
-            let clearView = BorderedButtonView.with(title: "Clear", image: #imageLiteral(resourceName: "Discard"), action: #selector(clear), target: self)
+            let clearView = BorderedButtonView.with(title: "Clear...", image: #imageLiteral(resourceName: "Discard"), action: #selector(clear), target: self)
             clearButton = clearView.button
             self.clearView = clearView
             
@@ -64,8 +64,6 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
     @objc var descriptionText: String?
     var wasFirstResponder = false
     
-    @objc lazy var songDelegate: SongDelegate = { SongDelegate.init(container: self) }()
-    
     @objc var operations = [IndexPath: Operation]()
     @objc var infoOperations = InfoOperations()
     @objc let infoCache: InfoCache = {
@@ -80,7 +78,7 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
         
         let queue = OperationQueue()
         queue.name = "Image Operation Queue"
-        queue.maxConcurrentOperationCount = 3
+        
         
         return queue
     }()
@@ -299,7 +297,7 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
                                         newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
                                         newBanner.show(duration: 0.5)
                                         
-                                        notifier.post(name: .songAddedToPlaylist, object: nil, userInfo: ["playlist": playlist?.persistentID ?? 0, "songs": array])
+                                        notifier.post(name: .songsAddedToPlaylists, object: nil, userInfo: [String.addedPlaylists: [playlist?.persistentID ?? 0], String.addedSongs: array])
                                         
                                         if weakSelf.fromQueue, let _ = weakSelf.manager {
                                             
@@ -424,7 +422,7 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
                 
                 guard let weakSelf = self else { return }
                 
-                weakSelf.updateItems(at: indexPaths, for: .remove)//.removeSelected(indexPaths)
+                weakSelf.updateItems(at: indexPaths, for: .remove)
             })
             
             array.append(clear)
@@ -435,7 +433,7 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
                     
                     guard let weakSelf = self else { return }
                     
-                    weakSelf.updateItems(at: indexPaths, for: .keep)//.retainSelected()
+                    weakSelf.updateItems(at: indexPaths, for: .keep)
                 })
                 
                 array.append(keep)
@@ -647,9 +645,16 @@ extension NewPlaylistViewController: EntityCellDelegate {
         
         guard let indexPath = tableView.indexPath(for: cell) else { return }
         
-        cell.setHighlighted(true, animated: true)
-        self.tableView(self.tableView, didSelectRowAt: indexPath)
-        cell.setHighlighted(false, animated: true)
+        if tableView.isEditing {
+            
+            tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
+            
+        } else {
+        
+            cell.setHighlighted(true, animated: true)
+            self.tableView(self.tableView, didSelectRowAt: indexPath)
+            cell.setHighlighted(false, animated: true)
+        }
     }
 }
 

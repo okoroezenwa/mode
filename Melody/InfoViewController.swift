@@ -26,7 +26,6 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
     @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
     @IBOutlet weak var previousButton: MELButton!
     @IBOutlet weak var nextButton: MELButton!
-    @IBOutlet weak var queueActivityIndicator: MELActivityIndicatorView!
     
     enum Context {
         
@@ -144,6 +143,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
     var genreQuery: MPMediaQuery?
     var albumArtistQuery: MPMediaQuery?
     var viewController: UIViewController?
+    var isCurrentlyTopViewController = false
     var context = Context.song(location: .queue(loaded: false, index: 0), at: 0, within: [musicPlayer.nowPlayingItem].compactMap({ $0 }))
     var tempContext: Context?
     var entityState = EntityState.single
@@ -207,7 +207,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
         
         let queue = OperationQueue()
         queue.name = "Image Operation Queue"
-        queue.maxConcurrentOperationCount = 3
+        
         
         return queue
     }()
@@ -215,7 +215,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
 //        
 //        let queue = OperationQueue()
 //        queue.name = "Queue Operation Queue"
-//        queue.maxConcurrentOperationCount = 3
+//        
 //        
 //        return queue
 //    }()
@@ -256,13 +256,6 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
             
             self.context = context
         }
-        
-//        if case .song(location: _, at: let index, within: let songs) = context, let song = songs.value(at: index), song.title == "Non Believer" {
-//
-//            song.set(property: "playCountSinceSync", to: -2)
-//
-//            UniversalMethods.banner(withTitle: "Plays set").show(for: 0.5)
-//        }
         
         if case .song = context {
             
@@ -412,16 +405,6 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
         
         (infoCornerRadius ?? cornerRadius).updateCornerRadius(on: artworkImageView.layer, width: artworkImageView.bounds.width, entityType: context.entity, globalRadiusType: cornerRadius)
         
-//        artworkImageView.layer.cornerRadius = {
-//
-//            switch cornerRadius {
-//
-//                case .automatic: return (infoCornerRadius ?? cornerRadius).radius(for: context.entity, width: artworkImageView.bounds.width)
-//
-//                default: return cornerRadius.radius(for: context.entity, width: artworkImageView.bounds.width)
-//            }
-//        }()
-        
         UniversalMethods.addShadow(to: artworkContainer, radius: 8, opacity: 0.2, shouldRasterise: true)
     }
     
@@ -446,6 +429,8 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
         
         changeSize(to: infoBoldTextEnabled ? .regular : .light)
         headerHeight = topViewHeight
+        
+        headerView.scrollViews.forEach({ $0.contentOffset = .zero })
         
         prepareTopView()
         prepareAdded()
@@ -838,6 +823,29 @@ extension InfoViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
+extension InfoViewController: UIScrollViewDelegate {
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        
+        guard let presentedVC = parent as? PresentedContainerViewController else { return }
+        
+        switch (scrollView.contentOffset.y, presentedVC.prompt) {
+            
+            case (let x, nil) where x > 60:
+            
+                presentedVC.prompt = titleButton.title(for: .normal)
+                presentedVC.updatePrompt(animated: true)
+            
+            case (let x, let y) where x < 61 && y != nil:
+            
+                presentedVC.prompt = nil
+                presentedVC.updatePrompt(animated: true)
+            
+            default: break
+        }
+    }
+}
+
 extension InfoViewController: UIViewControllerPreviewingDelegate {
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
@@ -864,7 +872,7 @@ extension InfoViewController: UIViewControllerPreviewingDelegate {
             
             previewingContext.sourceRect = superview.convert(superview.bounds, to: collectionView)
             
-            return Transitioner.shared.transition(to: context.entity, vc: entityVC, from: self, sender: sender, highlightedItem: currentItem, preview: true, titleOverride: container?.activeViewController?.topViewController?.title)
+            return Transitioner.shared.transition(to: context.entity, vc: entityVC, from: self, sender: sender, highlightedItem: currentItem, preview: true, titleOverride: (container?.activeViewController?.topViewController as? Navigatable)?.preferredTitle)
         
         } else if case .single = entityState, let superview = alternateButton1.superview, superview.bounds.contains(collectionView.convert(location, to: superview)), let details: (entity: Entity, collection: MPMediaItemCollection?) = {
             
@@ -883,7 +891,7 @@ extension InfoViewController: UIViewControllerPreviewingDelegate {
             
             previewingContext.sourceRect = superview.convert(superview.bounds, to: collectionView)
             
-            return Transitioner.shared.transition(to: details.entity, vc: entityVC, from: self, sender: details.collection, highlightedItem: currentItem, preview: true, titleOverride: container?.activeViewController?.topViewController?.title)
+            return Transitioner.shared.transition(to: details.entity, vc: entityVC, from: self, sender: details.collection, highlightedItem: currentItem, preview: true, titleOverride: (container?.activeViewController?.topViewController as? Navigatable)?.preferredTitle)
         
         } else if case .song = context, case .single = entityState, let superview = alternateButton2.superview, superview.bounds.contains(collectionView.convert(location, to: superview)), let album = albumQuery?.collections?.first {
             
@@ -891,7 +899,7 @@ extension InfoViewController: UIViewControllerPreviewingDelegate {
             
             previewingContext.sourceRect = superview.convert(superview.bounds, to: collectionView)
             
-            return Transitioner.shared.transition(to: .album, vc: entityVC, from: self, sender: album, highlightedItem: currentItem, preview: true, titleOverride: container?.activeViewController?.topViewController?.title)
+            return Transitioner.shared.transition(to: .album, vc: entityVC, from: self, sender: album, highlightedItem: currentItem, preview: true, titleOverride: (container?.activeViewController?.topViewController as? Navigatable)?.preferredTitle)
         
         } else if case .single = entityState, let superview = genreButton.superview, superview.bounds.contains(collectionView.convert(location, to: superview)), let genre: MPMediaItemCollection = {
             
@@ -908,7 +916,7 @@ extension InfoViewController: UIViewControllerPreviewingDelegate {
             
             previewingContext.sourceRect = superview.convert(superview.bounds, to: collectionView)
             
-            return Transitioner.shared.transition(to: .genre, vc: entityVC, from: self, sender: genre, highlightedItem: currentItem, preview: true, titleOverride: container?.activeViewController?.topViewController?.title)
+            return Transitioner.shared.transition(to: .genre, vc: entityVC, from: self, sender: genre, highlightedItem: currentItem, preview: true, titleOverride: (container?.activeViewController?.topViewController as? Navigatable)?.preferredTitle)
             
         } else if case .song = context, case .single = entityState, let superview = composerButton.superview, superview.bounds.contains(collectionView.convert(location, to: superview)), let composer = composerQuery?.collections?.first {
             
@@ -916,7 +924,7 @@ extension InfoViewController: UIViewControllerPreviewingDelegate {
             
             previewingContext.sourceRect = superview.convert(superview.bounds, to: collectionView)
             
-            return Transitioner.shared.transition(to: .composer, vc: entityVC, from: self, sender: composer, highlightedItem: currentItem, preview: true, titleOverride: container?.activeViewController?.topViewController?.title)
+            return Transitioner.shared.transition(to: .composer, vc: entityVC, from: self, sender: composer, highlightedItem: currentItem, preview: true, titleOverride: (container?.activeViewController?.topViewController as? Navigatable)?.preferredTitle)
         
         } else if case .song = context, case .single = entityState, let superview = albumArtistButton.superview, superview.bounds.contains(collectionView.convert(location, to: superview)) == true, let albumArtist = albumArtistQuery?.collections?.first {
             
@@ -924,13 +932,13 @@ extension InfoViewController: UIViewControllerPreviewingDelegate {
             
             previewingContext.sourceRect = superview.convert(superview.bounds, to: collectionView)
             
-            return Transitioner.shared.transition(to: .albumArtist, vc: entityVC, from: self, sender: albumArtist, highlightedItem: currentItem, preview: true, titleOverride: container?.activeViewController?.topViewController?.title)
+            return Transitioner.shared.transition(to: .albumArtist, vc: entityVC, from: self, sender: albumArtist, highlightedItem: currentItem, preview: true, titleOverride: (container?.activeViewController?.topViewController as? Navigatable)?.preferredTitle)
             
         } else if let indexPath = collectionView.indexPathForItem(at: location), let cell = collectionView.cellForItem(at: indexPath) as? PlaylistCollectionViewCell, let entityVC = entityStoryboard.instantiateViewController(withIdentifier: "entityItems") as? EntityItemsViewController {
             
             previewingContext.sourceRect = cell.artworkContainer.frame.convert(from: cell, to: collectionView) + cell.nameLabel.frame.convert(from: cell, to: collectionView) + cell.songCountLabel.frame.convert(from: cell, to: collectionView)//frame
 
-            return Transitioner.shared.transition(to: .playlist, vc: entityVC, from: self, sender: playlists[indexPath.row], highlightedItem: currentItem, preview: true, titleOverride: container?.activeViewController?.topViewController?.title)
+            return Transitioner.shared.transition(to: .playlist, vc: entityVC, from: self, sender: playlists[indexPath.row], highlightedItem: currentItem, preview: true, titleOverride: (container?.activeViewController?.topViewController as? Navigatable)?.preferredTitle)
         }
         
         return nil
@@ -946,6 +954,22 @@ extension InfoViewController: UIViewControllerPreviewingDelegate {
         if let vc = viewControllerToCommit as? Peekable {
             
             vc.peeker = nil
+        }
+        
+        if let vc = viewControllerToCommit as? Navigatable, let indexer = vc.activeChildViewController as? IndexContaining {
+            
+            indexer.tableView.contentInset.top = vc.inset
+            indexer.tableView.scrollIndicatorInsets.top = vc.inset
+            
+            if let sortable = indexer as? FullySortable, sortable.highlightedIndex == nil {
+                
+                indexer.tableView.contentOffset.y = -vc.inset
+            }
+            
+            container?.visualEffectNavigationBar.backBorderView.alpha = 1
+            container?.visualEffectNavigationBar.backView.isHidden = false
+            container?.visualEffectNavigationBar.backLabel.text = vc.backLabelText
+            container?.visualEffectNavigationBar.titleLabel.text = vc.title
         }
         
         viewController = viewControllerToCommit
@@ -1750,6 +1774,9 @@ extension InfoViewController {
                 
                 weakSelf.playlistsButton.setTitle(playlists.count.fullCountText(for: .playlist), for: .normal)
                 weakSelf.playlistsButton.greyOverride = weakSelf.playlists.isEmpty
+                
+                UIView.performWithoutAnimation { weakSelf.collectionView.layoutIfNeeded() }
+                
                 weakSelf.collectionView.reloadData()
             })
         })
@@ -1870,7 +1897,7 @@ extension InfoViewController: MPMediaPickerControllerDelegate {
                 banner.detailLabel.textColor = Themer.textColour(for: .subtitle)
                 banner.show(for: .bannerInterval)
                 
-                notifier.post(name: .songAddedToPlaylist, object: nil, userInfo: ["playlist": playlist.persistentID, "songs": mediaItemCollection.items])
+                notifier.post(name: .songsAddedToPlaylists, object: nil, userInfo: [String.addedPlaylists: [playlist.persistentID], String.addedSongs: mediaItemCollection.items])
                 weakSelf.parent?.performSegue(withIdentifier: "unwind", sender: nil)
             }
         })

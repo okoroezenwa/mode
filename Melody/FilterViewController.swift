@@ -9,7 +9,7 @@
 import UIKit
 import CoreData
 
-class FilterViewController: UIViewController, InfoLoading, SingleItemActionable, CellAnimatable, FilterContainer, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, GenreTransitionable, ComposerTransitionable, PlaylistTransitionable, EntityVerifiable {
+class FilterViewController: UIViewController, InfoLoading, SingleItemActionable, CellAnimatable, FilterContainer, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, GenreTransitionable, ComposerTransitionable, PlaylistTransitionable, EntityVerifiable, Arrangeable, Refreshable, BorderButtonContaining {
     
     @IBOutlet weak var tableView: MELTableView!
     @IBOutlet weak var filterViewContainer: FilterViewContainer! {
@@ -25,6 +25,50 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
     @IBOutlet weak var activityVisualEffectView: MELVisualEffectView!
     @IBOutlet var activityViewVerticalCenterConstraint: NSLayoutConstraint!
     
+    lazy var headerView: HeaderView = {
+        
+        let view = HeaderView.fresh
+        self.actionsStackView = view.actionsStackView
+        self.stackView = view.scrollStackView
+        
+        return view
+    }()
+    var actionsStackView: UIStackView! {
+        
+        didSet {
+            
+            let shuffleView = BorderedButtonView.with(title: .shuffleButtonTitle, image: #imageLiteral(resourceName: "Shuffle13"), action: #selector(shuffle), target: self)
+            shuffleButton = shuffleView.button
+            self.shuffleView = shuffleView
+            
+            let arrangeBorderView = BorderedButtonView.with(title: .arrangeButtonTitle, image: #imageLiteral(resourceName: "AscendingLines"), action: #selector(showArranger), target: self)
+            arrangeBorderView.borderView.centre(activityIndicator)
+            arrangeButton = arrangeBorderView.button
+            self.arrangeBorderView = arrangeBorderView
+            
+            let editView = BorderedButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, action: #selector(SongActionManager.toggleEditing(_:)), target: songManager)
+            editButton = editView.button
+            self.editView = editView
+            
+            [shuffleView, arrangeBorderView, editView].forEach({ actionsStackView.addArrangedSubview($0) })
+        }
+    }
+    
+    var stackView: UIStackView! {
+        
+        didSet {
+            
+            let view = ScrollHeaderSubview.with(title: arrangementLabelText, image: #imageLiteral(resourceName: "Order10"))
+            
+            orderLabel = view.label
+            
+            for view in [view] {
+                
+                stackView.addArrangedSubview(view)
+            }
+        }
+    }
+    
     enum FilterEntities {
         
         case songs([MPMediaItem]), collections([MPMediaItemCollection], kind: CollectionsKind)
@@ -38,11 +82,20 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
                 case .collections(_, let kind): return kind.category
             }
         }
+        
+        var entityType: Entity {
+            
+            switch self {
+                
+                case .songs: return .song
+                
+                case .collections(_, let kind): return kind.entity
+            }
+        }
     }
     
     var searchBar: MELSearchBar! { return filterViewContainer.filterView.searchBar }
     
-//    let managedContext = appDelegate.managedObjectContext
     weak var sender: (UIViewController & Filterable)?
     var tableContainer: TableViewContainer? { return sender as? TableViewContainer }
     var infoLoader: InfoLoading? { return sender as? InfoLoading }
@@ -52,6 +105,8 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
     @objc var unfilteredPoint = CGPoint.zero
     @objc var recentSearches = [RecentSearch]()
     lazy var category = { entities.category }()
+    
+    @objc lazy var refresher: Refresher = { Refresher.init(refreshable: self) }()
     
     @objc var currentItem: MPMediaItem?
     @objc var currentAlbum: MPMediaItemCollection?
@@ -79,12 +134,62 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         let button = MELButton.init(frame: .init(x: 0, y: 0, width: 30, height: 30))
         button.setTitle(nil, for: .normal)
         button.addTarget(self, action: #selector(rightViewButtonTapped), for: .touchUpInside)
-        button.titleLabel?.font = UIFont.myriadPro(ofWeight: .bold, size: 17)
+        button.titleLabel?.font = UIFont.myriadPro(ofWeight: .semibold, size: 17)
         
         return button
     }()
     
-    var editButton: MELButton! = MELButton()
+    var orderLabel: MELLabel!
+    var activityIndicator = MELActivityIndicatorView.init()
+    var arrangeButton: MELButton!
+    var editButton: MELButton! = MELButton() {
+        
+        didSet {
+            
+            let allHold = UILongPressGestureRecognizer.init(target: songManager, action: #selector(SongActionManager.showActionsForAll(_:)))
+            allHold.minimumPressDuration = longPressDuration
+            editButton.addGestureRecognizer(allHold)
+            LongPressManager.shared.gestureRecognisers.append(Weak.init(value: allHold))
+        }
+    }
+    var shuffleButton: MELButton!
+    var shuffleView: BorderedButtonView!
+    var arrangeBorderView: BorderedButtonView!
+    var editView: BorderedButtonView!
+    
+    var query: MPMediaQuery?
+    var sortCriteria: SortCriteria {
+        
+        get { return actualSortCriteria }
+        
+        set {
+            
+            sortItems()
+            orderLabel.text = arrangementLabelText
+        }
+    }
+    lazy var actualSortCriteria: SortCriteria = { sorter?.sortCriteria ?? .standard }()
+    var ascending: Bool {
+        
+        get { return actualAscending }
+        
+        set {
+            
+            actualAscending = newValue
+            
+            tableContainer?.filteredEntities.reverse()
+            
+            tableView.reloadData()
+            animateCells(direction: .vertical)
+            updateImage(for: arrangeButton)
+        }
+    }
+    
+    lazy var actualAscending: Bool = { sorter?.ascending ?? true }()
+    lazy var applicableSortCriteria: Set<SortCriteria> = { sorter?.applicableSortCriteria ?? [] }()
+    lazy var location: SortLocation = { sorter?.location ?? .songs }()
+    
+    var borderedButtons = [BorderedButtonView?]()
     var applicableActions: [SongAction] { return actionable?.applicableActions ?? [] }
     var actionableSongs: [MPMediaItem] { return actionable?.actionableSongs ?? [] }
     lazy var songManager: SongActionManager = { return SongActionManager.init(actionable: self) }()
@@ -115,7 +220,7 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         
         let queue = OperationQueue()
         queue.name = "Image Operation Queue"
-        queue.maxConcurrentOperationCount = 3
+        
         
         return queue
     }()
@@ -123,7 +228,7 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         
         let queue = OperationQueue()
         queue.name = "Filter Operation Queue"
-        queue.maxConcurrentOperationCount = 3
+        
         
         return queue
     }()
@@ -142,6 +247,16 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         
         sender?.filtering = true
         tableContainer?.filterContainer = self
+//        tableView.tableHeaderView = headerView
+        
+//        let refreshControl = MELRefreshControl.init()
+//        refreshControl.addTarget(refresher, action: #selector(Refresher.refresh(_:)), for: .valueChanged)
+//        tableView.addSubview(refreshControl)
+        
+        if let collectionsVC = tableContainer as? CollectionsViewController, collectionsVC.presented {
+            
+            tableView.allowsMultipleSelection = true
+        }
         
         view.layoutIfNeeded()
         
@@ -153,6 +268,9 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         searchBar(searchBar, textDidChange: searchBar.text ?? "")
         
         updateCollectedView(self)
+        
+//        updateHeaderView(with: tableContainer?.filteredEntities.count ?? 0)
+//        updateImage(for: arrangeButton)
         
         tableView.register(UINib.init(nibName: "RecentSearchCell", bundle: nil), forCellReuseIdentifier: .recentCell)
         
@@ -202,6 +320,24 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         updateCollectedText(animated: animated)
     }
     
+    @objc func updateHeaderView(with count: Int) {
+        
+        shuffleButton.superview?.isHidden = count < 2
+        tableView.tableHeaderView?.frame.size.height = 92
+        tableView.tableHeaderView = headerView
+        
+        var array = [shuffleView, arrangeBorderView, editView]
+        
+        if count < 2 {
+            
+            array.remove(at: 0)
+        }
+        
+        borderedButtons = array
+        
+        updateButtons()
+    }
+    
     override func didReceiveMemoryWarning() {
         
         super.didReceiveMemoryWarning()
@@ -222,6 +358,13 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         super.viewDidDisappear(animated)
         
         sender?.filtering = false
+        
+        if ascending.inverted && tableContainer?.ascending != false {
+            
+            tableContainer?.filteredEntities.reverse()
+        }
+        
+        filterViewContainer.context = .filter(filter: nil, container: nil)
         tableContainer?.filterContainer = nil
         
         notifier.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
@@ -251,6 +394,11 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         UIView.animate(withDuration: duration, animations: { self.view.layoutIfNeeded() })
     }
     
+    @objc func showArranger() {
+        
+        performSegue(withIdentifier: "toArranger", sender: nil)
+    }
+    
     func updateActivityViewConstraint(keyboardShowing: Bool) {
         
         activityViewVerticalCenterConstraint.constant = keyboardShowing ? -(view.frame.height - 22) / 4 : 0
@@ -269,11 +417,11 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         
         filterOperationQueue.cancelAllOperations()
         sender?.filterOperation = BlockOperation()
-        sender?.filterOperation?.addExecutionBlock({ [weak self] in
+        sender?.filterOperation?.addExecutionBlock({ [weak self, weak tableContainer, weak sender] in
             
             let text = searchText
             
-            guard let weakSelf = self, let sender = weakSelf.sender, let operation = sender.filterOperation else {
+            guard let weakSelf = self, let sender = sender, let operation = sender.filterOperation else {
                 
                 UniversalMethods.performInMain { self?.updateLoadingViews(hidden: true) }
                 
@@ -294,7 +442,7 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
                 }
             }()
             
-            guard let tableContainer = weakSelf.tableContainer else {
+            guard let tableContainer = tableContainer else {
                 
                 weakSelf.updateLoadingViews(hidden: true)
                 
@@ -341,26 +489,44 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         }())
     }
     
-    @IBAction func showSorter() {
+    @IBAction func shuffle() {
         
-        guard let sorter = sorter, let arrangeVC = popoverStoryboard.instantiateViewController(withIdentifier: "simpleArrangeVC") as? ArrangeViewController else { return }
+        let songs: [MPMediaItem] = {
         
-        arrangeVC.modalPresentationStyle = .popover
+            switch entities {
+                
+                case .songs(let songs): return songs
+                
+                case .collections(let collections, kind: _): return collections.reduce([], { $0 + $1.items })
+            }
+        }()
         
-        arrangeVC.sorter = sorter
-        arrangeVC.preferredContentSize = CGSize.init(width: 350, height: 169)
-        arrangeVC.view.backgroundColor = UIDevice.current.isBlurAvailable ? .clear : darkTheme ? UIColor.darkGray.withAlphaComponent(0.6) : .white
+        let canShuffleAlbums = songs.canShuffleAlbums
         
-        if let popover = arrangeVC.popoverPresentationController {
+        if canShuffleAlbums {
             
-            popover.delegate = PopoverDelegate.shared
-//            popover.sourceRect = sortButton.bounds.modifiedBy(width: 0, height: 5)
-//            popover.sourceView = sortButton
-            popover.backgroundColor = darkTheme ? UIColor.darkGray.withAlphaComponent(UIDevice.current.isBlurAvailable ? 0.5 : 1) : UIColor.white.withAlphaComponent(UIDevice.current.isBlurAvailable ? 0.6 : 1)
-            popover.permittedArrowDirections = [.up, .down]
+            var array = [UIAlertAction]()
+            
+            let shuffle = UIAlertAction.init(title: .shuffle(.songs), style: .default, handler: { _ in
+                
+                musicPlayer.play(songs, startingFrom: nil, shuffleMode: .songs, from: self, withTitle: (self.tableContainer?.filteredEntities.count ?? 0).countText(for: self.entities.entityType), alertTitle: .shuffle(.songs))
+            })
+            
+            array.append(shuffle)
+            
+            let shuffleAlbums = UIAlertAction.init(title: .shuffle(.albums), style: .default, handler: { _ in
+                
+                musicPlayer.play(songs.albumsShuffled, startingFrom: nil, from: self, withTitle: (self.tableContainer?.filteredEntities.count ?? 0).countText(for: self.entities.entityType), alertTitle: .shuffle(.albums))
+            })
+            
+            array.append(shuffleAlbums)
+            
+            present(UIAlertController.withTitle(nil, message: "Filtered Items", style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
+            
+        } else {
+            
+            musicPlayer.play(songs, startingFrom: nil, shuffleMode: .songs, from: self, withTitle: (self.tableContainer?.filteredEntities.count ?? 0).countText(for: self.entities.entityType), alertTitle: .shuffle())
         }
-        
-        present(arrangeVC, animated: true, completion: nil)
     }
     
     @IBAction func unwind(_ sender: UIStoryboardSegue) { }
@@ -375,6 +541,16 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         return false
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+        switch segue.identifier {
+            
+            case "toArranger": Transitioner.shared.transition(to: segue.destination, from: self)
+            
+            default: break
+        }
+    }
+    
     deinit {
         
         if isInDebugMode, deinitBannersEnabled {
@@ -383,6 +559,14 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
             banner.titleLabel.font = .myriadPro(ofWeight: .light, size: 22)
             banner.show(for: 0.3)
         }
+    }
+}
+
+extension FilterViewController {
+    
+    func sortItems() {
+        
+        
     }
 }
 
@@ -434,18 +618,41 @@ extension FilterViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        guard filtering else {
+        if tableView.isEditing {
             
-            let search = recentSearches[indexPath.row]
+            if filtering {
+                
+                tableContainer?.tableDelegate.tableView(tableView, didSelectRowAt: indexPath, filtering: true)
+            }
             
-            highlightSearchBar(withText: (tableView.cellForRow(at: indexPath) as? RecentSearchTableViewCell)?.termLabel?.text, property: Int(search.property), propertyTest: search.propertyTest, setFirstResponder: false)
+        } else {
+            
+            if filtering {
+                
+                tableContainer?.tableDelegate.tableView(tableView, didSelectRowAt: indexPath, filtering: true)
+                
+                if let collectionsVC = tableContainer as? CollectionsViewController, collectionsVC.presented {
+                    
+                    return
+                }
+                
+            } else {
+                
+                let search = recentSearches[indexPath.row]
+                
+                highlightSearchBar(withText: (tableView.cellForRow(at: indexPath) as? RecentSearchTableViewCell)?.termLabel?.text, property: Int(search.property), propertyTest: search.propertyTest, setFirstResponder: false)
+            }
             
             tableView.deselectRow(at: indexPath, animated: true)
-            
-            return
         }
+    }
+    
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         
-        tableContainer?.tableDelegate.tableView(tableView, didSelectRowAt: indexPath, filtering: true)
+        if let collectionsVC = tableContainer as? CollectionsViewController, collectionsVC.presented {
+            
+            tableContainer?.tableDelegate.tableView(tableView, didDeselectRowAt: indexPath, filtering: true)
+        }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -455,7 +662,7 @@ extension FilterViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         
-        return tableContainer!.tableDelegate.tableView(tableView, heightForHeaderInSection: section, filtering: true)
+        return 0.00001//11
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
@@ -483,11 +690,6 @@ extension FilterViewController: UITableViewDelegate, UITableViewDataSource {
         guard filtering else { return }
         
         tableContainer?.tableDelegate.tableView(tableView, commit: editingStyle, forRowAt: indexPath, filtering: true)
-    }
-    
-    func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
-        
-        return false
     }
 }
 
@@ -564,6 +766,8 @@ extension FilterViewController: UISearchBarDelegate {
             tableView.contentOffset = unfilteredPoint
             
             animateCells(direction: .vertical)
+            
+            updateDeleteButton()
             
             if tableView.isEditing {
                 

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14295.6" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.13.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina3_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14270.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.9"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -30,7 +30,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" alwaysBounceVertical="YES" keyboardDismissMode="onDrag" dataMode="prototypes" style="grouped" separatorStyle="none" allowsSelectionDuringEditing="YES" allowsMultipleSelectionDuringEditing="YES" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" contentViewInsetsToSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QqZ-Xc-6ma" customClass="MELTableView" customModule="Mode" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="20" width="320" height="372"/>
+                                <rect key="frame" x="0.0" y="20" width="320" height="416"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="boolean" keyPath="header" value="YES"/>
@@ -43,7 +43,7 @@
                                 </connections>
                             </tableView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hBh-VU-5Af">
-                                <rect key="frame" x="0.0" y="392" width="320" height="88"/>
+                                <rect key="frame" x="0.0" y="436" width="320" height="44"/>
                                 <subviews>
                                     <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="v0y-1J-GMf" customClass="MELActivityIndicatorView" customModule="Mode" customModuleProvider="target">
                                         <rect key="frame" x="256.5" y="12" width="20" height="20"/>
@@ -54,11 +54,11 @@
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nGO-rE-wF6" customClass="MELButton" customModule="Mode" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="0.0" width="106.5" height="44"/>
-                                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="15"/>
+                                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                 <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                 <inset key="titleEdgeInsets" minX="5" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="5" maxY="2"/>
-                                                <state key="normal" title="Clear" image="Discard">
+                                                <state key="normal" title="Clear..." image="Discard">
                                                     <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                 </state>
                                                 <connections>
@@ -68,7 +68,7 @@
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="td3-Wf-RjJ" customClass="ActionsButton" customModule="Mode" customModuleProvider="target">
                                                 <rect key="frame" x="106.5" y="0.0" width="107" height="44"/>
                                                 <gestureRecognizers/>
-                                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="15"/>
+                                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                 <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                 <state key="normal">
                                                     <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
@@ -79,10 +79,10 @@
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6SX-E3-8Yx" customClass="MELButton" customModule="Mode" customModuleProvider="target">
                                                 <rect key="frame" x="213.5" y="0.0" width="106.5" height="44"/>
-                                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="15"/>
+                                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                 <inset key="titleEdgeInsets" minX="5" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="5" maxY="2"/>
-                                                <state key="normal" title="Select" image="Add"/>
+                                                <state key="normal" title="Edit" image="Add"/>
                                             </button>
                                         </subviews>
                                         <constraints>
@@ -95,43 +95,6 @@
                                             </constraint>
                                         </constraints>
                                     </stackView>
-                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="eki-SG-ks2">
-                                        <rect key="frame" x="0.0" y="44" width="320" height="44"/>
-                                        <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sS2-PE-alI" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="0.0" width="160" height="44"/>
-                                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="15"/>
-                                                <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                <state key="normal" title="Remove"/>
-                                                <connections>
-                                                    <action selector="removeSelected:" destination="9EO-ML-dX3" eventType="touchUpInside" id="h7J-54-sSW"/>
-                                                </connections>
-                                            </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uxF-zr-3bJ" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="160" y="0.0" width="160" height="44"/>
-                                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="15"/>
-                                                <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                <state key="normal" title="Keep"/>
-                                                <connections>
-                                                    <action selector="keepSelected" destination="9EO-ML-dX3" eventType="touchUpInside" id="I3z-2y-RMK"/>
-                                                </connections>
-                                            </button>
-                                        </subviews>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="44" id="I37-ZB-76x">
-                                                <userDefinedRuntimeAttributes>
-                                                    <userDefinedRuntimeAttribute type="number" keyPath="constant">
-                                                        <integer key="value" value="0"/>
-                                                    </userDefinedRuntimeAttribute>
-                                                </userDefinedRuntimeAttributes>
-                                            </constraint>
-                                        </constraints>
-                                        <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="number" keyPath="alpha">
-                                                <integer key="value" value="0"/>
-                                            </userDefinedRuntimeAttribute>
-                                        </userDefinedRuntimeAttributes>
-                                    </stackView>
                                     <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="X2N-4X-HH1" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="320" height="1"/>
                                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.050000000000000003" colorSpace="calibratedRGB"/>
@@ -143,21 +106,18 @@
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="X2N-4X-HH1" secondAttribute="trailing" id="2Pn-hW-A9G"/>
-                                    <constraint firstItem="eki-SG-ks2" firstAttribute="leading" secondItem="hBh-VU-5Af" secondAttribute="leading" id="8dw-8i-OYL"/>
                                     <constraint firstItem="RV3-bT-ZXA" firstAttribute="top" secondItem="hBh-VU-5Af" secondAttribute="top" id="9zF-NV-1lW"/>
-                                    <constraint firstAttribute="trailing" secondItem="eki-SG-ks2" secondAttribute="trailing" id="Ff6-Fk-XmE"/>
                                     <constraint firstItem="X2N-4X-HH1" firstAttribute="top" secondItem="hBh-VU-5Af" secondAttribute="top" id="KY5-O2-bWg"/>
                                     <constraint firstItem="RV3-bT-ZXA" firstAttribute="leading" secondItem="hBh-VU-5Af" secondAttribute="leading" id="L3X-Nh-khD"/>
                                     <constraint firstItem="X2N-4X-HH1" firstAttribute="leading" secondItem="hBh-VU-5Af" secondAttribute="leading" id="MWw-Xk-Fcc"/>
-                                    <constraint firstAttribute="bottom" secondItem="eki-SG-ks2" secondAttribute="bottom" id="Nov-sW-VJY"/>
+                                    <constraint firstAttribute="bottom" secondItem="RV3-bT-ZXA" secondAttribute="bottom" id="OWn-jc-Hpv"/>
                                     <constraint firstItem="v0y-1J-GMf" firstAttribute="centerY" secondItem="6SX-E3-8Yx" secondAttribute="centerY" id="Rwc-P3-nZr"/>
                                     <constraint firstItem="v0y-1J-GMf" firstAttribute="centerX" secondItem="6SX-E3-8Yx" secondAttribute="centerX" id="UnB-hp-Wvg"/>
-                                    <constraint firstItem="eki-SG-ks2" firstAttribute="top" secondItem="RV3-bT-ZXA" secondAttribute="bottom" id="f1c-tx-AuE"/>
                                     <constraint firstAttribute="trailing" secondItem="RV3-bT-ZXA" secondAttribute="trailing" id="xQm-6s-aHH"/>
                                 </constraints>
                             </view>
                             <view clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vOc-6V-gOn">
-                                <rect key="frame" x="130" y="176" width="60" height="60"/>
+                                <rect key="frame" x="130" y="198" width="60" height="60"/>
                                 <subviews>
                                     <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="o9E-Td-iCq" customClass="MELVisualEffectView" customModule="Mode" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="60" height="60"/>
@@ -220,8 +180,6 @@
                         <outlet property="activityVisualEffectView" destination="o9E-Td-iCq" id="HMI-2n-xPO"/>
                         <outlet property="bottomView" destination="hBh-VU-5Af" id="Qnq-WN-AkN"/>
                         <outlet property="editButton" destination="6SX-E3-8Yx" id="6bE-XB-8Pw"/>
-                        <outlet property="editingStackView" destination="eki-SG-ks2" id="69m-d8-18c"/>
-                        <outlet property="editingStackViewHeightConstraint" destination="I37-ZB-76x" id="iyf-ft-IXg"/>
                         <outlet property="largeActivityIndicator" destination="n91-GM-jJz" id="L4D-Ey-xRy"/>
                         <outlet property="queueStackView" destination="RV3-bT-ZXA" id="aZF-lv-4bg"/>
                         <outlet property="queueStackViewHeightConstraint" destination="aLF-4a-vqQ" id="xMP-vO-tDs"/>
@@ -236,7 +194,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="DMy-EU-2bA" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="NSF-m0-tCW" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="-490" y="459"/>
+            <point key="canvasLocation" x="-491.25" y="458.75"/>
         </scene>
         <!--Properties View Controller-->
         <scene sceneID="y9t-Nx-QLn">
@@ -1495,6 +1453,23 @@
                                         <outlet property="titleButton" destination="CFL-Dy-6mH" id="pIF-qd-WXK"/>
                                         <outlet property="trackLabel" destination="gUE-Hk-DYf" id="0Ne-5U-Ydf"/>
                                         <outlet property="updatedLabel" destination="qdy-YX-S4F" id="5wC-Aw-x7f"/>
+                                        <outletCollection property="scrollViews" destination="Xda-hQ-0go" collectionClass="NSMutableArray" id="TGm-RJ-OOO"/>
+                                        <outletCollection property="scrollViews" destination="EF1-AL-bAo" collectionClass="NSMutableArray" id="gB8-Cq-Tpw"/>
+                                        <outletCollection property="scrollViews" destination="uEI-nE-Yvp" collectionClass="NSMutableArray" id="Mwe-oO-ggK"/>
+                                        <outletCollection property="scrollViews" destination="M4g-wM-7hQ" collectionClass="NSMutableArray" id="sgV-c3-mkc"/>
+                                        <outletCollection property="scrollViews" destination="FvK-sP-R5C" collectionClass="NSMutableArray" id="Rkj-xw-dyW"/>
+                                        <outletCollection property="scrollViews" destination="byO-6G-n5e" collectionClass="NSMutableArray" id="5YR-ov-R98"/>
+                                        <outletCollection property="scrollViews" destination="Ar7-Je-6kl" collectionClass="NSMutableArray" id="DFa-Ae-tOg"/>
+                                        <outletCollection property="scrollViews" destination="Cfx-Gk-Gcv" collectionClass="NSMutableArray" id="MAX-uu-9HL"/>
+                                        <outletCollection property="scrollViews" destination="aew-Si-MG9" collectionClass="NSMutableArray" id="hKJ-nx-eAu"/>
+                                        <outletCollection property="scrollViews" destination="Prl-Ij-Doa" collectionClass="NSMutableArray" id="nIz-Ws-iNI"/>
+                                        <outletCollection property="scrollViews" destination="409-fZ-JV0" collectionClass="NSMutableArray" id="rMS-lP-hct"/>
+                                        <outletCollection property="scrollViews" destination="6bP-nA-Jc9" collectionClass="NSMutableArray" id="Slj-5M-bi3"/>
+                                        <outletCollection property="scrollViews" destination="n36-cc-lNF" collectionClass="NSMutableArray" id="wnL-7K-eWA"/>
+                                        <outletCollection property="scrollViews" destination="Bnm-hb-X2A" collectionClass="NSMutableArray" id="Kj8-5E-kBG"/>
+                                        <outletCollection property="scrollViews" destination="5tY-fs-Gf0" collectionClass="NSMutableArray" id="twm-S7-mTw"/>
+                                        <outletCollection property="scrollViews" destination="he6-pV-WKH" collectionClass="NSMutableArray" id="Lno-lO-92Z"/>
+                                        <outletCollection property="scrollViews" destination="COS-NO-QUm" collectionClass="NSMutableArray" id="q3L-95-Ee7"/>
                                     </connections>
                                 </collectionReusableView>
                                 <connections>
@@ -1525,13 +1500,9 @@
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Een-b8-Kd2">
                                                 <rect key="frame" x="75" y="0.0" width="75" height="44"/>
                                                 <subviews>
-                                                    <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="DOk-9P-s0V" customClass="MELActivityIndicatorView" customModule="Mode" customModuleProvider="target">
-                                                        <rect key="frame" x="27.5" y="12" width="20" height="20"/>
-                                                        <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                    </activityIndicatorView>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ATJ-md-bbi" customClass="MELButton" customModule="Mode" customModuleProvider="target">
                                                         <rect key="frame" x="0.0" y="0.0" width="75" height="44"/>
-                                                        <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="15"/>
+                                                        <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                         <inset key="titleEdgeInsets" minX="8" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="8" maxY="2"/>
                                                         <state key="normal" title="Shuffle" image="Shuffle14"/>
@@ -1544,10 +1515,8 @@
                                                 <constraints>
                                                     <constraint firstItem="ATJ-md-bbi" firstAttribute="leading" secondItem="Een-b8-Kd2" secondAttribute="leading" id="0ku-fB-6pq"/>
                                                     <constraint firstItem="ATJ-md-bbi" firstAttribute="top" secondItem="Een-b8-Kd2" secondAttribute="top" id="O2u-80-6C9"/>
-                                                    <constraint firstItem="DOk-9P-s0V" firstAttribute="centerX" secondItem="Een-b8-Kd2" secondAttribute="centerX" id="UkA-iu-t9P"/>
                                                     <constraint firstAttribute="bottom" secondItem="ATJ-md-bbi" secondAttribute="bottom" id="fVp-g9-dW1"/>
                                                     <constraint firstAttribute="trailing" secondItem="ATJ-md-bbi" secondAttribute="trailing" id="mvq-CQ-4mz"/>
-                                                    <constraint firstItem="DOk-9P-s0V" firstAttribute="centerY" secondItem="Een-b8-Kd2" secondAttribute="centerY" id="tVa-4C-Gxg"/>
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="u0T-3t-FtA">
@@ -1579,7 +1548,7 @@
                                                 <subviews>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JkV-Vz-TqD" customClass="MELButton" customModule="Mode" customModuleProvider="target">
                                                         <rect key="frame" x="0.0" y="0.0" width="75" height="44"/>
-                                                        <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="15"/>
+                                                        <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                         <inset key="titleEdgeInsets" minX="8" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="8" maxY="1"/>
                                                         <state key="normal" title="Play" image="PlayFilled12"/>
@@ -1639,7 +1608,6 @@
                         <outlet property="nextButton" destination="bi9-8t-RAs" id="5XR-tl-NdC"/>
                         <outlet property="playButton" destination="JkV-Vz-TqD" id="2Ly-Br-e15"/>
                         <outlet property="previousButton" destination="7r9-Zh-o7G" id="DLH-f0-1kK"/>
-                        <outlet property="queueActivityIndicator" destination="DOk-9P-s0V" id="ca5-hl-7Pp"/>
                         <outlet property="shuffleButton" destination="ATJ-md-bbi" id="1jd-7U-bRo"/>
                         <segue destination="FpX-xB-QXM" kind="unwind" identifier="preview" unwindAction="previewUnwind:" id="PhJ-W9-bH8"/>
                         <segue destination="FpX-xB-QXM" kind="unwind" identifier="toPlaylistUnwind" unwindAction="playlistUnwind:" id="MZa-E9-Il7"/>
@@ -1828,7 +1796,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" alwaysBounceVertical="YES" keyboardDismissMode="onDrag" dataMode="prototypes" style="grouped" separatorStyle="none" allowsSelectionDuringEditing="YES" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" contentViewInsetsToSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Q8w-g7-skU" customClass="MELTableView" customModule="Mode" customModuleProvider="target">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" alwaysBounceVertical="YES" keyboardDismissMode="onDrag" dataMode="prototypes" style="grouped" separatorStyle="none" allowsSelectionDuringEditing="YES" allowsMultipleSelectionDuringEditing="YES" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" contentViewInsetsToSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Q8w-g7-skU" customClass="MELTableView" customModule="Mode" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="20" width="320" height="372"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <userDefinedRuntimeAttributes>
@@ -1931,6 +1899,7 @@
                         <segue destination="XSw-Fd-637" kind="unwind" identifier="toGenreUnwind" unwindAction="genreUnwind:" id="kTu-Zf-esv"/>
                         <segue destination="XSw-Fd-637" kind="unwind" identifier="unwind" unwindAction="unwind:" id="r2F-oX-RTL"/>
                         <segue destination="XSw-Fd-637" kind="unwind" identifier="toPlaylistUnwind" unwindAction="playlistUnwind:" id="NE3-5z-ND6"/>
+                        <segue destination="8tV-XY-t33" kind="presentation" identifier="toArranger" id="bEH-vN-Cnt"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Fe9-2s-V4A" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -2240,6 +2209,14 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="z87-uA-Cj6" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-490" y="-778"/>
+        </scene>
+        <!--VerticalPresentationContainerViewController-->
+        <scene sceneID="bIO-qW-xpZ">
+            <objects>
+                <viewControllerPlaceholder storyboardIdentifier="VerticalPresentationContainerViewController" storyboardName="Popovers" referencedIdentifier="VerticalPresentationContainerViewController" id="8tV-XY-t33" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Grq-pz-t4x" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1313" y="906"/>
         </scene>
     </scenes>
     <resources>

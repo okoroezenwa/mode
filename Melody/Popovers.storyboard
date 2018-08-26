@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.13.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
-        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.9"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -125,7 +122,7 @@
                                                                         <state key="normal" image="AddSong"/>
                                                                     </button>
                                                                     <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7ZN-Dc-wdX" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                                                        <rect key="frame" x="-15" y="12.5" width="30" height="30"/>
+                                                                        <rect key="frame" x="-15" y="12" width="30" height="30"/>
                                                                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.050000000000000003" colorSpace="calibratedRGB"/>
                                                                         <constraints>
                                                                             <constraint firstAttribute="width" priority="900" constant="30" id="3bf-TB-0A1"/>
@@ -234,7 +231,7 @@
                                                                         <state key="normal" image="AddNoBorder11"/>
                                                                     </button>
                                                                     <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RAC-iH-JzS" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                                                        <rect key="frame" x="-15" y="12.5" width="30" height="30"/>
+                                                                        <rect key="frame" x="-15" y="12" width="30" height="30"/>
                                                                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.050000000000000003" colorSpace="calibratedRGB"/>
                                                                         <constraints>
                                                                             <constraint firstAttribute="width" priority="900" constant="30" id="6bb-rL-Xh5"/>
@@ -705,7 +702,7 @@
                                                                         </userDefinedRuntimeAttributes>
                                                                     </view>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Playlists" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HoM-UR-gLw" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                        <rect key="frame" x="0.0" y="33.5" width="80" height="12"/>
+                                                                        <rect key="frame" x="0.0" y="33" width="80" height="12"/>
                                                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="12"/>
                                                                         <nil key="textColor"/>
                                                                         <nil key="highlightedColor"/>
@@ -1149,7 +1146,7 @@
                                                                         </connections>
                                                                     </button>
                                                                     <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HXK-Q0-xVc" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                                                        <rect key="frame" x="12" y="12.5" width="30" height="30"/>
+                                                                        <rect key="frame" x="12" y="12" width="30" height="30"/>
                                                                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.050000000000000003" colorSpace="calibratedRGB"/>
                                                                         <constraints>
                                                                             <constraint firstAttribute="width" secondItem="HXK-Q0-xVc" secondAttribute="height" multiplier="1:1" id="ACa-Mb-WGB"/>
@@ -1285,7 +1282,7 @@
                                                                         </connections>
                                                                     </button>
                                                                     <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PJu-Ib-OpN" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                                                        <rect key="frame" x="12" y="12.5" width="30" height="30"/>
+                                                                        <rect key="frame" x="12" y="12" width="30" height="30"/>
                                                                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.050000000000000003" colorSpace="calibratedRGB"/>
                                                                         <constraints>
                                                                             <constraint firstAttribute="width" constant="30" id="61A-8d-eJy"/>
@@ -1511,11 +1508,11 @@
                         <viewControllerLayoutGuide type="bottom" id="Ebc-WQ-Zb5"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="Kgg-xW-QSy">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="i2R-fx-fzK">
-                                <rect key="frame" x="280" y="-15" width="95" height="697"/>
+                                <rect key="frame" x="505" y="-48.5" width="95" height="697"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Zsn-Js-4my" customClass="ShadowImageView" customModule="Mode" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="134" height="697"/>
@@ -2100,7 +2097,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="xHP-Xy-DSc" customClass="ShadowImageView" customModule="Mode" customModuleProvider="target">
-                                <rect key="frame" x="-30" y="390" width="435" height="322"/>
+                                <rect key="frame" x="-30" y="323" width="660" height="322"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="number" keyPath="radius">
                                         <integer key="value" value="15"/>
@@ -2114,13 +2111,13 @@
                                 </userDefinedRuntimeAttributes>
                             </imageView>
                             <visualEffectView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4xb-dq-EE6" customClass="MELVisualEffectView" customModule="Mode" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="420" width="375" height="262"/>
+                                <rect key="frame" x="0.0" y="353" width="600" height="262"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="CJP-fx-T3a">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="262"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="262"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hke-JB-hi4" userLabel="Lock View">
-                                            <rect key="frame" x="313" y="0.0" width="62" height="51"/>
+                                            <rect key="frame" x="538" y="0.0" width="62" height="51"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aTR-T0-gaI" customClass="MELButton" customModule="Mode" customModuleProvider="target">
                                                     <rect key="frame" x="0.0" y="0.0" width="62" height="51"/>
@@ -2162,7 +2159,7 @@
                                             </constraints>
                                         </view>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Smp-rv-80U" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                            <rect key="frame" x="10" y="51" width="355" height="17"/>
+                                            <rect key="frame" x="10" y="51" width="580" height="17"/>
                                             <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
@@ -2171,13 +2168,13 @@
                                             </userDefinedRuntimeAttributes>
                                         </label>
                                         <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lfP-04-gL9">
-                                            <rect key="frame" x="0.0" y="76" width="375" height="171"/>
+                                            <rect key="frame" x="0.0" y="76" width="600" height="171"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="171" id="s0I-h5-x1a"/>
                                             </constraints>
                                         </containerView>
                                         <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pE4-oz-Zsr" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                            <rect key="frame" x="167.5" y="26" width="40" height="6"/>
+                                            <rect key="frame" x="280" y="26" width="40" height="6"/>
                                             <color key="backgroundColor" white="0.0" alpha="0.050000000000000003" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="40" id="HRu-dg-WoY"/>
@@ -2241,121 +2238,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kZu-km-QlE" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="882" y="1247"/>
-        </scene>
-        <!--Property Test View Controller-->
-        <scene sceneID="c91-6p-KyY">
-            <objects>
-                <viewController storyboardIdentifier="testVC" modalPresentationStyle="overFullScreen" id="Doe-pH-QRF" customClass="PropertyTestViewController" customModule="Mode" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="X16-VD-pvQ"/>
-                        <viewControllerLayoutGuide type="bottom" id="NUc-Rl-Zgm"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="pc0-eI-G8J">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="x9G-jo-kFd">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
-                                <subviews>
-                                    <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="K2I-Dz-7M5">
-                                        <rect key="frame" x="0.0" y="0.0" width="570" height="44"/>
-                                        <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fsA-JR-mxr" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="0.0" width="93" height="44"/>
-                                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                <inset key="contentEdgeInsets" minX="16" minY="0.0" maxX="16" maxY="0.0"/>
-                                                <state key="normal" title="contains"/>
-                                                <connections>
-                                                    <action selector="selectTest:" destination="Doe-pH-QRF" eventType="touchUpInside" id="m73-xm-Jlu"/>
-                                                </connections>
-                                            </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uCW-sp-gmF" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="93" y="0.0" width="93" height="44"/>
-                                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                <inset key="contentEdgeInsets" minX="16" minY="0.0" maxX="16" maxY="0.0"/>
-                                                <state key="normal" title="matches"/>
-                                                <connections>
-                                                    <action selector="selectTest:" destination="Doe-pH-QRF" eventType="touchUpInside" id="WtD-PH-T5D"/>
-                                                </connections>
-                                            </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yP3-Xe-f4K" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="186" y="0.0" width="115" height="44"/>
-                                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                <inset key="contentEdgeInsets" minX="16" minY="0.0" maxX="16" maxY="0.0"/>
-                                                <state key="normal" title="begins with"/>
-                                                <connections>
-                                                    <action selector="selectTest:" destination="Doe-pH-QRF" eventType="touchUpInside" id="D2r-uo-SNA"/>
-                                                </connections>
-                                            </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QrH-n0-bUF" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="301" y="0.0" width="102" height="44"/>
-                                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                <inset key="contentEdgeInsets" minX="16" minY="0.0" maxX="16" maxY="0.0"/>
-                                                <state key="normal" title="ends with"/>
-                                                <connections>
-                                                    <action selector="selectTest:" destination="Doe-pH-QRF" eventType="touchUpInside" id="yII-hM-aSp"/>
-                                                </connections>
-                                            </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="d8G-0o-G1W" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="403" y="0.0" width="78" height="44"/>
-                                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                <inset key="contentEdgeInsets" minX="16" minY="0.0" maxX="16" maxY="0.0"/>
-                                                <state key="normal" title="is over"/>
-                                                <connections>
-                                                    <action selector="selectTest:" destination="Doe-pH-QRF" eventType="touchUpInside" id="DKz-Gf-Jbb"/>
-                                                </connections>
-                                            </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Bo7-9b-O0b" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="481" y="0.0" width="89" height="44"/>
-                                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                <inset key="contentEdgeInsets" minX="16" minY="0.0" maxX="16" maxY="0.0"/>
-                                                <state key="normal" title="is under"/>
-                                                <connections>
-                                                    <action selector="selectTest:" destination="Doe-pH-QRF" eventType="touchUpInside" id="LFt-Ln-HAZ"/>
-                                                </connections>
-                                            </button>
-                                        </subviews>
-                                    </stackView>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstItem="K2I-Dz-7M5" firstAttribute="top" secondItem="x9G-jo-kFd" secondAttribute="top" id="ECu-mZ-pif"/>
-                                    <constraint firstAttribute="trailing" secondItem="K2I-Dz-7M5" secondAttribute="trailing" id="Hrn-cu-KdD"/>
-                                    <constraint firstItem="K2I-Dz-7M5" firstAttribute="leading" secondItem="x9G-jo-kFd" secondAttribute="leading" id="pmJ-fb-R6m"/>
-                                    <constraint firstAttribute="bottom" secondItem="K2I-Dz-7M5" secondAttribute="bottom" id="qGy-Oy-rci"/>
-                                    <constraint firstItem="K2I-Dz-7M5" firstAttribute="height" secondItem="x9G-jo-kFd" secondAttribute="height" id="wRY-jB-u7w"/>
-                                </constraints>
-                            </scrollView>
-                        </subviews>
-                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                        <constraints>
-                            <constraint firstItem="x9G-jo-kFd" firstAttribute="top" secondItem="X16-VD-pvQ" secondAttribute="bottom" id="FVG-tX-1US"/>
-                            <constraint firstItem="NUc-Rl-Zgm" firstAttribute="top" secondItem="x9G-jo-kFd" secondAttribute="bottom" id="GaD-6q-Uud"/>
-                            <constraint firstItem="x9G-jo-kFd" firstAttribute="leading" secondItem="pc0-eI-G8J" secondAttribute="leading" id="GkN-uw-P5W"/>
-                            <constraint firstAttribute="trailing" secondItem="x9G-jo-kFd" secondAttribute="trailing" id="s5f-q0-oYj"/>
-                        </constraints>
-                    </view>
-                    <nil key="simulatedStatusBarMetrics"/>
-                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <size key="freeformSize" width="375" height="44"/>
-                    <connections>
-                        <outlet property="beginsWithButton" destination="yP3-Xe-f4K" id="lga-iZ-4oJ"/>
-                        <outlet property="containsButton" destination="fsA-JR-mxr" id="7fY-7H-9mS"/>
-                        <outlet property="endsWithButton" destination="QrH-n0-bUF" id="kCJ-Lw-5zu"/>
-                        <outlet property="isOverButton" destination="d8G-0o-G1W" id="A5h-Ij-HQT"/>
-                        <outlet property="isUnderButton" destination="Bo7-9b-O0b" id="2FS-RU-g9j"/>
-                        <outlet property="matchesButton" destination="uCW-sp-gmF" id="XaP-sj-u1w"/>
-                        <outlet property="scrollView" destination="x9G-jo-kFd" id="dt7-xk-rzS"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="qgM-9g-BxT" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-26" y="938"/>
         </scene>
         <!--presentedVC-->
         <scene sceneID="BF2-qR-HJ5">

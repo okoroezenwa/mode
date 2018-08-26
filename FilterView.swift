@@ -55,7 +55,7 @@ class FilterView: UIView {
     
     enum Context: Equatable {
         
-        case filter(filter: Filterable?, container: FilterContainer & UIViewController), library
+        case filter(filter: Filterable?, container: (FilterContainer & UIViewController)?), library
         
         static func ==(lhs: Context, rhs: Context) -> Bool {
             
@@ -181,10 +181,10 @@ class FilterView: UIView {
     
     @IBAction func clearSearchBar(_ sender: Any) {
         
-        guard case .filter(filter: _, container: let container) = context, let searchBar = container.searchBar else { return }
+        guard case .filter(filter: _, container: let container) = context, let searchBar = container?.searchBar else { return }
         
         searchBar.text = nil
-        container.searchBar?(searchBar, textDidChange: "")
+        container?.searchBar?(searchBar, textDidChange: "")
         
         updateClearButton(to: .hidden)
     }
@@ -330,7 +330,7 @@ class FilterView: UIView {
         
         switch context {
             
-            case .filter(filter: _, container: let filterContainer) where filterContainer is FilterViewController: filterContainer.present(UIAlertController.withTitle(container.queue.count.fullCountText(for: .song), message: nil, style: .actionSheet, actions: collectorActions), animated: true, completion: nil)
+        case .filter(filter: _, container: let filterContainer) where filterContainer is FilterViewController: filterContainer?.present(UIAlertController.withTitle(container.queue.count.fullCountText(for: .song), message: nil, style: .actionSheet, actions: collectorActions), animated: true, completion: nil)
             
             default: container.present(UIAlertController.withTitle(container.queue.count.fullCountText(for: .song), message: nil, style: .actionSheet, actions: collectorActions), animated: true, completion: nil)
         }
@@ -340,7 +340,7 @@ class FilterView: UIView {
         
         switch context {
             
-            case .filter(filter: _, container: let container) where !withinSearchTerm: container.showPropertyTests()
+        case .filter(filter: _, container: let container) where !withinSearchTerm: container?.showPropertyTests()
             
             default: notifier.post(name: .performSecondaryAction, object: (appDelegate.window?.rootViewController as? ContainerViewController)?.activeViewController)
         }
@@ -409,6 +409,13 @@ extension FilterView: UICollectionViewDelegate, UICollectionViewDataSource {
         let text = isActive ? property.title.uppercased() : property.title
         
         cell.label.text = text
+        cell.imageView.superview?.isHidden = {
+            
+            if case .library = context { return false }
+            
+            return true
+        }()
+        cell.imageView.image = property.propertyImage
         cell.label.font = UIFont.myriadPro(ofWeight: isActive ? .bold : .regular, size: 17)
         
         return cell
@@ -459,8 +466,8 @@ extension FilterView: UICollectionViewDelegate, UICollectionViewDataSource {
                 filter?.clearIfNeeded(with: property)
                 filter?.filterProperty = property
                 filter?.verifyPropertyTest(with: container)
-                container.requiredInputView?.pickerView.reloadAllComponents()
-                container.updateRightView()
+                container?.requiredInputView?.pickerView.reloadAllComponents()
+                container?.updateRightView()
                 UIView.performWithoutAnimation { self.searchBar.updateTextField(with: filter?.placeholder ?? "") }
             
                 if let searchVC = container as? SearchViewController, searchVC != searchVC.navigationController?.topViewController {
@@ -592,7 +599,17 @@ extension FilterView: UICollectionViewDelegateFlowLayout {
         
         let text = isActive ? property.title.uppercased() : property.title
         
-        let size = Size.init(width: (text as NSString).boundingRect(with: .init(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude), options: [.usesFontLeading, .usesLineFragmentOrigin], attributes: [.font: UIFont.myriadPro(ofWeight: isActive ? .bold : .regular, size: 17)], context: nil).width + 32, height: 36)
+        let imageWidth: CGFloat = {
+            
+            switch self.context {
+                
+                case .filter: return 0
+                
+                case .library: return 15 + 5
+            }
+        }()
+        
+        let size = Size.init(width: (text as NSString).boundingRect(with: .init(width: CGFloat.greatestFiniteMagnitude, height: 36), options: [.usesFontLeading, .usesLineFragmentOrigin], attributes: [.font: UIFont.myriadPro(ofWeight: isActive ? .bold : .regular, size: 17)], context: nil).width + 32 + imageWidth, height: 36)
         
         cellSizes.setObject(size, forKey: Index.init(indexPath: indexPath, uppercased: isActive))
         

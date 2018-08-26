@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14101" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.13.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14086"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.9"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -99,71 +99,33 @@
                                     <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="ZuA-EM-iOk">
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                                         <subviews>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NxQ-wE-luN">
+                                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ovN-Tz-C5B" customClass="MELButton" customModule="Mode" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="0.0" width="125" height="44"/>
-                                                <subviews>
-                                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="XT3-c9-5a0">
-                                                        <rect key="frame" x="25.5" y="12" width="74.5" height="20"/>
-                                                        <subviews>
-                                                            <view contentMode="scaleToFill" placeholderIntrinsicWidth="20" placeholderIntrinsicHeight="20" translatesAutoresizingMaskIntoConstraints="NO" id="WgS-Kv-7Sn" customClass="CheckViewContainer" customModule="Mode" customModuleProvider="target">
-                                                                <rect key="frame" x="0.0" y="0.0" width="20" height="20"/>
-                                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                                <userDefinedRuntimeAttributes>
-                                                                    <userDefinedRuntimeAttribute type="number" keyPath="radius">
-                                                                        <integer key="value" value="10"/>
-                                                                    </userDefinedRuntimeAttribute>
-                                                                </userDefinedRuntimeAttributes>
-                                                            </view>
-                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Empty" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iJU-pb-n0j" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                <rect key="frame" x="28" y="0.0" width="46.5" height="20"/>
-                                                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                                <nil key="textColor"/>
-                                                                <nil key="highlightedColor"/>
-                                                            </label>
-                                                        </subviews>
-                                                    </stackView>
-                                                </subviews>
-                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <constraints>
-                                                    <constraint firstItem="XT3-c9-5a0" firstAttribute="centerX" secondItem="NxQ-wE-luN" secondAttribute="centerX" id="3dw-9X-4oz"/>
-                                                    <constraint firstItem="XT3-c9-5a0" firstAttribute="centerY" secondItem="NxQ-wE-luN" secondAttribute="centerY" id="fwu-cI-3dK"/>
-                                                </constraints>
-                                            </view>
+                                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
+                                                <inset key="titleEdgeInsets" minX="6" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="6" maxY="2"/>
+                                                <state key="normal" title="Add" image="Check"/>
+                                                <connections>
+                                                    <action selector="addItemsToSelectedPlaylists" destination="XKQ-q3-rxA" eventType="touchUpInside" id="eMY-Kt-JR2"/>
+                                                </connections>
+                                            </button>
                                             <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JQG-PG-LX1" customClass="ActionsButton" customModule="Mode" customModuleProvider="target">
                                                 <rect key="frame" x="125" y="0.0" width="125" height="44"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="width" priority="900" constant="69" id="A1x-iW-oNI"/>
-                                                </constraints>
                                                 <connections>
                                                     <action selector="showOptions" destination="XKQ-q3-rxA" eventType="touchUpInside" id="qnc-2X-dda"/>
                                                 </connections>
                                             </button>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dAH-cB-Q4F">
+                                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OAD-Mw-VwW" customClass="MELButton" customModule="Mode" customModuleProvider="target">
                                                 <rect key="frame" x="250" y="0.0" width="125" height="44"/>
-                                                <subviews>
-                                                    <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OAD-Mw-VwW" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                        <rect key="frame" x="-0.5" y="0.0" width="125" height="44"/>
-                                                        <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                        <inset key="titleEdgeInsets" minX="6" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="6" maxY="3"/>
-                                                        <state key="normal" title="Filter" image="Filter"/>
-                                                        <connections>
-                                                            <action selector="filterButtonTapped" destination="XKQ-q3-rxA" eventType="touchUpInside" id="1vA-jg-eYj"/>
-                                                        </connections>
-                                                    </button>
-                                                </subviews>
-                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="trailing" secondItem="OAD-Mw-VwW" secondAttribute="trailing" id="9iw-fE-egZ"/>
-                                                    <constraint firstItem="OAD-Mw-VwW" firstAttribute="top" secondItem="dAH-cB-Q4F" secondAttribute="top" id="OTb-Fx-jL8"/>
-                                                    <constraint firstAttribute="bottom" secondItem="OAD-Mw-VwW" secondAttribute="bottom" id="oDj-RV-Z1S"/>
-                                                    <constraint firstItem="OAD-Mw-VwW" firstAttribute="leading" secondItem="dAH-cB-Q4F" secondAttribute="leading" id="tEC-eu-CYB"/>
-                                                </constraints>
-                                            </view>
+                                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
+                                                <inset key="titleEdgeInsets" minX="6" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="6" maxY="3"/>
+                                                <state key="normal" title="Filter" image="Filter"/>
+                                                <connections>
+                                                    <action selector="filterButtonTapped" destination="XKQ-q3-rxA" eventType="touchUpInside" id="1vA-jg-eYj"/>
+                                                </connections>
+                                            </button>
                                         </subviews>
-                                        <constraints>
-                                            <constraint firstItem="dAH-cB-Q4F" firstAttribute="width" secondItem="NxQ-wE-luN" secondAttribute="width" id="MmI-Cr-0RZ"/>
-                                        </constraints>
                                     </stackView>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -201,10 +163,7 @@
                         <outlet property="actionsButton" destination="JQG-PG-LX1" id="5CY-l0-14R"/>
                         <outlet property="bottomView" destination="6xh-h1-qgj" id="He5-J6-YjZ"/>
                         <outlet property="bottomViewHeightConstraint" destination="8wU-3k-4Ic" id="Hjr-9X-BPt"/>
-                        <outlet property="checkViewContainer" destination="WgS-Kv-7Sn" id="bNr-jA-2Ng"/>
-                        <outlet property="emptyPlaylistsView" destination="NxQ-wE-luN" id="EAg-eI-3J3"/>
                         <outlet property="tableView" destination="EdZ-yH-ZX1" id="JEO-Jn-NJf"/>
-                        <segue destination="i3b-cu-1d8" kind="unwind" identifier="toArtistUnwind" unwindAction="artistUnwind:" id="gTH-KH-ZAy"/>
                         <segue destination="qMQ-mq-lMM" kind="show" identifier="toArtist" id="yle-mq-UFM"/>
                         <segue destination="qMQ-mq-lMM" kind="show" identifier="toAlbum" id="lAW-3v-MV2"/>
                         <segue destination="33X-rj-qf0" kind="popoverPresentation" identifier="toArranger" popoverAnchorView="EdZ-yH-ZX1" id="Vs4-ch-VuS">
@@ -216,6 +175,7 @@
                         <segue destination="i3b-cu-1d8" kind="unwind" identifier="toArtistUnwind" unwindAction="artistUnwind:" id="pdT-rT-Gue"/>
                         <segue destination="i3b-cu-1d8" kind="unwind" identifier="toGenreUnwind" unwindAction="genreUnwind:" id="YGz-Id-CaK"/>
                         <segue destination="i3b-cu-1d8" kind="unwind" identifier="toPlaylistUnwind" unwindAction="playlistUnwind:" id="IQW-Hg-oPA"/>
+                        <segue destination="i3b-cu-1d8" kind="unwind" identifier="toAlbumUnwind" unwindAction="albumUnwind:" id="8eN-n7-5pE"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="WaW-ob-JSb" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -241,11 +201,12 @@
         </scene>
     </scenes>
     <resources>
+        <image name="Check" width="11" height="8"/>
         <image name="Filter" width="13" height="15"/>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="Vs4-ch-VuS"/>
-        <segue reference="lAW-3v-MV2"/>
+        <segue reference="0B1-yw-O8t"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
 </document>

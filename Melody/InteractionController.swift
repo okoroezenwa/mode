@@ -67,73 +67,50 @@ class InteractionController: UIPercentDrivenInteractiveTransition {
                 // 2
                 interactionInProgress = true
                 
-//                if presenting {
-//
-////                    if let container = appDelegate.window?.rootViewController as? ContainerViewController, let presentedVC = container.queueVC, let vc = viewController as? InteractivePresenter {
-////
-////                        presentedVC.modalPresentationStyle = .custom
-////                        presentedVC.altAnimator = vc.presenter
-////                        viewController?.present(presentedVC, animated: true, completion: nil)
-////
-////                        return
-////                    }
-//
-//                    guard let _ = musicPlayer.nowPlayingItem, let presentedVC = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "presentedVC") as? PresentedContainerViewController, let vc = viewController as? InteractivePresenter else { return }
-//
-//                    presentedVC.context = .queue
-//                    presentedVC.modalPresentationStyle = .custom
-//                    presentedVC.altAnimator = vc.presenter
-//
-//                    viewController?.present(presentedVC, animated: true, completion: nil)
-//
-//                } else {
-                
-                    if let nVC = viewController as? UINavigationController {
+                if let nVC = viewController as? UINavigationController {
+                    
+                    guard nVC.topViewController != nVC.viewControllers.first else {
                         
-                        guard nVC.topViewController != nVC.viewControllers.first else {
+                        if let searchVC = nVC.topViewController as? SearchViewController {
                             
-                            if let searchVC = nVC.topViewController as? SearchViewController {
+                            if searchVC.filtering {
                                 
-                                if searchVC.filtering {
-                                    
-                                    searchVC.dismissSearch()
-                                    
-                                } else if searchVC.onlineOverride {
-                                    
-                                    searchVC.onlineOverride = false
+                                searchVC.dismissSearch()
+                                
+                            } else if searchVC.onlineOverride {
+                                
+                                searchVC.onlineOverride = false
 //                                    searchVC.updateTempView(hidden: true)
-                                }
                             }
-                            
-                            return
                         }
                         
-                        nVC.popViewController(animated: true)
-                        
-                    } else {
-                        
-                        if let viewController = viewController as? PresentedContainerViewController {
-                            
-                            viewController.altAnimator = viewController.animator
-                        }
-                        
-                        viewController?.dismiss(animated: true, completion: nil)
+                        return
                     }
-//                }
+                    
+                    nVC.popViewController(animated: true)
+                    
+                } else {
+                    
+                    if let viewController = viewController as? PresentedContainerViewController {
+                        
+                        viewController.altAnimator = viewController.animator
+                    }
+                    
+                    viewController?.dismiss(animated: true, completion: nil)
+                }
             
             case .changed:
                 
-                // 3
-                shouldCompleteTransition = progress > 0.5 || (translation.x > 0 && velocity.x > 500) //|| (translation.x < 0 && velocity.x < -500)
+                shouldCompleteTransition = progress > 0.5 || (translation.x > 0 && velocity.x > 500)
                 update(progress)
                 
             case .cancelled:
-                // 4
+                
                 interactionInProgress = false
                 cancel()
                 
             case .ended:
-                // 5
+                
                 interactionInProgress = false
                 
                 if !shouldCompleteTransition {

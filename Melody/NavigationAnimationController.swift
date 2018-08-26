@@ -44,6 +44,13 @@ class NavigationAnimationController: NSObject, UIViewControllerAnimatedTransitio
         
         var needsToUpdateBottomBar = false
         
+        toVC.view.layoutIfNeeded()
+        
+        if let first = fromVC as? Navigatable, let second = toVC as? Navigatable, let container = appDelegate.window?.rootViewController as? ContainerViewController {
+            
+            container.visualEffectNavigationBar.animateTitleLabel(direction: direction, section: .preparation, with: first, and: second)
+        }
+        
         if let container = appDelegate.window?.rootViewController as? ContainerViewController, container.activeViewController == container.searchNavigationController {
             
             needsToUpdateBottomBar = container.filterViewContainer.filterView.withinSearchTerm != (toVC != container.searchNavigationController?.viewControllers.first)
@@ -61,11 +68,21 @@ class NavigationAnimationController: NSObject, UIViewControllerAnimatedTransitio
             
                 fromVC.view.frame.origin.x += (self.direction == .forward ? -40 : 40)
                 fromVC.view.alpha = 0
+                
+                if let first = fromVC as? Navigatable, let second = toVC as? Navigatable, let container = appDelegate.window?.rootViewController as? ContainerViewController {
+                    
+                    container.visualEffectNavigationBar.animateTitleLabel(direction: self.direction, section: .firstHalf, with: first, and: second)
+                }
             })
             
             UIView.addKeyframe(withRelativeStartTime: 2.8/5, relativeDuration: 2.2/5, animations: {
             
                 toVC.view.frame.origin.x += (self.direction == .forward ? -40 : 40)
+                
+                if let first = fromVC as? Navigatable, let second = toVC as? Navigatable, let container = appDelegate.window?.rootViewController as? ContainerViewController {
+                    
+                    container.visualEffectNavigationBar.animateTitleLabel(direction: self.direction, section: .secondHalf, with: first, and: second)
+                }
                 
                 if self.direction == .forward, fromVC.view.frame.origin.x < 0 {
                     
@@ -97,6 +114,11 @@ class NavigationAnimationController: NSObject, UIViewControllerAnimatedTransitio
         }, completion: { [weak self] _ in
             
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
+            
+            if let weakSelf = self, let first = fromVC as? Navigatable, let second = toVC as? Navigatable, let container = appDelegate.window?.rootViewController as? ContainerViewController {
+                
+                container.visualEffectNavigationBar.animateTitleLabel(direction: weakSelf.direction, section: .end(completed: !transitionContext.transitionWasCancelled), with: first, and: second)
+            }
             
             if !transitionContext.transitionWasCancelled {
                 

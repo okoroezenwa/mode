@@ -25,21 +25,17 @@ class NowPlayingInteractionController: UIPercentDrivenInteractiveTransition {
         
         viewController = vc
         
-        let gr = UIPanGestureRecognizer(target: self, action: #selector(handleGesture))
-        
-        if let grDelegate = vc as? UIGestureRecognizerDelegate {
-            
-            gr.delegate = grDelegate
-        }
+        let gr = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(handleGesture))
+        gr.edges = .left
         
         viewController?.view.addGestureRecognizer(gr)
     }
     
     @objc func handleGesture(_ gestureRecognizer: UIPanGestureRecognizer) {
         
-        let translation = gestureRecognizer.translation(in: viewController?.view)
-        let velocity = gestureRecognizer.velocity(in: viewController?.view)
-        var progress = translation.y / UIScreen.main.bounds.height
+        let translation = gestureRecognizer.translation(in: gestureRecognizer.view)
+        let velocity = gestureRecognizer.velocity(in: gestureRecognizer.view?.superview)
+        var progress = translation.x / ((200 / 375) * UIScreen.main.bounds.width)
         
         progress = min(max(progress, 0), 1)
         
@@ -47,23 +43,21 @@ class NowPlayingInteractionController: UIPercentDrivenInteractiveTransition {
             
             case .began:
                 
-                // 2
                 interactionInProgress = true
-                    
                 viewController?.dismiss(animated: true, completion: nil)
                 
             case .changed:
-                // 3
-                shouldCompleteTransition = progress > 0.5 || velocity.y > 500
+                
+                shouldCompleteTransition = progress > 0.5 || (translation.x > 0 && velocity.x > 500)
                 update(progress)
                 
             case .cancelled:
-                // 4
+                
                 interactionInProgress = false
                 cancel()
                 
             case .ended:
-                // 5
+                
                 interactionInProgress = false
                 
                 if !shouldCompleteTransition {

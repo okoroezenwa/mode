@@ -35,6 +35,11 @@ class GradientView: UIView {
         
         super.layoutSubviews()
         
+        updateGradient()
+    }
+    
+    func updateGradient() {
+        
         gradient.frame = bounds
     }
 }

@@ -25,10 +25,10 @@ class MELSlider: UISlider {
     
     @objc func changeThemeColor() {
         
-        if #available(iOS 11, *) {
-            
-            accessibilityIgnoresInvertColors = false
-        }
+//        if #available(iOS 11, *) {
+//            
+//            accessibilityIgnoresInvertColors = false
+//        }
         
         maximumTrackTintColor = (darkTheme ? UIColor.white : UIColor.black).withAlphaComponent(border ? 0.05 : 0.1)
         minimumTrackTintColor = border ? (darkTheme ? UIColor.white.withAlphaComponent(0.5) : UIColor.black.withAlphaComponent(0.5)) : (darkTheme ? .white : .black)
@@ -39,7 +39,7 @@ class MELSlider: UISlider {
             
         } else {
             
-            setThumbImage(UIImage.new(withColour: darkTheme ? .white : .black, size: CGSize.init(width: size * 2, height: size * 2)).at(CGSize.init(width: size, height: size)).withCornerRadii(size / 2), for: .normal)
+            setThumbImage(UIImage.new(withColour: darkTheme ? .white : .black, size: .square(of: size * 2)).at(.square(of: size)).withCornerRadii(size / 2), for: .normal)
         }
         
         if brightness {

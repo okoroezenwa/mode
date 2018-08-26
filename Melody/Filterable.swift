@@ -723,28 +723,29 @@ extension Filterable {
             vc.context = .filter
             vc.filterVC.sender = filter
             vc.filterVC.entities = filter.filterEntities
+            vc.prompt = ((appDelegate.window?.rootViewController as? ContainerViewController)?.activeViewController?.topViewController as? Navigatable)?.preferredTitle
             
             filter.present(vc, animated: true, completion: nil)
         }
     }
     
-    func verifyPropertyTest(with container: FilterContainer & UIViewController) {
+    func verifyPropertyTest(with container: (FilterContainer & UIViewController)?) {
         
         if ignorePropertyChange.inverted {
             
             propertyTest = preferredInitialFilterTest
         }
         
-        container.updateTestView()
+        container?.updateTestView()
     
         updateKeyboard(with: container)
     }
     
-    func updateKeyboard(with container: FilterContainer) {
+    func updateKeyboard(with container: FilterContainer?) {
         
-        container.searchBar.keyboardType = keyboardType
-        container.searchBar.inputView = inputView
-        container.searchBar.reloadInputViews()
+        container?.searchBar.keyboardType = keyboardType
+        container?.searchBar.inputView = inputView
+        container?.searchBar.reloadInputViews()
     }
     
     func clearIfNeeded(with property: Property) {

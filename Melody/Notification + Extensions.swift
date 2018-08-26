@@ -21,7 +21,7 @@ extension NSNotification.Name {
     static let sortConflictFound = Notification.Name.init("conflictFoundInSort")
     static let addedToLibrary = Notification.Name.init("appleMusicSongAddedToLibrary")
     static let updateForFirstLaunch = Notification.Name.init("updateForFirstLaunch")
-    static let songAddedToPlaylist = Notification.Name.init("newSongAddedToPlaylist")
+    static let songsAddedToPlaylists = Notification.Name.init("songsAddedToPlaylists")
     static let changeLibrarySection = Notification.Name.init(rawValue: "changeLibrarySection")
     static let appleMusicStatusChecked = Notification.Name.init(rawValue: "appleMusicStatusChecked")
     static let libraryStatusChanged = Notification.Name.init(rawValue: "userLibraryStatusChanged")
@@ -36,4 +36,5 @@ extension NSNotification.Name {
     static let likedStateChanged = Notification.Name.init("likedStateChanged")
     static let showUnaddedSongsChanged = Notification.Name.init("showUnaddedSongsChanged")
     static let managerItemsChanged = Notification.Name.init("managerItemsChanged")
+    static let shuffleInvoked = Notification.Name.init("shuffleInvoked")
 }

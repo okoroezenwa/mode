@@ -162,7 +162,7 @@ extension PropertiesViewController: UITableViewDelegate, UITableViewDataSource {
         
         cell.textLabel?.text = properties[indexPath.row]
         
-        cell.selectedBackgroundView = MELBorderView()
+//        cell.selectedBackgroundView = MELBorderView()
         cell.textLabel?.font = UIFont.myriadPro(ofWeight: .regular, size: 17)
         
         return cell
@@ -205,23 +205,24 @@ extension PropertiesViewController {
             
             case .property: return entity.value(forProperty: text).debugDescription
             
-            case .selector: return entity.responds(to: NSSelectorFromString(text)) == true ? String(describing: entity.value(forKey: text)!) : nil
+            case .selector: return entity.responds(to: NSSelectorFromString(text)) == true ? String(describing: entity.value(forKey: text) ?? "") : nil
         }
     }
     
     class func properties(for entityType: Entity) -> [String] {
         
         let array = ["persistentID", "mediaLibrary"]
+        let collectionArray = ["groupingType", "itemsQuery", "mediaTypes", "artworkCatalog", "artistArtworkCatalog", "albumArtistArtworkCatalog", "_artworkCatalogRepresentativeItem", "multiverseIdentifier"]
         
         let others: [String] = {
         
             switch entityType {
                 
-                case .song: return ["cachedPropertyValues", "dateAccessed", "effectiveAlbumArtist", "effectiveStopTime", "playCountSinceSync"]
+                case .song: return ["cachedPropertyValues", "dateAccessed", "lyrics", "effectiveAlbumArtist", "effectiveStopTime", "playCountSinceSync"]
                 
-                case .playlist: return ["existsInLibrary", "mediaTypes", "artworkCatalog", "isCloudMix", "representativeArtists", "seedItems", "seedTracksQuery", "itemsQuery"]
+                case .playlist: return collectionArray + ["existsInLibrary", "isCloudMix", "representativeArtists", "seedItems", "seedTracksQuery"]
                 
-                default: return ["groupingType", "itemsQuery", "mediaTypes"]
+                default: return collectionArray
             }
         }()
         

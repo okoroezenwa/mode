@@ -28,7 +28,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
     @IBOutlet weak var playPauseButton: MELButton!
     @IBOutlet weak var previous: MELButton!
     @IBOutlet weak var nextButton: MELButton!
-    @IBOutlet weak var shuffle: MELButton!
+    @IBOutlet weak var shuffle: MELButton?
     @IBOutlet weak var startTime: MELLabel?
     @IBOutlet weak var stopTime: MELLabel?
     @IBOutlet weak var timeSlider: MELSlider!
@@ -74,13 +74,13 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
             LongPressManager.shared.gestureRecognisers.append(Weak.init(value: gr))
         }
     }
-    @IBOutlet weak var repeatView: UIView!
-    @IBOutlet weak var repeatButton: MELButton!
+    @IBOutlet weak var repeatView: MELBorderView?
+    @IBOutlet weak var repeatButton: MELButton?
     @IBOutlet weak var statusBarBackground: UIView!
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var effectView: MELVisualEffectView!
     @IBOutlet weak var artworkIntermediaryView: UIView!
-    @IBOutlet weak var shuffleView: UIView!
+    @IBOutlet weak var shuffleView: MELBorderView?
     @IBOutlet weak var queueChevronTrailingConstraint: NSLayoutConstraint!
     @IBOutlet weak var editButton: MELButton! {
         
@@ -125,9 +125,12 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
     @objc var currentItem: MPMediaItem?
     @objc var currentAlbum: MPMediaItemCollection?
     @objc var viewController: UIViewController?
+    var isCurrentlyTopViewController = false
     @objc var lifetimeObservers = Set<NSObject>()
     let playingImage = #imageLiteral(resourceName: "Pause")
     let pausedImage = #imageLiteral(resourceName: "Play")
+    let playPauseButtonNeedsAnimation = false
+    let prefersBoldOnTap = false
     var updateableView: UIView? { return detailsView }
     @objc var lyricsVisible = false
     var viewHeirachy: UIImage?
@@ -176,10 +179,10 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         prepareLifetimeObservers()
         prepareDetailLabels()
         
-        if #available(iOS 11, *) {
-            
-            view.accessibilityIgnoresInvertColors = darkTheme
-        }
+//        if #available(iOS 11, *) {
+//
+//            view.accessibilityIgnoresInvertColors = darkTheme
+//        }
         
         modifyShuffleState(changingMusicPlayer: false)
         modifyRepeatButton(changingMusicPlayer: false)
@@ -254,6 +257,8 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
     
     @IBAction func showSongActions() {
         
+        guard activeItem != nil else { return }
+        
         let info = UIAlertAction.init(title: "Get Info", style: .default, handler: { [weak self] _ in
             
             guard let weakSelf = self else { return }
@@ -301,14 +306,16 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
             
             guard let weakSelf = self else { return }
             
-            if #available(iOS 11, *) {
-                
-                weakSelf.view.accessibilityIgnoresInvertColors = darkTheme
-            }
+//            if #available(iOS 11, *) {
+//                
+//                weakSelf.view.accessibilityIgnoresInvertColors = darkTheme
+//            }
             
         }) as! NSObject)
         
         lifetimeObservers.insert(notifier.addObserver(forName: .queueModified, object: nil, queue: nil, using: { [weak self] _ in self?.modifyQueueLabel() }) as! NSObject)
+        
+        lifetimeObservers.insert(notifier.addObserver(forName: .shuffleInvoked, object: nil, queue: nil, using: { [weak self] _ in self?.modifyQueueLabel() }) as! NSObject)
         
         lifetimeObservers.insert(notifier.addObserver(forName: .MPMusicPlayerControllerPlaybackStateDidChange, object: musicPlayer, queue: nil, using: { [weak self] _ in
             
@@ -334,9 +341,9 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
             }) as! NSObject)
         })
         
-        lifetimeObservers.insert(notifier.addObserver(forName: .songAddedToPlaylist, object: nil, queue: nil, using: { [weak self] notification in
+        lifetimeObservers.insert(notifier.addObserver(forName: .songsAddedToPlaylists, object: nil, queue: nil, using: { [weak self] notification in
             
-            guard let weakSelf = self, let song = musicPlayer.nowPlayingItem, let songs = notification.userInfo?["songs"] as? [MPMediaItem], Set(songs).contains(song) else { return }
+            guard let weakSelf = self, let song = musicPlayer.nowPlayingItem, let songs = notification.userInfo?[String.addedSongs] as? [MPMediaItem], Set(songs).contains(song) else { return }
             
             weakSelf.updateAddButton(hidden: true, animated: true)
             
@@ -737,88 +744,6 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         return (UIScreen.main.bounds.height - UIScreen.main.bounds.width - 38 - 46 - 70) / 2
     }
     
-    @objc func modifyRepeatButton(changingMusicPlayer: Bool) {
-        
-        switch musicPlayer.repeatMode {
-            
-            case .one:
-            
-                repeatView.isHidden = changingMusicPlayer
-                repeatButton.setImage(changingMusicPlayer ? #imageLiteral(resourceName: "Repeat") : #imageLiteral(resourceName: "RepeatOne"), for: .normal)
-            
-                if changingMusicPlayer {
-                    
-                    musicPlayer.repeatMode = .none
-                }
-            
-            case .all:
-            
-                repeatView.isHidden = false
-                repeatButton.setImage(changingMusicPlayer ? #imageLiteral(resourceName: "RepeatOne") : #imageLiteral(resourceName: "Repeat"), for: .normal)
-            
-                if changingMusicPlayer {
-                    
-                    musicPlayer.repeatMode = .one
-                }
-            
-            case .none:
-            
-                repeatView.isHidden = !changingMusicPlayer
-                repeatButton.setImage(#imageLiteral(resourceName: "Repeat"), for: .normal)
-            
-                if changingMusicPlayer {
-                    
-                    musicPlayer.repeatMode = .all
-                }
-            
-            case .default:
-            
-                repeatView.isHidden = !changingMusicPlayer
-                repeatButton.setImage(changingMusicPlayer ? #imageLiteral(resourceName: "RepeatOne") : #imageLiteral(resourceName: "Repeat"), for: .normal)
-                
-                if changingMusicPlayer {
-                    
-                    musicPlayer.repeatMode = .all
-                }
-        }
-        
-        if changingMusicPlayer {
-            
-            prefs.set(musicPlayer.repeatMode.rawValue, forKey: .repeatMode)
-        }
-    }
-    
-    @IBAction func setRepeatMode() {
-        
-        modifyRepeatButton(changingMusicPlayer: true)
-        modifyQueueLabel()
-    }
-    
-    @objc func modifyShuffleState(changingMusicPlayer: Bool) {
-        
-        switch musicPlayer.shuffleMode {
-            
-            case .default, .off:
-                
-                shuffleView.isHidden = !changingMusicPlayer
-                
-                if changingMusicPlayer {
-                    
-                    musicPlayer.shuffleMode = .songs
-                }
-            
-            
-            case .albums, .songs:
-                
-                shuffleView.isHidden = changingMusicPlayer
-            
-                if changingMusicPlayer {
-                    
-                    musicPlayer.shuffleMode = .off
-                }
-        }
-    }
-    
     @objc func updateSliderDuration() {
         
         if let nowPlaying = activeItem {
@@ -851,6 +776,9 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
     @objc func prepareViews(animated: Bool) {
         
         if let currentItem = activeItem {
+            
+            songNameScrollView.contentOffset = .zero
+            songDetailsScrollView.contentOffset = .zero
             
             let albumTitle = currentItem.validAlbum
             let artistName = currentItem.validArtist
@@ -898,14 +826,6 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
                 albumWidthConstraint.priority = UILayoutPriority(rawValue: 249)
             }
             
-//            if lyricsVisible && currentItem.lyrics?.isEmpty == true {
-//                
-//                modifyLyricsView(hidden: true)
-//            }
-            
-//            lyricsButton.alpha = currentItem.lyrics?.isEmpty == true ? 0 : 1
-//            lyricsButton.isUserInteractionEnabled = currentItem.lyrics?.isEmpty == false
-            
             modifyQueueLabel()
             modifyPlayPauseButton()
             rateShareView.entity = currentItem
@@ -916,7 +836,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
             
             if let lyricsVC = children.first as? LyricsViewController {
                 
-                lyricsVC.item = currentItem
+                lyricsVC.manager.item = currentItem
             }
         
         } else {
@@ -948,18 +868,25 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
     
     @IBAction func viewFullLyrcs(_ sender: UILongPressGestureRecognizer) {
         
-        guard sender.state == .began else { return }
+        guard activeItem != nil, sender.state == .began else { return }
         
         performSegue(withIdentifier: "toLyrics", sender: nil)
     }
 
     @objc func modifyQueueLabel() {
         
+        guard musicPlayer.nowPlayingItem != nil else {
+            
+            queue.setTitle("Queue", for: .normal)
+            
+            return
+        }
+        
         queue.superview?.layoutIfNeeded()
         
         let string = musicPlayer.fullQueueCount(withInitialSpace: false, parentheses: false).uppercased()
         queue.setTitle(string, for: .normal)
-        queue.attributes = [Attributes.init(name: .font, value: .other(UIFont.myriadPro(ofWeight: .regular, size: 12)), range: string.nsRange(of: "OF"))]
+        queue.attributes = [Attributes.init(name: .font, value: .other(UIFont.myriadPro(ofWeight: .regular, size: 13)), range: string.nsRange(of: "OF"))]
         
         queueChevronTrailingConstraint.constant = queue.intrinsicContentSize.width + 3
         
@@ -1014,22 +941,6 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         }
     }
     
-    @IBAction func changeShuffle() {
-        
-        modifyShuffleState(changingMusicPlayer: true)
-        modifyQueueLabel()
-        
-        if #available(iOS 11.3, *) {
-        
-            UniversalMethods.performOnMainThread({ self.modifyQueueLabel() }, afterDelay: 1)
-        }
-        
-        if #available(iOS 10.3, *), !useSystemPlayer, let musicPlayer = musicPlayer as? MPMusicPlayerApplicationController {
-            
-            musicPlayer.perform(queueTransaction: { _ in }, completionHandler: { controller, _ in notifier.post(name: .saveQueue, object: nil, userInfo: [String.queueItems: controller.items]) })
-        }
-    }
-    
     @IBAction func nextSong() {
         
         musicPlayer.skipToNextItem()
@@ -1050,10 +961,14 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
     
     @IBAction func goToArtist() {
         
+        guard activeItem != nil else { return }
+        
         performUnwindSegue(with: .artist, isEntityAvailable: artistQuery != nil, title: Entity.artist.title())
     }
     
     @IBAction func goToAlbum() {
+        
+        guard activeItem != nil else { return }
         
         performUnwindSegue(with: .album, isEntityAvailable: albumQuery != nil, title: Entity.album.title())
     }
@@ -1209,6 +1124,16 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         }
     }
     
+    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
+        
+        switch identifier {
+            
+            case "toQueue": return musicPlayer.nowPlayingItem != nil
+            
+            default: return true
+        }
+    }
+    
     @IBAction func unwind(_ segue: UIStoryboardSegue) { }
     
     override func canPerformUnwindSegueAction(_ action: Selector, from fromViewController: UIViewController, withSender sender: Any) -> Bool {
@@ -1239,7 +1164,7 @@ extension NowPlayingViewController: UIViewControllerPreviewingDelegate {
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
         
-        if queue.bounds.contains(nowPlayingView.convert(location, to: queue)) {
+        if queue.bounds.contains(nowPlayingView.convert(location, to: queue)), let _ = musicPlayer.nowPlayingItem {
             
             if let queueVC = presentedChilrenStoryboard.instantiateViewController(withIdentifier: "queueTVC") as? QueueViewController, let vc = performTransition(to: queueVC, sender: nil) {
                 
@@ -1254,7 +1179,7 @@ extension NowPlayingViewController: UIViewControllerPreviewingDelegate {
             
             previewingContext.sourceRect = self.albumButton.convert(self.albumButton.bounds, to: nowPlayingView)
             
-            return Transitioner.shared.transition(to: .album, vc: albumVC, from: self, sender: album, highlightedItem: currentItem, preview: true, titleOverride: container?.activeViewController?.topViewController?.title)
+            return Transitioner.shared.transition(to: .album, vc: albumVC, from: self, sender: album, highlightedItem: currentItem, preview: true, titleOverride: (container?.activeViewController?.topViewController as? Navigatable)?.preferredTitle)
         
         } else if self.artistButton.bounds.contains(nowPlayingView.convert(location, to: self.artistButton)), let artist = artistQuery?.collections?.first {
             
@@ -1262,7 +1187,7 @@ extension NowPlayingViewController: UIViewControllerPreviewingDelegate {
             
             previewingContext.sourceRect = self.artistButton.convert(self.artistButton.bounds, to: nowPlayingView)
             
-            return Transitioner.shared.transition(to: .artist, vc: entityVC, from: self, sender: artist, highlightedItem: currentItem, preview: true, titleOverride: container?.activeViewController?.topViewController?.title)
+            return Transitioner.shared.transition(to: .artist, vc: entityVC, from: self, sender: artist, highlightedItem: currentItem, preview: true, titleOverride: (container?.activeViewController?.topViewController as? Navigatable)?.preferredTitle)
         }
         
         return nil
@@ -1278,6 +1203,22 @@ extension NowPlayingViewController: UIViewControllerPreviewingDelegate {
         if let vc = viewControllerToCommit as? Peekable {
             
             vc.peeker = nil
+        }
+        
+        if let vc = viewControllerToCommit as? Navigatable, let indexer = vc.activeChildViewController as? IndexContaining {
+            
+            indexer.tableView.contentInset.top = vc.inset
+            indexer.tableView.scrollIndicatorInsets.top = vc.inset
+            
+            if let sortable = indexer as? FullySortable, sortable.highlightedIndex == nil {
+            
+                indexer.tableView.contentOffset.y = -vc.inset
+            }
+            
+            container?.visualEffectNavigationBar.backBorderView.alpha = 1
+            container?.visualEffectNavigationBar.backView.isHidden = false
+            container?.visualEffectNavigationBar.backLabel.text = vc.backLabelText
+            container?.visualEffectNavigationBar.titleLabel.text = vc.title
         }
         
         pop(to: viewControllerToCommit, queue: viewControllerToCommit is QueueViewController)
@@ -1334,44 +1275,5 @@ extension NowPlayingViewController: UIViewControllerPreviewingDelegate {
         let third: [UIPreviewActionItem] = [stop]
     
         return first + second + third
-    }
-}
-
-//MARK: - GestureRecogniser
-extension NowPlayingViewController: UIGestureRecognizerDelegate {
-    
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        
-        if let gr = gestureRecognizer as? UIPanGestureRecognizer {
-            
-            if gr.view is UISlider {
-                
-                return false
-            }
-        }
-        
-        return true
-    }
-    
-    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        
-        guard let gr = gestureRecognizer as? UIPanGestureRecognizer else { return true }
-        
-        if abs(gr.translation(in: view).y) < abs(gr.translation(in: view).x) {
-            
-            return false
-        }
-        
-        return true
-    }
-    
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        
-        return otherGestureRecognizer is UIScreenEdgePanGestureRecognizer
-    }
-    
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        
-        return otherGestureRecognizer is UIScreenEdgePanGestureRecognizer
     }
 }

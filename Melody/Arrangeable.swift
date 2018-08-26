@@ -15,18 +15,22 @@ protocol Arrangeable: NSObjectProtocol, TableViewContaining {
     var ascending: Bool { get set }
     var applicableSortCriteria: Set<SortCriteria> { get }
     var arrangeButton: MELButton! { get set }
-    var operation: BlockOperation? { get set }
     var location: SortLocation { get }
-    var sections: [SortSectionDetails] { get set }
-    var sorter: Sorter { get set }
-    var highlightedIndex: Int? { get set }
     
     func sortItems()
 }
 
-extension Arrangeable {
+protocol FullySortable: Arrangeable {
     
-    var duration: TimeInterval { return 0.8 }
+    var operation: BlockOperation? { get set }
+    var sections: [SortSectionDetails] { get set }
+    var sorter: Sorter { get set }
+    var highlightedIndex: Int? { get set }
+}
+
+extension FullySortable {
+    
+    var duration: TimeInterval { return 1 }
     
     var alphaNumericCritieria: Set<SortCriteria> {
         
@@ -1227,7 +1231,7 @@ class Sorter: NSObject {
     }
 }
 
-/*@objc*/ protocol IndexContaining: NSObjectProtocol, TableViewContaining {
+protocol IndexContaining: NSObjectProtocol, TableViewContaining, NavigatableContained {
     
     var sectionIndexViewController: SectionIndexViewController? { get set }
     var requiresLargerTrailingConstraint: Bool { get }

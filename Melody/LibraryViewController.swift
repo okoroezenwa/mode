@@ -9,7 +9,7 @@
 import UIKit
 import StoreKit
 
-class LibraryViewController: UIViewController, Contained, OptionsContaining {
+class LibraryViewController: UIViewController, Contained, OptionsContaining, Navigatable {
     
     @IBOutlet weak var titleButton: MELButton!
     @IBOutlet weak var contentView: UIView!
@@ -76,6 +76,12 @@ class LibraryViewController: UIViewController, Contained, OptionsContaining {
             changeActiveViewControllerFrom(oldValue)
         }
     }
+    
+    var backLabelText: String?
+    var requiresShadow = false
+    var artwork: UIImage?
+    let inset: CGFloat = 10 + 34 + 10 + 1
+    lazy var preferredTitle: String? = title
 
     override func viewDidLoad() {
         
@@ -103,6 +109,8 @@ class LibraryViewController: UIViewController, Contained, OptionsContaining {
             
             case .playlists: title = "Playlists"
         }
+
+        container?.visualEffectNavigationBar.titleLabel.text = title
         
         let edge = UIScreenEdgePanGestureRecognizer.init(target: self, action: #selector(updateSections))
         edge.edges = .right
@@ -161,7 +169,7 @@ class LibraryViewController: UIViewController, Contained, OptionsContaining {
         
                 if sectionVC.hasHeader, indexPath.row == 0 {
                     
-                    sectionVC.container?.tableView.setContentOffset(.zero, animated: false)
+                    sectionVC.container?.tableView.setContentOffset(.init(x: 0, y: -inset), animated: false)
                     
                 } else {
                     
@@ -306,10 +314,11 @@ class LibraryViewController: UIViewController, Contained, OptionsContaining {
     
     func updateViews(inSection section: LibrarySection, count: Int, filteredCount: Int? = nil) {
         
-        titleButton.setTitle(" " + count.fullCountText(for: section.entity, filteredCount: filteredCount, compilationOverride: section == .compilations, capitalised: true), for: .normal)
-        titleButton.setImage(section.image, for: .normal)
+        let text = count.fullCountText(for: section.entity, filteredCount: filteredCount, compilationOverride: section == .compilations, capitalised: true)
         
-        title = section.title.capitalized
+        title = text
+        preferredTitle = section.title.capitalized
+        container?.visualEffectNavigationBar.titleLabel.text = title
     }
     
     private func removeInactiveViewController(inactiveViewController: UIViewController?) {
@@ -335,7 +344,7 @@ class LibraryViewController: UIViewController, Contained, OptionsContaining {
         }
     }
     
-    @objc func changeActiveViewControllerFrom(_ vc: UIViewController?, animated: Bool = true) {
+    @objc func changeActiveViewControllerFrom(_ vc: UIViewController?, animated: Bool = true, animateTitle: Bool = false) {
         
         guard let activeVC = activeChildViewController, let inActiveVC = vc else { return }
         
@@ -348,6 +357,11 @@ class LibraryViewController: UIViewController, Contained, OptionsContaining {
             activeVC.view.alpha = 0
             activeVC.view.frame = contentView.bounds.modifiedBy(x: 0, y: 40)
             contentView.addSubview(activeVC.view)
+            
+            if animateTitle {
+                
+//                container?.visualEffectNavigationBar.animateTitleLabel(direction: .forward, section: .preparation, with: <#T##(title: String?, backLabelText: String?)#>, and: <#T##(title: String?, backLabelText: String?)#>, preferVerticalTransition: <#T##Bool#>)
+            }
             
             UIView.animateKeyframes(withDuration: 0.3, delay: 0, options: .calculationModeCubic, animations: {
                 

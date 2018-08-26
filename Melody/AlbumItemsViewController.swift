@@ -8,7 +8,7 @@
 
 import UIKit
 
-class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, InfoLoading, SongContainer, QueryUpdateable, CellAnimatable, SingleItemActionable, BorderButtonContaining, Refreshable, IndexContaining, AlbumArtistTransitionable, ArtistTransitionable, GenreTransitionable, ComposerTransitionable, EntityVerifiable, TopScrollable {
+class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, InfoLoading, QueryUpdateable, CellAnimatable, SingleItemActionable, BorderButtonContaining, Refreshable, IndexContaining, AlbumArtistTransitionable, ArtistTransitionable, GenreTransitionable, ComposerTransitionable, EntityVerifiable, TopScrollable, EntityContainer {
     
     @IBOutlet weak var tableView: MELTableView!
 
@@ -19,10 +19,14 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Inf
         self.stackView = view.scrollStackView
         view.showArtistView = true
         view.showLoved = true
+        view.showInfo = true
         self.artistButton = view.artistButton
         self.artistImageView = view.chevron
         self.artistChevronBorder = view.chevronBorder
-        self.likedImageView = view.likedStateImageView
+        view.infoButton.addTarget(entityVC, action: #selector(EntityItemsViewController.showOptions), for: .touchUpInside)
+        view.likedStateButton.addTarget(self, action: #selector(setLiked), for: .touchUpInside)
+        
+        updateLikedButton(view.likedStateButton)
         
         return view
     }()
@@ -103,7 +107,6 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Inf
     @objc var songCountLabel: MELLabel!
     @objc var artistImageView: UIImageView!
     @objc var artistChevronBorder: UIView!
-    @objc var likedImageView: MELImageView!
     @objc var shuffleView: BorderedButtonView!
     @objc var arrangeBorderView: BorderedButtonView!
     @objc var editView: BorderedButtonView!
@@ -111,6 +114,7 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Inf
     var borderedButtons = [BorderedButtonView?]()
     var sectionIndexViewController: SectionIndexViewController?
     let requiresLargerTrailingConstraint = false
+    var navigatable: Navigatable? { return entityVC }
     
     @objc lazy var sorter: Sorter = { Sorter.init(operation: self.operation) }()
     
@@ -143,7 +147,6 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Inf
     @objc var query: MPMediaQuery? { return albumQuery }
     @objc lazy var filteredEntities = [MPMediaEntity]()
     @objc var highlightedEntity: MPMediaEntity? { return entityVC?.highlightedEntities?.song }
-    @objc var cellDelegate: Any { return songDelegate }
     var filterContainer: (UIViewController & FilterContainer)?
     var filterEntities: FilterViewController.FilterEntities { return .songs(songs) }
     var collectionView: UICollectionView?
@@ -154,7 +157,6 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Inf
     var applicableActions: [SongAction] { return [SongAction.collect, .info(context: .album(at: 0, within: [])), .queue(name: album?.representativeItem?.albumTitle ??? .untitledAlbum, query: nil), .newPlaylist, .addTo] }
     @objc lazy var songManager: SongActionManager = { return SongActionManager.init(actionable: self) }()
     
-    @objc lazy var songDelegate: SongDelegate = { SongDelegate.init(container: self) }()
     var sections = [SortSectionDetails]()
     var highlightedIndex: Int?
     @objc var ascending = true {
@@ -235,7 +237,7 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Inf
         
         let queue = OperationQueue()
         queue.name = "Image Operation Queue"
-        queue.maxConcurrentOperationCount = 3
+        
         
         return queue
     }()
@@ -251,7 +253,7 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Inf
         
         let queue = OperationQueue()
         queue.name = "Sort Operation Queue"
-        queue.maxConcurrentOperationCount = 3
+        
         
         return queue
     }()
@@ -264,6 +266,9 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Inf
         
         super.viewDidLoad()
         
+        let inset = entityVC?.peeker != nil ? 0 : entityVC?.inset ?? 0
+        tableView.contentInset.top = inset
+        tableView.scrollIndicatorInsets.top = inset
         adjustInsets(context: .container)
         
         prepareLifetimeObservers()
@@ -333,25 +338,58 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Inf
             
             copyrightLabel.superview?.superview?.isHidden = true
         }
+    }
+    
+    func updateLikedButton(_ sender: UIButton) {
         
-        let image: UIImage? = {
+        guard let album = album else { return }
+        
+        sender.setImage(image(for: album.likedState), for: .normal)
+    }
+    
+    func image(for likedState: LikedState) -> UIImage {
+        
+        switch likedState {
             
-            switch album?.likedState {
-                
-                case .some(.liked): return #imageLiteral(resourceName: "Loved")
-                    
-                case .some(.disliked): return #imageLiteral(resourceName: "Unloved")
-                    
-                case .some(.none): return #imageLiteral(resourceName: "NoLove")
-                    
-                default:
-                    
-                    headerView.showLoved = false
-                    return nil
-            }
-        }()
+            case .liked: return #imageLiteral(resourceName: "Loved13")
+            
+            case .disliked: return #imageLiteral(resourceName: "Unloved13")
+            
+            case .none: return #imageLiteral(resourceName: "NoLove13")
+        }
+    }
+    
+    @objc func setLiked() {
         
-        likedImageView.image = image
+        guard let album = album else { return }
+        
+        var value: Int {
+            
+            switch album.likedState {
+                
+                case .none: return LikedState.liked.rawValue
+                
+                case .liked: return LikedState.disliked.rawValue
+                
+                case .disliked: return LikedState.none.rawValue
+            }
+        }
+        
+        album.set(property: .albumLikedState, to: NSNumber.init(value: value))
+        
+        UIView.transition(with: headerView.likedStateButton, duration: 0.3, options: .transitionCrossDissolve, animations: { self.updateLikedButton(self.headerView.likedStateButton) }, completion: { [weak self] finished in
+            
+            guard finished, let weakSelf = self else { return }
+            
+            UniversalMethods.performOnMainThread({
+            
+                if weakSelf.headerView.likedStateButton.image(for: .normal) != weakSelf.image(for: album.likedState) {
+                    
+                    UIView.transition(with: weakSelf.headerView.likedStateButton, duration: 0.3, options: .transitionCrossDissolve, animations: { weakSelf.updateLikedButton(weakSelf.headerView.likedStateButton) }, completion: nil)
+                }
+            
+            }, afterDelay: 0.3)
+        })
     }
     
     @objc func prepareGestures() {
@@ -745,162 +783,6 @@ extension AlbumItemsViewController: TableViewContainer {
     }
 }
 
-extension AlbumItemsViewController: UITableViewDelegate, UITableViewDataSource {
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
-        if filtering {
-            
-            return filteredSongs.count
-            
-        } else {
-            
-            switch sortCriteria {
-                
-                case .random: return songs.count
-                
-                default: return sections[section].count
-            }
-        }
-    }
-    
-    func numberOfSections(in tableView: UITableView) -> Int {
-        
-        if filtering {
-            
-            return 1
-            
-        } else {
-            
-            switch sortCriteria {
-                
-                case .random: return 1
-                
-                default: return sections.count
-            }
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        let cell = tableView.songCell(for: indexPath)
-        
-        let song = getSong(from: indexPath)
-        
-//        cell.delegate = songDelegate
-//        cell.scrollDelegate = songDelegate
-        cell.prepare(with: song, songNumber: indexPath.row + 1, highlightedSong: entityVC?.highlightedEntities?.song)
-        
-        updateImageView(using: song, in: cell, indexPath: indexPath, reusableView: tableView)
-        
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        
-        operations[indexPath]?.cancel()
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        if tableView.isEditing {
-            
-            self.tableView(tableView, commit: self.tableView(tableView, editingStyleForRowAt: indexPath), forRowAt: indexPath)
-            
-        } else {
-            
-            let song = getSong(from: indexPath)
-            
-            musicPlayer.play(filtering ? filteredSongs : songs, startingFrom: song, from: self, withTitle: song.validAlbum, subtitle: "Starting from \(song.validTitle)", alertTitle: "Play")
-        }
-        
-        tableView.deselectRow(at: indexPath, animated: true)
-    }
-    
-    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        
-        return true
-    }
-    
-    func sectionIndexTitles(for tableView: UITableView) -> [String]? {
-        
-        guard !filtering else { return nil }
-        
-        guard sections.count > 1 else { return nil }
-        
-        switch sortCriteria {
-            
-            case .random: return nil
-                
-            default: return sections.map({ $0.indexTitle })
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
-        
-        return .insert
-    }
-    
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        
-        if editingStyle == .insert {
-            
-            let song = getSong(from: indexPath)
-            
-            notifier.post(name: .addedToQueue, object: nil, userInfo: [DictionaryKeys.queueItems: [song]])
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        
-        guard !songs.isEmpty else { return nil }
-        
-        let header = tableView.sectionHeader
-        
-        if filtering {
-            
-            header?.label.text = nil
-            
-        } else {
-            
-            switch sortCriteria {
-                
-                case .random: header?.label.text = nil
-                    
-                default: header?.label.text = sections[section].title.uppercased()
-            }
-        }
-        
-        return header
-    }
-    
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        
-        if filtering {
-            
-            return 11
-            
-        } else {
-            
-            switch sortCriteria {
-                
-                case .random: return 11
-                    
-                default:
-                    
-                    let height = ("eh" as NSString).boundingRect(with: CGSize(width: 100, height: CGFloat.greatestFiniteMagnitude), options: .usesLineFragmentOrigin, attributes: [.font: UIFont.myriadPro(ofWeight: .light, size: 20)], context: nil).height
-                    
-                    return height + 24
-            }
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        
-        return 0.001
-    }
-}
-
 extension AlbumItemsViewController: UIViewControllerPreviewingDelegate {
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
@@ -934,11 +816,27 @@ extension AlbumItemsViewController: UIViewControllerPreviewingDelegate {
             vc.peeker = nil
         }
         
+        if let vc = viewControllerToCommit as? Navigatable, let indexer = vc.activeChildViewController as? IndexContaining {
+            
+            indexer.tableView.contentInset.top = vc.inset
+            indexer.tableView.scrollIndicatorInsets.top = vc.inset
+            
+            if let sortable = indexer as? FullySortable, sortable.highlightedIndex == nil {
+                
+                indexer.tableView.contentOffset.y = -vc.inset
+            }
+            
+            entityVC?.container?.visualEffectNavigationBar.backBorderView.alpha = 1
+            entityVC?.container?.visualEffectNavigationBar.backView.isHidden = false
+            entityVC?.container?.visualEffectNavigationBar.backLabel.text = vc.backLabelText
+            entityVC?.container?.visualEffectNavigationBar.titleLabel.text = vc.title
+        }
+        
         show(viewControllerToCommit, sender: nil)
     }
 }
 
-extension AlbumItemsViewController: Arrangeable {
+extension AlbumItemsViewController: FullySortable {
     
     @objc func sortItems() {
         

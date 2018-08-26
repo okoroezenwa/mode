@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="M4Y-Lb-cyx">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.13.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="M4Y-Lb-cyx">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
-        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.9"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -36,7 +33,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Nothing Playing" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eQr-BK-8sg">
-                                <rect key="frame" x="16" y="115.5" width="288" height="20"/>
+                                <rect key="frame" x="16" y="115" width="288" height="20"/>
                                 <fontDescription key="fontDescription" name="MyriadPro-It" family="Myriad Pro" pointSize="20"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -168,7 +165,7 @@
                                                         </subviews>
                                                     </stackView>
                                                     <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iAl-Mi-djg">
-                                                        <rect key="frame" x="15.5" y="15.5" width="24" height="24"/>
+                                                        <rect key="frame" x="15" y="15.5" width="24" height="24"/>
                                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" secondItem="iAl-Mi-djg" secondAttribute="height" multiplier="1:1" id="Oxf-CZ-uex"/>
@@ -202,13 +199,13 @@
                                                 <rect key="frame" x="0.0" y="0.0" width="320" height="55"/>
                                                 <subviews>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="816-bL-cS0">
-                                                        <rect key="frame" x="0.0" y="0.0" width="54" height="55"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="54.5" height="55"/>
                                                         <subviews>
                                                             <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="z3D-D7-JgG">
-                                                                <rect key="frame" x="0.0" y="0.0" width="54" height="55"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="54.5" height="55"/>
                                                                 <subviews>
                                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NlE-R8-Bpz">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="54" height="55"/>
+                                                                        <rect key="frame" x="0.0" y="0.0" width="54.5" height="55"/>
                                                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                         <inset key="contentEdgeInsets" minX="0.5" minY="0.0" maxX="0.0" maxY="4"/>
                                                                         <state key="normal" image="NoLove14"/>
@@ -243,13 +240,13 @@
                                                         </constraints>
                                                     </view>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nmc-lf-WcY">
-                                                        <rect key="frame" x="54" y="0.0" width="157.5" height="55"/>
+                                                        <rect key="frame" x="54.5" y="0.0" width="156.5" height="55"/>
                                                         <subviews>
                                                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="LtK-Uu-HyO">
-                                                                <rect key="frame" x="0.0" y="0.0" width="157.5" height="55"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="156.5" height="55"/>
                                                                 <subviews>
                                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ETn-lW-U8C">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="26.5" height="55"/>
+                                                                        <rect key="frame" x="0.0" y="0.0" width="26" height="55"/>
                                                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="18"/>
                                                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                         <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="0.0" maxY="4"/>
@@ -260,7 +257,7 @@
                                                                         </connections>
                                                                     </button>
                                                                     <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YiZ-Ui-7oI">
-                                                                        <rect key="frame" x="26.5" y="0.0" width="26" height="55"/>
+                                                                        <rect key="frame" x="26" y="0.0" width="26" height="55"/>
                                                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="18"/>
                                                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                         <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="0.0" maxY="4"/>
@@ -271,7 +268,7 @@
                                                                         </connections>
                                                                     </button>
                                                                     <button opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="N75-EA-OXF">
-                                                                        <rect key="frame" x="52.5" y="0.0" width="26.5" height="55"/>
+                                                                        <rect key="frame" x="52" y="0.0" width="26.5" height="55"/>
                                                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="18"/>
                                                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                         <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="0.0" maxY="4"/>
@@ -282,7 +279,7 @@
                                                                         </connections>
                                                                     </button>
                                                                     <button opaque="NO" tag="3" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6qA-hc-hbk">
-                                                                        <rect key="frame" x="79" y="0.0" width="26" height="55"/>
+                                                                        <rect key="frame" x="78.5" y="0.0" width="26" height="55"/>
                                                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="18"/>
                                                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                         <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="0.0" maxY="4"/>
@@ -293,7 +290,7 @@
                                                                         </connections>
                                                                     </button>
                                                                     <button opaque="NO" tag="4" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="39L-gz-Pf4">
-                                                                        <rect key="frame" x="105" y="0.0" width="26.5" height="55"/>
+                                                                        <rect key="frame" x="104.5" y="0.0" width="26" height="55"/>
                                                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="18"/>
                                                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                         <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="0.0" maxY="4"/>
@@ -304,7 +301,7 @@
                                                                         </connections>
                                                                     </button>
                                                                     <button opaque="NO" tag="5" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zGi-d4-4kj">
-                                                                        <rect key="frame" x="131.5" y="0.0" width="26" height="55"/>
+                                                                        <rect key="frame" x="130.5" y="0.0" width="26" height="55"/>
                                                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="18"/>
                                                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                         <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="0.0" maxY="4"/>
@@ -326,7 +323,7 @@
                                                         </constraints>
                                                     </view>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3Hm-DT-k7y">
-                                                        <rect key="frame" x="211.5" y="0.0" width="54.5" height="55"/>
+                                                        <rect key="frame" x="211" y="0.0" width="54.5" height="55"/>
                                                         <subviews>
                                                             <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="oe1-2g-euR">
                                                                 <rect key="frame" x="0.0" y="0.0" width="54.5" height="55"/>
@@ -367,13 +364,13 @@
                                                         </constraints>
                                                     </view>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="inh-XP-6Gs">
-                                                        <rect key="frame" x="266" y="0.0" width="54" height="55"/>
+                                                        <rect key="frame" x="265.5" y="0.0" width="54.5" height="55"/>
                                                         <subviews>
                                                             <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xBG-nX-QIr">
-                                                                <rect key="frame" x="0.5" y="0.0" width="54" height="55"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="54.5" height="55"/>
                                                                 <subviews>
                                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AHf-HV-hKx">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="54" height="55"/>
+                                                                        <rect key="frame" x="0.0" y="0.0" width="54.5" height="55"/>
                                                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                         <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="0.0" maxY="4"/>
                                                                         <state key="normal" image="Repeat"/>
@@ -384,7 +381,7 @@
                                                                 </subviews>
                                                             </stackView>
                                                             <view hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PRe-nQ-z2I">
-                                                                <rect key="frame" x="12" y="10.5" width="30" height="30"/>
+                                                                <rect key="frame" x="12.5" y="10.5" width="30" height="30"/>
                                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="width" secondItem="PRe-nQ-z2I" secondAttribute="height" multiplier="1:1" id="SR9-Dp-BMe"/>
@@ -434,7 +431,7 @@
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="CGY-nS-C7n">
                                         <rect key="frame" x="0.0" y="0.0" width="320" height="30"/>
                                         <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="999" verticalCompressionResistancePriority="999" text="Up Next" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gmn-MC-D7U">
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="999" verticalCompressionResistancePriority="999" text="up next" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gmn-MC-D7U">
                                                 <rect key="frame" x="10" y="5" width="201" height="20"/>
                                                 <fontDescription key="fontDescription" name="MyriadPro-Semibold" family="Myriad Pro" pointSize="20"/>
                                                 <nil key="textColor"/>
@@ -484,7 +481,7 @@
                                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                         </collectionViewFlowLayout>
                                         <cells>
-                                            <collectionViewCell opaque="NO" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="cell" id="7B4-y7-O7a" customClass="WidgetCollectionViewCell" customModule="ModeWidget" customModuleProvider="target">
+                                            <collectionViewCell opaque="NO" multipleTouchEnabled="YES" contentMode="center" misplaced="YES" reuseIdentifier="cell" id="7B4-y7-O7a" customClass="WidgetCollectionViewCell" customModule="ModeWidget" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="0.0" width="90" height="90"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -492,13 +489,13 @@
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="SPt-KQ-Pf0">
-                                                            <rect key="frame" x="16" y="8" width="58" height="72"/>
+                                                            <rect key="frame" x="8" y="8" width="74" height="74"/>
                                                             <subviews>
                                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="TET-8o-P5a" customClass="InvertIgnoringImageView" customModule="ModeWidget" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="58" height="72"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="74" height="74"/>
                                                                 </imageView>
                                                                 <view hidden="YES" clipsSubviews="YES" alpha="0.20000000298023224" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gWx-pN-wZz" customClass="InvertIgnoringView" customModule="ModeWidget" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="58" height="72"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="74" height="74"/>
                                                                     <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                 </view>
                                                             </subviews>

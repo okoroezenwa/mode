@@ -27,11 +27,11 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
         
         didSet {
             
-            let lockView = BorderedButtonView.with(title: "Lock", image: #imageLiteral(resourceName: "Locked13"), action: /*#selector(addSongs)*/nil, target: self)
-            lockButton = lockView.button
-            self.lockView = lockView
+//            let lockView = BorderedButtonView.with(title: "Lock", image: #imageLiteral(resourceName: "Locked13"), action: /*#selector(addSongs)*/nil, target: self)
+//            lockButton = lockView.button
+//            self.lockView = lockView
             
-            let clearView = BorderedButtonView.with(title: "Clear", image: #imageLiteral(resourceName: "Discard"), action: #selector(clear), target: self)
+            let clearView = BorderedButtonView.with(title: "Clear...", image: #imageLiteral(resourceName: "Discard"), action: #selector(clear), target: self)
             clearButton = clearView.button
             self.clearView = clearView
             
@@ -39,7 +39,7 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
             editButton = editView.button
             self.editView = editView
             
-            for view in [lockView, clearView, editView] {
+            for view in [/*lockView, */clearView, editView] {
                 
                 view.button.contentEdgeInsets.top = 10
                 view.button.contentEdgeInsets.bottom = 0
@@ -54,16 +54,15 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
     @IBOutlet var playButton: MELButton!
     @IBOutlet var shuffleButton: MELButton!
     
-    @objc var lockButton: MELButton!
+//    @objc var lockButton: MELButton!
     @objc var clearButton: MELButton!
     @objc var editButton: MELButton!
-    @objc var lockView: BorderedButtonView!
+//    @objc var lockView: BorderedButtonView!
     @objc var clearView: BorderedButtonView!
     @objc var editView: BorderedButtonView!
     
     var borderedButtons = [BorderedButtonView?]()
     
-    @objc lazy var songDelegate: SongDelegate = { SongDelegate.init(container: self) }()
     var manager: QueueManager!
     @objc lazy var itemsToAdd = [MPMediaItem]()
     @objc var peeker: UIViewController?
@@ -94,7 +93,7 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
         
         let queue = OperationQueue()
         queue.name = "Image Operation Queue"
-        queue.maxConcurrentOperationCount = 3
+        
         
         return queue
     }()
@@ -187,17 +186,6 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
             if !tableView.isEditing {
                 
                 tableView.setEditing(true, animated: true)
-                
-//                editingStackViewHeightConstraint.constant = 44
-//                actionsViewHeightConstraint.constant = 0
-//
-//                UIView.animate(withDuration: 0.3, animations: {
-//
-//                    self.actionsView.alpha = 0
-//                    self.editingStackView.alpha = 1
-//                    self.bottomView.layoutIfNeeded()
-//                    self.tableView.tableHeaderView?.layoutIfNeeded()
-//                })
             }
             
         } else {
@@ -205,17 +193,6 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
             if tableView.isEditing {
                 
                 tableView.setEditing(false, animated: true)
-                
-//                editingStackViewHeightConstraint.constant = 0
-//                actionsViewHeightConstraint.constant = 44
-//
-//                UIView.animate(withDuration: 0.3, animations: {
-//
-//                    self.actionsView.alpha = 1
-//                    self.editingStackView.alpha = 0
-//                    self.bottomView.layoutIfNeeded()
-//                    self.tableView.tableHeaderView?.layoutIfNeeded()
-//                })
             }
         }
     }
@@ -322,7 +299,7 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
 //            array.removeLast(2)
 //        }
         
-        borderedButtons = [lockView, clearView, editView]//array
+        borderedButtons = [/*lockView, */clearView, editView]//array
         
         updateButtons()
     }
@@ -626,9 +603,16 @@ extension CollectorViewController: EntityCellDelegate {
         
         guard let indexPath = tableView.indexPath(for: cell) else { return }
         
-        cell.setHighlighted(true, animated: true)
-        self.tableView(self.tableView, didSelectRowAt: indexPath)
-        cell.setHighlighted(false, animated: true)
+        if tableView.isEditing {
+            
+            tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
+            
+        } else {
+            
+            cell.setHighlighted(true, animated: true)
+            self.tableView(self.tableView, didSelectRowAt: indexPath)
+            cell.setHighlighted(false, animated: true)
+        }
     }
 }
 

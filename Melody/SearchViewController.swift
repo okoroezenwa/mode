@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 import Foundation
 
-class SearchViewController: UIViewController, Filterable, DynamicSections, AlbumTransitionable, Contained, InfoLoading, ArtistTransitionable, GenreTransitionable, ComposerTransitionable, AlbumArtistTransitionable, PlaylistTransitionable, EntityContainer, OptionsContaining, CellAnimatable, IndexContaining, FilterContainer, SingleItemActionable, EntityVerifiable, TopScrollable, Detailing {
+class SearchViewController: UIViewController, Filterable, DynamicSections, AlbumTransitionable, Contained, InfoLoading, ArtistTransitionable, GenreTransitionable, ComposerTransitionable, AlbumArtistTransitionable, PlaylistTransitionable, EntityContainer, OptionsContaining, CellAnimatable, IndexContaining, FilterContainer, SingleItemActionable, EntityVerifiable, TopScrollable, Detailing, Navigatable {
 
     @IBOutlet weak var tableView: MELTableView!
     @IBOutlet weak var emptyStackView: UIStackView!
@@ -89,6 +89,13 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
     lazy var manager = { SongActionManager.init(actionable: self) }()
     var editButton: MELButton! = MELButton()
     
+    var backLabelText: String?
+    var requiresShadow = false
+    var artwork: UIImage?
+    let inset: CGFloat = 10 + 34 + 10 + 1
+    lazy var preferredTitle: String? = "Search"
+    var activeChildViewController: UIViewController?
+    
     @objc lazy var songs = [MPMediaItem]()
     @objc lazy var playlists = [MPMediaPlaylist]()
     @objc lazy var playlistCounts = [Int]()
@@ -101,6 +108,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
     var options: LibraryOptions { return .init(fromVC: self, configuration: .search) }
     var sectionIndexViewController: SectionIndexViewController?
     let requiresLargerTrailingConstraint = false
+    var navigatable: Navigatable?
     var ignorePropertyChange = false
     var filterViewContainer: FilterViewContainer! {
         
@@ -128,7 +136,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         let button = MELButton.init(frame: .init(x: 0, y: 0, width: 30, height: 30))
         button.setTitle(nil, for: .normal)
         button.addTarget(self, action: #selector(rightViewButtonTapped), for: .touchUpInside)
-        button.titleLabel?.font = UIFont.myriadPro(ofWeight: .bold, size: 17)
+        button.titleLabel?.font = UIFont.myriadPro(ofWeight: .semibold, size: 17)
         
         return button
     }()
@@ -178,7 +186,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         
         let queue = OperationQueue()
         queue.name = "Image Operation Queue"
-        queue.maxConcurrentOperationCount = 3
+        
         
         return queue
     }()
@@ -194,13 +202,12 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         
         let queue = OperationQueue()
         queue.name = "Filter Operation Queue"
-        queue.maxConcurrentOperationCount = 3
+        
         
         return queue
     }()
     @objc var operation: BlockOperation?
     @objc var filterOperation: BlockOperation?
-    @objc lazy var songDelegate: SongDelegate = { SongDelegate.init(container: self) }()
     
     // MARK: - Methods
     
@@ -208,7 +215,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         
         super.viewDidLoad()
         
-        title = "Search"
+        container?.visualEffectNavigationBar.titleLabel.text = title
         
         navigationController?.delegate = presenter
         presenter.interactor.add(to: navigationController)
@@ -1124,6 +1131,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
             
             if filtering {
                 
+                tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
                 self.tableView(tableView, commit: .insert, forRowAt: indexPath)
                 saveRecentSearch(withTitle: searchBar?.text, resignFirstResponder: false)
                 tableView.deselectRow(at: indexPath, animated: true)
@@ -1190,17 +1198,8 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        
-        if filtering {
             
-            let height = ("eh" as NSString).boundingRect(with: CGSize(width: 100, height: CGFloat.greatestFiniteMagnitude), options: .usesLineFragmentOrigin, attributes: [.font: UIFont.myriadPro(ofWeight: .light, size: .tableHeader)], context: nil).height
-            
-            return height + 24
-            
-        } else {
-            
-            return 0.001
-        }
+        return filtering ? .textHeaderHeight : 0.00001
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
@@ -1240,25 +1239,9 @@ extension SearchViewController: UISearchBarDelegate {
         
         emptyStackView.isHidden = filtering || recentSearches.count > 0
         
-//        if !filtering {
-//
-//            tableView.contentOffset = unfilteredPoint
-//        }
-        
         updateDeleteButton()
         
-//        topView.layoutIfNeeded()
-//
-//        clearButtonTrailingConstraint.constant = filtering || recentSearches.isEmpty ? -44 : 0
-//
-//        UIView.animate(withDuration: 0.3, animations: { self.topView.layoutIfNeeded() })
-        
         adjustInsets(context: .container)
-        
-        if let _ = presentedViewController as? PropertyTestViewController {
-            
-            presentedViewController?.dismiss(animated: true, completion: nil)
-        }
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -1270,14 +1253,6 @@ extension SearchViewController: UISearchBarDelegate {
         if filtering {
             
             updateDeleteButton()
-            
-//            emptyStackView.isHidden = true
-//
-//            topView.layoutIfNeeded()
-//
-//            clearButtonTrailingConstraint.constant = -44
-//
-//            UIView.animate(withDuration: 0.3, animations: { self.topView.layoutIfNeeded() })
             
             filter(with: searchText)
         
@@ -1292,12 +1267,6 @@ extension SearchViewController: UISearchBarDelegate {
             animateCells(direction: .vertical)
             
             updateDeleteButton()
-            
-//            topView.layoutIfNeeded()
-//
-//            clearButtonTrailingConstraint.constant = recentSearches.isEmpty ? -44 : 0
-//
-//            UIView.animate(withDuration: 0.3, animations: { self.topView.layoutIfNeeded() })
             
             if tableView.isEditing {
                 
@@ -1327,49 +1296,6 @@ extension SearchViewController: UIViewControllerPreviewingDelegate {
         previewingContext.sourceRect = cell.frame
         
         return Transitioner.shared.transition(to: sectionDetails[indexPath.section].category.entity, vc: vc, from: self, sender: collectionArray(from: sectionDetails[indexPath.section].category)[indexPath.row], preview: true)
-        
-//        if SearchCategory.playlists.rawValue == sectionDetails[indexPath.section].rawValue, let cell = tableView.cellForRow(at: indexPath) {
-//
-//            let vc = entityStoryboard.instantiateViewController(withIdentifier: "entityItems")
-//
-//            previewingContext.sourceRect = cell.frame
-//
-//            return Transitioner.shared.transition(to: .playlist, vc: vc, from: self, sender: playlists[indexPath.row], preview: true)
-//
-//        } else if SearchCategory.albums.rawValue == sectionDetails[indexPath.section].rawValue, let cell = tableView.cellForRow(at: indexPath) {
-//
-//            let vc = entityStoryboard.instantiateViewController(withIdentifier: "entityItems")
-//
-//            previewingContext.sourceRect = cell.frame
-//
-//            return Transitioner.shared.transition(to: .album, vc: vc, from: self, sender: albums[indexPath.row], preview: true)
-//
-//        } else if Set([SearchCategory.artists, .genres, .composers].map({ $0.rawValue })).contains(sectionDetails[indexPath.section].rawValue), let cell = tableView.cellForRow(at: indexPath) {
-//
-//            let details: (collection: MPMediaItemCollection, entity: Entity) = {
-//
-//                if sectionDetails[indexPath.section].rawValue == SearchCategory.artists.rawValue {
-//
-//                    return (artists[indexPath.row], .artist)
-//
-//                } else if sectionDetails[indexPath.section].rawValue == SearchCategory.genres.rawValue {
-//
-//                    return (genres[indexPath.row], .genre)
-//
-//                } else {
-//
-//                    return (composers[indexPath.row], .composer)
-//                }
-//            }()
-//
-//            let vc = entityStoryboard.instantiateViewController(withIdentifier: "entityItems")
-//
-//            previewingContext.sourceRect = cell.frame
-//
-//            return Transitioner.shared.transition(to: details.entity, vc: vc, from: self, sender: details.collection, preview: true)
-//        }
-//
-//        return nil
     }
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {

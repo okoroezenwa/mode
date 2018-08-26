@@ -31,6 +31,8 @@ class MELTableViewCell: UITableViewCell {
         
         changeThemeColor()
         
+        selectedBackgroundView = MELBorderView()
+        
         notifier.addObserver(self, selector: #selector(changeThemeColor), name: .themeChanged, object: nil)
     }
     
@@ -41,6 +43,8 @@ class MELTableViewCell: UITableViewCell {
         backgroundColor = .clear
         
         changeThemeColor()
+        
+        selectedBackgroundView = MELBorderView()
         
         notifier.addObserver(self, selector: #selector(changeThemeColor), name: .themeChanged, object: nil)
     }

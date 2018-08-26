@@ -29,11 +29,14 @@ class PresentedContainerViewController: UIViewController {
     @IBOutlet weak var parentViewLeadingConstraint: NSLayoutConstraint!
     @IBOutlet weak var parentViewTrailingConstraint: NSLayoutConstraint!
     @IBOutlet weak var largeActivityIndicator: MELActivityIndicatorView!
+    @IBOutlet var promptLabel: MELLabel!
+    @IBOutlet var topStackViewConstraint: NSLayoutConstraint!
     
-    enum ChildContext { case items, playlists, upNext, newPlaylist, settings, tips, queue, playlistDetails, info, songDetails, queueGuard, theme, gestures, playback, tabBar, background, filter, artwork, icon, fullPlayer, libraryRefresh, recents, properties }
+    enum ChildContext { case items, playlists, upNext, newPlaylist, settings, tips, queue, playlistDetails, info, songDetails, queueGuard, theme, gestures, playback, tabBar, background, filter, artwork, icon, fullPlayer, libraryRefresh, recents, properties, lyricsInfo }
     
     var context = ChildContext.items
     var manager: QueueManager?
+    var prompt: String?
     @objc var query: MPMediaQuery?
     @objc var itemsToAdd = [MPMediaItem]()
     @objc var firstLaunch = true
@@ -227,6 +230,12 @@ class PresentedContainerViewController: UIViewController {
         
         return vc
     }()
+    @objc lazy var lyricsInfoVC: LyricsInfoViewController = {
+        
+        let vc = UIStoryboard.init(name: "LyricsInfoViewController", bundle: nil).instantiateViewController(withIdentifier: "LyricsInfoViewController") as! LyricsInfoViewController
+        
+        return vc
+    }()
     @objc var activeViewController: UIViewController? {
         
         didSet {
@@ -252,10 +261,10 @@ class PresentedContainerViewController: UIViewController {
         
         modalIndex += 1
         
-        if #available(iOS 11, *) {
-            
-            view.accessibilityIgnoresInvertColors = darkTheme
-        }
+//        if #available(iOS 11, *) {
+//
+//            view.accessibilityIgnoresInvertColors = darkTheme
+//        }
         
         if useConstraintConstant {
             
@@ -312,6 +321,8 @@ class PresentedContainerViewController: UIViewController {
                 case .recents: return recentsVC
                 
                 case .properties: return propertiesVC
+                
+                case .lyricsInfo: return lyricsInfoVC
             }
         }()
         
@@ -334,10 +345,10 @@ class PresentedContainerViewController: UIViewController {
         
         setNeedsStatusBarAppearanceUpdate()
         
-        if #available(iOS 11, *) {
-            
-            view.accessibilityIgnoresInvertColors = darkTheme
-        }
+//        if #available(iOS 11, *) {
+//            
+//            view.accessibilityIgnoresInvertColors = darkTheme
+//        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -489,6 +500,8 @@ class PresentedContainerViewController: UIViewController {
                 case .recents: return "Recents"
                 
                 case .properties: return title ?? ""
+                
+                case .lyricsInfo: return "Lyrics Details"
             }
         }()
         
@@ -500,6 +513,8 @@ class PresentedContainerViewController: UIViewController {
             
             titleLabel.text = text
         }
+        
+        updatePrompt(animated: animated)
     
         switch context {
             
@@ -541,7 +556,7 @@ class PresentedContainerViewController: UIViewController {
                     
                     rightButton.setImage(#imageLiteral(resourceName: "Lightbulb"), for: .normal)
                 }
-        case .tips, .playlists, .songDetails, .queueGuard, .theme, .gestures, .playback, .tabBar, .background, .artwork, .icon, .fullPlayer, .libraryRefresh, .recents, .items, .properties:
+        case .tips, .playlists, .songDetails, .queueGuard, .theme, .gestures, .playback, .tabBar, .background, .artwork, .icon, .fullPlayer, .libraryRefresh, .recents, .items, .properties, .lyricsInfo:
                 
                 if updateConstraintsAndButtons {
                     
@@ -560,6 +575,19 @@ class PresentedContainerViewController: UIViewController {
                     rightButton.imageEdgeInsets.bottom = 1
                 }
         }
+    }
+    
+    func updatePrompt(animated: Bool) {
+        
+        promptLabel.text = prompt
+        topStackViewConstraint.constant = prompt == nil ? 44 : 57
+            
+        UIView.animate(withDuration: animated ? 0.3 : 0, delay: 0, options: .allowUserInteraction, animations: {
+            
+            self.promptLabel.isHidden = self.prompt == nil
+            self.view.layoutIfNeeded()
+        
+        }, completion: nil)
     }
     
     private func removeInactiveViewController(inactiveViewController: UIViewController?) {
@@ -657,7 +685,7 @@ class PresentedContainerViewController: UIViewController {
             
                 dismissVC()
             
-            case .songDetails, .tips, .queueGuard, .theme, .gestures, .playback, .tabBar, .background, .artwork, .icon, .fullPlayer, .libraryRefresh, .recents, .items, .properties: break
+            case .songDetails, .tips, .queueGuard, .theme, .gestures, .playback, .tabBar, .background, .artwork, .icon, .fullPlayer, .libraryRefresh, .recents, .items, .properties, .lyricsInfo: break
             
             case /*.items,*/ .upNext:
                 

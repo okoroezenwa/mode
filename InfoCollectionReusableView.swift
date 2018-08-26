@@ -48,6 +48,7 @@ class InfoCollectionReusableView: UICollectionReusableView {
     @IBOutlet var skipsLabel: MELLabel!
     @IBOutlet var updatedLabel: MELLabel!
     @IBOutlet var skipsTitleLabel: MELLabel!
+    @IBOutlet var scrollViews: [UIScrollView]!
     
     @objc let queueView = BorderedButtonView.with(title: "Queue...", image: #imageLiteral(resourceName: "AddSong10"), action: nil, target: nil)
     @objc let insertView = BorderedButtonView.with(title: "Insert...", image: #imageLiteral(resourceName: "AddToPlaylist10"), action: nil, target: nil)

@@ -29,47 +29,41 @@ class LyricsViewController: UIViewController {
     
     #warning("Needs localisation update")
     var textAlignment: NSTextAlignment = .left
-    
-    var item: MPMediaItem? {
-        
-        didSet {
-            
-            guard item != oldValue, let item = item else { return }
-            
-            if item.validLyrics.isEmpty {
-                
-                textView.isHidden = true
-                unavailableLabel.isHidden = true
-                activityIndicator.startAnimating()
-                
-                if oldValue != nil {
-                
-                    updateBottomView(to: .hidden)
-                }
-                
-                getLyrics()
-                
-            } else {
-                
-                activityIndicator.stopAnimating()
-                unavailableLabel.isHidden = true
-                textView.contentOffset = .zero
-                textView.text = item.validLyrics
-                textView.isHidden = false
-                
-                locationButton.setImage(#imageLiteral(resourceName: "Offline14"), for: .normal)
-                locationButton.setTitle("on device", for: .normal)
-                
-                updateBottomView(to: .visible, animated: oldValue == nil)
-            }
-        }
-    }
+    lazy var manager = LyricsManager(viewer: self)
     
     override func viewDidLoad() {
         
         super.viewDidLoad()
         
         updateBottomView(to: .hidden, animated: false)
+    }
+    
+    func prepareLyrics(updateBootomView: Bool) {
+        
+        textView.isHidden = true
+        unavailableLabel.isHidden = true
+        activityIndicator.startAnimating()
+        
+        if updateBootomView {
+            
+            updateBottomView(to: .hidden)
+        }
+        
+        manager.getLyrics()
+    }
+    
+    func useDeviceLyrics(source: String?, lyrics: String?, animated: Bool) {
+        
+        activityIndicator.stopAnimating()
+        unavailableLabel.isHidden = true
+        textView.contentOffset = .zero
+        textView.text = lyrics
+        textView.isHidden = false
+        
+        locationButton.setImage(#imageLiteral(resourceName: "Offline14"), for: .normal)
+        locationButton.setTitle(source, for: .normal)
+        
+        updateBottomView(to: .visible, animated: animated)
     }
     
     func updateBottomView(to state: VisibilityState, animated: Bool = true) {
@@ -81,145 +75,34 @@ class LyricsViewController: UIViewController {
         })
     }
     
-    func getLyrics() {
+    @IBAction func viewLyricsDetails() {
         
-        let token = "Xn2cLRvTA6EIfuTt8NE4jBiiqf579ocFAwQ5xzlEPkO11Kfo3MW0LGgsm6MtfeAl"
-        let base = "https://api.genius.com"
+        guard let presentedVC = presentedStoryboard.instantiateViewController(withIdentifier: "presentedVC") as? PresentedContainerViewController else { return }
         
-        guard let title = item?.validTitle.lowercased().roundedBracketsRemoved.squareBracketsRemoved.punctuationRemoved.censoredWordsReplaced, let artist = item?.validArtist.lowercased().roundedBracketsRemoved.squareBracketsRemoved.replacingOccurrences(of: "&", with: "") else { return }
+        presentedVC.context = .lyricsInfo
+        presentedVC.lyricsInfoVC.manager = manager
         
-        var request = URLRequest.init(url: URL.init(string: base + "/search")!)
-        request.httpMethod = "GET"
-        request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        let text = title + " " + artist
-        
-        let parameters = ["q": text]
-        request.httpBody = try? JSONSerialization.data(withJSONObject: parameters, options: [])
-        
-        let task = URLSession.shared.dataTask(with: request, completionHandler: { data, response, error in
-            
-            if let error = error {
-                
-                print(error)
-                
-                DispatchQueue.main.async { self.displayUavailable() }
-                
-                return
-            }
-            
-            do {
-                
-                let genius = try JSONDecoder().decode(Genius.self, from: data!)
-                
-                DispatchQueue.main.async {
-                    
-                    let url = genius.response.hits.first(where: { hit in Set(["Translations", "Tracklist", "[Credits]"]).contains(where: { hit.result.fullTitle.contains($0) }).inverted && (hit.result.title.similarityTo(title, fuzziness: 0.4) >= 0.5 || hit.result.artist.name.similarityTo(artist, fuzziness: 0.4) >= 0.5) })?.result.url
-                    
-                    self.downloadHTML(from: url)
-                }
-                
-            } catch let error {
-                
-                print(error)
-                
-                DispatchQueue.main.async { self.displayUavailable() }
-            }
-        })
-        
-        task.resume()
+        present(presentedVC, animated: true, completion: nil)
     }
     
-    func downloadHTML(from urlString: String?) {
+    func performSuccesfulLyricsCheck(with text: String) {
         
-        guard let url = URL(string: urlString ?? "") else {
-            
-            if isInDebugMode {
-                
-                UniversalMethods.banner(withTitle: "Invalid URL").show(for: 0.3)
-            }
-            
-            self.displayUavailable()
-            
-            return
-        }
+        activityIndicator?.stopAnimating()
+        unavailableLabel?.isHidden = true
         
-        DispatchQueue.global(qos: .utility).async {
-            
-            do {
-                
-                let html = try String.init(contentsOf: url)
-                
-                let document = try SwiftSoup.parse(html)
-                document.outputSettings().prettyPrint(pretty: false)
-                try document.select("br").append("\\n")
-                try document.select("p").prepend("\\n\\n")
-//                let new = try document.html().replacingOccurrences(of: "\\\\n", with: "\n")
-//
-//                if let newDoc = try SwiftSoup.clean(new, .none()) {
-//
-//                    let doc = try SwiftSoup.parse(newDoc)
-//                    doc.outputSettings().prettyPrint(pretty: false)
-//
-//                    document = doc
-//                }
-                
-                UniversalMethods.performInMain { self.parse(document) }
-                
-            } catch let error {
-                
-                DispatchQueue.main.async {
-                    
-                    if isInDebugMode {
-                    
-                        UniversalMethods.banner(withTitle: "\(error)").show(for: 1)
-                    }
-
-                    self.displayUavailable()
-                }
-            }
-        }
+        textView.contentOffset = .zero
+        
+        textView?.text = text
+        
+        textView?.isHidden = false
+        
+        locationButton?.setImage(#imageLiteral(resourceName: "Web"), for: .normal)
+        locationButton?.setTitle("genius", for: .normal)
+        
+        updateBottomView(to: .visible)
     }
     
-    func parse(_ document: Document) {
-        
-        do {
-            
-            let elements: Elements = try document.select("body")
-            
-            if let text = try elements.first()?.text().components(separatedBy: "\\n\\n")[1].replacingOccurrences(of: "\\n ", with: "\n").replacingOccurrences(of: "More on Genius", with: "\\") {
-                
-                activityIndicator?.stopAnimating()
-                unavailableLabel?.isHidden = true
-                textView.contentOffset = .zero
-                
-                textView?.text = String(text.prefix(upTo: text.index(of: "\\") ?? text.endIndex))
-                
-                textView?.isHidden = false
-                
-                locationButton?.setImage(#imageLiteral(resourceName: "Web"), for: .normal)
-                locationButton?.setTitle("genius.com", for: .normal)
-                
-                updateBottomView(to: .visible)
-            
-            } else {
-            
-                displayUavailable()
-            }
-            
-        } catch let error {
-            
-            displayUavailable()
-            
-            if isInDebugMode {
-            
-                UniversalMethods.banner(withTitle: "\(error)").show(for: 1)
-            }
-        }
-    }
-    
-    func displayUavailable() {
+    func displayUnavailable() {
         
         activityIndicator.stopAnimating()
         unavailableLabel.isHidden = false
@@ -227,25 +110,35 @@ class LyricsViewController: UIViewController {
         
         updateBottomView(to: .hidden)
     }
+    
+    deinit {
+        
+        if isInDebugMode, deinitBannersEnabled {
+            
+            let banner = UniversalMethods.banner(withTitle: "LVC going away...")
+            banner.titleLabel.font = .myriadPro(ofWeight: .light, size: 22)
+            banner.show(for: 0.3)
+        }
+    }
 }
 
 // MARK: - Genius Codables
-struct Genius: Codable {
+struct Genius: Codable, Equatable {
     
     let response: Response
 }
 
-struct Response: Codable {
+struct Response: Codable, Equatable {
     
     let hits: [Hit]
 }
 
-struct Hit: Codable {
+struct Hit: Codable, Equatable {
     
     let result: Result
 }
 
-struct Result: Codable {
+struct Result: Codable, Equatable {
     
     enum CodingKeys: String, CodingKey {
         
@@ -261,7 +154,7 @@ struct Result: Codable {
     let fullTitle: String
 }
 
-struct Artist: Codable {
+struct Artist: Codable, Equatable {
     
     let name: String
 }

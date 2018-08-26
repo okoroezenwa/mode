@@ -11,12 +11,14 @@ import UIKit
 class PropertyCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var label: MELLabel!
+    @IBOutlet var imageView: MELImageView!
     
     override var isSelected: Bool {
         
         didSet {
             
             label.lightOverride = isSelected
+            imageView.lightOverride = isSelected
         }
     }
     
@@ -25,6 +27,7 @@ class PropertyCollectionViewCell: UICollectionViewCell {
         didSet {
             
             label.lightOverride = isHighlighted
+            imageView.lightOverride = isHighlighted
         }
     }
 }

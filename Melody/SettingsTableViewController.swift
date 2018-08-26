@@ -19,7 +19,8 @@ class SettingsTableViewController: UITableViewController {
         4: ("temporary", nil),
         5: ("sleep prevention", nil),
         6: (nil, nil),
-        7: (nil, nil)
+        7: (nil, nil),
+        8: (nil, nil)
     ]
     lazy var settings: SettingsDictionary = [
         
@@ -54,7 +55,8 @@ class SettingsTableViewController: UITableViewController {
         .init(7, 0): .init(title: "Show Deinit Banner", accessoryType: .onOff(isOn: { deinitBannersEnabled }, action: { [weak self] in self?.toggleDeinit() })),
         .init(7, 1): .init(title: "Use Descriptor", accessoryType: .onOff(isOn: { useDescriptor }, action: { [weak self] in self?.toggleDescriptor() })),
         .init(7, 2): .init(title: "Use Media Items", accessoryType: .onOff(isOn: { useMediaItems }, action: { [weak self] in self?.toggleMediaItems() })),
-        .init(7, 3): .init(title: "Manual Queue Insertion", accessoryType: .onOff(isOn: { useOldStyleQueue }, action: { [weak self] in self?.toggleManual() }))
+        .init(7, 3): .init(title: "Manual Queue Insertion", accessoryType: .onOff(isOn: { useOldStyleQueue }, action: { [weak self] in self?.toggleManual() })),
+        .init(8, 0): .init(title: "Collect New Songs", accessoryType: .none)
     ]
 
     override func viewDidLoad() {
@@ -241,7 +243,7 @@ class SettingsTableViewController: UITableViewController {
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         
-        return isInDebugMode ? 8 : 7
+        return isInDebugMode ? 9 : 8
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -354,6 +356,17 @@ class SettingsTableViewController: UITableViewController {
         } else if indexPath.section == 6 {
             
             reset()
+        
+        } else if indexPath.section == 8 {
+            
+            (parent as? PresentedContainerViewController)?.activityIndicator.startAnimating()
+            
+            let playlists = (MPMediaQuery.playlists().collections as? [MPMediaPlaylist])?.filter({ $0.isAppleMusic })
+            playlists?.forEach({ ($0.value(forKey: "itemsQuery") as? MPMediaQuery)?.showAll() })
+            let items = playlists?.reduce([], { $0 + $1.items.filter({ $0.existsInLibrary.inverted }) }) ?? []
+            
+            notifier.post(name: .addedToQueue, object: nil, userInfo: [DictionaryKeys.queueItems: items])
+            (parent as? PresentedContainerViewController)?.activityIndicator.stopAnimating()
         }
         
         tableView.deselectRow(at: indexPath, animated: true)
@@ -361,7 +374,7 @@ class SettingsTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         
-        return indexPath.section == 0 || (indexPath.section == 1 && Set([0, 1]).contains(indexPath.row).inverted) || indexPath.section == 2 || (indexPath.section == 4 && Set([3, 4]).contains(indexPath.row)) || indexPath.section == 5 || indexPath.section == 6
+        return indexPath.section == 0 || (indexPath.section == 1 && Set([0, 1]).contains(indexPath.row).inverted) || indexPath.section == 2 || (indexPath.section == 4 && Set([3, 4]).contains(indexPath.row)) || indexPath.section == 5 || indexPath.section == 6 || indexPath.section == 8
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {

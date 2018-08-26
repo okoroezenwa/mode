@@ -16,8 +16,8 @@ extension UIFont {
         case lightItalic = "MyriadPro-LightIt"
         case regular = "MyriadPro-Regular"
         case regularItalic = "MyriadPro-It"
-        case bold = "MyriadPro-Semibold"
-        case boldItalic = "MyriadPro-SemiboldIt"
+        case semibold = "MyriadPro-Semibold"
+        case semiboldItalic = "MyriadPro-SemiboldIt"
     }
     
     enum AvenirWeigths: String {
@@ -26,8 +26,8 @@ extension UIFont {
         case lightItalic = "AvenirNext-UltraLightItalic"
         case regular = "AvenirNext-Regular"
         case regularItalic = "AvenirNext-Italic"
-        case bold = "AvenirNext-DemiBold"
-        case boldItalic = "AvenirNext-DemiBoldItalic"
+        case demibold = "AvenirNext-DemiBold"
+        case demiboldItalic = "AvenirNext-DemiBoldItalic"
     }
     
     enum SFWeigths: String {
@@ -36,8 +36,8 @@ extension UIFont {
         case lightItalic = "AvenirNext-UltraLightItalic"
         case regular = "AvenirNext-Regular"
         case regularItalic = "AvenirNext-Italic"
-        case bold = "AvenirNext-DemiBold"
-        case boldItalic = "AvenirNext-DemiBoldItalic"
+        case demibold = "AvenirNext-DemiBold"
+        case demiboldItalic = "AvenirNext-DemiBoldItalic"
     }
     
     enum FontWeight: String {
@@ -46,8 +46,10 @@ extension UIFont {
         case lightItalic = "MyriadPro-LightIt"
         case regular = "MyriadPro-Regular"
         case regularItalic = "MyriadPro-It"
-        case bold = "MyriadPro-Semibold"
-        case boldItalic = "MyriadPro-SemiboldIt"
+        case semibold = "MyriadPro-Semibold"
+        case semiboldItalic = "MyriadPro-SemiboldIt"
+        case bold = "MyriadPro-Bold"
+        case boldItalic = "MyriadPro-BoldIt"
     }
     
     class func myriadPro(ofWeight weight: FontWeight, size: CGFloat) -> UIFont {

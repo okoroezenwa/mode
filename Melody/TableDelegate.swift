@@ -209,6 +209,11 @@ extension TableDelegate: UITableViewDelegate, UITableViewDataSource {
         self.tableView(tableView, didSelectRowAt: indexPath, filtering: false)
     }
     
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        
+        self.tableView(tableView, didDeselectRowAt: indexPath, filtering: false)
+    }
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
         return self.tableView(tableView, heightForRowAt: indexPath, filtering: false)
@@ -297,10 +302,10 @@ extension TableDelegate: UITableViewDelegate, UITableViewDataSource {
             
             case .standard:
             
-                if let vc = container as? ArtistSongsViewController, let entityVC = vc.entityVC, Set([AlbumBasedCollectionKind.artist, .albumArtist]).contains(entityVC.kind) {
-                    
-                    return container!.sections[indexPath.section].startingPoint + indexPath.row
-                }
+//                if let vc = container as? ArtistSongsViewController, let entityVC = vc.entityVC, Set([AlbumBasedCollectionKind.artist, .albumArtist]).contains(entityVC.kind) {
+//
+//                    return container!.sections[indexPath.section].startingPoint + indexPath.row
+//                }
                 
                 switch querySectionsType {
                     
@@ -395,27 +400,27 @@ extension TableDelegate {
                 
                 case .standard:
                     
-                    if let vc = container as? ArtistSongsViewController, let entityVC = vc.entityVC, Set([AlbumBasedCollectionKind.artist, .albumArtist]).contains(entityVC.kind) {
-                        
-                        return container!.sections.count
-                    }
+//                    if let vc = container as? ArtistSongsViewController, let entityVC = vc.entityVC, Set([AlbumBasedCollectionKind.artist, .albumArtist]).contains(entityVC.kind) {
+//
+//                        return container!.sections.count
+//                    }
                     
                     switch querySectionsType {
                         
-                    case .collections: return container!.query?.collectionSections?.count ?? 1
+                        case .collections: return container!.query?.collectionSections?.count ?? 1
                         
-                    case .items: return container!.query?.itemSections?.count ?? 1
+                        case .items: return container!.query?.itemSections?.count ?? 1
                         
-                    case .none:
-                        
-                        switch location {
+                        case .none:
                             
-                        case .album: return container!.sections.count
-                            
-                        case .collections(kind: .playlist): return container!.sections.count
-                            
-                        default: return 1
-                        }
+                            switch location {
+                                
+                                case .album: return container!.sections.count
+                                
+                                case .collections(kind: .playlist): return container!.sections.count
+                                
+                                default: return 1
+                            }
                     }
                 
                 case .random: return 1
@@ -437,10 +442,10 @@ extension TableDelegate {
                 
                 case .standard:
                     
-                    if let vc = container as? ArtistSongsViewController, let entityVC = vc.entityVC, Set([AlbumBasedCollectionKind.artist, .albumArtist]).contains(entityVC.kind) {
-                        
-                        return container!.sections[section].count
-                    }
+//                    if let vc = container as? ArtistSongsViewController, let entityVC = vc.entityVC, Set([AlbumBasedCollectionKind.artist, .albumArtist]).contains(entityVC.kind) {
+//
+//                        return container!.sections[section].count
+//                    }
                     
                     switch querySectionsType {
                         
@@ -503,10 +508,10 @@ extension TableDelegate {
                         
                         case .artistSongs:
                             
-                            if let vc = container as? ArtistSongsViewController, let entityVC = vc.entityVC, Set([AlbumBasedCollectionKind.artist, .albumArtist]).contains(entityVC.kind) {
-                                
-                                return song.albumTrackNumber//container!.sections[indexPath.section].startingPoint + indexPath.row + 1
-                            }
+//                            if let vc = container as? ArtistSongsViewController, let entityVC = vc.entityVC, Set([AlbumBasedCollectionKind.artist, .albumArtist]).contains(entityVC.kind) {
+//
+//                                return song.albumTrackNumber//container!.sections[indexPath.section].startingPoint + indexPath.row + 1
+//                            }
                             
                             return querySectionsType == .items && container!.sortCriteria == .standard ? (container!.query?.itemSections?[indexPath.section].range.location ?? 0) + indexPath.row + 1 : container!.sections[indexPath.section].startingPoint + indexPath.row + 1
                         
@@ -614,12 +619,22 @@ extension TableDelegate {
                     
                     case .playlist:
                         
-                        cell.prepare(with: collection as! MPMediaPlaylist, count: collection.count, number: number)
+                        let playlist = collection as! MPMediaPlaylist
+                        cell.prepare(with: playlist, count: collection.count, number: number)
                         
                         if let collectionsVC = container as? CollectionsViewController, collectionsVC.presented {
                             
-                            [cell.playButton, cell.infoButton].forEach({ $0.isUserInteractionEnabled = false })
+                            [cell.playButton, cell.infoButton, cell.supplemetaryScrollView].forEach({ $0.isUserInteractionEnabled = false })
                             cell.optionsView.isHidden = true
+                            
+                            if Set(collectionsVC.selectedPlaylists).contains(playlist), cell.isSelected.inverted {
+                                
+                                tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
+                                
+                            } else if Set(collectionsVC.selectedPlaylists).contains(playlist).inverted, cell.isSelected {
+                                
+                                tableView.deselectRow(at: indexPath, animated: false)
+                            }
                             
                         } else {
                             
@@ -685,7 +700,19 @@ extension TableDelegate {
             default: break
         }
         
+        if let collectionsVC = container as? CollectionsViewController, collectionsVC.presented {
+            
+            return
+        }
+        
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath, filtering: Bool) {
+        
+        guard let collectionsVC = container as? CollectionsViewController, collectionsVC.presented else { return }
+        
+        collectionsVC.deselectCell(in: tableView, at: indexPath, filtering: filtering)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath, filtering: Bool) -> CGFloat {
@@ -802,12 +829,12 @@ extension TableDelegate {
                 
                 case .standard:
                     
-                    header.label.text = {
+                    let text: String? = {
                         
-                        if let vc = container as? ArtistSongsViewController, let entityVC = vc.entityVC, Set([AlbumBasedCollectionKind.artist, .albumArtist]).contains(entityVC.kind) {
-                            
-                            return container?.sections[section].title//.capitalized
-                        }
+//                        if let vc = container as? ArtistSongsViewController, let entityVC = vc.entityVC, Set([AlbumBasedCollectionKind.artist, .albumArtist]).contains(entityVC.kind) {
+//
+//                            return container?.sections[section].title//.capitalized
+//                        }
                         
                         switch location {
                             
@@ -819,7 +846,9 @@ extension TableDelegate {
                         }
                     }()
                 
-                default: header.label.text = container?.sections[section].title//.capitalized
+                    header.label.text = text?.lowercased()
+                
+                default: header.label.text = container?.sections[section].title.lowercased()//.capitalized
             }
         }
         
@@ -867,10 +896,10 @@ extension TableDelegate {
                 
                 case .standard:
                     
-                    if let vc = container as? ArtistSongsViewController, let entityVC = vc.entityVC, Set([AlbumBasedCollectionKind.artist, .albumArtist]).contains(entityVC.kind) {
-                        
-                        return vc.sections.map({ $0.indexTitle })
-                    }
+//                    if let vc = container as? ArtistSongsViewController, let entityVC = vc.entityVC, Set([AlbumBasedCollectionKind.artist, .albumArtist]).contains(entityVC.kind) {
+//
+//                        return vc.sections.map({ $0.indexTitle })
+//                    }
                     
                     let details: (array: [String]?, isCorrectOrder: Bool) = {
                         
@@ -1112,74 +1141,74 @@ extension TableDelegate: SwipeTableViewCellDelegate {
         
         switch orientation {
             
-        case .left:
-            
-            guard let container = container else { return nil }
-            
-            let actionable = container.filterContainer as? SongActionable ?? container
-            
-            if let collectionsVC = container as? CollectionsViewController, collectionsVC.presented, collectionsVC.filterContainer == nil {
+            case .left:
                 
-                return nil
-            }
-            
-            var array = [SwipeAction]()
-            
-            let edit = SwipeAction.init(style: .default, title: tableView.isEditing ? "done" : "edit", handler: { action, _ in
+                guard let container = container else { return nil }
                 
-                actionable.songManager.toggleEditing(action)
-            })
+                let actionable = container.filterContainer as? SongActionable ?? container
+                
+                if let collectionsVC = container as? CollectionsViewController, collectionsVC.presented, collectionsVC.filterContainer == nil {
+                    
+                    return nil
+                }
+                
+                var array = [SwipeAction]()
+                
+                let edit = SwipeAction.init(style: .default, title: tableView.isEditing ? "done" : "edit", handler: { action, _ in
+                    
+                    actionable.songManager.toggleEditing(action)
+                })
+                
+                edit.image = tableView.isEditing ? #imageLiteral(resourceName: "CheckBordered17") : #imageLiteral(resourceName: "Edit17")
+                
+                array.append(edit)
+                
+                if musicPlayer.nowPlayingItem != nil, let cell = tableView.cellForRow(at: indexPath) as? SongTableViewCell {
+                    
+                    let details = getActionDetails(from: .queue(name: cell.nameLabel.text, query: query(at: indexPath, filtering: container.filterContainer != nil)), indexPath: indexPath, vc: container.filterContainer ?? container as? UIViewController)
+                    
+                    let queue = SwipeAction.init(style: .default, title: details?.title.lowercased(), handler: { _, _ in details?.handler() })
+                    
+                    queue.image = details?.action.icon
+                    
+                    array.append(queue)
+                }
+                
+                return array
             
-            edit.image = tableView.isEditing ? #imageLiteral(resourceName: "CheckBordered17") : #imageLiteral(resourceName: "Edit17")
-            
-            array.append(edit)
-            
-            if musicPlayer.nowPlayingItem != nil, let cell = tableView.cellForRow(at: indexPath) as? SongTableViewCell {
-                
-                let details = getActionDetails(from: .queue(name: cell.nameLabel.text, query: query(at: indexPath, filtering: container.filterContainer != nil)), indexPath: indexPath, vc: container.filterContainer ?? container as? UIViewController)
-                
-                let queue = SwipeAction.init(style: .default, title: details?.title.lowercased(), handler: { _, _ in details?.handler() })
-                
-                queue.image = details?.action.icon
-                
-                array.append(queue)
-            }
-            
-            return array
-            
-        case .right:
-            
-            if let collectionsVC = container as? CollectionsViewController, collectionsVC.presented {
-                
-                return nil
-            }
-            
-            var array = [SwipeAction]()
-            
-            if let cell = tableView.cellForRow(at: indexPath) as? SongTableViewCell {
-                
-                let details = getActionDetails(from: SongAction.show(title: cell.nameLabel.text, context: infoContext(from: indexPath, filtering: container?.filterContainer != nil)), indexPath: indexPath, vc: container?.filterContainer ?? container as? UIViewController, useAlternateTitle: true)
-                
-                let goTo = SwipeAction.init(style: .default, title: details?.title.lowercased(), handler: { _, _ in details?.handler() }, image: details?.action.icon)
-                
-                array.append(goTo)
-            }
-            
-            if let _ = container?.filterContainer {
-                
-                let details = getActionDetails(from: SongAction.reveal(indexPath: indexPath), indexPath: indexPath, vc: container as? UIViewController)
-                
-                let context = SwipeAction.init(style: .default, title: details?.title.lowercased(), handler: { _, _ in details?.handler() }, image: details?.action.icon)
+            case .right:
                 
                 if let collectionsVC = container as? CollectionsViewController, collectionsVC.presented {
                     
-                    return [context]
+                    return nil
                 }
                 
-                array.append(context)
-            }
-            
-            return array
+                var array = [SwipeAction]()
+                
+                if let cell = tableView.cellForRow(at: indexPath) as? SongTableViewCell {
+                    
+                    let details = getActionDetails(from: SongAction.show(title: cell.nameLabel.text, context: infoContext(from: indexPath, filtering: container?.filterContainer != nil)), indexPath: indexPath, vc: container?.filterContainer ?? container as? UIViewController, useAlternateTitle: true)
+                    
+                    let goTo = SwipeAction.init(style: .default, title: details?.title.lowercased(), handler: { _, _ in details?.handler() }, image: details?.action.icon)
+                    
+                    array.append(goTo)
+                }
+                
+                if let _ = container?.filterContainer {
+                    
+                    let details = getActionDetails(from: SongAction.reveal(indexPath: indexPath), indexPath: indexPath, vc: container as? UIViewController)
+                    
+                    let context = SwipeAction.init(style: .default, title: details?.title.lowercased(), handler: { _, _ in details?.handler() }, image: details?.action.icon)
+                    
+                    if let collectionsVC = container as? CollectionsViewController, collectionsVC.presented {
+                        
+                        return [context]
+                    }
+                    
+                    array.append(context)
+                }
+                
+                return array
         }
     }
     
@@ -1320,15 +1349,6 @@ extension TableDelegate {
                 
                 array.append(edit)
                 
-//                let info = SwipeAction.init(style: .default, title: "info", handler: { _, indexPath in
-//
-//                    Transitioner.shared.showInfo(from: collectorItemsViewController, with: .song(location: .list, at: indexPath.row, within: collectorItemsViewController.manager.queue))
-//                })
-//
-//                info.image = #imageLiteral(resourceName: "InfoNoBorder17")
-//
-//                array.append(info)
-                
                 return array
             
             case .right:
@@ -1380,15 +1400,6 @@ extension TableDelegate {
             edit.image = editing ? #imageLiteral(resourceName: "CheckBordered17") : #imageLiteral(resourceName: "Edit17")
             
             array.append(edit)
-            
-//            let info = SwipeAction.init(style: .default, title: "info", handler: { _, indexPath in
-//
-//                Transitioner.shared.showInfo(from: newPlaylistViewController, with: .song(location: .list, at: indexPath.row, within: newPlaylistViewController.manager.queue))
-//            })
-//
-//            info.image = #imageLiteral(resourceName: "InfoNoBorder15")
-//
-//            array.append(info)
             
             return array
             

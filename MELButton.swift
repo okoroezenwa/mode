@@ -67,10 +67,10 @@ class MELButton: UIButton {
         
         guard !ignoreTheme else {
             
-            if #available(iOS 11, *) {
-                
-                accessibilityIgnoresInvertColors = true
-            }
+//            if #available(iOS 11, *) {
+//
+//                accessibilityIgnoresInvertColors = true
+//            }
             
             return
         }
@@ -91,10 +91,10 @@ class MELButton: UIButton {
         
         guard !ignoreTheme else {
             
-            if #available(iOS 11, *) {
-                
-                accessibilityIgnoresInvertColors = true
-            }
+//            if #available(iOS 11, *) {
+//                
+//                accessibilityIgnoresInvertColors = true
+//            }
             
             return
         }
