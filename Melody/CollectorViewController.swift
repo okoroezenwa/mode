@@ -65,8 +65,10 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
     
     var manager: QueueManager!
     @objc lazy var itemsToAdd = [MPMediaItem]()
+    
     @objc var peeker: UIViewController?
-    var screenshotProvider: ScreenshotProviding?
+    var oldArtwork: UIImage?
+    
     lazy var songManager: SongActionManager = { SongActionManager.init(actionable: self) }()
     var actionableSongs: [MPMediaItem] { return manager.queue }
     let applicableActions = [SongAction.newPlaylist, .addTo]
@@ -127,7 +129,7 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
         
         if let _ = peeker {
             
-            temporaryImageView.image = musicPlayer.nowPlayingItem?.actualArtwork?.image(at: .init(width: 20, height: 20)) ?? #imageLiteral(resourceName: "NoArt")
+            temporaryImageView.image = ArtworkManager.shared.activeContainer?.modifier?.artworkType.image
         }
 
         tableView.tableFooterView = UIView.init(frame: .zero)
@@ -220,6 +222,22 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
         
         upNextButton.lightOverride = musicPlayer.nowPlayingItem == nil
         upNextButton.isUserInteractionEnabled = musicPlayer.nowPlayingItem != nil
+        
+        for cell in tableView.visibleCells {
+            
+            guard let cell = cell as? SongTableViewCell, let indexPath = tableView.indexPath(for: cell) else { continue }
+            
+            if cell.playingView.isHidden.inverted && musicPlayer.nowPlayingItem != manager?.queue[indexPath.row] {
+                
+                cell.playingView.isHidden = true
+                cell.indicator.state = .stopped
+                
+            } else if cell.playingView.isHidden && musicPlayer.nowPlayingItem == manager?.queue[indexPath.row] {
+                
+                cell.playingView.isHidden = false
+                UniversalMethods.performOnMainThread({ cell.indicator.state = musicPlayer.isPlaying ? .playing : .paused }, afterDelay: 0.1)
+            }
+        }
     }
     
     @IBAction func showLibraryOptions() {

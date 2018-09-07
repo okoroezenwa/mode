@@ -288,9 +288,9 @@
                             </userDefinedRuntimeAttributes>
                         </collectionView>
                         <visualEffectView hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6zL-CQ-7yb" customClass="MELVisualEffectView" customModule="Mode" customModuleProvider="target">
-                            <rect key="frame" x="99" y="59" width="177.5" height="40"/>
+                            <rect key="frame" x="99" y="59" width="177" height="40"/>
                             <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="mzm-YD-VFV">
-                                <rect key="frame" x="0.0" y="0.0" width="178" height="40"/>
+                                <rect key="frame" x="0.0" y="0.0" width="177" height="40"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
                                     <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="751" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="hPq-aX-UXH" customClass="MELActivityIndicatorView" customModule="Mode" customModuleProvider="target">
@@ -383,6 +383,7 @@
                 <outlet property="likedView" destination="Rd7-Zx-ZfW" id="Vsk-L4-2KP"/>
                 <outlet property="loadingEffectView" destination="6zL-CQ-7yb" id="cwn-5T-tIR"/>
                 <outlet property="scrollStackView" destination="Xik-7R-75C" id="Svg-WK-Nky"/>
+                <outlet property="scrollStackViewHeightConstraint" destination="Ftj-XX-cLc" id="cg0-zi-Zbl"/>
                 <outlet property="tableHeaderContainer" destination="6yI-jD-ZZE" id="ltw-Nz-fey"/>
             </connections>
             <point key="canvasLocation" x="-79.200000000000003" y="-63.868065967016499"/>

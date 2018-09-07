@@ -125,21 +125,6 @@ extension MPMediaItem {
     }
 }
 
-extension MPMediaItemArtwork {
-    
-    var actualArtwork: MPMediaItemArtwork? {
-        
-        if self.bounds.width != 0 {
-            
-            return self
-            
-        } else {
-            
-            return nil
-        }
-    }
-}
-
 extension UIImage {
     
     func at(_ size: CGSize) -> UIImage {

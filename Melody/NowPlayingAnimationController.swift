@@ -46,6 +46,11 @@ class NowPlayingAnimationController: NSObject, UIViewControllerAnimatedTransitio
                 toVC.view.alpha = 0
                 containerView.addSubview(fromVC.view)
                 containerView.addSubview(toVC.view)
+                
+                fromVC.altImageView.image = fromVC.imageView.image
+                fromVC.altImageView.alpha = 1
+                fromVC.imageView.alpha = 0
+                fromVC.imageView.image = toVC.artworkType.image
             
                 let duration = transitionDuration(using: transitionContext)
                 
@@ -67,15 +72,23 @@ class NowPlayingAnimationController: NSObject, UIViewControllerAnimatedTransitio
                         toVC.view.alpha = 1
                     })
                     
+                    UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 1, animations: {
+                            
+                        fromVC.imageView.alpha = 1
+                        fromVC.altImageView.alpha = 0
+                    })
+                    
                 }, completion: { _ in
                     
                     transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
                     toVC.view.frame = transitionContext.finalFrame(for: toVC)
-                        
-//                    fromVC.bottomEffectView.transform = .identity
-//                    fromVC.visualEffectNavigationBar.transform = .identity
+                    
                     fromVC.contentView.alpha = 0
                     fromVC.contentView.transform = .identity
+                    
+                    fromVC.altImageView.alpha = 0
+                    fromVC.imageView.alpha = 1
+                    fromVC.imageView.image = transitionContext.transitionWasCancelled.inverted ? toVC.artworkType.image : fromVC.modifier?.artworkType.image
                 })
             
             case .reverse:
@@ -83,6 +96,8 @@ class NowPlayingAnimationController: NSObject, UIViewControllerAnimatedTransitio
                 guard let fromVC = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.from) as? NowPlayingViewController, let toVC = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.to) as? ContainerViewController else { return }
             
                 let containerView = transitionContext.containerView
+                
+                toVC.view.frame = .init(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height - UIApplication.shared.statusBarFrame.height + 20)
                 
                 if useAlternateAnimation {
                     
@@ -98,6 +113,14 @@ class NowPlayingAnimationController: NSObject, UIViewControllerAnimatedTransitio
                     toVC.contentView.alpha = 0
                     toVC.contentView.transform = .init(translationX: -50, y: 0)
                     toVC.bottomEffectView.transform = .init(translationX: 0, y: toVC.inset)
+                    
+                    toVC.altImageView.image = toVC.imageView.image
+                    toVC.altImageView.alpha = 1
+                    toVC.imageView.alpha = 0
+                    toVC.imageView.image = toVC.modifier?.artworkType.image
+                    
+                    if toVC.visualEffectNavigationBar.alpha < 1 { toVC.visualEffectNavigationBar.alpha = 1 }
+                    if toVC.bottomEffectView.alpha < 1 { toVC.bottomEffectView.alpha = 1 }
                     
                     let inset = (toVC.activeViewController?.topViewController as? Navigatable)?.inset ?? (10 + 34 + 10)
                     toVC.visualEffectNavigationBar.transform = .init(translationX: 0, y: -(inset + (UIApplication.shared.statusBarFrame.height == 40 ? 0 : UIApplication.shared.statusBarFrame.height)))
@@ -123,6 +146,24 @@ class NowPlayingAnimationController: NSObject, UIViewControllerAnimatedTransitio
                         toVC.bottomEffectView.transform = .identity
                         toVC.visualEffectNavigationBar.transform = .identity
                         toVC.contentView.alpha = 1
+                        
+                        if useAlternateAnimation.inverted {
+                        
+                            toVC.altImageView.alpha = 0
+                            toVC.imageView.alpha = 1
+                            toVC.imageView.image = toVC.modifier?.artworkType.image
+                        }
+                    
+                    } else {
+                        
+                        toVC.contentView.alpha = 0
+                        
+                        if useAlternateAnimation.inverted {
+                            
+                            toVC.altImageView.alpha = 0
+                            toVC.imageView.alpha = 1
+                            toVC.imageView.image = fromVC.artworkType.image
+                        }
                     }
                     
                     toVC.contentView.transform = .identity
@@ -144,6 +185,8 @@ class NowPlayingAnimationController: NSObject, UIViewControllerAnimatedTransitio
                             
                             toVC.visualEffectNavigationBar.alpha = 1
                             toVC.bottomEffectView.alpha = 1
+//                            toVC.imageView.alpha = 1
+//                            toVC.altImageView.alpha = 0
                         })
                         
                         UIView.addKeyframe(withRelativeStartTime: 1/5, relativeDuration: 4/5, animations: {
@@ -170,6 +213,12 @@ class NowPlayingAnimationController: NSObject, UIViewControllerAnimatedTransitio
                             
                             toVC.visualEffectNavigationBar.transform = .identity
                             toVC.bottomEffectView.transform = .identity
+                        })
+                        
+                        UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 1, animations: {
+                            
+                            toVC.imageView.alpha = 1
+                            toVC.altImageView.alpha = 0
                         })
                         
                     }, completion: completion)

@@ -476,7 +476,21 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
             
             guard let weakSelf = self else { return }
             
-            weakSelf.tableView.reloadData()
+            for cell in weakSelf.tableView.visibleCells {
+                
+                guard let cell = cell as? SongTableViewCell, let indexPath = weakSelf.tableView.indexPath(for: cell) else { continue }
+                
+                if cell.playingView.isHidden.inverted && musicPlayer.nowPlayingItem != weakSelf.getSong(from: indexPath) {
+                    
+                    cell.playingView.isHidden = true
+                    cell.indicator.state = .stopped
+                    
+                } else if cell.playingView.isHidden && musicPlayer.nowPlayingItem == weakSelf.getSong(from: indexPath) {
+                    
+                    cell.playingView.isHidden = false
+                    UniversalMethods.performOnMainThread({ cell.indicator.state = musicPlayer.isPlaying ? .playing : .paused }, afterDelay: 0.1)
+                }
+            }
             
         }) as! NSObject)
         

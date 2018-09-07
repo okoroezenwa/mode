@@ -22,7 +22,6 @@ class LyricsViewController: UIViewController {
     }
     @IBOutlet var locationButton: MELButton!
     @IBOutlet var saveButton: MELButton!
-    @IBOutlet var spacerView: UIView!
     @IBOutlet var activityIndicator: MELActivityIndicatorView!
     @IBOutlet var bottomStackView: UIStackView!
     @IBOutlet var unavailableLabel: MELLabel!
@@ -34,6 +33,8 @@ class LyricsViewController: UIViewController {
     override func viewDidLoad() {
         
         super.viewDidLoad()
+        
+        
         
         updateBottomView(to: .hidden, animated: false)
     }
@@ -67,6 +68,14 @@ class LyricsViewController: UIViewController {
     }
     
     func updateBottomView(to state: VisibilityState, animated: Bool = true) {
+        
+        if isInDebugMode.inverted {
+            
+            bottomStackView.isHidden = true
+            bottomStackView.alpha = 0
+            
+            return
+        }
         
         UIView.animate(withDuration: animated ? 0.3 : 0, animations: {
             
@@ -113,12 +122,12 @@ class LyricsViewController: UIViewController {
     
     deinit {
         
-        if isInDebugMode, deinitBannersEnabled {
-            
-            let banner = UniversalMethods.banner(withTitle: "LVC going away...")
-            banner.titleLabel.font = .myriadPro(ofWeight: .light, size: 22)
-            banner.show(for: 0.3)
-        }
+//        if isInDebugMode, deinitBannersEnabled {
+//            
+//            let banner = UniversalMethods.banner(withTitle: "LVC going away...")
+//            banner.titleLabel.font = .myriadPro(ofWeight: .light, size: 22)
+//            banner.show(for: 0.3)
+//        }
     }
 }
 

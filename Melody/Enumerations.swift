@@ -405,9 +405,19 @@ enum CornerRadius: Int {
         }
     }
     
+    func radiusDetails(for entityType: Entity, width: CGFloat, globalRadiusType: CornerRadius) -> RadiusDetails {
+        
+        switch globalRadiusType {
+            
+            case .automatic: return (self.radius(for: entityType, width: width), (self == .rounded || self == .automatic && Set([Entity.artist, .albumArtist, .genre, .composer]).contains(entityType)).inverted)
+        
+            default: return (globalRadiusType.radius(for: entityType, width: width), globalRadiusType != .rounded)
+        }
+    }
+    
     func updateCornerRadius(on layer: CALayer?, width: CGFloat, entityType: Entity, globalRadiusType: CornerRadius) {
         
-        let details: RadiusDetails = {
+        let details = radiusDetails(for: entityType, width: width, globalRadiusType: globalRadiusType)/*{
             
             switch globalRadiusType {
                 
@@ -415,7 +425,7 @@ enum CornerRadius: Int {
                 
                 default: return (globalRadiusType.radius(for: entityType, width: width), globalRadiusType != .rounded)
             }
-        }()
+        }()*/
         
         layer?.setRadiusTypeIfNeeded(to: details.useContinuousCorners)
         layer?.cornerRadius = details.radius
@@ -746,8 +756,44 @@ enum SongAction {
     }
 }
 
-protocol TitleContaining {
+enum Threshold: String, Comparable {
     
-    var title: String { get }
-    var propertyImage: UIImage? { get }
+    case none, first, second, third
+
+    static func <(lhs: Threshold, rhs: Threshold) -> Bool {
+        
+        switch (lhs, rhs) {
+            
+            case (.none, .first), (.none, .second), (.none, .third), (.first, .second), (.first, .third), (.second, .third): return true
+            
+            default: return false
+        }
+    }
+
+    var index: Int {
+        
+        switch self {
+            
+            case .none, .first: return 0
+            
+            case .second: return 1
+            
+            case .third: return 2
+        }
+    }
+}
+
+enum ArtworkType {
+    
+    case image(UIImage?), colour(UIColor)
+    
+    var image: UIImage? {
+        
+        switch self {
+            
+            case .image(let image): return image
+            
+            case .colour(let colour): return .new(withColour: colour, size: .artworkSize)
+        }
+    }
 }

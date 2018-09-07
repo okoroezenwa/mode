@@ -60,11 +60,6 @@ class PlaylistCollectionViewCell: UICollectionViewCell, ArtworkContainingCell {
         updateCornersAndShadows()
         ([accessoryBorderView, playButtonBorder] as [UIView]).forEach({ UniversalMethods.addShadow(to: $0, radius: 2, opacity: 0.5, path: $0.shadowPath(cornerRadius: 12)) })
         
-//        if #available(iOS 11, *) {
-//            
-//            artworkImageView.accessibilityIgnoresInvertColors = true
-//        }
-        
         notifier.addObserver(self, selector: #selector(modifyInfoButton), name: .infoButtonVisibilityChanged, object: nil)
 
         notifier.addObserver(self, selector: #selector(updateCornersAndShadows), name: .cornerRadiusChanged, object: nil)

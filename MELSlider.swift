@@ -25,11 +25,6 @@ class MELSlider: UISlider {
     
     @objc func changeThemeColor() {
         
-//        if #available(iOS 11, *) {
-//            
-//            accessibilityIgnoresInvertColors = false
-//        }
-        
         maximumTrackTintColor = (darkTheme ? UIColor.white : UIColor.black).withAlphaComponent(border ? 0.05 : 0.1)
         minimumTrackTintColor = border ? (darkTheme ? UIColor.white.withAlphaComponent(0.5) : UIColor.black.withAlphaComponent(0.5)) : (darkTheme ? .white : .black)
         

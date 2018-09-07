@@ -12,8 +12,6 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
 
     @IBOutlet weak var titleLabel: MELLabel!
     @IBOutlet weak var backLabel: MELLabel!
-    @IBOutlet weak var albumsButton: MELButton!
-    @IBOutlet weak var songsButton: MELButton!
     @IBOutlet weak var artistItemsViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var titleScrollView: UIScrollView!
     @IBOutlet weak var artistView: UIView!
@@ -42,6 +40,9 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
     
     var options: LibraryOptions { return LibraryOptions.init(fromVC: activeChildViewController, configuration: .collection, context: contextForContainerType()) }
     
+    var albumsButton: MELButton? { return (appDelegate.window?.rootViewController as? ContainerViewController)?.visualEffectNavigationBar.albumsButton }
+    var songsButton: MELButton? { return (appDelegate.window?.rootViewController as? ContainerViewController)?.visualEffectNavigationBar.songsButton }
+    
     @objc var collection: MPMediaItemCollection?
     var entityContainerType = EntityContainerType.playlist
     var kind = AlbumBasedCollectionKind.artist
@@ -61,6 +62,8 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
     }
     @objc var needsDismissal = false
     @objc var artwork: UIImage?
+    
+    var oldArtwork: UIImage?
     @objc weak var peeker: UIViewController? {
         
         didSet {
@@ -105,8 +108,8 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
     }()
     
     @objc lazy var temporaryEffectView = MELVisualEffectView()
-    var requiresShadow = false
-    let inset: CGFloat = 10 + 15 + 10 + 34 + 10 + 1
+    var needsEntityBar: Bool { return entityContainerType == .collection }
+    var inset: CGFloat { return 10 + 15 + 10 + 34 + 10 + 1 + (needsEntityBar ? 44 : 0) }
     lazy var preferredTitle: String? = title
     
     @objc lazy var artistSongsViewController: ArtistSongsViewController = {
@@ -163,6 +166,8 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
             artistView.isHidden = false
             updateButton(for: .albums)
             updateButton(for: .songs)
+            
+            [albumsButton, songsButton].forEach({ $0?.addTarget(self, action: #selector(switchSection(_:)), for: .touchUpInside) })
         }
         
         updateActiveViewController()
@@ -220,14 +225,16 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
             }
         }()
         
-        artwork = (shouldUseCollectionArtwork ? collectionImage ?? image : image)?.at(.init(width: 20, height: 20)) ?? #imageLiteral(resourceName: "NoArt")
-        artworkImageView.image = collectionImage ?? image ?? noImage
+        artwork = (shouldUseCollectionArtwork ? collectionImage ?? image : image)?.at(.init(width: 20, height: 20)) //?? #imageLiteral(resourceName: "NoArt")
+        artworkImageView.image = collectionImage ?? image //?? noImage
         
-        if peeker != nil, let container = appDelegate.window?.rootViewController as? ContainerViewController {
+        if let _ = peeker, let container = appDelegate.window?.rootViewController as? ContainerViewController {
             
-            temporaryImageView.image = artwork
-            container.shouldUseNowPlayingArt = false
-            container.updateBackgroundViaModifier(with: artwork)
+            oldArtwork = container.imageView.image
+            
+            UIView.transition(with: container.imageView, duration: 0.5, options: .transitionCrossDissolve, animations: { container.imageView.image = self.artworkType.image }, completion: nil)
+            
+            temporaryImageView.image = artworkType.image
         }
         
         titleLabel.text = title
@@ -333,20 +340,6 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         container?.currentModifier = self
         setCurrentOptions()
         
-        if container?.deferToNowPlayingViewController == false, backgroundArtworkAdaptivity == .sectionAdaptive {
-            
-            if let _ = artwork {
-                
-                container?.shouldUseNowPlayingArt = false
-                container?.updateBackgroundViaModifier()
-                
-            } else {
-                
-                container?.shouldUseNowPlayingArt = true
-                container?.updateBackgroundWithNowPlaying()
-            }
-        }
-        
         if needsDismissal {
             
             if let vc = presentedViewController {
@@ -375,20 +368,6 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         notifier.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
         
         unregisterAll(from: transientObservers)
-        
-        if peeker != nil, let container = appDelegate.window?.rootViewController as? ContainerViewController {
-            
-            if let _ = container.currentModifier {
-                
-                container.shouldUseNowPlayingArt = false
-                container.updateBackgroundViaModifier()
-                
-            } else {
-                
-                container.shouldUseNowPlayingArt = true
-                container.updateBackgroundWithNowPlaying()
-            }
-        }
     }
     
     @objc func prepareTransientObservers() {
@@ -607,7 +586,7 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         }
     }
     
-    @objc func selectedArtistButton() -> UIButton {
+    @objc func selectedArtistButton() -> UIButton? {
         
         switch activeChildViewController {
             
@@ -711,38 +690,20 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
                 
                 guard let albums = query?.collections?.count else { return }
             
-                albumsButton.setTitle(albums.fullCountText(for: .album, filteredCount: count).capitalized, for: .normal)
-                
-                /*if let count = count {
-                    
-                    albumsButton.setTitle(UniversalMethods.formattedNumber(from: count) + " of " + UniversalMethods.formattedNumber(from: albums) + " \(UniversalMethods.countText(for: albums, entity: .album).capitalized)", for: .normal)
-                
-                } else {
-                    
-                    albumsButton.setTitle(UniversalMethods.formattedNumber(from: albums) + " \(UniversalMethods.countText(for: albums, entity: .album).capitalized)", for: .normal)
-                }*/
+                albumsButton?.setTitle(albums.fullCountText(for: .album, filteredCount: count).capitalized, for: .normal)
                 
             case .songs:
                 
                 guard let songs = query?.items?.count else { return }
             
-                songsButton.setTitle(songs.fullCountText(for: .song, filteredCount: count).capitalized, for: .normal)
-                
-//                if let count = count {
-//                    
-//                    songsButton.setTitle(UniversalMethods.formattedNumber(from: count) + " of " + UniversalMethods.formattedNumber(from: songs) + " \(UniversalMethods.countText(for: songs, entity: .song).capitalized)", for: .normal)
-//                
-//                } else {
-//                    
-//                    songsButton.setTitle(UniversalMethods.formattedNumber(from: songs) + " \(UniversalMethods.countText(for: songs, entity: .song).capitalized)", for: .normal)
-//                }
+                songsButton?.setTitle(songs.fullCountText(for: .song, filteredCount: count).capitalized, for: .normal)
         }
         
         switch activeChildViewController {
             
-            case let x where x == artistSongsViewController: songsButton.update(for: .selected)
+            case let x where x == artistSongsViewController: songsButton?.update(for: .selected)
             
-            case let x where x == artistAlbumsViewController: albumsButton.update(for: .selected)
+            case let x where x == artistAlbumsViewController: albumsButton?.update(for: .selected)
             
             default: break
         }
@@ -796,6 +757,11 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         if isInDebugMode, deinitBannersEnabled {
             
 //            UniversalMethods.banner(withTitle: "EVC going away...").show(for: 0.3)
+        }
+        
+        if let _ = peeker, let container = appDelegate.window?.rootViewController as? ContainerViewController {
+            
+            UIView.transition(with: container.imageView, duration: 0.5, options: .transitionCrossDissolve, animations: { container.imageView.image = self.oldArtwork }, completion: nil)
         }
         
         unregisterAll(from: lifetimeObservers)

@@ -170,7 +170,7 @@ class SectionIndexViewController: UIViewController {
                 
                 if hasHeader, indexPath.row == 0 {
                     
-                    container?.tableView.setContentOffset(.init(x: 0, y: -(container?.navigatable?.inset ?? 0)), animated: false)
+                    container?.tableView.setContentOffset(.init(x: 0, y: -((container?.navigatable?.activeChildViewController as? CollectionsViewController)?.presented == true ? 0 : container?.navigatable?.inset ?? 0)), animated: false)
                     
                 } else {
                     

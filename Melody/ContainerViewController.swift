@@ -9,11 +9,12 @@
 import UIKit
 import StoreKit
 
-class ContainerViewController: UIViewController, QueueManager, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, ComposerTransitionable, GenreTransitionable, InteractivePresenter, TimerBased, SingleItemActionable, EntityVerifiable, ScreenshotProviding, Detailing {
+class ContainerViewController: UIViewController, QueueManager, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, ComposerTransitionable, GenreTransitionable, InteractivePresenter, TimerBased, SingleItemActionable, EntityVerifiable, Detailing, ArtworkModifierContaining {
 
     @IBOutlet weak var effectView: MELVisualEffectView!
     let visualEffectNavigationBar = Bundle.main.loadNibNamed("VisualEffectNavigationBar", owner: nil, options: nil)?.first as! VisualEffectNavigationBar
     @IBOutlet weak var imageView: UIImageView!
+    @IBOutlet var altImageView: InvertIgnoringImageView!
     @IBOutlet weak var nowPlayingView: UIView!
     @IBOutlet weak var filterViewContainer: FilterViewContainer! {
         
@@ -102,8 +103,6 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
     }
     @objc lazy var songManager: SongActionManager = { return SongActionManager.init(actionable: self) }()
     
-    var viewHeirachy: UIImage?
-    
     @objc lazy var queue = [MPMediaItem]()
     var shuffled = false {
         
@@ -133,6 +132,10 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             
             notifier.post(name: .libraryOptionsChanged, object: nil, userInfo: ["options": options])
         }
+    }
+    var modifier: ArtworkModifying? {
+        
+        return activeViewController?.topViewController as? ArtworkModifying
     }
     @objc var deferToNowPlayingViewController = false
     @objc var lifetimeObservers = Set<NSObject>()
@@ -186,8 +189,10 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         updateLibraryButtonImage()
         
         updateSliderDuration()
-
-        updateBackgroundWithNowPlaying(animated: false)
+        
+        ArtworkManager.shared.container = self
+        imageView.image = musicPlayer.nowPlayingItem?.actualArtwork?.image(at: .artworkSize) ?? .new(withColour: .noArtwork, size: .artworkSize)
+        
         updateTimes(setValue: true, seeking: false)
         prepareNowPlayingViews(with: musicPlayer.nowPlayingItem, animated: false)
         prepareLifetimeObservers()
@@ -219,11 +224,6 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         
         getCollected()
         Queue.shared.verifyQueue()
-        
-//        if #available(iOS 11, *) {
-//
-//            view.accessibilityIgnoresInvertColors = darkTheme
-//        }
     }
     
     func updateLibraryButtonImage() {
@@ -457,8 +457,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
 //            guard let weakSelf = self else { return }
 //            
 //            weakSelf.prepareNowPlayingViews(with: musicPlayer.nowPlayingItem, animated: true)
-//            
-//            weakSelf.shouldUseNowPlayingArt = true
+//
 //            weakSelf.updateBackgroundWithNowPlaying()
 //            
 //            weakSelf.updateSliderDuration()
@@ -473,8 +472,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             
             weakSelf.prepareNowPlayingViews(with: musicPlayer.nowPlayingItem, animated: true)
             
-            weakSelf.shouldUseNowPlayingArt = true
-            weakSelf.updateBackgroundWithNowPlaying()
+            UIView.transition(with: weakSelf.imageView, duration: 0.3, options: .transitionCrossDissolve, animations: { weakSelf.imageView.image = weakSelf.modifier?.artworkType.image }, completion: nil)
             
             weakSelf.updateSliderDuration()
             weakSelf.updateTimes(setValue: true, seeking: false)
@@ -615,21 +613,6 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             weakSelf.verifyLibraryStatus(of: musicPlayer.nowPlayingItem, itemProperty: .song, animated: true)
         
         }) as! NSObject)
-    
-        lifetimeObservers.insert(notifier.addObserver(forName: .backgroundArtworkAdaptivityChanged, object: nil, queue: nil, using: { [weak self] _ in
-            
-            guard let weakSelf = self else { return }
-            
-            switch backgroundArtworkAdaptivity {
-                
-                case .none: break
-                
-                case .nowPlayingAdaptive: weakSelf.updateBackgroundWithNowPlaying()
-                
-                case .sectionAdaptive: weakSelf.updateBackgroundViaModifier()
-            }
-        
-        }) as! NSObject)
         
         lifetimeObservers.insert(notifier.addObserver(forName: .infoButtonVisibilityChanged, object: nil, queue: nil, using: { [weak self] _ in
             
@@ -645,11 +628,6 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             guard let weakSelf = self else { return }
             
             weakSelf.setNeedsStatusBarAppearanceUpdate()
-            
-//            if #available(iOS 11, *) {
-//                
-//                weakSelf.view.accessibilityIgnoresInvertColors = darkTheme
-//            }
             
             weakSelf.prepareAltAlbumArt()
             
@@ -842,6 +820,8 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             
             let child = entityVC.albumItemsViewController
             
+            UIView.transition(with: imageView, duration: 0.3, options: .transitionCrossDissolve, animations: { self.imageView.image = entityVC.artworkType.image }, completion: nil)
+            
             entityVC.highlightedEntities?.song = vc.currentItem
             child.highlightedIndex = child.songs.optionalIndex(of: vc.currentItem)
             child.tableView.reloadData() // causes crash at points
@@ -868,6 +848,8 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             collections.first?.persistentID == entityVC.collection?.persistentID {
             
             entityVC.highlightedEntities = (currentItem, currentAlbum)
+            
+            UIView.transition(with: imageView, duration: 0.3, options: .transitionCrossDissolve, animations: { self.imageView.image = entityVC.artworkType.image }, completion: nil)
             
             if entityVC.activeChildViewController == entityVC.artistSongsViewController {
                 
@@ -908,6 +890,8 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             playlists.first?.persistentID == entityVC.collection?.persistentID {
             
             let child = entityVC.playlistItemsViewController
+            
+            UIView.transition(with: imageView, duration: 0.3, options: .transitionCrossDissolve, animations: { self.imageView.image = entityVC.artworkType.image }, completion: nil)
             
             entityVC.highlightedEntities?.song = vc.currentItem
             child.highlightedIndex = child.songs.optionalIndex(of: vc.currentItem)
@@ -978,7 +962,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
 
             defer {
                 
-                [bottomEffectView, contentView].forEach({
+                [bottomEffectView, contentView, visualEffectNavigationBar].forEach({
                     
                     $0?.transform = .identity
                     $0?.alpha = 1
@@ -1104,7 +1088,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         
         guard backgroundArtworkAdaptivity == .sectionAdaptive && !shouldUseNowPlayingArt else { return }
         
-        UIView.transition(with: imageView, duration: 0.45, options: .transitionCrossDissolve, animations: { self.imageView.image = imageOverride ?? self.currentModifier?.artwork }, completion: nil)
+        UIView.transition(with: imageView, duration: 0.45, options: .transitionCrossDissolve, animations: { self.imageView.image = imageOverride ?? self.currentModifier?.artworkType.image }, completion: nil)
     }
     
     private func updateActiveViewController() {
@@ -1175,25 +1159,27 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             self.view.layoutIfNeeded()
         })
         
-        visualEffectNavigationBar.animateTitleLabel(direction: .forward, section: .preparation, with: inActiveVC.topViewController as? Navigatable, and: activeVC.topViewController as? Navigatable, preferVerticalTransition: true)
+        UIView.transition(with: imageView, duration: animated ? 0.3 : 0, options: .transitionCrossDissolve, animations: { self.imageView.image = (activeVC.topViewController as? ArtworkModifying)?.artworkType.image }, completion: nil)
         
         if animateTitle {
-        
+            
+            visualEffectNavigationBar.animateViews(direction: .forward, section: .preparation, with: inActiveVC.topViewController as? Navigatable, and: activeVC.topViewController as? Navigatable, preferVerticalTransition: true)
+            
             UIView.animateKeyframes(withDuration: 0.3, delay: 0, options: .calculationModeCubic, animations: {
                 
                 UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 1/2, animations: {
                     
-                    self.visualEffectNavigationBar.animateTitleLabel(direction: .forward, section: .firstHalf, with: inActiveVC.topViewController as? Navigatable, and: activeVC.topViewController as? Navigatable, preferVerticalTransition: true)
+                    self.visualEffectNavigationBar.animateViews(direction: .forward, section: .firstHalf, with: inActiveVC.topViewController as? Navigatable, and: activeVC.topViewController as? Navigatable, preferVerticalTransition: true)
                 })
                 
                 UIView.addKeyframe(withRelativeStartTime: 1/2, relativeDuration: 1/2, animations: {
                     
-                    self.visualEffectNavigationBar.animateTitleLabel(direction: .forward, section: .secondHalf, with: inActiveVC.topViewController as? Navigatable, and: activeVC.topViewController as? Navigatable, preferVerticalTransition: true)
+                    self.visualEffectNavigationBar.animateViews(direction: .forward, section: .secondHalf, with: inActiveVC.topViewController as? Navigatable, and: activeVC.topViewController as? Navigatable, preferVerticalTransition: true)
                 })
                 
             }, completion: { _ in
                 
-                self.visualEffectNavigationBar.animateTitleLabel(direction: .forward, section: .end(completed: true), with: inActiveVC.topViewController as? Navigatable, and: activeVC.topViewController as? Navigatable, preferVerticalTransition: true)
+                self.visualEffectNavigationBar.animateViews(direction: .forward, section: .end(completed: true), with: inActiveVC.topViewController as? Navigatable, and: activeVC.topViewController as? Navigatable, preferVerticalTransition: true)
             })
         
         } else {
@@ -1284,14 +1270,14 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
     
     @IBAction func showAddOptions() {
         
-        let new = UIAlertAction.init(title: "Create Playlist", style: .default, handler: { [weak self] _ in
+        let new = UIAlertAction.init(title: "Create Playlist...", style: .default, handler: { [weak self] _ in
             
             guard let weakSelf = self else { return }
             
             weakSelf.performSegue(withIdentifier: "toNewPlaylist", sender: nil)
         })
         
-        let add = UIAlertAction.init(title: "Add to Playlist", style: .default, handler: { [weak self] _ in
+        let add = UIAlertAction.init(title: "Add to Playlists...", style: .default, handler: { [weak self] _ in
             
             guard let weakSelf = self else { return }
             
@@ -1514,14 +1500,13 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         
         guard let now = vc as? NowPlayingViewController else { return nil }
         
-        deferToNowPlayingViewController = true
-        
         now.container = self
         now.transitioningDelegate = now.animator
         
         if perform3DTouchActions {
             
             now.peeker = self
+            now.modifyBackgroundView(forState: .visible)
         }
         
         return now
@@ -1548,7 +1533,6 @@ extension ContainerViewController: UIViewControllerPreviewingDelegate {
             
             if let queueVC = presentedChilrenStoryboard.instantiateViewController(withIdentifier: "queueVC") as? CollectorViewController {
                 
-                queueVC.screenshotProvider = self
                 queueVC.manager = self
                 queueVC.peeker = self
                 queueVC.modifyBackgroundView(forState: .visible)
@@ -1562,7 +1546,6 @@ extension ContainerViewController: UIViewControllerPreviewingDelegate {
             if let queueVC = /*self.queueVC?.queueTVC ?? */presentedChilrenStoryboard.instantiateViewController(withIdentifier: "queueTVC") as? QueueViewController {
                 
                 queueVC.peeker = self
-                queueVC.screenshotProvider = self
                 queueVC.modifyBackgroundView(forState: .visible)
                 previewingContext.sourceRect = bottomEffectView.convert(upNextButton.frame, from: nowPlayingView)
                 
@@ -1597,6 +1580,7 @@ extension ContainerViewController: UIViewControllerPreviewingDelegate {
         if let vc = viewControllerToCommit as? Peekable {
             
             vc.peeker = nil
+            vc.oldArtwork = nil
         }
         
         if let vc = viewControllerToCommit as? Navigatable, let indexer = vc.activeChildViewController as? IndexContaining {
@@ -1609,16 +1593,20 @@ extension ContainerViewController: UIViewControllerPreviewingDelegate {
                 indexer.tableView.contentOffset.y = -vc.inset
             }
             
+            imageView.image = vc.artworkType.image
             visualEffectNavigationBar.backBorderView.alpha = 1
             visualEffectNavigationBar.backView.isHidden = false
             visualEffectNavigationBar.backLabel.text = vc.backLabelText
             visualEffectNavigationBar.titleLabel.text = vc.title
+            visualEffectNavigationBar.animateRelevantConstraints(direction: .forward, section: .end(completed: true), with: nil, and: indexer.navigatable)
         }
         
         if let vc = viewControllerToCommit as? NowPlayingViewController {
             
             vc.perfrom3DTouchCleanup()
             contentView.alpha = 0
+            visualEffectNavigationBar.alpha = 0
+            bottomEffectView.alpha = 0
             vc.statusBarBackground.isHidden = dynamicStatusBar
         }
         

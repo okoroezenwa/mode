@@ -299,13 +299,6 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Inf
         updateSongsLabel(with: (albumQuery?.items ?? []).count)
         
         artistButton.setTitle(album?.representativeItem?.validAlbumArtist, for: .normal)
-        artistButton.isUserInteractionEnabled = album?.representativeItem?.isCompilation == false
-        artistButton.contentEdgeInsets.left = album?.representativeItem?.isCompilation == true ? 36 : 34
-        artistChevronBorder.isHidden = album?.representativeItem?.isCompilation == true
-        
-        artistImageView.image = album?.representativeItem?.isCompilation == true ? #imageLiteral(resourceName: "ArtistsSmall") : #imageLiteral(resourceName: "ForwardArrowSmall")
-        artistImageView.contentMode = album?.representativeItem?.isCompilation == true ? .scaleAspectFit : .center
-        artistImageView.alpha = album?.representativeItem?.isCompilation == true ? 0.7 : 1
         
         totalDurationLabel.text = (albumQuery?.items ?? []).map({ $0.playbackDuration }).reduce(0, +).stringRepresentation(as: .short)
         
@@ -482,14 +475,6 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Inf
         
         super.viewDidAppear(animated)
         
-//        for cell in tableView.visibleCells {
-//            
-//            if let cell = cell as? SongTableViewCell, !cell.playingView.isHidden {
-//                
-//                cell.indicator.state = musicPlayer.isPlaying ? .playing : .paused
-//            }
-//        }
-        
         prepareTransientObservers()
         
         if needsDismissal {
@@ -581,7 +566,21 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Inf
             
             guard let weakSelf = self else { return }
             
-            weakSelf.tableView.reloadData()
+            for cell in weakSelf.tableView.visibleCells {
+                
+                guard let cell = cell as? SongTableViewCell, let indexPath = weakSelf.tableView.indexPath(for: cell) else { continue }
+                
+                if cell.playingView.isHidden.inverted && musicPlayer.nowPlayingItem != weakSelf.getSong(from: indexPath) {
+                    
+                    cell.playingView.isHidden = true
+                    cell.indicator.state = .stopped
+                    
+                } else if cell.playingView.isHidden && musicPlayer.nowPlayingItem == weakSelf.getSong(from: indexPath) {
+                    
+                    cell.playingView.isHidden = false
+                    UniversalMethods.performOnMainThread({ cell.indicator.state = musicPlayer.isPlaying ? .playing : .paused }, afterDelay: 0.1)
+                }
+            }
             
         }) as! NSObject)
         
@@ -701,7 +700,7 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Inf
                     
                     let sender = sender as? (MPMediaItemCollection?, MPMediaItem?)
                     
-                    Transitioner.shared.transition(to: album?.representativeItem?.isCompilation == true ? .artist : .albumArtist, vc: segue.destination, from: entityVC, sender: sender?.0, highlightedItem: sender?.1, filter: self)
+                    Transitioner.shared.transition(to: /*album?.representativeItem?.isCompilation == true ? .artist : */.albumArtist, vc: segue.destination, from: entityVC, sender: sender?.0, highlightedItem: sender?.1, filter: self)
                 
                 case "toArranger": Transitioner.shared.transition(to: segue.destination, from: self)
             
@@ -740,7 +739,7 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Inf
         
         guard let song = song else { return nil }
         
-        let query = MPMediaQuery.init(filterPredicates: [.for(song.isCompilation ? .artist : .albumArtist, using: song.isCompilation ? song.artistPersistentID : song.albumArtistPersistentID)]).cloud.grouped(by: song.isCompilation ? .artist : .albumArtist)
+        let query = MPMediaQuery.init(filterPredicates: [.for(/*song.isCompilation ? .artist : */.albumArtist, using: /*song.isCompilation ? song.artistPersistentID : */song.albumArtistPersistentID)]).cloud.grouped(by: /*song.isCompilation ? .artist : */.albumArtist)
         
         if let artist = query.collections?.first {
             
@@ -814,6 +813,7 @@ extension AlbumItemsViewController: UIViewControllerPreviewingDelegate {
         if let vc = viewControllerToCommit as? Peekable {
             
             vc.peeker = nil
+            vc.oldArtwork = nil
         }
         
         if let vc = viewControllerToCommit as? Navigatable, let indexer = vc.activeChildViewController as? IndexContaining {
@@ -826,10 +826,12 @@ extension AlbumItemsViewController: UIViewControllerPreviewingDelegate {
                 indexer.tableView.contentOffset.y = -vc.inset
             }
             
+            entityVC?.container?.imageView.image = vc.artworkType.image
             entityVC?.container?.visualEffectNavigationBar.backBorderView.alpha = 1
             entityVC?.container?.visualEffectNavigationBar.backView.isHidden = false
             entityVC?.container?.visualEffectNavigationBar.backLabel.text = vc.backLabelText
             entityVC?.container?.visualEffectNavigationBar.titleLabel.text = vc.title
+            entityVC?.container?.visualEffectNavigationBar.animateRelevantConstraints(direction: .forward, section: .end(completed: true), with: nil, and: indexer.navigatable)
         }
         
         show(viewControllerToCommit, sender: nil)

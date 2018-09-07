@@ -27,7 +27,7 @@
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="hdm-KQ-6xG">
-                        <rect key="frame" x="0.0" y="11" width="320" height="117"/>
+                        <rect key="frame" x="0.0" y="3" width="320" height="125"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tGb-zK-IYc">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="80"/>
@@ -266,34 +266,34 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FWd-6D-QVJ">
-                                <rect key="frame" x="0.0" y="81" width="320" height="36"/>
+                                <rect key="frame" x="0.0" y="81" width="320" height="44"/>
                                 <subviews>
                                     <view alpha="0.05000000074505806" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RpR-td-WoG" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                        <rect key="frame" x="159.5" y="8" width="1" height="20"/>
+                                        <rect key="frame" x="159.5" y="8" width="1" height="28"/>
                                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                         <constraints>
                                             <constraint firstAttribute="width" priority="900" constant="1" id="TYf-Xg-scK"/>
                                         </constraints>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6XZ-dJ-kM6" userLabel="Top Divider View" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="35" width="320" height="1"/>
+                                        <rect key="frame" x="0.0" y="43" width="320" height="1"/>
                                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.050000000000000003" colorSpace="calibratedRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="height" priority="900" constant="1" id="IT0-V6-Gdm"/>
                                         </constraints>
                                     </view>
                                     <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="cEW-mb-fPv">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="36"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="751" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MN2-Cy-8b0" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="0.0" width="160" height="36"/>
-                                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="15"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="160" height="44"/>
+                                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                 <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                 <state key="normal" title="Albums"/>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="751" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ae5-sm-UOM" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="160" y="0.0" width="160" height="36"/>
-                                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="15"/>
+                                                <rect key="frame" x="160" y="0.0" width="160" height="44"/>
+                                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="16"/>
                                                 <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                 <state key="normal" title="Songs"/>
                                             </button>
@@ -311,11 +311,14 @@
                                     <constraint firstAttribute="bottom" secondItem="cEW-mb-fPv" secondAttribute="bottom" id="dv5-Xq-bhU"/>
                                     <constraint firstItem="cEW-mb-fPv" firstAttribute="top" secondItem="FWd-6D-QVJ" secondAttribute="top" id="fvJ-jc-Ybu"/>
                                     <constraint firstItem="cEW-mb-fPv" firstAttribute="leading" secondItem="FWd-6D-QVJ" secondAttribute="leading" id="h93-W4-y1e"/>
-                                    <constraint firstAttribute="height" priority="900" constant="36" id="uVU-Wr-pIy"/>
+                                    <constraint firstAttribute="height" priority="900" constant="44" id="uVU-Wr-pIy"/>
                                     <constraint firstAttribute="bottom" secondItem="RpR-td-WoG" secondAttribute="bottom" priority="900" constant="8" id="yMi-nI-h88"/>
                                 </constraints>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="boolean" keyPath="hidden" value="YES"/>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="alpha">
+                                        <integer key="value" value="0"/>
+                                    </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                             </view>
                         </subviews>
@@ -339,6 +342,8 @@
                 <outlet property="clearButtonView" destination="n07-kd-PK0" id="lpB-Vy-HsE"/>
                 <outlet property="entityImageView" destination="Ofg-i6-SIT" id="tQN-9s-cWk"/>
                 <outlet property="entityImageViewContainer" destination="FHH-mf-Q5m" id="Uv8-rp-tGq"/>
+                <outlet property="entityView" destination="FWd-6D-QVJ" id="u0O-N5-zJV"/>
+                <outlet property="entityViewHeightConstraint" destination="uVU-Wr-pIy" id="V5V-iX-FPN"/>
                 <outlet property="gradientView" destination="jLH-Vb-2XB" id="Lo6-MP-GYc"/>
                 <outlet property="songsButton" destination="ae5-sm-UOM" id="2ei-Lr-Abe"/>
                 <outlet property="stackView" destination="hdm-KQ-6xG" id="weq-i8-Eeq"/>

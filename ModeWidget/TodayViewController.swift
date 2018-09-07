@@ -181,21 +181,6 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         
         (CornerRadius(rawValue: sharedWidgetCornerRadius) ?? cornerRadius).updateCornerRadius(on: artwork.layer, using: artwork.bounds.width, globalRadiusType: cornerRadius)
         
-//        let details: (radius: CGFloat, useContinuousCorners: Bool) = {
-//
-//            let cornerRadius = CornerRadius(rawValue: sharedCornerRadius) ?? .small
-//
-//            switch cornerRadius {
-//
-//                case .automatic: return ((CornerRadius(rawValue: sharedWidgetCornerRadius) ?? cornerRadius).radius(width: artwork.bounds.width), (CornerRadius(rawValue: sharedWidgetCornerRadius) ?? cornerRadius) != .rounded)
-//
-//                default: return (cornerRadius.radius(width: artwork.bounds.width), cornerRadius != .rounded)
-//            }
-//        }()
-//
-//        artwork.layer.setRadiusTypeIfNeeded(to: details.useContinuousCorners)
-//        artwork.layer.cornerRadius = details.radius
-        
         guard updateShadow else { return }
         
         artworkContainer?.addShadow(radius: 8, opacity: 0, shouldRasterise: true)
@@ -516,7 +501,7 @@ extension TodayViewController: UICollectionViewDelegate, UICollectionViewDataSou
         
         let count = queueLocation == .upNext ? musicPlayer.queueCount() - (musicPlayer.nowPlayingItemIndex + 1) : musicPlayer.nowPlayingItemIndex
         
-        return min(10, count)
+        return min(5, count)
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

@@ -29,7 +29,8 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         
         let view = HeaderView.fresh
         self.actionsStackView = view.actionsStackView
-        self.stackView = view.scrollStackView
+//        self.stackView = view.scrollStackView
+        view.scrollStackViewHeightConstraint.constant = 0
         
         return view
     }()
@@ -37,37 +38,37 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         
         didSet {
             
-            let shuffleView = BorderedButtonView.with(title: .shuffleButtonTitle, image: #imageLiteral(resourceName: "Shuffle13"), action: #selector(shuffle), target: self)
-            shuffleButton = shuffleView.button
-            self.shuffleView = shuffleView
-            
-            let arrangeBorderView = BorderedButtonView.with(title: .arrangeButtonTitle, image: #imageLiteral(resourceName: "AscendingLines"), action: #selector(showArranger), target: self)
-            arrangeBorderView.borderView.centre(activityIndicator)
-            arrangeButton = arrangeBorderView.button
-            self.arrangeBorderView = arrangeBorderView
+//            let shuffleView = BorderedButtonView.with(title: .shuffleButtonTitle, image: #imageLiteral(resourceName: "Shuffle13"), action: #selector(shuffle), target: self)
+//            shuffleButton = shuffleView.button
+//            self.shuffleView = shuffleView
+//
+//            let arrangeBorderView = BorderedButtonView.with(title: .arrangeButtonTitle, image: #imageLiteral(resourceName: "AscendingLines"), action: #selector(showArranger), target: self)
+//            arrangeBorderView.borderView.centre(activityIndicator)
+//            arrangeButton = arrangeBorderView.button
+//            self.arrangeBorderView = arrangeBorderView
             
             let editView = BorderedButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, action: #selector(SongActionManager.toggleEditing(_:)), target: songManager)
             editButton = editView.button
             self.editView = editView
             
-            [shuffleView, arrangeBorderView, editView].forEach({ actionsStackView.addArrangedSubview($0) })
+            [/*shuffleView, arrangeBorderView, */editView].forEach({ actionsStackView.addArrangedSubview($0) })
         }
     }
     
-    var stackView: UIStackView! {
-        
-        didSet {
-            
-            let view = ScrollHeaderSubview.with(title: arrangementLabelText, image: #imageLiteral(resourceName: "Order10"))
-            
-            orderLabel = view.label
-            
-            for view in [view] {
-                
-                stackView.addArrangedSubview(view)
-            }
-        }
-    }
+//    var stackView: UIStackView! {
+//
+//        didSet {
+//
+//            let view = ScrollHeaderSubview.with(title: arrangementLabelText, image: #imageLiteral(resourceName: "Order10"))
+//
+//            orderLabel = view.label
+//
+//            for view in [view] {
+//
+//                stackView.addArrangedSubview(view)
+//            }
+//        }
+//    }
     
     enum FilterEntities {
         
@@ -117,6 +118,8 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
     @objc var albumArtistQuery: MPMediaQuery?
     @objc var playlistQuery: MPMediaQuery?
     
+    var emptyCondition: Bool { return filtering ? tableContainer?.filteredEntities.isEmpty != false : recentSearches.isEmpty }
+    
 //    lazy var filteredSongs = [MPMediaItem]()
 //    lazy var filteredCollections = [MPMediaItemCollection]()
     
@@ -142,7 +145,7 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
     var orderLabel: MELLabel!
     var activityIndicator = MELActivityIndicatorView.init()
     var arrangeButton: MELButton!
-    var editButton: MELButton! = MELButton() {
+    var editButton: MELButton! {
         
         didSet {
             
@@ -179,6 +182,7 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
             
             tableContainer?.filteredEntities.reverse()
             
+            updateHeaderView()
             tableView.reloadData()
             animateCells(direction: .vertical)
             updateImage(for: arrangeButton)
@@ -260,6 +264,10 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         
         view.layoutIfNeeded()
         
+        tableView.register(UINib.init(nibName: "RecentSearchCell", bundle: nil), forCellReuseIdentifier: .recentCell)
+        
+        resetRecentSearches()
+        
         searchBar.delegate = self
         searchBar.text = sender?.filterText
         filterViewContainer.filterView.filterTestButton.setTitle(sender?.testTitle, for: .normal)
@@ -271,14 +279,15 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         
 //        updateHeaderView(with: tableContainer?.filteredEntities.count ?? 0)
 //        updateImage(for: arrangeButton)
-        
-        tableView.register(UINib.init(nibName: "RecentSearchCell", bundle: nil), forCellReuseIdentifier: .recentCell)
-        
-        resetRecentSearches()
        
         notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillHideNotification, object: nil)
         notifier.addObserver(self, selector: #selector(updateCollectedView(_:)), name: .managerItemsChanged, object: nil)
+        
+        if case .collections(_, .playlist) = entities { } else {
+            
+            notifier.addObserver(self, selector: #selector(updateNowPlaying), name: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer)
+        }
         
         (parent as? PresentedContainerViewController)?.transitionStart = { [weak self] in
             
@@ -310,6 +319,54 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         }
     }
     
+    @objc func updateNowPlaying() {
+        
+        switch entities {
+            
+            case .songs(let songs):
+            
+                for cell in tableView.visibleCells {
+                    
+                    guard let cell = cell as? SongTableViewCell, let indexPath = tableView.indexPath(for: cell) else { continue }
+                    
+                    if cell.playingView.isHidden.inverted && musicPlayer.nowPlayingItem != songs[indexPath.row] {
+                        
+                        cell.playingView.isHidden = true
+                        cell.indicator.state = .stopped
+                        
+                    } else if cell.playingView.isHidden && musicPlayer.nowPlayingItem == songs[indexPath.row] {
+                        
+                        cell.playingView.isHidden = false
+                        UniversalMethods.performOnMainThread({ cell.indicator.state = musicPlayer.isPlaying ? .playing : .paused }, afterDelay: 0.1)
+                    }
+                }
+            
+            case .collections(let collections, kind: _):
+            
+                for cell in tableView.visibleCells {
+                    
+                    guard let entityCell = cell as? SongTableViewCell, let indexPath = tableView.indexPath(for: entityCell), let nowPlaying = musicPlayer.nowPlayingItem else {
+                        
+                        (cell as? SongTableViewCell)?.playingView.isHidden = true
+                        (cell as? SongTableViewCell)?.indicator.state = .stopped
+                        
+                        continue
+                    }
+                    
+                    if entityCell.playingView.isHidden.inverted && Set(collections[indexPath.row].items).contains(nowPlaying).inverted {
+                        
+                        entityCell.playingView.isHidden = true
+                        entityCell.indicator.state = .stopped
+                        
+                    } else if entityCell.playingView.isHidden && Set(collections[indexPath.row].items).contains(nowPlaying) {
+                        
+                        entityCell.playingView.isHidden = false
+                        UniversalMethods.performOnMainThread({ entityCell.indicator.state = musicPlayer.isPlaying ? .playing : .paused }, afterDelay: 0.1)
+                    }
+                }
+        }
+    }
+    
     @objc func updateCollectedView(_ sender: Any) {
         
         guard let container = appDelegate.window?.rootViewController as? ContainerViewController else { return }
@@ -320,18 +377,18 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         updateCollectedText(animated: animated)
     }
     
-    @objc func updateHeaderView(with count: Int) {
+    @objc func updateHeaderView() {
         
-        shuffleButton.superview?.isHidden = count < 2
-        tableView.tableHeaderView?.frame.size.height = 92
-        tableView.tableHeaderView = headerView
+//        shuffleButton.superview?.isHidden = count < 2
+        tableView.tableHeaderView = emptyCondition ? nil : headerView
+        tableView.tableHeaderView?.frame.size.height = emptyCondition ? 0 : 48//92
         
-        var array = [shuffleView, arrangeBorderView, editView]
+        let array = /*emptyCondition ? [] : */[/*shuffleView, arrangeBorderView, */editView]
         
-        if count < 2 {
-            
-            array.remove(at: 0)
-        }
+//        if count < 2 {
+//
+//            array.remove(at: 0)
+//        }
         
         borderedButtons = array
         
@@ -453,6 +510,7 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
             if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
             
             [{ tableContainer.filteredEntities = array },
+             { weakSelf.updateHeaderView() },
              { weakSelf.tableView.reloadData() },
              { weakSelf.tableView.setContentOffset(.zero, animated: false)},
              { weakSelf.animateCells(direction: .vertical) },
@@ -662,7 +720,7 @@ extension FilterViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         
-        return 0.00001//11
+        return emptyCondition ? 0.00001 : 11
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
@@ -763,6 +821,7 @@ extension FilterViewController: UISearchBarDelegate {
             sender?.filterOperation?.cancel()
             updateTitleLabel()
             tableView.reloadData()
+            updateHeaderView()
             tableView.contentOffset = unfilteredPoint
             
             animateCells(direction: .vertical)

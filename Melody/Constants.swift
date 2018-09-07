@@ -23,8 +23,6 @@ struct FileSize: Hashable, Comparable {
     let actualSize: Int64
     let suffix: String
     
-//    var hashValue: Int { return size.hashValue ^ suffix.hashValue }
-    
     init(size: Int64, suffix: String, actualSize: Int64) {
         
         self.size = size
@@ -38,11 +36,6 @@ struct FileSize: Hashable, Comparable {
         size = actualSize.divided
         suffix = actualSize.fileSizeSuffix
     }
-    
-//    static func ==(lhs: FileSize, rhs: FileSize) -> Bool {
-//
-//        return lhs.size == rhs.size && lhs.suffix == rhs.suffix
-//    }
     
     static func >(lhs: FileSize, rhs: FileSize) -> Bool {
         

@@ -96,7 +96,15 @@
 		BE3BC1072025A627004B0FB1 /* ActionsButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3BC1062025A627004B0FB1 /* ActionsButton.swift */; };
 		BE3BF6BD1E7554B400667D4C /* TipsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3BF6BC1E7554B400667D4C /* TipsTableViewController.swift */; };
 		BE3F63211DCE2E71009173AB /* PlaylistCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3F63201DCE2E71009173AB /* PlaylistCollectionViewCell.swift */; };
-		BE43524C2101EEBA0027C02C /* SwiperTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE43524B2101EEBA0027C02C /* SwiperTableViewCell.swift */; };
+		BE42A620213523070094DD0C /* SwipeView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BE42A61F213523070094DD0C /* SwipeView.xib */; };
+		BE42A622213540B10094DD0C /* SwipeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE42A621213540B10094DD0C /* SwipeView.swift */; };
+		BE42A62B21357A850094DD0C /* MessageTone.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE42A62521357A820094DD0C /* MessageTone.swift */; };
+		BE42A62C21357A850094DD0C /* HapticFeedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE42A62621357A830094DD0C /* HapticFeedback.swift */; };
+		BE42A62D21357A850094DD0C /* SoundEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE42A62721357A830094DD0C /* SoundEffect.swift */; };
+		BE42A62E21357A850094DD0C /* FeedbackEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE42A62821357A830094DD0C /* FeedbackEffect.swift */; };
+		BE42A62F21357A850094DD0C /* VibrationFeedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE42A62921357A840094DD0C /* VibrationFeedback.swift */; };
+		BE42A63021357A850094DD0C /* URL+SoundEmitting.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE42A62A21357A850094DD0C /* URL+SoundEmitting.swift */; };
+		BE43524C2101EEBA0027C02C /* SwipeContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE43524B2101EEBA0027C02C /* SwipeContainer.swift */; };
 		BE47B9781D317B9500503E20 /* InteractionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE47B9771D317B9500503E20 /* InteractionController.swift */; };
 		BE494D301D2F1310007DE1F6 /* PlaylistItemsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE494D2F1D2F1310007DE1F6 /* PlaylistItemsViewController.swift */; };
 		BE500F1F1F9918EE0005E568 /* QueueInsertViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE500F1E1F9918EE0005E568 /* QueueInsertViewController.swift */; };
@@ -171,6 +179,7 @@
 		BEB47B5A1F614CCB00CAD2C4 /* String + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7C425E1E84499600974EF2 /* String + Extensions.swift */; };
 		BEB47B5B1F61586600CAD2C4 /* Notification + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE15AA1E1E869B100053D10B /* Notification + Extensions.swift */; };
 		BEB4C4661ECF1B0D0087E6F5 /* MELCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB4C4651ECF1B0D0087E6F5 /* MELCollectionView.swift */; };
+		BEB504C2213B0175004F94DE /* ArtworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB504C1213B0175004F94DE /* ArtworkManager.swift */; };
 		BEB57D9E1D569A9A0078264A /* UIImage+UIStatusBarStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = BEB57D9D1D569A9A0078264A /* UIImage+UIStatusBarStyle.m */; };
 		BEB76FC020505067001FCA00 /* RecentsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB76FBF20505066001FCA00 /* RecentsTableViewController.swift */; };
 		BEBC4E321FB2DAE200F18E06 /* InputView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BEBC4E311FB2DAE200F18E06 /* InputView.xib */; };
@@ -408,7 +417,15 @@
 		BE3BC1062025A627004B0FB1 /* ActionsButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionsButton.swift; sourceTree = "<group>"; };
 		BE3BF6BC1E7554B400667D4C /* TipsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TipsTableViewController.swift; sourceTree = "<group>"; };
 		BE3F63201DCE2E71009173AB /* PlaylistCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaylistCollectionViewCell.swift; sourceTree = "<group>"; };
-		BE43524B2101EEBA0027C02C /* SwiperTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiperTableViewCell.swift; sourceTree = "<group>"; };
+		BE42A61F213523070094DD0C /* SwipeView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SwipeView.xib; sourceTree = "<group>"; };
+		BE42A621213540B10094DD0C /* SwipeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeView.swift; sourceTree = "<group>"; };
+		BE42A62521357A820094DD0C /* MessageTone.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageTone.swift; sourceTree = "<group>"; };
+		BE42A62621357A830094DD0C /* HapticFeedback.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HapticFeedback.swift; sourceTree = "<group>"; };
+		BE42A62721357A830094DD0C /* SoundEffect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SoundEffect.swift; sourceTree = "<group>"; };
+		BE42A62821357A830094DD0C /* FeedbackEffect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedbackEffect.swift; sourceTree = "<group>"; };
+		BE42A62921357A840094DD0C /* VibrationFeedback.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VibrationFeedback.swift; sourceTree = "<group>"; };
+		BE42A62A21357A850094DD0C /* URL+SoundEmitting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URL+SoundEmitting.swift"; sourceTree = "<group>"; };
+		BE43524B2101EEBA0027C02C /* SwipeContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeContainer.swift; sourceTree = "<group>"; };
 		BE47B9771D317B9500503E20 /* InteractionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InteractionController.swift; sourceTree = "<group>"; };
 		BE494D2F1D2F1310007DE1F6 /* PlaylistItemsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaylistItemsViewController.swift; sourceTree = "<group>"; };
 		BE500F1E1F9918EE0005E568 /* QueueInsertViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueueInsertViewController.swift; sourceTree = "<group>"; };
@@ -482,6 +499,7 @@
 		BEB47B551F614BA700CAD2C4 /* ModeWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ModeWidget.entitlements; sourceTree = "<group>"; };
 		BEB47B571F614C4600CAD2C4 /* SharedGlobals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedGlobals.swift; sourceTree = "<group>"; };
 		BEB4C4651ECF1B0D0087E6F5 /* MELCollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MELCollectionView.swift; sourceTree = "<group>"; };
+		BEB504C1213B0175004F94DE /* ArtworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtworkManager.swift; sourceTree = "<group>"; };
 		BEB57D9C1D569A9A0078264A /* UIImage+UIStatusBarStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImage+UIStatusBarStyle.h"; path = "../UIImage+UIStatusBarStyle.h"; sourceTree = "<group>"; };
 		BEB57D9D1D569A9A0078264A /* UIImage+UIStatusBarStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImage+UIStatusBarStyle.m"; path = "../UIImage+UIStatusBarStyle.m"; sourceTree = "<group>"; };
 		BEB76FBF20505066001FCA00 /* RecentsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentsTableViewController.swift; sourceTree = "<group>"; };
@@ -899,7 +917,6 @@
 				BEBF0E7520461B2F001C29CC /* RecentSearchTableViewCell.swift */,
 				BEDC53AC1EBCECFD00566424 /* SongDetailsTableViewCell.swift */,
 				BE73B1E41D96D9C20059D084 /* SongTableViewCell.swift */,
-				BE43524B2101EEBA0027C02C /* SwiperTableViewCell.swift */,
 				BE0136A7211DCED600D7588A /* TextViewTableViewCell.swift */,
 				BE0136A9211DCEE600D7588A /* TextFieldsTableViewCell.swift */,
 				BEFB93CD21244E6C00590993 /* PlaybackTableViewCell.swift */,
@@ -930,6 +947,8 @@
 				BEBC4E331FB37D1200F18E06 /* InputView.swift */,
 				BE2808851FC9724300D3AB1C /* FilterView.swift */,
 				BE3BC1062025A627004B0FB1 /* ActionsButton.swift */,
+				BE43524B2101EEBA0027C02C /* SwipeContainer.swift */,
+				BE42A621213540B10094DD0C /* SwipeView.swift */,
 			);
 			name = "View Subclasses";
 			path = ..;
@@ -938,6 +957,7 @@
 		BE2861EB1E8CCFA8000AADB9 /* Delegates & Handlers */ = {
 			isa = PBXGroup;
 			children = (
+				BEB504C1213B0175004F94DE /* ArtworkManager.swift */,
 				BE7E73B620ADF7B2008A52B7 /* ActionsManager.swift */,
 				BE2861E91E8CCF89000AADB9 /* TableDelegate.swift */,
 				BE89790D1E30C22B008634E6 /* NowPlaying.swift */,
@@ -980,6 +1000,19 @@
 				BEFF5569212873A5006CBAEE /* NavigationBarEffectView.swift */,
 			);
 			name = Themable;
+			sourceTree = "<group>";
+		};
+		BE42A63121357A8B0094DD0C /* Feedback */ = {
+			isa = PBXGroup;
+			children = (
+				BE42A62821357A830094DD0C /* FeedbackEffect.swift */,
+				BE42A62621357A830094DD0C /* HapticFeedback.swift */,
+				BE42A62521357A820094DD0C /* MessageTone.swift */,
+				BE42A62721357A830094DD0C /* SoundEffect.swift */,
+				BE42A62A21357A850094DD0C /* URL+SoundEmitting.swift */,
+				BE42A62921357A840094DD0C /* VibrationFeedback.swift */,
+			);
+			name = Feedback;
 			sourceTree = "<group>";
 		};
 		BE49F4661F3F0533009E0D11 /* SwipeCellKit */ = {
@@ -1093,6 +1126,7 @@
 				BEBF0E73204616BC001C29CC /* RecentSearchCell.xib */,
 				BEFB93CB2124421900590993 /* PlaybackCell.xib */,
 				BEFF556B212874F0006CBAEE /* VisualEffectNavigationBar.xib */,
+				BE42A61F213523070094DD0C /* SwipeView.xib */,
 			);
 			name = XIBS;
 			path = ..;
@@ -1171,6 +1205,7 @@
 				BE24F0F21F64570E00BBBD32 /* Insomnia.swift */,
 				BE5439A31E87E62D0082645C /* ESTMusicIndicatorContentView.swift */,
 				BE5439A41E87E62D0082645C /* ESTMusicIndicatorView.swift */,
+				BE42A63121357A8B0094DD0C /* Feedback */,
 			);
 			name = "3rd Party";
 			sourceTree = "<group>";
@@ -1408,6 +1443,7 @@
 				BEC04C051D30257B0095D856 /* MyriadPro-Light.otf in Resources */,
 				BE10508D211AFFB000F5DC78 /* LyricsInfoViewController.storyboard in Resources */,
 				BE573CFC1E669FD20021DCBD /* NowPlaying.storyboard in Resources */,
+				BE42A620213523070094DD0C /* SwipeView.xib in Resources */,
 				BE573CFF1E66A0F30021DCBD /* PresentedChildren.storyboard in Resources */,
 				BE0F5C2C1D2D663F00C9E8A1 /* Main.storyboard in Resources */,
 				BEC0B1672021D506008CBEB5 /* Light App Icon Wide@2x.png in Resources */,
@@ -1549,6 +1585,7 @@
 				BE21DAFE1F229EDF00441BF6 /* TableFooterView.swift in Sources */,
 				BE15DA2D1E81183C00E44CE2 /* Collection + Extensions.swift in Sources */,
 				BEFA28041D32CE3100DE7018 /* NowPlayingViewController.swift in Sources */,
+				BE42A63021357A850094DD0C /* URL+SoundEmitting.swift in Sources */,
 				BE25AED51FA3CE3E00BE37C1 /* ShadowImageView.swift in Sources */,
 				BE0136AE211EFDAB00D7588A /* LyricsManager.swift in Sources */,
 				BE67095D1EB475B40066E515 /* InfoViewController.swift in Sources */,
@@ -1565,12 +1602,13 @@
 				BE0136B121205A4A00D7588A /* Song+CoreDataClass.swift in Sources */,
 				BE99B5361ED6CF130033B796 /* MELLayerView.swift in Sources */,
 				BE7A66941E6253120091A216 /* MELLabel.swift in Sources */,
-				BE43524C2101EEBA0027C02C /* SwiperTableViewCell.swift in Sources */,
+				BE43524C2101EEBA0027C02C /* SwipeContainer.swift in Sources */,
 				BEC933D91F6D9B2400FB5984 /* SwipeAnimator.swift in Sources */,
 				BE53A9A61DD0D77000FB3073 /* TableHeaderView.swift in Sources */,
 				BEC933D71F6D9B1E00FB5984 /* SwipeActionsView.swift in Sources */,
 				BEE173841DA6C1BD00559C05 /* ArrangeViewController.swift in Sources */,
 				BE6CB7251D9D603700328C19 /* NowPlayingAnimationController.swift in Sources */,
+				BE42A62D21357A850094DD0C /* SoundEffect.swift in Sources */,
 				BE34A4901DDEDCCF0023A0EB /* CollectionsViewController.swift in Sources */,
 				BE5BC87E1E18E7A4003889F9 /* NoAccessView.swift in Sources */,
 				BEE7F6471E636766005927C7 /* MELActivityIndicator.swift in Sources */,
@@ -1611,6 +1649,7 @@
 				BED9BC01202D9933007FEC65 /* MELSwitch.swift in Sources */,
 				BE5439A51E87E62D0082645C /* ESTMusicIndicatorContentView.swift in Sources */,
 				BE10508B211AFF7B00F5DC78 /* LyricsInfoViewController.swift in Sources */,
+				BEB504C2213B0175004F94DE /* ArtworkManager.swift in Sources */,
 				BEC0B1512021C05E008CBEB5 /* IconSelectionTableViewController.swift in Sources */,
 				BE0136AC211E12C500D7588A /* ModeOnlyStringExtensions.swift in Sources */,
 				BEC933DF1F6D9B3600FB5984 /* SwipeTableViewCell+Accessibility.swift in Sources */,
@@ -1622,6 +1661,7 @@
 				BE2A69291F1D566100DEE878 /* VolumeViewContainer.swift in Sources */,
 				BE7E73B720ADF7B2008A52B7 /* ActionsManager.swift in Sources */,
 				BE55746B1E7D027000E870A5 /* Arrangeable.swift in Sources */,
+				BE42A62C21357A850094DD0C /* HapticFeedback.swift in Sources */,
 				BE0136A8211DCED600D7588A /* TextViewTableViewCell.swift in Sources */,
 				BE573D061E66A2AD0021DCBD /* Globals.swift in Sources */,
 				BE036EDA1D4A775300BBF1C3 /* NowPlayingInteractionController.swift in Sources */,
@@ -1632,6 +1672,7 @@
 				BE28088C1FC97F5700D3AB1C /* PropertyCollectionViewCell.swift in Sources */,
 				BE2B48C6201F2C5800A534A2 /* VerticalPresentationContainerViewController.swift in Sources */,
 				BED9566D1F9B2A6B00980DF4 /* Image + Extensions.swift in Sources */,
+				BE42A62F21357A850094DD0C /* VibrationFeedback.swift in Sources */,
 				BE7A66961E62C91E0091A216 /* MELSlider.swift in Sources */,
 				BEBC4E341FB37D1200F18E06 /* InputView.swift in Sources */,
 				BE89790E1E30C22B008634E6 /* NowPlaying.swift in Sources */,
@@ -1684,6 +1725,7 @@
 				BE2E7CC81E61F1AE00FD69C4 /* Settings.swift in Sources */,
 				BE7486EA1D982CA60062EB68 /* NavigationAnimationController.swift in Sources */,
 				BEC933E01F6D9B3800FB5984 /* SwipeTableViewCell+Display.swift in Sources */,
+				BE42A622213540B10094DD0C /* SwipeView.swift in Sources */,
 				BE0136AA211DCEE600D7588A /* TextFieldsTableViewCell.swift in Sources */,
 				BE3BF6BD1E7554B400667D4C /* TipsTableViewController.swift in Sources */,
 				BE5439A61E87E62D0082645C /* ESTMusicIndicatorView.swift in Sources */,
@@ -1693,6 +1735,7 @@
 				BE2CC8DF1FC2A6A30012FD5F /* SectionIndexViewController.swift in Sources */,
 				BEC933DD1F6D9B3100FB5984 /* SwipeTableOptions.swift in Sources */,
 				BE63F5681D57C50200D03019 /* QueueViewController.swift in Sources */,
+				BE42A62B21357A850094DD0C /* MessageTone.swift in Sources */,
 				BEC933DE1F6D9B3400FB5984 /* SwipeTableViewCell.swift in Sources */,
 				BEC933E11F6D9B3C00FB5984 /* SwipeTableViewCellDelegate.swift in Sources */,
 				BE25606A1E74189700858C02 /* MELTextField.swift in Sources */,
@@ -1702,6 +1745,7 @@
 				BE66DF891DC3E5D300CF59CD /* TipsViewController.swift in Sources */,
 				BE2E6EEA205F9CB30004ABC1 /* FilterContainer.swift in Sources */,
 				BE21DB021F22C2CF00441BF6 /* PlaybackTableViewController.swift in Sources */,
+				BE42A62E21357A850094DD0C /* FeedbackEffect.swift in Sources */,
 				BEC978BC1D6E0B93006277C2 /* RecentSearch+CoreDataProperties.swift in Sources */,
 				BE73B1E51D96D9C30059D084 /* SongTableViewCell.swift in Sources */,
 				BE7A19BB1ECB470200825303 /* MusicPlayer + Extensions.swift in Sources */,

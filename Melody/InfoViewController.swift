@@ -8,7 +8,7 @@
 
 import UIKit
 
-class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTransitionable, ArtistTransitionable, PlaylistTransitionable, GenreTransitionable, ComposerTransitionable, PreviewTransitionable, EntityVerifiable, InfoLoading, BorderButtonContaining, AlbumArtistTransitionable, FilterContaining {
+class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTransitionable, ArtistTransitionable, PlaylistTransitionable, GenreTransitionable, ComposerTransitionable, PreviewTransitionable, EntityVerifiable, InfoLoading, BorderButtonContaining, AlbumArtistTransitionable, FilterContaining, ArtworkModifying {
 
     @IBOutlet weak var collectionView: MELCollectionView!
     @IBOutlet weak var playButton: MELButton!
@@ -113,6 +113,8 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
     }
     
 //    var relevantWidth = screenWidth - 12
+    var artwork: UIImage?
+    
     var borderedButtons = [BorderedButtonView?]()
     
     let width = (screenWidth - 12) / 3
@@ -655,9 +657,12 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
         
         query = getQuery()
         
-//        UIView.animate(withDuration: 0.3, animations: { self.prepareViews() })
+        prepareViews()
         
-        /*UIView.transition(with: headerView, duration: 0.3, options: .transitionCrossDissolve, animations: { self.*/prepareViews()/* }, completion: nil)*/
+        guard let presentedVC = parent as? PresentedContainerViewController, collectionView.contentOffset.y > 35 else { return }
+        
+        presentedVC.prompt = titleButton.title(for: .normal)
+        presentedVC.updatePrompt(animated: false)
     }
     
     @IBAction func previousItem() {
@@ -677,9 +682,12 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
         
         query = getQuery()
         
-//        UIView.animate(withDuration: 0.3, animations: { self.prepareViews() })
+        prepareViews()
         
-        /*UIView.transition(with: headerView, duration: 0.3, options: .transitionCrossDissolve, animations: { self.*/prepareViews()/* }, completion: nil)*/
+        guard let presentedVC = parent as? PresentedContainerViewController, collectionView.contentOffset.y > 35 else { return }
+        
+        presentedVC.prompt = titleButton.title(for: .normal)
+        presentedVC.updatePrompt(animated: false)
     }
     
     @objc func addSongs() {
@@ -829,14 +837,16 @@ extension InfoViewController: UIScrollViewDelegate {
         
         guard let presentedVC = parent as? PresentedContainerViewController else { return }
         
+        let offset: CGFloat = 35
+        
         switch (scrollView.contentOffset.y, presentedVC.prompt) {
             
-            case (let x, nil) where x > 60:
+            case (let x, nil) where x > offset:
             
                 presentedVC.prompt = titleButton.title(for: .normal)
                 presentedVC.updatePrompt(animated: true)
             
-            case (let x, let y) where x < 61 && y != nil:
+            case (let x, let y) where x < offset + 1 && y != nil:
             
                 presentedVC.prompt = nil
                 presentedVC.updatePrompt(animated: true)
@@ -954,6 +964,7 @@ extension InfoViewController: UIViewControllerPreviewingDelegate {
         if let vc = viewControllerToCommit as? Peekable {
             
             vc.peeker = nil
+            vc.oldArtwork = nil
         }
         
         if let vc = viewControllerToCommit as? Navigatable, let indexer = vc.activeChildViewController as? IndexContaining {
@@ -966,10 +977,12 @@ extension InfoViewController: UIViewControllerPreviewingDelegate {
                 indexer.tableView.contentOffset.y = -vc.inset
             }
             
+            container?.imageView.image = vc.artworkType.image
             container?.visualEffectNavigationBar.backBorderView.alpha = 1
             container?.visualEffectNavigationBar.backView.isHidden = false
             container?.visualEffectNavigationBar.backLabel.text = vc.backLabelText
             container?.visualEffectNavigationBar.titleLabel.text = vc.title
+            container?.visualEffectNavigationBar.animateRelevantConstraints(direction: .forward, section: .end(completed: true), with: nil, and: indexer.navigatable)
         }
         
         viewController = viewControllerToCommit
@@ -1365,7 +1378,7 @@ extension InfoViewController {
                         
                     case .playlist(let index, let playlists):
                         
-                        let actualCollection = query/*collections?*/.playlistsExtracted(showCloudItems: showiCloudItems).first ?? playlists[index]
+                        let actualCollection = query.playlistsExtracted(showCloudItems: showiCloudItems).first ?? playlists[index]
                         
                         guard !actualCollection.items.isEmpty else { return (nil, 0) }
                         
@@ -1376,7 +1389,7 @@ extension InfoViewController {
             guard let sizeDetails = details.size else { return true }
             
             headerHeight += infoHeight
-            durationLabel.text = details.duration.stringRepresentation(as: .short) + " (\(sizeDetails.size)\(sizeDetails.suffix))"
+            durationLabel.text = details.duration.stringRepresentation(as: .short) + " " + "(" + sizeDetails.actualSize.fileSizeRepresentation + ")"
             
             return false
         }()

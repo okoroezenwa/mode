@@ -65,6 +65,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
     @objc var userScrolled = false
     @objc var needsDismissal = false
     @objc var allowPresentation = true // used for presenting actions when controlling music player
+    
     @objc weak var peeker: UIViewController? {
         
         didSet {
@@ -74,7 +75,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             tableView.reloadData()
         }
     }
-    var screenshotProvider: ScreenshotProviding?
+    var oldArtwork: UIImage?
     
     var manager: QueueManager?
     var sectionIndexViewController: SectionIndexViewController?
@@ -140,7 +141,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         
         if let _ = peeker {
             
-            temporaryImageView.image = musicPlayer.nowPlayingItem?.actualArtwork?.image(at: .init(width: 20, height: 20)) ?? #imageLiteral(resourceName: "NoArt")
+            temporaryImageView.image = ArtworkManager.shared.activeContainer?.modifier?.artworkType.image
         }
         
         shouldReturnToContainer = false

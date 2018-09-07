@@ -31,6 +31,7 @@ class HeaderView: UIView, InfoLoading {
     @IBOutlet var buttonsStackView: UIStackView!
     @IBOutlet var addButton: MELButton!
     @IBOutlet var infoButton: MELButton!
+    @IBOutlet var scrollStackViewHeightConstraint: NSLayoutConstraint!
     
     enum Context {
         
@@ -428,9 +429,11 @@ extension HeaderView: UICollectionViewDelegate, UICollectionViewDataSource {
                 
                 if collectionsVC.presented, let playlist = collection as? MPMediaPlaylist {
                     
-                    if collectionsVC.selectedPlaylists.firstIndex(of: playlist) == nil  {
+                    if collectionsVC.selectedPlaylists.firstIndex(of: playlist) == nil, let presentedVC = collectionsVC.libraryVC?.parent as? PresentedContainerViewController {
                         
                         collectionsVC.selectedPlaylists.append(playlist)
+                        presentedVC.prompt = collectionsVC.selectedPlaylists.count.formatted + " selected " + collectionsVC.selectedPlaylists.count.countText(for: .playlist)
+                        presentedVC.updatePrompt(animated: false)
                         
                         if let selectedIndexPath = collectionsVC.tableView.indexPathsForVisibleRows?.first(where: { collectionsVC.getCollection(from: $0) == playlist }), let cell = collectionsVC.tableView.cellForRow(at: selectedIndexPath), cell.isSelected.inverted {
 
@@ -439,7 +442,6 @@ extension HeaderView: UICollectionViewDelegate, UICollectionViewDataSource {
                     }
 
                     return
-//                    collectionsVC.addItems(to: playlist)
                     
                 } else {
                     
@@ -460,9 +462,11 @@ extension HeaderView: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         
-        if let collectionsVC = viewController as? CollectionsViewController, collectionsVC.presented, let playlist = playlists.value(at: indexPath.row), let index = collectionsVC.selectedPlaylists.firstIndex(of: playlist) {
+        if let collectionsVC = viewController as? CollectionsViewController, collectionsVC.presented, let playlist = playlists.value(at: indexPath.row), let index = collectionsVC.selectedPlaylists.firstIndex(of: playlist), let presentedVC = collectionsVC.libraryVC?.parent as? PresentedContainerViewController {
             
             collectionsVC.selectedPlaylists.remove(at: index)
+            presentedVC.prompt = collectionsVC.selectedPlaylists.count.formatted + " selected " + collectionsVC.selectedPlaylists.count.countText(for: .playlist)
+            presentedVC.updatePrompt(animated: false)
             
             if let selectedIndexPath = collectionsVC.tableView.indexPathsForVisibleRows?.first(where: { collectionsVC.getCollection(from: $0) == playlist }), let indexPaths = collectionsVC.tableView.indexPathsForSelectedRows, Set(indexPaths).contains(selectedIndexPath) {
                 

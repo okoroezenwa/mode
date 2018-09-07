@@ -135,19 +135,60 @@ protocol AlbumArtistTransitionable: class {
     var albumArtistQuery: MPMediaQuery? { get set }
 }
 
-protocol ArtworkModifying {
+protocol ArtworkModifying: class {
     
     var artwork: UIImage? { get set }
+}
+
+extension ArtworkModifying {
+    
+    var artworkType: ArtworkType {
+        
+        switch backgroundArtworkAdaptivity {
+            
+            case .none: return .colour(.noArtwork)
+            
+            case .nowPlayingAdaptive:
+            
+                if let artwork = musicPlayer.nowPlayingItem?.actualArtwork?.image(at: .artworkSize) {
+                    
+                    return .image(artwork)
+                }
+                
+                return .colour(.noArtwork)
+            
+            case .sectionAdaptive:
+            
+                if let artwork = artwork {
+                    
+                    return .image(artwork)
+                }
+                
+                return .colour(.noArtwork)
+        }
+    }
+}
+
+protocol ArtworkModifierContaining: class {
+    
+    var modifier: ArtworkModifying? { get }
 }
 
 protocol Peekable: class {
     
     var peeker: UIViewController? { get set }
+    var oldArtwork: UIImage? { get set }
 }
 
 protocol InteractivePresenter {
     
     var presenter: PresentationAnimationController { get }
+}
+
+protocol TitleContaining {
+    
+    var title: String { get }
+    var propertyImage: UIImage? { get }
 }
 
 protocol EntityContainer: UITableViewDelegate, TableViewContaining {
@@ -341,12 +382,6 @@ extension BorderButtonContaining {
 protocol OptionsContaining {
     
     var options: LibraryOptions { get }
-}
-
-protocol ScreenshotProviding {
-    
-    var viewHeirachy: UIImage? { get set }
-    var view: UIView! { get set }
 }
 
 protocol LargeActivityIndicatorContaining: TableViewContaining {

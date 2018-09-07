@@ -320,13 +320,13 @@ extension InfoLoading {
                         
                             let sizer = FileSize.init(actualSize: song.fileSize)
                             
-                            return String(sizer.size) + sizer.suffix
+                            return sizer.actualSize.fileSizeRepresentation//String(sizer.size) + sizer.suffix
                         
                         case .dateAdded: return song.existsInLibrary ? song.validDateAdded.timeIntervalSinceNow.shortStringRepresentation : "Not in Library"
                         
                         case .genre: return song.validGenre
                         
-                        case .lastPlayed: return song.lastPlayedDate?.timeIntervalSinceNow.shortStringRepresentation
+                        case .lastPlayed: return song.lastPlayedDate?.timeIntervalSinceNow.shortStringRepresentation ?? "-"
                         
                         case .loved:
                             
@@ -348,7 +348,7 @@ extension InfoLoading {
                                 default: return "StarFilled" + "." + song.rating.formatted
                             }
                     
-                        case .year: return song.year == 0 ? nil : String(song.year)
+                        case .year: return song.year == 0 ? "-" : String(song.year)
                     }
                     
                 }(), !string.isEmpty {

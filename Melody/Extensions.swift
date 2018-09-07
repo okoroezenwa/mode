@@ -157,6 +157,10 @@ extension UIColor {
     class var peach: UIColor { return UIColor(red:1.0000, green:0.8000, blue:0.6000, alpha:1.0000) }
     class var azure: UIColor { return UIColor(red:0.0588, green:0.4902, blue:0.9686, alpha:1.0000) }
     class var deepGreen: UIColor { return UIColor(red: 99/255, green: 154/255, blue: 39/255, alpha: 1) }
+    class var cream: UIColor { return UIColor(red:0.9569, green:0.9255, blue:0.8824, alpha:1.0000) }
+    class var licorice: UIColor { return UIColor(red:0.1843, green:0.2078, blue:0.2784, alpha:1.0000) }
+    
+    class var noArtwork: UIColor { return darkTheme ? .licorice : .cream }
 }
 
 // MARK: - Array
@@ -615,7 +619,7 @@ extension Int64 {
             
             case .byte: return String.init(describing: self)
             
-            default: return self % divider == 0 ? String.init(describing: divided) : String.init(format: "%.2f", Double(divided)) + " " + fileSizeSuffix
+            default: return self % divider == 0 ? String.init(describing: divided) : String.init(format: "%.2f", Double(self) / Double(divider)) + " " + fileSizeSuffix
         }
     }
 }
@@ -684,6 +688,8 @@ extension CGSize {
         
         return .init(width: dimension, height: dimension)
     }
+    
+    static var artworkSize: CGSize { return .init(width: 20, height: 20) }
 }
 
 // MARK: - UITableView
@@ -867,7 +873,7 @@ extension UITextView: TextContaining {
 
 extension UIViewController {
     
-    static var storyboardName: String {
+    class var storyboardName: String {
         
         return String.init(describing: type(of: self))
     }

@@ -206,8 +206,6 @@ class FilterView: UIView {
         
         guard let container = appDelegate.window?.rootViewController as? ContainerViewController else { return [] }
         
-//        let canShuffleAlbums = actions.contains(.shuffleAlbums)
-        
         return actions.map({
             
             switch $0 {
@@ -266,7 +264,7 @@ class FilterView: UIView {
                 
                 case .existingPlaylist:
                     
-                    return UIAlertAction.init(title: "Add to Playlist", style: .default, handler: { [weak self] _ in
+                    return UIAlertAction.init(title: "Add to Playlists...", style: .default, handler: { [weak self] _ in
                         
                         guard let weakSelf = self, let vc: UIViewController = {
                            
@@ -284,7 +282,7 @@ class FilterView: UIView {
                 
                 case .newPlaylist:
                     
-                    return UIAlertAction.init(title: "Create Playlist", style: .default, handler: { [weak self] _ in
+                    return UIAlertAction.init(title: "Create Playlist...", style: .default, handler: { [weak self] _ in
                         
                         guard let weakSelf = self, let vc: UIViewController = {
                            

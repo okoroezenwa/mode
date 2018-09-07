@@ -444,11 +444,14 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
             tableView.contentInset.top = libraryVC?.inset ?? 0
             tableView.scrollIndicatorInsets.top = libraryVC?.inset ?? 0
             
-        } else {
+        } else if let presentedVC = libraryVC?.parent as? PresentedContainerViewController {
             
             bottomView.isHidden = false
             bottomViewHeightConstraint.constant = 44
             tableView.allowsMultipleSelection = true
+            
+            presentedVC.prompt = selectedPlaylists.count.formatted + " selected " + selectedPlaylists.count.countText(for: .playlist)
+            presentedVC.updatePrompt(animated: false)
         }
         
         prepareLifetimeObservers()
@@ -585,6 +588,14 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
     override func viewWillAppear(_ animated: Bool) {
         
         super.viewWillAppear(animated)
+        
+        for cell in tableView.visibleCells {
+            
+            if let cell = cell as? SongTableViewCell, !cell.playingView.isHidden {
+                
+                cell.indicator.state = musicPlayer.isPlaying ? .playing : .paused
+            }
+        }
     }
     
     @objc func updateHeaderView(withCount count: Int) {
@@ -876,6 +887,42 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
             }
             
         }) as! NSObject)
+        
+        if collectionKind != .playlist {
+            
+            lifetimeObservers.insert(notifier.addObserver(forName: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer, queue: nil, using: { [weak self] _ in
+                
+                guard let weakSelf = self else { return }
+                
+                for cell in weakSelf.tableView.visibleCells {
+                    
+                    guard let entityCell = cell as? SongTableViewCell, let indexPath = weakSelf.tableView.indexPath(for: entityCell), let nowPlaying = musicPlayer.nowPlayingItem else {
+                        
+                        (cell as? SongTableViewCell)?.playingView.isHidden = true
+                        (cell as? SongTableViewCell)?.indicator.state = .stopped
+                        
+                        continue
+                    }
+                    
+                    if entityCell.playingView.isHidden.inverted && Set(weakSelf.getCollection(from: indexPath).items).contains(nowPlaying).inverted {
+                        
+                        entityCell.playingView.isHidden = true
+                        entityCell.indicator.state = .stopped
+                        
+                    } else if entityCell.playingView.isHidden && Set(weakSelf.getCollection(from: indexPath).items).contains(nowPlaying) {
+                        
+                        entityCell.playingView.isHidden = false
+                        UniversalMethods.performOnMainThread({ entityCell.indicator.state = musicPlayer.isPlaying ? .playing : .paused }, afterDelay: 0.1)
+                    
+                    } else {
+                        
+                        entityCell.playingView.isHidden = true
+                        entityCell.indicator.state = .stopped
+                    }
+                }
+                
+            }) as! NSObject)
+        }
     }
     
     @objc func getCurrentQuery() -> MPMediaQuery {
@@ -1420,9 +1467,11 @@ extension CollectionsViewController: TableViewContainer {
             
             guard let playlist = getCollection(from: indexPath, filtering: filtering) as? MPMediaPlaylist else { return }
             
-            if selectedPlaylists.firstIndex(of: playlist) == nil {
+            if selectedPlaylists.firstIndex(of: playlist) == nil, let presentedVC = libraryVC?.parent as? PresentedContainerViewController {
                 
                 selectedPlaylists.append(playlist)
+                presentedVC.prompt = selectedPlaylists.count.formatted + " selected " + selectedPlaylists.count.countText(for: .playlist)
+                presentedVC.updatePrompt(animated: false)
                 
                 if let selectedIndexPath = collectionView?.indexPathsForVisibleItems.first(where: { headerView.playlists.value(at: $0.row) == playlist }), let cell = collectionView?.cellForItem(at: selectedIndexPath), cell.isSelected.inverted {
                     
@@ -1459,9 +1508,11 @@ extension CollectionsViewController: TableViewContainer {
     
     func deselectCell(in tableView: UITableView, at indexPath: IndexPath, filtering: Bool) {
         
-        guard presented, let playlist = getCollection(from: indexPath, filtering: filtering) as? MPMediaPlaylist, let index = selectedPlaylists.firstIndex(of: playlist) else { return }
+        guard presented, let playlist = getCollection(from: indexPath, filtering: filtering) as? MPMediaPlaylist, let index = selectedPlaylists.firstIndex(of: playlist), let presentedVC = libraryVC?.parent as? PresentedContainerViewController else { return }
         
         selectedPlaylists.remove(at: index)
+        presentedVC.prompt = selectedPlaylists.count.formatted + " selected " + selectedPlaylists.count.countText(for: .playlist)
+        presentedVC.updatePrompt(animated: false)
         
         if let selectedIndexPath = collectionView?.indexPathsForVisibleItems.first(where: { headerView.playlists.value(at: $0.row) == playlist }), let indexPaths = collectionView?.indexPathsForSelectedItems, Set(indexPaths).contains(selectedIndexPath) {
             
@@ -2008,6 +2059,7 @@ extension CollectionsViewController: UIViewControllerPreviewingDelegate {
         if let vc = viewControllerToCommit as? Peekable {
             
             vc.peeker = nil
+            vc.oldArtwork = nil
         }
         
         if let vc = viewControllerToCommit as? Navigatable, let indexer = vc.activeChildViewController as? IndexContaining {
@@ -2020,10 +2072,12 @@ extension CollectionsViewController: UIViewControllerPreviewingDelegate {
                 indexer.tableView.contentOffset.y = -vc.inset
             }
             
+            libraryVC?.container?.imageView.image = vc.artworkType.image
             libraryVC?.container?.visualEffectNavigationBar.backBorderView.alpha = 1
             libraryVC?.container?.visualEffectNavigationBar.backView.isHidden = false
             libraryVC?.container?.visualEffectNavigationBar.backLabel.text = vc.backLabelText
             libraryVC?.container?.visualEffectNavigationBar.titleLabel.text = vc.title
+            libraryVC?.container?.visualEffectNavigationBar.animateRelevantConstraints(direction: .forward, section: .end(completed: true), with: nil, and: indexer.navigatable)
         }
         
         show(viewControllerToCommit, sender: nil)

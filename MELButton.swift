@@ -65,43 +65,28 @@ class MELButton: UIButton {
         
         self.frame = frame
         
-        guard !ignoreTheme else {
-            
-//            if #available(iOS 11, *) {
-//
-//                accessibilityIgnoresInvertColors = true
-//            }
-            
-            return
-        }
-        
-        changeThemeColor()
-        
-        notifier.addObserver(self, selector: #selector(changeThemeColor), name: .themeChanged, object: nil)
+        prepare()
     }
     
     required init?(coder aDecoder: NSCoder) {
         
         super.init(coder: aDecoder)
     }
+    
+    func prepare() {
+        
+        guard !ignoreTheme else { return }
+        
+        changeThemeColor()
+        
+        notifier.addObserver(self, selector: #selector(changeThemeColor), name: .themeChanged, object: nil)
+    }
 
     override func awakeFromNib() {
         
         super.awakeFromNib()
         
-        guard !ignoreTheme else {
-            
-//            if #available(iOS 11, *) {
-//                
-//                accessibilityIgnoresInvertColors = true
-//            }
-            
-            return
-        }
-        
-        changeThemeColor()
-        
-        notifier.addObserver(self, selector: #selector(changeThemeColor), name: .themeChanged, object: nil)
+        prepare()
     }
     
     @objc func changeThemeColor() {

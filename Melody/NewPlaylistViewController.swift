@@ -115,6 +115,7 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
         tableView.addGestureRecognizer(swipeLeft)
         
         notifier.addObserver(self, selector: #selector(updateEntityCountVisibility), name: .entityCountVisibilityChanged, object: nil)
+        notifier.addObserver(self, selector: #selector(updateNowPlaying), name: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer)
         
         nameSearchBar.setImage(#imageLiteral(resourceName: "Playlists16"), for: .search, state: .normal)
         nameSearchBar.becomeFirstResponder()
@@ -150,6 +151,25 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
         guard let indexPaths = tableView.indexPathsForVisibleRows else { return }
         
         tableView.reloadRows(at: indexPaths, with: .none)
+    }
+    
+    @objc func updateNowPlaying() {
+        
+        for cell in tableView.visibleCells {
+            
+            guard let cell = cell as? SongTableViewCell, let indexPath = tableView.indexPath(for: cell) else { continue }
+            
+            if cell.playingView.isHidden.inverted && musicPlayer.nowPlayingItem != (manager?.queue ?? playlistItems)[indexPath.row] {
+                
+                cell.playingView.isHidden = true
+                cell.indicator.state = .stopped
+                
+            } else if cell.playingView.isHidden && musicPlayer.nowPlayingItem == (manager?.queue ?? playlistItems)[indexPath.row] {
+                
+                cell.playingView.isHidden = false
+                UniversalMethods.performOnMainThread({ cell.indicator.state = musicPlayer.isPlaying ? .playing : .paused }, afterDelay: 0.1)
+            }
+        }
     }
     
     @objc func adjustKeyboard(with notification: Notification) {

@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 import Foundation
 
-class SearchViewController: UIViewController, Filterable, DynamicSections, AlbumTransitionable, Contained, InfoLoading, ArtistTransitionable, GenreTransitionable, ComposerTransitionable, AlbumArtistTransitionable, PlaylistTransitionable, EntityContainer, OptionsContaining, CellAnimatable, IndexContaining, FilterContainer, SingleItemActionable, EntityVerifiable, TopScrollable, Detailing, Navigatable {
+class SearchViewController: UIViewController, Filterable, DynamicSections, AlbumTransitionable, Contained, InfoLoading, ArtistTransitionable, GenreTransitionable, ComposerTransitionable, AlbumArtistTransitionable, PlaylistTransitionable, EntityContainer, OptionsContaining, CellAnimatable, IndexContaining, FilterContainer, SingleItemActionable, EntityVerifiable, TopScrollable, Detailing, Navigatable, ArtworkModifying, BorderButtonContaining {
 
     @IBOutlet weak var tableView: MELTableView!
     @IBOutlet weak var emptyStackView: UIStackView!
@@ -36,7 +36,26 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         }
     }
     
-//    @objc let managedContext = appDelegate.managedObjectContext
+    lazy var headerView: HeaderView = {
+        
+        let view = HeaderView.fresh
+        self.actionsStackView = view.actionsStackView
+        view.scrollStackViewHeightConstraint.constant = 0
+        
+        return view
+    }()
+    var actionsStackView: UIStackView! {
+        
+        didSet {
+            
+            let editView = BorderedButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, action: #selector(SongActionManager.toggleEditing(_:)), target: songManager)
+            editButton = editView.button
+            self.editView = editView
+            
+            [editView].forEach({ actionsStackView.addArrangedSubview($0) })
+        }
+    }
+    
     @objc let presenter = NavigationAnimationController()
     @objc var recentSearches = [RecentSearch]()
     var currentEntity = Entity.artist
@@ -68,6 +87,8 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
     @objc var albumArtistQuery: MPMediaQuery?
     @objc var playlistQuery: MPMediaQuery?
     
+    lazy var borderedButtons = [BorderedButtonView?]()
+    
     @objc var ignoreKeyboardForInset = true
     var sender: (UIViewController & Filterable)? {
         
@@ -82,16 +103,34 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         set { }
     }
     @objc lazy var wasFiltering = false
+    var emptyCondition: Bool { return filtering ? itemCount < 1 : recentSearches.isEmpty }
     
     let applicableActions = [SongAction]()
     let actionableSongs = [MPMediaItem]()
-    var songManager: SongActionManager { return manager }
-    lazy var manager = { SongActionManager.init(actionable: self) }()
-    var editButton: MELButton! = MELButton()
+    lazy var songManager: SongActionManager = { SongActionManager.init(actionable: self) }()
+    
+    var editView: BorderedButtonView!
+    var editButton: MELButton! {
+        
+        didSet {
+            
+            let allHold = UILongPressGestureRecognizer.init(target: songManager, action: #selector(SongActionManager.showActionsForAll(_:)))
+            allHold.minimumPressDuration = longPressDuration
+            editButton.addGestureRecognizer(allHold)
+            LongPressManager.shared.gestureRecognisers.append(Weak.init(value: allHold))
+        }
+    }
     
     var backLabelText: String?
-    var requiresShadow = false
-    var artwork: UIImage?
+    let needsEntityBar = false
+    
+    var artwork: UIImage? {
+        
+        get { return musicPlayer.nowPlayingItem?.actualArtwork?.image(at: .artworkSize) }
+        
+        set { }
+    }
+    
     let inset: CGFloat = 10 + 34 + 10 + 1
     lazy var preferredTitle: String? = "Search"
     var activeChildViewController: UIViewController?
@@ -108,7 +147,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
     var options: LibraryOptions { return .init(fromVC: self, configuration: .search) }
     var sectionIndexViewController: SectionIndexViewController?
     let requiresLargerTrailingConstraint = false
-    var navigatable: Navigatable?
+    var navigatable: Navigatable? { return self }
     var ignorePropertyChange = false
     var filterViewContainer: FilterViewContainer! {
         
@@ -227,10 +266,14 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         filterViewContainer.filterView.filterTestButton.setTitle(testTitle, for: .normal)
         
         tableView.register(UINib.init(nibName: "RecentSearchCell", bundle: nil), forCellReuseIdentifier: .recentCell)
+        tableView.contentInset.top = inset
+        tableView.scrollIndicatorInsets.top = inset
+        tableView.tableHeaderView = headerView
         
         updateKeyboard(with: self)
         
         resetRecentSearches()
+        updateHeaderView()
         
         let swipeRight = UISwipeGestureRecognizer.init(target: self, action: #selector(handleRightSwipe(_:)))
         swipeRight.direction = .right
@@ -253,6 +296,18 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
             
             registerForPreviewing(with: self, sourceView: tableView)
         }
+    }
+    
+    @objc func updateHeaderView() {
+        
+//        tableView.tableHeaderView = emptyCondition ? nil : headerView
+        tableView.tableHeaderView?.frame.size.height = emptyCondition ? 0 : 48
+        
+        let array = [editView]
+        
+        borderedButtons = array
+        
+        updateButtons()
     }
     
     @objc func showOptions(_ sender: Any) {
@@ -315,8 +370,6 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillHideNotification, object: nil)
         
-        container?.shouldUseNowPlayingArt = true
-        container?.updateBackgroundWithNowPlaying()
         container?.currentModifier = nil
         container?.currentOptionsContaining = self
         
@@ -342,6 +395,11 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
     @objc func handleRightSwipe(_ sender: Any) {
         
         tableView.setEditing(true, animated: true)
+        
+        editButton.setTitle("Done", for: .normal)
+        editButton.setImage(.doneImage, for: .normal)
+        
+        UIView.animate(withDuration: 0.3, animations: { self.editButton.superview?.layoutIfNeeded() })
     }
     
     @objc func handleLeftSwipe(_ sender: Any) {
@@ -349,6 +407,11 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         if tableView.isEditing {
             
             tableView.setEditing(false, animated: true)
+            
+            editButton.setTitle(.inactiveEditButtonTitle, for: .normal)
+            editButton.setImage(.inactiveEditImage, for: .normal)
+            
+            UIView.animate(withDuration: 0.3, animations: { self.editButton.superview?.layoutIfNeeded() })
         
         } else if let gr = sender as? UISwipeGestureRecognizer, let indexPath = tableView.indexPathForRow(at: gr.location(in: tableView)), filtering {
             
@@ -509,9 +572,45 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         
         lifetimeObservers.insert(notifier.addObserver(forName: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer, queue: nil, using: { [weak self] _ in
             
-            guard let weakSelf = self, let indexPath = weakSelf.tableView.indexPathsForVisibleRows?.first(where: { $0.section == SearchCategory.songs.rawValue }) else { return }
+            guard let weakSelf = self else { return }
             
-            weakSelf.tableView.reloadSections(.init(integer: indexPath.section), with: .none)
+            for cell in weakSelf.tableView.visibleCells where weakSelf.tableView.indexPath(for: cell)?.section != SearchCategory.playlists.rawValue {
+                
+                guard let entityCell = cell as? SongTableViewCell, let indexPath = weakSelf.tableView.indexPath(for: entityCell), let nowPlaying = musicPlayer.nowPlayingItem else {
+                    
+                    (cell as? SongTableViewCell)?.playingView.isHidden = true
+                    (cell as? SongTableViewCell)?.indicator.state = .stopped
+                    
+                    continue
+                }
+                
+                if let song = weakSelf.getEntity(at: indexPath) as? MPMediaItem {
+                    
+                    if entityCell.playingView.isHidden.inverted && musicPlayer.nowPlayingItem != song {
+                        
+                        entityCell.playingView.isHidden = true
+                        entityCell.indicator.state = .stopped
+                        
+                    } else if entityCell.playingView.isHidden && musicPlayer.nowPlayingItem == song {
+                        
+                        entityCell.playingView.isHidden = false
+                        UniversalMethods.performOnMainThread({ entityCell.indicator.state = musicPlayer.isPlaying ? .playing : .paused }, afterDelay: 0.1)
+                    }
+                
+                } else if let collection = weakSelf.getEntity(at: indexPath) as? MPMediaItemCollection {
+                    
+                    if entityCell.playingView.isHidden.inverted && Set(collection.items).contains(nowPlaying).inverted {
+                        
+                        entityCell.playingView.isHidden = true
+                        entityCell.indicator.state = .stopped
+                        
+                    } else if entityCell.playingView.isHidden && Set(collection.items).contains(nowPlaying) {
+                        
+                        entityCell.playingView.isHidden = false
+                        UniversalMethods.performOnMainThread({ entityCell.indicator.state = musicPlayer.isPlaying ? .playing : .paused }, afterDelay: 0.1)
+                    }
+                }
+            }
             
         }) as! NSObject)
         
@@ -545,6 +644,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         searchBar?.text = nil
         filterOperation = nil
         filtering = false
+        updateHeaderView()
         tableView.reloadData()
         updateLoadingViews(hidden: true)
         
@@ -581,6 +681,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         filterOperation = nil
         filtering = false
         updateTitleLabel()
+        updateHeaderView()
         tableView.reloadData()
         updateLoadingViews(hidden: true)
         
@@ -809,7 +910,12 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
                 if weakSelf.filterOperation == nil { weakSelf.updateLoadingViews(hidden: true); return }
                 if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
                 
-                weakSelf.tableView.contentOffset = .zero
+                weakSelf.tableView.contentOffset = .init(x: 0, y: -weakSelf.inset)
+                
+                if weakSelf.filterOperation == nil { weakSelf.updateLoadingViews(hidden: true); return }
+                if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
+                
+                weakSelf.updateHeaderView()
                 
                 if weakSelf.filterOperation == nil { weakSelf.updateLoadingViews(hidden: true); return }
                 if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
@@ -847,31 +953,8 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
     
     @objc func updateTitleLabel() {
         
-        if filtering, let searchText = searchBar?.text {
-            
-            let text = /*searchText == "" ? "empty search" : */"\"\(searchText)\""
-            let countString = itemCount.formatted
-            let restOfString = "\(itemCount == 1 ? "result" : "results") for \(text)".uppercased()
-            let string = countString + " " + restOfString
-
-            titleLabel.text = string
-            titleLabel.updateTheme = false
-            titleLabel.greyOverride = true
-            titleLabel.attributes = [
-
-                .init(name: .font, value: .other(UIFont.myriadPro(ofWeight: .regular, size: 15)), range: string.nsRange(of: restOfString)),
-                .init(kind: .title, range: string.nsRange(of: countString))
-            ]
-            titleLabel.updateTheme = true
-            
-        } else {
-            
-            titleLabel.text = "Previous Searches"
-            titleLabel.updateTheme = false
-            titleLabel.greyOverride = false
-            titleLabel.attributes = nil
-            titleLabel.updateTheme = true
-        }
+        title = filtering ? itemCount.formatted + " \(itemCount == 1 ? "Result" : "Results")" : "Previous Searches"
+        container?.visualEffectNavigationBar.titleLabel.text = title
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -1199,7 +1282,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
             
-        return filtering ? .textHeaderHeight : 0.00001
+        return filtering ? .textHeaderHeight : emptyCondition ? 0.00001 : .emptyHeaderHeight
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
@@ -1261,6 +1344,7 @@ extension SearchViewController: UISearchBarDelegate {
             filterOperation = nil
             updateTitleLabel()
             emptyStackView.isHidden = recentSearches.count > 0
+            updateHeaderView()
             tableView.reloadData()
             tableView.contentOffset = unfilteredPoint
             
@@ -1314,6 +1398,7 @@ extension SearchViewController: UIViewControllerPreviewingDelegate {
         if let vc = viewControllerToCommit as? Peekable {
             
             vc.peeker = nil
+            vc.oldArtwork = nil
         }
         
         if let vc = viewControllerToCommit as? Arrangeable {

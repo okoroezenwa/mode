@@ -96,7 +96,7 @@ extension SongActionable {
             
             case .addTo:
             
-                return (action: action, title: alternateTitle ? "Existing Playlist..." : "Add to Playlist...", style: .default, handler: {
+                return (action: action, title: alternateTitle ? "Existing Playlists..." : "Add to Playlists...", style: .default, handler: {
                     
                     guard let presentedVC = presentedStoryboard.instantiateViewController(withIdentifier: "presentedVC") as? PresentedContainerViewController else { return }
                     
@@ -316,6 +316,15 @@ class SongActionManager: NSObject {
     
     @objc func toggleEditing(_ sender: Any) {
         
+        if actionable is QueueViewController, musicPlayer.queueCount() < 2 { return }
+        
+        if let searchVC = actionable as? SearchViewController {
+            
+            searchVC.tableView.isEditing ? searchVC.handleLeftSwipe(searchVC) : searchVC.handleRightSwipe(searchVC)
+            
+            return
+        }
+        
         guard let actionable = actionable, let container = actionable as? EntityContainer, actionable is QueueViewController && (useSystemPlayer || forceOldStyleQueue) ? true : {
             
             if let collectionActionable = actionable as? CollectionActionable {
@@ -518,7 +527,7 @@ extension SingleItemActionable {
             
             case .addTo:
             
-                return (action: action, title: "Add to Playlist...", style: .default, handler: {
+                return (action: action, title: "Add to Playlists...", style: .default, handler: {
                     
                     guard let presentedVC = presentedStoryboard.instantiateViewController(withIdentifier: "presentedVC") as? PresentedContainerViewController, let array: [MPMediaItem] = {
                         

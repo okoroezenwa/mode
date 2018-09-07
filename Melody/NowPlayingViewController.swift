@@ -9,7 +9,7 @@
 import UIKit
 import StoreKit
 
-class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTransitionable, PreviewTransitionable, InteractivePresenter, TimerBased, SongActionable, Boldable, EntityVerifiable, Peekable, ScreenshotProviding {
+class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTransitionable, PreviewTransitionable, InteractivePresenter, TimerBased, SongActionable, Boldable, EntityVerifiable, Peekable, BackgroundHideable, ArtworkModifying, ArtworkModifierContaining {
 
     @IBOutlet weak var songName: MELButton!
     @IBOutlet weak var artistButton: MELButton!
@@ -114,9 +114,20 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
     }
     @objc lazy var songManager: SongActionManager = { return SongActionManager.init(actionable: self) }()
     
+    @objc lazy var temporaryImageView: UIImageView = {
+        
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
+        return imageView
+    }()
+    @objc lazy var temporaryEffectView = MELVisualEffectView()
+    
     @objc let animator = NowPlayingAnimationController.init(interactor: NowPlayingInteractionController.init())
     @objc let presenter = PresentationAnimationController.init(interactor: InteractionController())
+    
     @objc weak var peeker: UIViewController?
+    var oldArtwork: UIImage?
+    
     @objc weak var container: ContainerViewController?
     @objc var from3DTouch: Bool { return peeker != nil }
     var alternateItem: MPMediaItem?
@@ -133,8 +144,15 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
     let prefersBoldOnTap = false
     var updateableView: UIView? { return detailsView }
     @objc var lyricsVisible = false
-    var viewHeirachy: UIImage?
     var activeItem: MPMediaItem? { return alternateItem ?? musicPlayer.nowPlayingItem }
+    
+    var artwork: UIImage? {
+        
+        get { return activeItem?.actualArtwork?.image(at: .artworkSize) }
+        
+        set { }
+    }
+    var modifier: ArtworkModifying? { return self }
     
     var useContinuousCorners: Bool {
         
@@ -154,20 +172,20 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         
         modalPresentationCapturesStatusBarAppearance = true
         NowPlaying.shared.nowPlayingVC = self
+        ArtworkManager.shared.nowPlayingVC = self
         
         animator.interactor.addToVC(self)
         
-        if let _ = peeker {
-            
-            container?.deferToNowPlayingViewController = true
+        if let _ = peeker, let imageView = container?.imageView {
+        
+            oldArtwork = container?.imageView.image
+            UIView.transition(with: imageView, duration: 0.5, options: .transitionCrossDissolve, animations: { imageView.image = self.artworkType.image }, completion: nil)
         }
         
         artworkIntermediaryView.layer.setRadiusTypeIfNeeded(to: useContinuousCorners)
         
         useAlternateAnimation = false
         shouldReturnToContainer = false
-        container?.shouldUseNowPlayingArt = true
-        container?.updateBackgroundWithNowPlaying()
         
         updateDetailsView()
         
@@ -178,11 +196,6 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         updateTitle()
         prepareLifetimeObservers()
         prepareDetailLabels()
-        
-//        if #available(iOS 11, *) {
-//
-//            view.accessibilityIgnoresInvertColors = darkTheme
-//        }
         
         modifyShuffleState(changingMusicPlayer: false)
         modifyRepeatButton(changingMusicPlayer: false)
@@ -299,17 +312,6 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
             weakSelf.verifyLibraryStatus(of: weakSelf.activeItem, itemProperty: .song)
             weakSelf.verifyLibraryStatus(of: weakSelf.activeItem, itemProperty: .artist)
             weakSelf.verifyLibraryStatus(of: weakSelf.activeItem, itemProperty: .album)
-            
-        }) as! NSObject)
-        
-        lifetimeObservers.insert(notifier.addObserver(forName: .themeChanged, object: nil, queue: nil, using: { [weak self] _ in
-            
-            guard let weakSelf = self else { return }
-            
-//            if #available(iOS 11, *) {
-//                
-//                weakSelf.view.accessibilityIgnoresInvertColors = darkTheme
-//            }
             
         }) as! NSObject)
         
@@ -726,7 +728,6 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         
         updateDetailsView()
         updateArtwork()
-//        container?.deferToNowPlayingViewController = false
     }
     
     @objc func updateArtwork() {
@@ -794,10 +795,16 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
                     (imageView, 0.3, { [weak self] in self?.imageView.image = image ?? #imageLiteral(resourceName: "NoArt") }, nil)
                 )
                 
+                if peeker != nil {
+                    
+                    UIView.transition(with: temporaryImageView, duration: 0.3, options: .transitionCrossDissolve, animations: { [weak self] in self?.temporaryImageView.image = image ?? #imageLiteral(resourceName: "NoArt") }, completion: nil)
+                }
+                
             } else {
                 
                 albumArt.image = albumImage ?? #imageLiteral(resourceName: "NoSong900")
                 imageView.image = image ?? #imageLiteral(resourceName: "NoArt")
+                temporaryImageView.image = image ?? #imageLiteral(resourceName: "NoArt")
             }
             
             songName.setTitle(songTitle, for: .normal)
@@ -981,26 +988,14 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
     override func viewWillDisappear(_ animated: Bool) {
         
         super.viewWillDisappear(animated)
-        
-        container?.deferToNowPlayingViewController = true
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         
         super.viewDidDisappear(animated)
         
-        container?.deferToNowPlayingViewController = false
-        
-        if peeker == nil {
-        
-            if let _ = container?.currentModifier {
-                
-                container?.shouldUseNowPlayingArt = false
-                container?.updateBackgroundViaModifier()
-            }
-        }
-        
         NowPlaying.shared.nowPlayingVC = nil
+        ArtworkManager.shared.nowPlayingVC = nil
     }
 
     override func didReceiveMemoryWarning() {
@@ -1044,7 +1039,6 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         } else if let queueVC = vc as? QueueViewController {
             
             queueVC.peeker = self
-            queueVC.screenshotProvider = self
             queueVC.modifyBackgroundView(forState: .visible)
             
             return queueVC
@@ -1152,6 +1146,11 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
             
             UniversalMethods.banner(withTitle: "NVC going away...").show(for: 0.3)
         }
+
+        if let _ = peeker, let imageView = container?.imageView {
+            
+            UIView.transition(with: imageView, duration: 0.5, options: .transitionCrossDissolve, animations: { imageView.image = self.oldArtwork }, completion: nil)
+        }
         
         notifier.removeObserver(self)
         
@@ -1203,6 +1202,7 @@ extension NowPlayingViewController: UIViewControllerPreviewingDelegate {
         if let vc = viewControllerToCommit as? Peekable {
             
             vc.peeker = nil
+            vc.oldArtwork = nil
         }
         
         if let vc = viewControllerToCommit as? Navigatable, let indexer = vc.activeChildViewController as? IndexContaining {
@@ -1215,10 +1215,12 @@ extension NowPlayingViewController: UIViewControllerPreviewingDelegate {
                 indexer.tableView.contentOffset.y = -vc.inset
             }
             
+            container?.imageView.image = vc.artworkType.image
             container?.visualEffectNavigationBar.backBorderView.alpha = 1
             container?.visualEffectNavigationBar.backView.isHidden = false
             container?.visualEffectNavigationBar.backLabel.text = vc.backLabelText
             container?.visualEffectNavigationBar.titleLabel.text = vc.title
+            container?.visualEffectNavigationBar.animateRelevantConstraints(direction: .forward, section: .end(completed: true), with: nil, and: indexer.navigatable)
         }
         
         pop(to: viewControllerToCommit, queue: viewControllerToCommit is QueueViewController)

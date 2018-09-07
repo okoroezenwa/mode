@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.13.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.9"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="MyriadPro-Regular.otf">
+            <string>MyriadPro-Regular</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clipsSubviews="YES" contentMode="scaleToFill" id="qCN-PZ-aAK" customClass="SwipeView" customModule="Mode" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="57"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="Ybg-hd-D19">
+                    <rect key="frame" x="10" y="9.5" width="355" height="38"/>
+                    <subviews>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="TkB-NO-Lp8">
+                            <rect key="frame" x="0.0" y="0.0" width="355" height="17"/>
+                            <subviews>
+                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="7FC-8z-91Z" customClass="MELImageView" customModule="Mode" customModuleProvider="target">
+                                    <rect key="frame" x="169" y="0.0" width="17" height="17"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" secondItem="7FC-8z-91Z" secondAttribute="height" multiplier="1:1" id="Ohi-8Z-tIP"/>
+                                        <constraint firstAttribute="height" constant="17" id="XQW-Te-SKF"/>
+                                    </constraints>
+                                </imageView>
+                            </subviews>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <constraints>
+                                <constraint firstItem="7FC-8z-91Z" firstAttribute="centerX" secondItem="TkB-NO-Lp8" secondAttribute="centerX" id="0X7-4o-2N9"/>
+                                <constraint firstItem="7FC-8z-91Z" firstAttribute="top" secondItem="TkB-NO-Lp8" secondAttribute="top" id="JeM-ny-cOQ"/>
+                                <constraint firstAttribute="bottom" secondItem="7FC-8z-91Z" secondAttribute="bottom" id="fjr-ED-NQJ"/>
+                            </constraints>
+                        </view>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zdF-rJ-gpe" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                            <rect key="frame" x="0.0" y="21" width="355" height="17"/>
+                            <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
+                </stackView>
+            </subviews>
+            <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+            <constraints>
+                <constraint firstItem="nR3-xB-80T" firstAttribute="trailing" secondItem="Ybg-hd-D19" secondAttribute="trailing" constant="10" id="Cln-fr-6NN"/>
+                <constraint firstItem="Ybg-hd-D19" firstAttribute="centerY" secondItem="nR3-xB-80T" secondAttribute="centerY" id="FwK-Xb-9TS"/>
+                <constraint firstItem="Ybg-hd-D19" firstAttribute="leading" secondItem="nR3-xB-80T" secondAttribute="leading" constant="10" id="WDF-b6-ZWn"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="nR3-xB-80T"/>
+            <connections>
+                <outlet property="imageView" destination="7FC-8z-91Z" id="AII-cU-ZfJ"/>
+                <outlet property="label" destination="zdF-rJ-gpe" id="GR3-5O-uma"/>
+                <outlet property="leadingConstraint" destination="WDF-b6-ZWn" id="vQK-Va-5zG"/>
+                <outlet property="stackView" destination="Ybg-hd-D19" id="Kj6-kl-Ujm"/>
+                <outlet property="trailingConstraint" destination="Cln-fr-6NN" id="nCI-GG-CoT"/>
+            </connections>
+            <point key="canvasLocation" x="152.80000000000001" y="37.331334332833585"/>
+        </view>
+    </objects>
+</document>

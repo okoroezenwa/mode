@@ -81,17 +81,17 @@
                                 <rect key="frame" x="0.0" y="32" width="415" height="55.5"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" horizontalHuggingPriority="251" horizontalCompressionResistancePriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="HBL-Lc-Xpx">
-                                        <rect key="frame" x="0.0" y="0.0" width="183.5" height="55.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="151.5" height="55.5"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SAq-M0-Zya" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="0.0" width="183.5" height="55.5"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="151.5" height="55.5"/>
                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                 <inset key="titleEdgeInsets" minX="5" minY="2" maxX="0.0" maxY="0.0"/>
                                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="5" maxY="0.0"/>
                                                 <state key="normal" title="Shuffle" image="Shuffle"/>
                                             </button>
                                             <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="f7i-xN-RyH" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="9" width="166.5" height="38"/>
+                                                <rect key="frame" x="10" y="9" width="134.5" height="38"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <userDefinedRuntimeAttributes>
                                                     <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
@@ -111,20 +111,19 @@
                                         </constraints>
                                     </view>
                                     <view contentMode="scaleToFill" horizontalHuggingPriority="251" horizontalCompressionResistancePriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="Vd0-wU-Vhc">
-                                        <rect key="frame" x="183.5" y="0.0" width="48" height="55.5"/>
+                                        <rect key="frame" x="151.5" y="0.0" width="112" height="55.5"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eXw-gD-QgR" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="0.0" width="48" height="55.5"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="112" height="55.5"/>
                                                 <inset key="contentEdgeInsets" minX="0.0" minY="1" maxX="0.0" maxY="0.0"/>
                                                 <inset key="imageEdgeInsets" minX="3" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                 <state key="normal" image="PlayFilled"/>
                                             </button>
                                             <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="v0n-7m-oW2" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="5" y="9" width="38" height="38"/>
+                                                <rect key="frame" x="3" y="9" width="106" height="38"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="width" constant="38" id="2kT-t6-Lzx"/>
-                                                    <constraint firstAttribute="width" secondItem="v0n-7m-oW2" secondAttribute="height" multiplier="1:1" id="lah-2R-L12"/>
+                                                    <constraint firstAttribute="height" constant="38" id="CNk-3U-Ssg"/>
                                                 </constraints>
                                                 <userDefinedRuntimeAttributes>
                                                     <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
@@ -135,27 +134,27 @@
                                         </subviews>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="48" id="5Oo-vt-pWC"/>
                                             <constraint firstItem="eXw-gD-QgR" firstAttribute="leading" secondItem="Vd0-wU-Vhc" secondAttribute="leading" id="7bz-vO-BjX"/>
                                             <constraint firstAttribute="bottom" secondItem="eXw-gD-QgR" secondAttribute="bottom" id="92o-NR-sUm"/>
-                                            <constraint firstItem="v0n-7m-oW2" firstAttribute="centerX" secondItem="eXw-gD-QgR" secondAttribute="centerX" id="LOg-gY-IAp"/>
+                                            <constraint firstAttribute="trailing" secondItem="v0n-7m-oW2" secondAttribute="trailing" constant="3" id="E5G-w4-Yjp"/>
                                             <constraint firstItem="eXw-gD-QgR" firstAttribute="top" secondItem="Vd0-wU-Vhc" secondAttribute="top" id="OTf-8k-bzq"/>
+                                            <constraint firstItem="v0n-7m-oW2" firstAttribute="leading" secondItem="Vd0-wU-Vhc" secondAttribute="leading" constant="3" id="e75-4c-Z8X"/>
                                             <constraint firstAttribute="trailing" secondItem="eXw-gD-QgR" secondAttribute="trailing" id="ovH-E2-ohS"/>
                                             <constraint firstItem="v0n-7m-oW2" firstAttribute="centerY" secondItem="eXw-gD-QgR" secondAttribute="centerY" id="thY-SK-uph"/>
                                         </constraints>
                                     </view>
                                     <view contentMode="scaleToFill" horizontalHuggingPriority="251" horizontalCompressionResistancePriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="3Oc-Gp-qtf">
-                                        <rect key="frame" x="231.5" y="0.0" width="183.5" height="55.5"/>
+                                        <rect key="frame" x="263.5" y="0.0" width="151.5" height="55.5"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Xck-Al-RQm" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="0.0" width="183.5" height="55.5"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="151.5" height="55.5"/>
                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                 <inset key="titleEdgeInsets" minX="5" minY="2" maxX="0.0" maxY="0.0"/>
                                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="5" maxY="0.0"/>
                                                 <state key="normal" title="Repeat" image="Repeat"/>
                                             </button>
                                             <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PGY-dF-t5e" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="7" y="9" width="166.5" height="38"/>
+                                                <rect key="frame" x="7" y="9" width="134.5" height="38"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <userDefinedRuntimeAttributes>
                                                     <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
@@ -195,6 +194,7 @@
                     <constraint firstAttribute="bottom" secondItem="spB-gM-gzj" secondAttribute="bottom" id="7v0-IC-nVb"/>
                     <constraint firstItem="spB-gM-gzj" firstAttribute="top" secondItem="dgT-QH-htT" secondAttribute="top" id="PdC-vg-wyX"/>
                     <constraint firstAttribute="trailing" secondItem="spB-gM-gzj" secondAttribute="trailing" id="prW-cr-cuc"/>
+                    <constraint firstItem="Vd0-wU-Vhc" firstAttribute="width" secondItem="dgT-QH-htT" secondAttribute="width" multiplier="0.27" id="yBY-Vw-FlM"/>
                 </constraints>
             </tableViewCellContentView>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

@@ -11,7 +11,7 @@ import StoreKit
 import CoreData
 
 let appDelegate = UIApplication.shared.delegate as! AppDelegate
-public let musicPlayer: MPMusicPlayerController = {
+public var musicPlayer: MPMusicPlayerController {
     
     if #available(iOS 10.3, *), !useSystemPlayer {
 
@@ -21,7 +21,7 @@ public let musicPlayer: MPMusicPlayerController = {
     
         return .systemMusicPlayer
     }
-}()
+}
 public let musicLibrary = MPMediaLibrary.default()
 
 @UIApplicationMain
@@ -231,7 +231,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
                 if container.presentedViewController != nil {
                     
-                    container.dismiss(animated: false, completion: nil)
+                    container.dismiss(animated: true, completion: nil)
                 }
             
                 if container.activeViewController == container.searchNavigationController {

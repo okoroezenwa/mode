@@ -48,7 +48,7 @@ class NavigationAnimationController: NSObject, UIViewControllerAnimatedTransitio
         
         if let first = fromVC as? Navigatable, let second = toVC as? Navigatable, let container = appDelegate.window?.rootViewController as? ContainerViewController {
             
-            container.visualEffectNavigationBar.animateTitleLabel(direction: direction, section: .preparation, with: first, and: second)
+            container.visualEffectNavigationBar.animateViews(direction: direction, section: .preparation, with: first, and: second)
         }
         
         if let container = appDelegate.window?.rootViewController as? ContainerViewController, container.activeViewController == container.searchNavigationController {
@@ -62,6 +62,14 @@ class NavigationAnimationController: NSObject, UIViewControllerAnimatedTransitio
             }
         }
         
+        if let container = appDelegate.window?.rootViewController as? ContainerViewController, let final = toVC as? ArtworkModifying {
+            
+            container.altImageView.image = container.imageView.image
+            container.altImageView.alpha = 1
+            container.imageView.alpha = 0
+            container.imageView.image = final.artworkType.image
+        }
+        
         UIView.animateKeyframes(withDuration: duration, delay: 0, options: .calculationModeCubic, animations: {
             
             UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 3/5, animations: {
@@ -71,7 +79,7 @@ class NavigationAnimationController: NSObject, UIViewControllerAnimatedTransitio
                 
                 if let first = fromVC as? Navigatable, let second = toVC as? Navigatable, let container = appDelegate.window?.rootViewController as? ContainerViewController {
                     
-                    container.visualEffectNavigationBar.animateTitleLabel(direction: self.direction, section: .firstHalf, with: first, and: second)
+                    container.visualEffectNavigationBar.animateViews(direction: self.direction, section: .firstHalf, with: first, and: second)
                 }
             })
             
@@ -81,7 +89,7 @@ class NavigationAnimationController: NSObject, UIViewControllerAnimatedTransitio
                 
                 if let first = fromVC as? Navigatable, let second = toVC as? Navigatable, let container = appDelegate.window?.rootViewController as? ContainerViewController {
                     
-                    container.visualEffectNavigationBar.animateTitleLabel(direction: self.direction, section: .secondHalf, with: first, and: second)
+                    container.visualEffectNavigationBar.animateViews(direction: self.direction, section: .secondHalf, with: first, and: second)
                 }
                 
                 if self.direction == .forward, fromVC.view.frame.origin.x < 0 {
@@ -90,6 +98,15 @@ class NavigationAnimationController: NSObject, UIViewControllerAnimatedTransitio
                 }
                 
                 toVC.view.alpha = 1
+            })
+            
+            UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 1, animations: {
+                
+                if let container = appDelegate.window?.rootViewController as? ContainerViewController {
+                    
+                    container.imageView.alpha = 1
+                    container.altImageView.alpha = 0
+                }
             })
             
             if needsToUpdateBottomBar, let container = appDelegate.window?.rootViewController as? ContainerViewController, let filterView = container.filterViewContainer?.filterView {
@@ -117,7 +134,14 @@ class NavigationAnimationController: NSObject, UIViewControllerAnimatedTransitio
             
             if let weakSelf = self, let first = fromVC as? Navigatable, let second = toVC as? Navigatable, let container = appDelegate.window?.rootViewController as? ContainerViewController {
                 
-                container.visualEffectNavigationBar.animateTitleLabel(direction: weakSelf.direction, section: .end(completed: !transitionContext.transitionWasCancelled), with: first, and: second)
+                container.visualEffectNavigationBar.animateViews(direction: weakSelf.direction, section: .end(completed: !transitionContext.transitionWasCancelled), with: first, and: second)
+            }
+            
+            if let container = appDelegate.window?.rootViewController as? ContainerViewController, let initial = fromVC as? ArtworkModifying, let final = toVC as? ArtworkModifying {
+                
+                container.altImageView.alpha = 0
+                container.imageView.alpha = 1
+                container.imageView.image = transitionContext.transitionWasCancelled.inverted ? final.artworkType.image : initial.artworkType.image
             }
             
             if !transitionContext.transitionWasCancelled {

@@ -297,14 +297,12 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="albumsButton" destination="sU5-JR-3Ta" id="oWm-Xa-RLb"/>
                         <outlet property="artistItemsViewHeightConstraint" destination="5Bg-WN-dRo" id="Zv7-w8-iQx"/>
                         <outlet property="artistView" destination="gL9-7V-Y46" id="jBq-Vw-0R2"/>
                         <outlet property="artworkImageView" destination="mvS-Lt-zoy" id="K3w-Qj-yU8"/>
                         <outlet property="artworkImageViewContainer" destination="uWe-Qq-6YM" id="ULn-C2-yQa"/>
                         <outlet property="backLabel" destination="1ir-lC-m3N" id="TiT-Q6-LQJ"/>
                         <outlet property="containerView" destination="mer-vT-hgh" id="uh5-kk-r1V"/>
-                        <outlet property="songsButton" destination="5wT-Rb-Re7" id="8I8-fz-Hd7"/>
                         <outlet property="titleLabel" destination="kNL-e1-bO7" id="wyg-Vi-UTx"/>
                         <outlet property="titleScrollView" destination="Nf9-pX-JVJ" id="Dsz-1G-Gtc"/>
                         <outlet property="topView" destination="gKm-Ar-rMz" id="8c5-PK-HTr"/>

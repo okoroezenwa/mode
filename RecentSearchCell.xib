@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14101" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.13.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14086"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.9"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -57,7 +57,7 @@
                                 <rect key="frame" x="314" y="0.0" width="41" height="39.5"/>
                                 <subviews>
                                     <view userInteractionEnabled="NO" alpha="0.05000000074505806" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="AGQ-LR-MFw" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                        <rect key="frame" x="16.5" y="8.5" width="24" height="24"/>
+                                        <rect key="frame" x="16.5" y="8" width="24" height="24"/>
                                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="24" id="aaj-Zv-Iqe"/>
@@ -93,21 +93,23 @@
                 </subviews>
                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                 <constraints>
-                    <constraint firstAttribute="trailing" secondItem="tNs-Xv-Zqe" secondAttribute="trailing" constant="10" id="JEJ-j5-AUt"/>
-                    <constraint firstItem="NQ9-8P-4cH" firstAttribute="top" secondItem="BPA-IA-Sy7" secondAttribute="top" id="T9S-gf-58B"/>
-                    <constraint firstAttribute="bottom" secondItem="NQ9-8P-4cH" secondAttribute="bottom" id="Y1e-nE-pFg"/>
-                    <constraint firstAttribute="bottom" secondItem="tNs-Xv-Zqe" secondAttribute="bottom" priority="900" constant="8" id="hKd-Qt-OSu"/>
-                    <constraint firstAttribute="trailing" secondItem="NQ9-8P-4cH" secondAttribute="trailing" id="kSK-7E-mzP"/>
-                    <constraint firstItem="tNs-Xv-Zqe" firstAttribute="top" secondItem="BPA-IA-Sy7" secondAttribute="top" priority="900" constant="8" id="tVS-hS-4ZH"/>
-                    <constraint firstItem="tNs-Xv-Zqe" firstAttribute="leading" secondItem="BPA-IA-Sy7" secondAttribute="leading" constant="10" id="xXM-uK-kZ3"/>
+                    <constraint firstItem="tNs-Xv-Zqe" firstAttribute="top" secondItem="BPA-IA-Sy7" secondAttribute="top" constant="8" id="8gE-VT-Eh4"/>
+                    <constraint firstItem="NQ9-8P-4cH" firstAttribute="top" secondItem="BPA-IA-Sy7" secondAttribute="top" id="J9A-xn-avB"/>
+                    <constraint firstAttribute="trailing" secondItem="tNs-Xv-Zqe" secondAttribute="trailing" constant="10" id="O6p-FU-pIv"/>
+                    <constraint firstItem="tNs-Xv-Zqe" firstAttribute="leading" secondItem="BPA-IA-Sy7" secondAttribute="leading" constant="10" id="PYH-As-IRy"/>
+                    <constraint firstAttribute="bottom" secondItem="tNs-Xv-Zqe" secondAttribute="bottom" constant="8" id="Tqz-hx-Lpy"/>
+                    <constraint firstAttribute="trailing" secondItem="NQ9-8P-4cH" secondAttribute="trailing" id="qry-7g-UnS"/>
+                    <constraint firstAttribute="bottom" secondItem="NQ9-8P-4cH" secondAttribute="bottom" id="uev-Xs-GuN"/>
                 </constraints>
             </tableViewCellContentView>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <connections>
                 <outlet property="borderView" destination="AGQ-LR-MFw" id="srb-NF-XiQ"/>
                 <outlet property="criteriaLabel" destination="VrA-cj-RGW" id="yNp-1A-FD8"/>
+                <outlet property="leadingConstraint" destination="PYH-As-IRy" id="WTf-aV-H3d"/>
                 <outlet property="searchCategoryImageView" destination="G8y-nw-PPm" id="e3M-Km-QwT"/>
                 <outlet property="termLabel" destination="CBD-Hn-rsM" id="hfP-8J-xYk"/>
+                <outlet property="trailingConstraint" destination="O6p-FU-pIv" id="rwC-WJ-FeU"/>
             </connections>
             <point key="canvasLocation" x="23.5" y="40"/>
         </tableViewCell>

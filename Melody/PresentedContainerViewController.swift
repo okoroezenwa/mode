@@ -8,7 +8,7 @@
 
 import UIKit
 
-class PresentedContainerViewController: UIViewController {
+class PresentedContainerViewController: UIViewController, ArtworkModifierContaining {
     
     @IBOutlet weak var containerView: UIView!
     @IBOutlet weak var effectView: MELVisualEffectView!
@@ -69,6 +69,16 @@ class PresentedContainerViewController: UIViewController {
         get { return .overFullScreen }
         
         set { }
+    }
+    
+    var modifier: ArtworkModifying? {
+        
+        switch context {
+            
+            case .info: return newOptionsVC
+            
+            default: return nil
+        }
     }
     
     @objc var animator = PresentationAnimationController.init(interactor: InteractionController())
@@ -261,11 +271,6 @@ class PresentedContainerViewController: UIViewController {
         
         modalIndex += 1
         
-//        if #available(iOS 11, *) {
-//
-//            view.accessibilityIgnoresInvertColors = darkTheme
-//        }
-        
         if useConstraintConstant {
             
             parentViewLeadingConstraint.constant = UIScreen.main.bounds.width * 0.6
@@ -276,7 +281,12 @@ class PresentedContainerViewController: UIViewController {
             
             switch context {
                 
-                case .playlists: return playlistsVC
+                case .playlists:
+                    
+//                    prompt = "0 selected playlists"
+//                    updatePrompt(animated: false)
+                    
+                    return playlistsVC
                 
                 case .upNext: return queueTVC
                 
@@ -344,11 +354,6 @@ class PresentedContainerViewController: UIViewController {
     @objc func updateStatusBar() {
         
         setNeedsStatusBarAppearanceUpdate()
-        
-//        if #available(iOS 11, *) {
-//            
-//            view.accessibilityIgnoresInvertColors = darkTheme
-//        }
     }
 
     override func didReceiveMemoryWarning() {

@@ -9,7 +9,7 @@
 import UIKit
 import StoreKit
 
-class LibraryViewController: UIViewController, Contained, OptionsContaining, Navigatable {
+class LibraryViewController: UIViewController, Contained, OptionsContaining, Navigatable, ArtworkModifying {
     
     @IBOutlet weak var titleButton: MELButton!
     @IBOutlet weak var contentView: UIView!
@@ -78,8 +78,13 @@ class LibraryViewController: UIViewController, Contained, OptionsContaining, Nav
     }
     
     var backLabelText: String?
-    var requiresShadow = false
-    var artwork: UIImage?
+    let needsEntityBar = false
+    var artwork: UIImage? {
+        
+        get { return musicPlayer.nowPlayingItem?.actualArtwork?.image(at: .init(width: 20, height: 20)) }
+        
+        set { }
+    }
     let inset: CGFloat = 10 + 34 + 10 + 1
     lazy var preferredTitle: String? = title
 
@@ -169,14 +174,14 @@ class LibraryViewController: UIViewController, Contained, OptionsContaining, Nav
         
                 if sectionVC.hasHeader, indexPath.row == 0 {
                     
-                    sectionVC.container?.tableView.setContentOffset(.init(x: 0, y: -inset), animated: false)
+                    sectionVC.container?.tableView.setContentOffset(.init(x: 0, y: (activeChildViewController as? CollectionsViewController)?.presented == true ? 0 : -inset), animated: false)
                     
                 } else {
                     
                     sectionVC.container?.tableView.scrollToRow(at: .init(row: NSNotFound, section: indexPath.row - (sectionVC.hasHeader ? 1 : 0)), at: .top, animated: false)
                 }
             
-            case .ended, .failed/*, .cancelled*/: (activeChildViewController as? IndexContaining)?.sectionIndexViewController?.dismissVC()
+            case .ended, .failed: (activeChildViewController as? IndexContaining)?.sectionIndexViewController?.dismissVC()
             
             default: break
         }
@@ -213,8 +218,6 @@ class LibraryViewController: UIViewController, Contained, OptionsContaining, Nav
         
         prepareTransientObservers()
         
-        container?.shouldUseNowPlayingArt = true
-        container?.updateBackgroundWithNowPlaying()
         container?.currentModifier = nil
         setCurrentOptions()
     }
@@ -318,7 +321,11 @@ class LibraryViewController: UIViewController, Contained, OptionsContaining, Nav
         
         title = text
         preferredTitle = section.title.capitalized
-        container?.visualEffectNavigationBar.titleLabel.text = title
+        
+        if container?.activeViewController?.topViewController == self {
+            
+            container?.visualEffectNavigationBar.titleLabel.text = title
+        }
     }
     
     private func removeInactiveViewController(inactiveViewController: UIViewController?) {

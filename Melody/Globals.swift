@@ -29,6 +29,7 @@ let prefs = UserDefaults.standard
 let notifier = NotificationCenter.default
 var useAlternateAnimation = false
 var shouldReturnToContainer = false
+//var ignoreArtwork
 var disregardBrightnessNotification = false
 var isInDebugMode: Bool { return Settings.isInDebugMode }
 var isSmallScreen: Bool { return /*traitCollection.verticalSizeClass == .compact &&*/ screenHeight / screenWidth < 1.6 }

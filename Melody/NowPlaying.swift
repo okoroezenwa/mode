@@ -188,7 +188,7 @@ class NowPlaying: NSObject {
     
     @objc func stop(_ gr: UILongPressGestureRecognizer) {
         
-        if gr.state == .began {
+        if gr.state == .began, musicPlayer.nowPlayingItem != nil {
             
             topVC(startingFrom: appDelegate.window?.rootViewController)?
                 .guardQueue(using:

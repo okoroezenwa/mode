@@ -101,11 +101,11 @@ class TableDelegate: NSObject, Detailing {
         
         switch location {
             
-            case .album, .playlist, .songs, .artistSongs: return MPMediaQuery.init(filterPredicates: [.for(.song, using: container!.getEntity(at: indexPath, filtering: filtering).persistentID)])
+            case .album, .playlist, .songs, .artistSongs: return MPMediaQuery.init(filterPredicates: [.for(.song, using: container!.getEntity(at: indexPath, filtering: filtering).persistentID)]).cloud
             
-            case .artistAlbums: return MPMediaQuery.init(filterPredicates: [.for(.album, using: container!.getEntity(at: indexPath, filtering: filtering).persistentID)])
+            case .artistAlbums: return MPMediaQuery.init(filterPredicates: [.for(.album, using: container!.getEntity(at: indexPath, filtering: filtering).persistentID)]).cloud
             
-            case .collections(let kind): return MPMediaQuery.init(filterPredicates: [.for(kind.entity, using: container!.getEntity(at: indexPath, filtering: filtering).persistentID)])
+            case .collections(let kind): return MPMediaQuery.init(filterPredicates: [.for(kind.entity, using: container!.getEntity(at: indexPath, filtering: filtering).persistentID)]).cloud
         }
     }
     
@@ -1194,7 +1194,7 @@ extension TableDelegate: SwipeTableViewCellDelegate {
                     array.append(goTo)
                 }
                 
-                if let _ = container?.filterContainer {
+                if let filterVC = container?.filterContainer, filterVC.filtering {
                     
                     let details = getActionDetails(from: SongAction.reveal(indexPath: indexPath), indexPath: indexPath, vc: container as? UIViewController)
                     
@@ -1285,9 +1285,9 @@ extension TableDelegate {
                 
                 let editing = queueViewController.tableView.isEditing
                 
-                let edit = SwipeAction.init(style: .default, title: editing ? "done" : "edit", handler: { _, _ in
+                let edit = SwipeAction.init(style: .default, title: editing ? "done" : "edit", handler: { action, _ in
                     
-                    queueViewController.songManager.toggleEditing(queueViewController)
+                    queueViewController.songManager.toggleEditing(action)
                 })
                 
                 edit.image = editing ? #imageLiteral(resourceName: "CheckBordered17") : #imageLiteral(resourceName: "Edit17")

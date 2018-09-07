@@ -26,12 +26,20 @@ class VisualEffectNavigationBar: MELVisualEffectView {
     @IBOutlet var backBorderView: UIView!
     @IBOutlet var titleScrollView: MELScrollView!
     @IBOutlet var gradientView: GradientView!
+    @IBOutlet var entityViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet var entityView: UIView!
+    @IBOutlet var rightView: UIView!
     
     enum AnimationSection { case preparation, firstHalf, secondHalf, end(completed: Bool) }
     
-    var titleLabelSnapshot: UIView?
-    var backLabelSnapshot: UIView?
-    var backBorderViewSnapshot: UIView?
+    enum Location { case library, search, entity(details: RadiusDetails) }
+    
+    var titleLabelSnapshot: UIView? { didSet { oldValue?.removeFromSuperview() } }
+    var backLabelSnapshot: UIView? { didSet { oldValue?.removeFromSuperview() } }
+    var backBorderViewSnapshot: UIView? { didSet { oldValue?.removeFromSuperview() } }
+    
+    var isAnimatingTitles = false
+    var isAnimatingImages = false
     
     var containerVC: ContainerViewController? { return appDelegate.window?.rootViewController as? ContainerViewController }
     
@@ -46,9 +54,76 @@ class VisualEffectNavigationBar: MELVisualEffectView {
         titleScrollView.addGestureRecognizer(tap)
     }
     
-    func animateTitleLabel(direction: AnimationDirection, section: AnimationSection, with initialVC: Navigatable?, and finalVC: Navigatable?, preferVerticalTransition: Bool = false) {
+    func location(from navigatable: Navigatable?) -> Location {
+        
+        if let _ = navigatable as? LibraryViewController {
+            
+            return .library
+            
+        } else if let entityVC = navigatable as? EntityItemsViewController {
+            
+            return .entity(details: (listsCornerRadius ?? cornerRadius).radiusDetails(for: entityVC.entityForContainerType(), width: artworkContainer.bounds.width, globalRadiusType: cornerRadius))
+            
+        } else {
+            
+            return .search
+        }
+    }
+    
+    func animateViews(direction: AnimationDirection, section: AnimationSection, with initialVC: Navigatable?, and finalVC: Navigatable?, preferVerticalTransition: Bool = false) {
         
         animateTitleLabel(direction: direction, section: section, with: (initialVC?.title, initialVC?.backLabelText), and: (finalVC?.title, finalVC?.backLabelText), preferVerticalTransition: preferVerticalTransition)
+        
+        animateRelevantConstraints(direction: direction, section: section, with: initialVC, and: finalVC)
+    }
+    
+    func animateRelevantConstraints(direction: AnimationDirection, section: AnimationSection, with initialVC: Navigatable?, and finalVC: Navigatable?) {
+        
+        switch section {
+            
+            case .preparation: break
+            
+            case .firstHalf:
+            
+                if direction == .reverse, let final = finalVC {
+                    
+                    entityView.isHidden = final.needsEntityBar.inverted
+                    entityView.alpha = final.needsEntityBar ? 1 : 0
+                }
+            
+            case .secondHalf:
+            
+                if let final = finalVC {
+                    
+                    entityView.isHidden = final.needsEntityBar.inverted
+                    entityView.alpha = final.needsEntityBar ? 1 : 0
+                }
+            
+            case .end(completed: let completed):
+            
+                if completed, let final = finalVC {
+                    
+                    entityView.isHidden = final.needsEntityBar.inverted
+                    entityView.alpha = final.needsEntityBar ? 1 : 0
+                    
+                    if case .entity = location(from: final), let entityVC = final as? EntityItemsViewController, entityVC.entityContainerType == .collection {
+                        
+                        entityVC.updateButton(for: .albums)
+                        entityVC.updateButton(for: .songs)
+                    }
+                    
+                } else if let initial = initialVC {
+                    
+                    entityView.isHidden = initial.needsEntityBar.inverted
+                    entityView.alpha = initial.needsEntityBar ? 1 : 0
+                    
+                    if case .entity = location(from: initial), let entityVC = initial as? EntityItemsViewController, entityVC.entityContainerType == .collection {
+                        
+                        entityVC.updateButton(for: .albums)
+                        entityVC.updateButton(for: .songs)
+                    }
+                }
+        }
     }
     
     func animateTitleLabel(direction: AnimationDirection, section: AnimationSection, with initialDetails: NavigatableDetails, and finalDetails: NavigatableDetails, preferVerticalTransition: Bool = false) {
@@ -58,6 +133,8 @@ class VisualEffectNavigationBar: MELVisualEffectView {
             case .preparation:
             
                 if let snapshot = titleLabel.snapshotView(afterScreenUpdates: false), let backSnapshot = backLabel.snapshotView(afterScreenUpdates: false), let borderSnapshot = backBorderView.snapshotView(afterScreenUpdates: false) {
+                    
+                    isAnimatingTitles = true
                     
                     snapshot.frame = titleLabel.frame
                     titleLabel.superview?.addSubview(snapshot)
@@ -144,9 +221,14 @@ class VisualEffectNavigationBar: MELVisualEffectView {
     
     @IBAction func showOptions() {
         
-        guard let entityVC = containerVC?.activeViewController?.topViewController as? EntityItemsViewController else { return }
+        if let entityVC = containerVC?.activeViewController?.topViewController as? EntityItemsViewController {
         
-        entityVC.showOptions()
+            entityVC.showOptions()
+        
+        } else if let searchVC = containerVC?.activeViewController?.topViewController as? SearchViewController {
+            
+            searchVC.deleteRecentSearches()
+        }
     }
 }
 
@@ -155,8 +237,8 @@ protocol Navigatable: ArtworkModifying {
     var title: String? { get set }
     var backLabelText: String? { get set }
     var preferredTitle: String? { get set }
-    var requiresShadow: Bool { get set }
     var inset: CGFloat { get }
+    var needsEntityBar: Bool { get }
     var activeChildViewController: UIViewController? { get set }
 }
 
