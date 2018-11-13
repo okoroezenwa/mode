@@ -47,34 +47,65 @@ class MELLabel: UILabel {
             changeThemeColor()
         }
     }
+    
+    @objc var allowFontChange = true
+    @objc var scaleFactor: CGFloat = 1
+    
+    @objc var fontWeight = FontWeight.regular.rawValue {
+        
+        didSet {
+            
+            changeFont()
+        }
+    }
+    
+    @objc var textStyle = TextStyle.body.rawValue {
+        
+        didSet {
+            
+            changeFont()
+        }
+    }
 
     override func awakeFromNib() {
         
         super.awakeFromNib()
         
-        alpha = 1
-        
-        changeThemeColor()
-        
-        notifier.addObserver(self, selector: #selector(changeThemeColor), name: .themeChanged, object: nil)
+        prepare()
     }
     
     override init(frame: CGRect) {
         
         super.init(frame: frame)
         
+        prepare()
+    }
+    
+    func prepare() {
+        
         alpha = 1
         
+        adjustsFontSizeToFitWidth = true
+        minimumScaleFactor = scaleFactor
+        
         changeThemeColor()
+        
+        if allowFontChange {
+            
+            changeFont()
+            
+            notifier.addObserver(self, selector: #selector(changeFont), name: .activeFontChanged, object: nil)
+        }
         
         notifier.addObserver(self, selector: #selector(changeThemeColor), name: .themeChanged, object: nil)
     }
     
-    convenience init(fontWeight weight: UIFont.FontWeight, fontSize size: CGFloat, alignment: NSTextAlignment) {
+    convenience init(fontWeight weight: FontWeight, textStyle style: TextStyle, alignment: NSTextAlignment) {
         
         self.init(frame: .zero)
+        self.fontWeight = weight.rawValue
+        self.textStyle = style.rawValue
         
-        font = .myriadPro(ofWeight: weight, size: size)
         textAlignment = alignment
     }
     
@@ -97,5 +128,12 @@ class MELLabel: UILabel {
             
             attributedText = attributed
         }
+    }
+    
+    @objc func changeFont() {
+        
+        guard allowFontChange else { return }
+        
+        font = UIFont.font(ofWeight: FontWeight(rawValue: fontWeight) ?? .regular, size: (TextStyle(rawValue: textStyle) ?? .body).textSize())
     }
 }

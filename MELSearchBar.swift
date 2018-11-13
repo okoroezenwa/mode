@@ -24,6 +24,24 @@ class MELSearchBar: UISearchBar {
             textField?.inputView = newValue
         }
     }
+    
+    @objc var allowFontChange = true
+    
+    @objc var fontWeight = FontWeight.regular.rawValue {
+        
+        didSet {
+            
+            changeFont()
+        }
+    }
+    
+    @objc var textStyle = TextStyle.body.rawValue {
+        
+        didSet {
+            
+            changeFont()
+        }
+    }
 
     override func awakeFromNib() {
         
@@ -34,6 +52,13 @@ class MELSearchBar: UISearchBar {
         autocapitalizationType = capitalise ? .words : .none
         returnKeyType = .done
         
+        if allowFontChange {
+            
+            changeFont()
+            
+            notifier.addObserver(self, selector: #selector(changeFont), name: .activeFontChanged, object: nil)
+        }
+        
         notifier.addObserver(self, selector: #selector(changeThemeColor), name: .themeChanged, object: nil)
     }
     
@@ -43,6 +68,13 @@ class MELSearchBar: UISearchBar {
         
         tintColor = darkTheme ? .white : .black
         updateKeyboard(with: inputView)
+        
+        updateTextField(with: placeholder ?? "")
+    }
+    
+    @objc func changeFont() {
+        
+        textField?.font = UIFont.font(ofWeight: FontWeight(rawValue: fontWeight) ?? .regular, size: (TextStyle(rawValue: textStyle) ?? .body).textSize())
         
         updateTextField(with: placeholder ?? "")
     }
@@ -79,13 +111,13 @@ class MELSearchBar: UISearchBar {
         
         textField?.defaultTextAttributes = [
             
-            NSAttributedString.Key.font: UIFont.myriadPro(ofWeight: .regular, size: 17),
+            NSAttributedString.Key.font: UIFont.font(ofWeight: .regular, size: 17),
             NSAttributedString.Key.foregroundColor: Themer.textColour(for: .title)
         ]
         
         textField?.attributedPlaceholder = NSAttributedString.init(string: placeholder, attributes: [
             
-            .font: UIFont.myriadPro(ofWeight: .regular, size: 17),
+            .font: UIFont.font(ofWeight: .regular, size: 17),
             .foregroundColor: Themer.themeColour(alpha: 0.3)//textColour(for: .subtitle)
         ])
     }

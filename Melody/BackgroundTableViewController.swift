@@ -12,13 +12,16 @@ class BackgroundTableViewController: UITableViewController {
     
     var sections: SectionDictionary = [
         
-        0: ("artwork", nil)
+        0: ("artwork", "A plain colour is used when no artwork is present."),
+        1: ("preferred colour", nil)
     ]
-    var settings: SettingsDictionary = [
+    lazy var settings: SettingsDictionary = [
         
         .init(0, 0): .init(title: "Static", accessoryType: .check({ backgroundArtworkAdaptivity == .none })),
-        .init(0, 1): .init(title: "Adapts to View", accessoryType: .check({ backgroundArtworkAdaptivity == .sectionAdaptive })),
-        .init(0, 2): .init(title: "Adapts to Now Playing", accessoryType: .check({ backgroundArtworkAdaptivity == .nowPlayingAdaptive }))
+        .init(0, 1): .init(title: "Adapts to Each View", accessoryType: .check({ backgroundArtworkAdaptivity == .sectionAdaptive })),
+        .init(0, 2): .init(title: "Adapts to Currently Playing", accessoryType: .check({ backgroundArtworkAdaptivity == .nowPlayingAdaptive })),
+        .init(1, 0): .init(title: "White Background", subtitle: "Used in light theme.", accessoryType: .onOff(isOn: { useWhiteColorBackground }, action: { [weak self] in self?.updateThemeChoice(dark: false) })),
+        .init(1, 1): .init(title: "Black Background", subtitle: "Used in dark theme.", accessoryType: .onOff(isOn: { useBlackColorBackground }, action: { [weak self] in self?.updateThemeChoice(dark: true) }))
     ]
 
     override func viewDidLoad() {
@@ -26,6 +29,20 @@ class BackgroundTableViewController: UITableViewController {
         super.viewDidLoad()
         
         tableView.scrollIndicatorInsets.bottom = 14
+    }
+    
+    func updateThemeChoice(dark: Bool) {
+        
+        if dark {
+            
+            prefs.set(!useBlackColorBackground, forKey: .useBlackColorBackground)
+            notifier.post(name: .backgroundArtworkAdaptivityChanged, object: nil)
+        
+        } else {
+            
+            prefs.set(!useWhiteColorBackground, forKey: .useWhiteColorBackground)
+            notifier.post(name: .backgroundArtworkAdaptivityChanged, object: nil)
+        }
     }
 
     // MARK: - Table view data source
@@ -80,8 +97,49 @@ class BackgroundTableViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
+    override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+        
+        return indexPath.section == 0
+    }
+    
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
-        return 54
+        return indexPath.section == 0 ? 54 : UITableView.automaticDimension
+    }
+    
+    override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        
+        return indexPath.section == 0 ? 54 : FontManager.shared.entityCellHeight
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        
+        return UITableView.automaticDimension
+    }
+    
+    override func tableView(_ tableView: UITableView, estimatedHeightForFooterInSection section: Int) -> CGFloat {
+        
+        return 50
+    }
+    
+    override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        
+        let footer = tableView.sectionFooter
+        
+        if let text = sections[section]?.footer {
+            
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.lineHeightMultiple = 1.5
+            
+            footer?.label.text = text
+            footer?.label.attributes = [.init(name: .paragraphStyle, value: .other(paragraphStyle), range: text.nsRange())]
+            
+        } else {
+            
+            footer?.label.text = nil
+            footer?.label.attributes = nil
+        }
+        
+        return footer
     }
 }

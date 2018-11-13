@@ -10,11 +10,11 @@ import UIKit
 
 class WidgetCollectionViewCell: UICollectionViewCell {
     
-    @IBOutlet weak var artworkImageView: UIImageView!
-    @IBOutlet weak var artworkContainer: UIView!
-    @IBOutlet weak var selectedView: UIView!
-    @IBOutlet weak var artworkImageViewLeadingConstraint: NSLayoutConstraint!
-    @IBOutlet weak var artworkImageViewTrailingConstraint: NSLayoutConstraint!
+    @IBOutlet var artworkImageView: UIImageView!
+    @IBOutlet var artworkContainer: UIView!
+    @IBOutlet var selectedView: UIView!
+    @IBOutlet var artworkImageViewLeadingConstraint: NSLayoutConstraint!
+    @IBOutlet var artworkImageViewTrailingConstraint: NSLayoutConstraint!
     
     override var isSelected: Bool {
         

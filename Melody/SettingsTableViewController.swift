@@ -99,6 +99,7 @@ class SettingsTableViewController: UITableViewController {
     func toggleExplicit() {
         
         prefs.set(!showExplicit, forKey: .showExplicitness)
+        notifier.post(name: .showExplicitnessChanged, object: nil)
     }
     
     func toggleNumbersBelow() {

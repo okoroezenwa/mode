@@ -21,6 +21,7 @@ class ArtworkManager: NSObject {
     
     weak var container: ArtworkModifierContaining?
     weak var nowPlayingVC: ArtworkModifierContaining?
+    weak var currentlyPeeking: Peekable?
     
     var activeContainer: ArtworkModifierContaining? { return nowPlayingVC ?? container }
     

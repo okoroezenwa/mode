@@ -58,8 +58,8 @@ class NowPlayingAnimationController: NSObject, UIViewControllerAnimatedTransitio
                     
                     UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 2.6/5, animations: {
                         
-                        fromVC.contentView.alpha = 0
-                        fromVC.contentView.transform = .init(translationX: -50, y: 0)
+                        fromVC.containerView.alpha = 0
+                        fromVC.containerView.transform = .init(translationX: -50, y: 0)
                         
                         let inset = (fromVC.activeViewController?.topViewController as? Navigatable)?.inset ?? (10 + 34 + 10)
                         fromVC.visualEffectNavigationBar.transform = .init(translationX: 0, y: -(inset + (UIApplication.shared.statusBarFrame.height == 40 ? 0 : UIApplication.shared.statusBarFrame.height)))
@@ -83,8 +83,8 @@ class NowPlayingAnimationController: NSObject, UIViewControllerAnimatedTransitio
                     transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
                     toVC.view.frame = transitionContext.finalFrame(for: toVC)
                     
-                    fromVC.contentView.alpha = 0
-                    fromVC.contentView.transform = .identity
+                    fromVC.containerView.alpha = 0
+                    fromVC.containerView.transform = .identity
                     
                     fromVC.altImageView.alpha = 0
                     fromVC.imageView.alpha = 1
@@ -106,12 +106,12 @@ class NowPlayingAnimationController: NSObject, UIViewControllerAnimatedTransitio
 
                     toVC.visualEffectNavigationBar.transform = .identity
                     toVC.bottomEffectView.transform = .identity
-                    toVC.contentView.alpha = 0
+                    toVC.containerView.alpha = 0
                     
                 } else {
                     
-                    toVC.contentView.alpha = 0
-                    toVC.contentView.transform = .init(translationX: -50, y: 0)
+                    toVC.containerView.alpha = 0
+                    toVC.containerView.transform = .init(translationX: -50, y: 0)
                     toVC.bottomEffectView.transform = .init(translationX: 0, y: toVC.inset)
                     
                     toVC.altImageView.image = toVC.imageView.image
@@ -145,7 +145,7 @@ class NowPlayingAnimationController: NSObject, UIViewControllerAnimatedTransitio
                         
                         toVC.bottomEffectView.transform = .identity
                         toVC.visualEffectNavigationBar.transform = .identity
-                        toVC.contentView.alpha = 1
+                        toVC.containerView.alpha = 1
                         
                         if useAlternateAnimation.inverted {
                         
@@ -156,7 +156,7 @@ class NowPlayingAnimationController: NSObject, UIViewControllerAnimatedTransitio
                     
                     } else {
                         
-                        toVC.contentView.alpha = 0
+                        toVC.containerView.alpha = 0
                         
                         if useAlternateAnimation.inverted {
                             
@@ -166,7 +166,7 @@ class NowPlayingAnimationController: NSObject, UIViewControllerAnimatedTransitio
                         }
                     }
                     
-                    toVC.contentView.transform = .identity
+                    toVC.containerView.transform = .identity
                     
                     transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
                 }
@@ -191,7 +191,7 @@ class NowPlayingAnimationController: NSObject, UIViewControllerAnimatedTransitio
                         
                         UIView.addKeyframe(withRelativeStartTime: 1/5, relativeDuration: 4/5, animations: {
                             
-                            toVC.contentView.alpha = 1
+                            toVC.containerView.alpha = 1
                         })
                         
                     }, completion: completion)
@@ -208,8 +208,8 @@ class NowPlayingAnimationController: NSObject, UIViewControllerAnimatedTransitio
                         
                         UIView.addKeyframe(withRelativeStartTime: 2.4/5, relativeDuration: 2.6/5, animations: {
                             
-                            toVC.contentView.alpha = 1
-                            toVC.contentView.transform = .identity
+                            toVC.containerView.alpha = 1
+                            toVC.containerView.transform = .identity
                             
                             toVC.visualEffectNavigationBar.transform = .identity
                             toVC.bottomEffectView.transform = .identity

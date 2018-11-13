@@ -337,7 +337,7 @@ class UniversalMethods: NSObject {
             
             do {
                 
-                if let json = try JSONSerialization.jsonObject(with: obtainedData, options: JSONSerialization.ReadingOptions.mutableContainers) as? [String: Any], let results = json["results"] as? [[String: Any]], let result = results.first(where: { result in ((result["trackName"] as? String) == item.title || (result["trackCensoredName"] as? String) == item.title) && result["artistName"] as? String == item.artist && result["collectionName"] as? String == item.albumTitle }), let trackID = result["trackId"] as? NSNumber {
+                if let json = try JSONSerialization.jsonObject(with: obtainedData, options: .mutableContainers) as? [String: Any], let results = json["results"] as? [[String: Any]], let result = results.first(where: { result in ((result["trackName"] as? String) == item.title || (result["trackCensoredName"] as? String) == item.title) && result["artistName"] as? String == item.artist && result["collectionName"] as? String == item.albumTitle }), let trackID = result["trackId"] as? NSNumber {
                     
                     UniversalMethods.performInMain {
                         

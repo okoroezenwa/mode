@@ -51,6 +51,25 @@ class MELButton: UIButton {
         }
     }
     
+    @objc var allowFontChange = true
+    @objc var scaleFactor: CGFloat = 1
+    
+    @objc var fontWeight = FontWeight.regular.rawValue {
+        
+        didSet {
+            
+            changeFont()
+        }
+    }
+    
+    @objc var textStyle = TextStyle.body.rawValue {
+        
+        didSet {
+            
+            changeFont()
+        }
+    }
+    
     private var inputReplacement: UIView?
     override var inputView: UIView? {
         
@@ -79,6 +98,16 @@ class MELButton: UIButton {
         
         changeThemeColor()
         
+        titleLabel?.adjustsFontSizeToFitWidth = true
+        titleLabel?.minimumScaleFactor = scaleFactor
+        
+        if allowFontChange {
+            
+            changeFont()
+            
+            notifier.addObserver(self, selector: #selector(changeFont), name: .activeFontChanged, object: nil)
+        }
+        
         notifier.addObserver(self, selector: #selector(changeThemeColor), name: .themeChanged, object: nil)
     }
 
@@ -104,5 +133,10 @@ class MELButton: UIButton {
             
             setAttributedTitle(attributed, for: .normal)
         }
+    }
+    
+    @objc func changeFont() {
+        
+        titleLabel?.font = UIFont.font(ofWeight: FontWeight(rawValue: fontWeight) ?? .regular, size: (TextStyle(rawValue: textStyle) ?? .body).textSize())
     }
 }

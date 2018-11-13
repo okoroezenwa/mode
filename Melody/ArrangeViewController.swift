@@ -10,28 +10,28 @@ import UIKit
 
 class ArrangeViewController: UIViewController {
     
-    @IBOutlet weak var orderBorderView: MELBorderView!
-    @IBOutlet weak var orderBorderViewLeadingConstraint: NSLayoutConstraint!
-    @IBOutlet weak var ascendingButton: MELButton!
-    @IBOutlet weak var descendingButton: MELButton!
-    @IBOutlet weak var resetButton: MELButton!
-    @IBOutlet weak var randomButton: MELButton!
-    @IBOutlet weak var scrollView: UIScrollView!
-    @IBOutlet weak var titleButton: MELButton!
-    @IBOutlet weak var artistButton: MELButton!
-    @IBOutlet weak var albumButton: MELButton!
-    @IBOutlet weak var dateAddedButton: MELButton!
-    @IBOutlet weak var playsButton: MELButton!
-    @IBOutlet weak var durationButton: MELButton!
-    @IBOutlet weak var ratingButton: MELButton!
-    @IBOutlet weak var genreButton: MELButton!
-    @IBOutlet weak var lastPlayedButton: MELButton!
-    @IBOutlet weak var yearButton: MELButton!
-    @IBOutlet weak var fileSizeButton: MELButton!
-    @IBOutlet weak var songCountButton: MELButton!
-    @IBOutlet weak var albumCountButton: MELButton!
-    @IBOutlet weak var lockButtonBorder: MELBorderView!
-    @IBOutlet weak var lockButton: MELButton!
+    @IBOutlet var orderBorderView: MELBorderView!
+    @IBOutlet var orderBorderViewLeadingConstraint: NSLayoutConstraint!
+    @IBOutlet var ascendingButton: MELButton!
+    @IBOutlet var descendingButton: MELButton!
+    @IBOutlet var resetButton: MELButton!
+    @IBOutlet var randomButton: MELButton!
+    @IBOutlet var scrollView: UIScrollView!
+    @IBOutlet var titleButton: MELButton!
+    @IBOutlet var artistButton: MELButton!
+    @IBOutlet var albumButton: MELButton!
+    @IBOutlet var dateAddedButton: MELButton!
+    @IBOutlet var playsButton: MELButton!
+    @IBOutlet var durationButton: MELButton!
+    @IBOutlet var ratingButton: MELButton!
+    @IBOutlet var genreButton: MELButton!
+    @IBOutlet var lastPlayedButton: MELButton!
+    @IBOutlet var yearButton: MELButton!
+    @IBOutlet var fileSizeButton: MELButton!
+    @IBOutlet var songCountButton: MELButton!
+    @IBOutlet var albumCountButton: MELButton!
+    @IBOutlet var lockButtonBorder: MELBorderView!
+    @IBOutlet var lockButton: MELButton!
     
     weak var sorter: Arrangeable!
     @objc var firstLaunch = true
@@ -58,6 +58,19 @@ class ArrangeViewController: UIViewController {
         
         orderBorderViewLeadingConstraint.priority = UILayoutPriority(rawValue: sorter?.ascending == true ? 901 : 899)
         persist(self)
+        
+        [randomButton, resetButton].forEach({
+            
+            $0?.titleEdgeInsets.bottom = {
+            
+                switch activeFont {
+                    
+                    case .avenirNext, .system: return 3
+                    
+                    case .myriadPro: return 0
+                }
+            }()
+        })
         
         selectedButton().update(for: .selected)
         

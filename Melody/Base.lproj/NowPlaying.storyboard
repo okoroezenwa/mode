@@ -173,6 +173,12 @@
                                                                 <state key="normal" title="Song Name">
                                                                     <color key="titleColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                                 </state>
+                                                                <userDefinedRuntimeAttributes>
+                                                                    <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                        <integer key="value" value="0"/>
+                                                                    </userDefinedRuntimeAttribute>
+                                                                    <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="nowPlayingTitle"/>
+                                                                </userDefinedRuntimeAttributes>
                                                                 <connections>
                                                                     <action selector="showSongActions" destination="DFa-JA-3bC" eventType="touchUpInside" id="ZuX-6Z-k4x"/>
                                                                 </connections>
@@ -220,6 +226,12 @@
                                                                 <state key="normal" title="Artist">
                                                                     <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                 </state>
+                                                                <userDefinedRuntimeAttributes>
+                                                                    <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                        <integer key="value" value="0"/>
+                                                                    </userDefinedRuntimeAttribute>
+                                                                    <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="nowPlayingSubtitle"/>
+                                                                </userDefinedRuntimeAttributes>
                                                                 <connections>
                                                                     <action selector="goToArtist" destination="DFa-JA-3bC" eventType="touchUpInside" id="dO6-D2-TY6"/>
                                                                 </connections>
@@ -234,6 +246,12 @@
                                                                 <state key="normal" title="Album">
                                                                     <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                 </state>
+                                                                <userDefinedRuntimeAttributes>
+                                                                    <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                        <integer key="value" value="0"/>
+                                                                    </userDefinedRuntimeAttribute>
+                                                                    <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="nowPlayingSubtitle"/>
+                                                                </userDefinedRuntimeAttributes>
                                                                 <connections>
                                                                     <action selector="goToAlbum" destination="DFa-JA-3bC" eventType="touchUpInside" id="EFQ-dQ-CIn"/>
                                                                 </connections>
@@ -243,6 +261,12 @@
                                                                 <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="17"/>
                                                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                                 <nil key="highlightedColor"/>
+                                                                <userDefinedRuntimeAttributes>
+                                                                    <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                        <integer key="value" value="0"/>
+                                                                    </userDefinedRuntimeAttribute>
+                                                                    <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="nowPlayingSubtitle"/>
+                                                                </userDefinedRuntimeAttributes>
                                                             </label>
                                                         </subviews>
                                                         <constraints>
@@ -432,7 +456,6 @@
                                                         <state key="normal" title="Lyrics" image="Lyrics"/>
                                                         <connections>
                                                             <action selector="viewLyrics" destination="DFa-JA-3bC" eventType="touchUpInside" id="y1l-AR-ESK"/>
-                                                            <outletCollection property="gestureRecognizers" destination="IUZ-9O-aGk" appends="YES" id="uvC-Zz-ong"/>
                                                         </connections>
                                                     </button>
                                                 </subviews>
@@ -516,6 +539,9 @@
                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="15"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="prompt"/>
+                                                </userDefinedRuntimeAttributes>
                                             </label>
                                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="1TX-LY-wvh" customClass="MELSlider" customModule="Mode" customModuleProvider="target">
                                                 <rect key="frame" x="40" y="0.0" width="240" height="39"/>
@@ -525,6 +551,9 @@
                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="15"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="prompt"/>
+                                                </userDefinedRuntimeAttributes>
                                             </label>
                                         </subviews>
                                         <constraints>
@@ -646,7 +675,6 @@
                         <segue destination="vJL-YB-7qo" kind="presentation" identifier="toAlbumOptions" modalPresentationStyle="overFullScreen" id="Dx2-St-6K1"/>
                         <segue destination="bVw-3Y-1bJ" kind="unwind" identifier="preview" unwindAction="previewUnwind:" id="fok-bs-EqM"/>
                         <segue destination="bVw-3Y-1bJ" kind="unwind" identifier="unwind" unwindAction="unwind:" id="AnS-X8-MGC"/>
-                        <segue destination="vJL-YB-7qo" kind="presentation" identifier="toLyrics" id="uhf-aL-3u9"/>
                         <segue destination="bVw-3Y-1bJ" kind="unwind" identifier="toArtistUnwind" unwindAction="artistUnwind:" id="JBu-nk-WJP"/>
                         <segue destination="bVw-3Y-1bJ" kind="unwind" identifier="toAlbumUnwind" unwindAction="albumUnwind:" id="NNl-m5-vAY"/>
                     </connections>
@@ -658,13 +686,8 @@
                         <action selector="showArtistOptions:" destination="DFa-JA-3bC" id="WZy-HI-xTk"/>
                     </connections>
                 </pongPressGestureRecognizer>
-                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.29999999999999999" id="IUZ-9O-aGk">
-                    <connections>
-                        <action selector="viewFullLyrcs:" destination="DFa-JA-3bC" id="vkJ-OZ-I65"/>
-                    </connections>
-                </pongPressGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="-242.40000000000001" y="613.94302848575717"/>
+            <point key="canvasLocation" x="-243.75" y="613.73239436619724"/>
         </scene>
         <!--actionsVC-->
         <scene sceneID="psY-s3-Jdb">
@@ -703,7 +726,7 @@
         <image name="Shuffle" width="18" height="14"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="uhf-aL-3u9"/>
+        <segue reference="N5W-C5-zSn"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
 </document>

@@ -27,14 +27,30 @@ extension UIButton {
             case .selected:
             
                 setTitle(title(for: .normal)?.uppercased(), for: .normal)
-                titleLabel?.font = UIFont.myriadPro(ofWeight: .bold, size: titleLabel?.font.pointSize ?? 15)
+                
+                if let melButton = self as? MELButton {
+                    
+                    melButton.fontWeight = FontWeight.bold.rawValue
+                    
+                } else {
+                    
+                    titleLabel?.font = UIFont.font(ofWeight: .bold, size: titleLabel?.font.pointSize ?? 15)
+                }
             
             case .unselected:
             
                 let text = !capitalised ? title(for: .normal)?.lowercased() : title(for: .normal)?.capitalized
                 
                 setTitle(text, for: .normal)
-                titleLabel?.font = UIFont.myriadPro(ofWeight: .regular, size: titleLabel?.font.pointSize ?? 15)
+                
+                if let melButton = self as? MELButton {
+                    
+                    melButton.fontWeight = FontWeight.regular.rawValue
+                    
+                } else {
+                    
+                    titleLabel?.font = UIFont.font(ofWeight: .regular, size: titleLabel?.font.pointSize ?? 15)
+                }
         }
     }
 }
@@ -160,7 +176,7 @@ extension UIColor {
     class var cream: UIColor { return UIColor(red:0.9569, green:0.9255, blue:0.8824, alpha:1.0000) }
     class var licorice: UIColor { return UIColor(red:0.1843, green:0.2078, blue:0.2784, alpha:1.0000) }
     
-    class var noArtwork: UIColor { return darkTheme ? .licorice : .cream }
+    class var noArtwork: UIColor { return darkTheme ? (useBlackColorBackground ? .black : .licorice) : (useWhiteColorBackground ? .white : .cream) }
 }
 
 // MARK: - Array
@@ -171,6 +187,52 @@ extension Array {
         guard count > index else { return nil }
         
         return self[index]
+    }
+    
+    func inserting(_ element: Element, at index: Index) -> [Element] {
+        
+        var array = self
+        
+        array.insert(element, at: index)
+        
+        return array
+    }
+    
+    func appending(_ element: Element) -> [Element] {
+        
+        var array = self
+        
+        array.append(element)
+        
+        return array
+    }
+    
+    func appending<S>(contentsOf sequence: S) -> [Element] where Element == S.Element, S: Sequence {
+        
+        var array = self
+        
+        array.append(contentsOf: sequence)
+        
+        return array
+    }
+    
+    func removing(from index: Index) -> [Element] {
+        
+        var array = self
+        
+        array.remove(at: index)
+        
+        return array
+    }
+    
+    func moving(from oldIndex: Index, to newIndex: Index) -> [Element] {
+        
+        var array = self
+        
+        let element = array.remove(at: oldIndex)
+        array.insert(element, at: newIndex)
+        
+        return array//.inserting(array.remove(at: oldIndex), at: newIndex)
     }
 }
 
@@ -841,9 +903,9 @@ extension CGFloat {
     
     static var textHeaderHeight: CGFloat {
         
-        let height = ("eh" as NSString).boundingRect(with: CGSize(width: 100, height: CGFloat.greatestFiniteMagnitude), options: .usesLineFragmentOrigin, attributes: [.font: UIFont.myriadPro(ofWeight: .light, size: .tableHeader)], context: nil).height
+        let height = FontManager.shared.heightsDictionary[.sectionHeading] ?? 0
         
-        return height + 24
+        return height + FontManager.shared.sectionHeaderSpacing
     }
     
     static var emptyHeaderHeight: CGFloat { return 11 }
@@ -871,45 +933,6 @@ extension UITextView: TextContaining {
     }
 }
 
-extension UIViewController {
-    
-    class var storyboardName: String {
-        
-        return String.init(describing: type(of: self))
-    }
-    
-    func guardQueue(using alertController: UIAlertController, onCondition condition: Bool, fallBack: () -> ()) {
-        
-        if condition {
-            
-            present(alertController, animated: true, completion: nil)
-            
-        } else {
-            
-            fallBack()
-        }
-    }
-    
-    @objc func showSettings(with sender: Any) {
-        
-        if let sender = sender as? UILongPressGestureRecognizer {
-            
-            guard sender.state == .began else { return }
-        }
-        
-        guard let vc = presentedStoryboard.instantiateViewController(withIdentifier: "presentedVC") as? PresentedContainerViewController else { return }
-        
-        vc.context = .settings
-        
-        present(vc, animated: true, completion: nil)
-    }
-    
-    static var fromStoryboard: UIViewController {
-        print(self.storyboardName)
-        return UIStoryboard.init(name: self.storyboardName, bundle: nil).instantiateViewController(withIdentifier: self.storyboardName)
-    }
-}
-
 extension UIAlertAction {
     
     static func cancel(withTitle title: String = "Cancel", handler: ((UIAlertAction) -> Void)? = nil) -> UIAlertAction {
@@ -926,12 +949,11 @@ extension UIAlertAction {
         
         if condition {
             
-            let selString = NSString.init(format: "%@%@%@", "ch", "eck", "ed")
-            let sel = NSSelectorFromString(selString as String)
+            let selString = "ch" + "eck" + "ed"
             
-            if responds(to: sel) {
+            if let _ = value(forKey: selString) {
                 
-                setValue(NSNumber.init(value: true), forKey: selString as String)
+                setValue(true, forKey: selString)
             }
         }
         
@@ -1095,5 +1117,59 @@ extension Range where Element == Int {
     func indexPaths(in section: Int) -> [IndexPath] {
         
         return self.map({ IndexPath.init(row: $0, section: section) })
+    }
+}
+
+extension RawRepresentable {
+    
+    static func from(_ optionalRawValue: Self.RawValue?) -> Self? {
+        
+        if let rawValue = optionalRawValue {
+            
+            return self.init(rawValue: rawValue)
+        }
+        
+        return nil
+    }
+}
+
+extension UIViewControllerPreviewingDelegate where Self: UIViewController {
+    
+    func performCommitActions(on viewControllerToCommit: UIViewController) {
+        
+        if let vc = viewControllerToCommit as? BackgroundHideable {
+            
+            vc.modifyBackgroundView(forState: .removed)
+        }
+        
+        if let vc = viewControllerToCommit as? Arrangeable {
+            
+            vc.updateImage(for: vc.arrangeButton)
+        }
+        
+        if let vc = viewControllerToCommit as? Peekable {
+            
+            vc.peeker = nil
+            vc.oldArtwork = nil
+        }
+        
+        if let vc = viewControllerToCommit as? Navigatable, let indexer = vc.activeChildViewController as? IndexContaining, let container = appDelegate.window?.rootViewController as? ContainerViewController {
+            
+            indexer.tableView.contentInset.top = vc.inset
+            indexer.tableView.scrollIndicatorInsets.top = vc.inset
+            
+            if let sortable = indexer as? FullySortable, sortable.highlightedIndex == nil {
+                
+                indexer.tableView.contentOffset.y = -vc.inset
+            }
+            
+            container.imageView.image = vc.artworkType.image
+            container.visualEffectNavigationBar.backBorderView.alpha = 1
+            container.visualEffectNavigationBar.backView.isHidden = false
+            container.visualEffectNavigationBar.backLabel.text = vc.backLabelText
+            container.visualEffectNavigationBar.titleLabel.text = vc.title
+            container.visualEffectNavigationBar.updateTopConstraint(for: .end(completed: true), with: nil, and: vc)
+            container.visualEffectNavigationBar.prepareRightView(for: vc.rightViewMode, initialPreparation: true)
+        }
     }
 }

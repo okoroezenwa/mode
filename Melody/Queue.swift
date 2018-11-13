@@ -1,3 +1,4 @@
+
 //
 //  Queue.swift
 //  Melody
@@ -80,14 +81,20 @@ class Queue {
         }
         
         musicPlayer.nowPlayingItem = queue[index < queue.count ? index : 0]
-        musicPlayer.currentPlaybackTime = time
         musicPlayer.prepareToPlay()
 
         if #available(iOS 11.3, *) { musicPlayer.pause() }
         
-        musicPlayer.currentPlaybackTime = time
-        musicPlayer.currentPlaybackTime = time
-        musicPlayer.currentPlaybackTime = time
+        UniversalMethods.performOnMainThread({
+            
+            musicPlayer.currentPlaybackTime = time
+//            NowPlaying.shared.container?.playPauseButton.gestureRecognizers = nil
+//            NowPlaying.shared.container?.altPlayPauseButton??.gestureRecognizers = nil
+//            NowPlaying.shared.container = appDelegate.window?.rootViewController as? ContainerViewController
+            NowPlaying.shared.container?.updateTimes(setValue: true, seeking: false )
+            
+        }, afterDelay: 1)
+    
         prefs.set(time, forKey: .currentPlaybackTime)
         NowPlaying.shared.registered.forEach({ $0?.updateTimes(setValue: true, seeking: false )})
     }

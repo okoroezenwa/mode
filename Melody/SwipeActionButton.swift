@@ -35,7 +35,7 @@ class SwipeActionButton: MELButton {
 //        tintColor = action.textColor ?? .white
         highlightedBackgroundColor = action.highlightedBackgroundColor ?? UIColor.black.withAlphaComponent(0.1)
 
-        titleLabel?.font = UIFont.myriadPro(ofWeight: .regular, size: 15)//action.font ?? UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.medium)
+//        titleLabel?.font = UIFont.font(ofWeight: .regular, size: 15)//action.font ?? UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.medium)
         titleLabel?.textAlignment = .center
         titleLabel?.lineBreakMode = .byWordWrapping
         titleLabel?.numberOfLines = 0

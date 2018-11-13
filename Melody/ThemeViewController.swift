@@ -10,9 +10,9 @@ import UIKit
 
 class ThemeViewController: UIViewController {
 
-    @IBOutlet weak var bottomViewBottomConstraint: NSLayoutConstraint!
-    @IBOutlet weak var bottomView: UIView!
-    @IBOutlet weak var pickerView: UIPickerView!
+    @IBOutlet var bottomViewBottomConstraint: NSLayoutConstraint!
+    @IBOutlet var bottomView: UIView!
+    @IBOutlet var pickerView: UIPickerView!
     
     lazy var twelveHourTimes = Array(1...12)
     lazy var twentyFourHourTimes = Array(0...23)
@@ -82,7 +82,7 @@ extension ThemeViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     
     func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
         
-        let label = view as? MELLabel ?? MELLabel.init(fontWeight: .regular, fontSize: 25, alignment: .center)
+        let label = view as? MELLabel ?? MELLabel.init(fontWeight: .regular, textStyle: .subheading, alignment: .center)
         
         label.text = values(forRow: row, inComponent: component).string
         

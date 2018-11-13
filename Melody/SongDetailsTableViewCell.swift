@@ -10,9 +10,9 @@ import UIKit
 
 class SongDetailsTableViewCell: UITableViewCell {
     
-    @IBOutlet weak var typeImageView: MELImageView!
-    @IBOutlet weak var label: MELLabel!
-    @IBOutlet weak var checkImageView: MELImageView!
+    @IBOutlet var typeImageView: MELImageView!
+    @IBOutlet var label: MELLabel!
+    @IBOutlet var checkImageView: MELImageView!
 
     override func awakeFromNib() {
         

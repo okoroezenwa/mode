@@ -10,7 +10,7 @@ import UIKit
 
 class FilterViewContainer: UIView {
     
-    var context = FilterView.Context.library {
+    var context = FilterViewContext.library {
         
         didSet {
             
@@ -32,9 +32,9 @@ class FilterViewContainer: UIView {
 
 class FilterView: UIView {
 
-    @IBOutlet weak var filterInputView: UIView!
-    @IBOutlet weak var searchBar: MELSearchBar!
-    @IBOutlet weak var filterTestButton: MELButton! {
+    @IBOutlet var filterInputView: UIView!
+    @IBOutlet var searchBar: MELSearchBar!
+    @IBOutlet var filterTestButton: MELButton! {
         
         didSet {
             
@@ -43,44 +43,16 @@ class FilterView: UIView {
         }
     }
     @IBOutlet var filterTestBorderView: MELBorderView!
-    @IBOutlet weak var collectionView: MELCollectionView!
-    @IBOutlet weak var filterInputViewBottomConstraint: NSLayoutConstraint!
-    @IBOutlet weak var filterInputViewHeightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var collectedView: UIView!
-    @IBOutlet weak var collectedLabel: MELLabel!
+    @IBOutlet var collectionView: MELCollectionView!
+    @IBOutlet var filterInputViewBottomConstraint: NSLayoutConstraint!
+    @IBOutlet var filterInputViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet var collectedView: UIView!
+    @IBOutlet var collectedLabel: MELLabel!
     @IBOutlet var searchButtonContainer: UIView!
     @IBOutlet var searchButtonContainerWidthConstraint: NSLayoutConstraint!
     @IBOutlet var actionsButtonContainer: UIView!
     @IBOutlet var actionsButtonContainerWidthConstraint: NSLayoutConstraint!
-    
-    enum Context: Equatable {
-        
-        case filter(filter: Filterable?, container: (FilterContainer & UIViewController)?), library
-        
-        static func ==(lhs: Context, rhs: Context) -> Bool {
-            
-            switch lhs {
-                
-                case .filter(let filter, _):
-                
-                    switch rhs {
-                        
-                        case .filter(filter: let otherFilter, container: _): return filter == nil && otherFilter == nil
-                          
-                        default: return false
-                    }
-                
-                case .library:
-                
-                    switch rhs {
-                        
-                        case .library: return true
-                        
-                        default: return false
-                    }
-            }
-        }
-    }
+    @IBOutlet var gradientView: GradientView!
     
     enum ClearButtonState { case hidden, visible }
     
@@ -102,13 +74,22 @@ class FilterView: UIView {
         }
     }
     
-    lazy var properties: [TitleContaining] = {
+    lazy var properties: [PropertyStripPresented] = {
         
         switch context {
             
-            case .filter(let filter, _): return filterProperties.filter({ filter?.applicableFilterProperties.contains($0) == true })
+            case .filter(let filter, _): return filterProperties.filter({ Set(hiddenFilterProperties).contains($0).inverted && filter?.applicableFilterProperties.contains($0) == true })
             
-            case .library: return librarySections
+            case .library: return librarySections.filter({ Set(hiddenLibrarySections).contains($0).inverted })
+        }
+    }()
+    lazy var otherProperties: [PropertyStripPresented] = {
+        
+        switch context {
+            
+            case .filter(let filter, _): return otherFilterProperties.filter({ filter?.applicableFilterProperties.contains($0) == true })
+            
+            case .library: return otherLibrarySections
         }
     }()
     @objc let cellSizes: NSCache<Index, Size> = {
@@ -120,19 +101,11 @@ class FilterView: UIView {
         return cache
     }()
     
-    var context = Context.library {
+    var context = FilterViewContext.library {
         
         didSet {
             
-            properties = {
-                
-                switch context {
-                    
-                    case .filter(let filter, _): return filterProperties.filter({ filter?.applicableFilterProperties.contains($0) == true })
-                    
-                    case .library: return librarySections
-                }
-            }()
+            prepareProperties()
             
             collectionView.reloadData()
             filterInputViewHeightConstraint.constant = context == .library || withinSearchTerm ? 0 : 52
@@ -163,13 +136,161 @@ class FilterView: UIView {
         
         collectionView.register(UINib.init(nibName: "PropertyCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "cell")
         
+        updateSpacing(self)
+        
+        notifier.addObserver(self, selector: #selector(reloadCollectionView), name: .propertiesUpdated, object: nil)
+        notifier.addObserver(self, selector: #selector(updateSpacing), name: .lineHeightsCalculated, object: nil)
+        
         let hold = UILongPressGestureRecognizer.init(target: self, action: #selector(showCollectedActions(_:)))
         hold.minimumPressDuration = longPressDuration
         collectedView.addGestureRecognizer(hold)
         LongPressManager.shared.gestureRecognisers.append(Weak.init(value: hold))
+        
+        let gr = UILongPressGestureRecognizer.init(target: self, action: #selector(showItemActions(_:)))
+        gr.minimumPressDuration = longPressDuration
+        collectionView.addGestureRecognizer(gr)
+        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: gr))
     }
     
-    class func with(context: Context) -> FilterView {
+    @objc func reloadCollectionView(_ notification: Notification) {
+        
+        guard let context = notification.userInfo?[String.filterViewContext] as? FilterViewContext, context ~= self.context else { return }
+        
+        prepareProperties()
+        collectionView.reloadData()
+    }
+    
+    @objc func updateSpacing(_ sender: Any) {
+        
+        filterTestButton.titleEdgeInsets.bottom = {
+            
+            switch activeFont {
+                
+                case .avenirNext, .system: return 3
+                
+                case .myriadPro: return 0
+            }
+        }()
+        
+        if sender is Notification {
+        
+            collectionView.reloadData()
+        }
+    }
+    
+    func prepareProperties() {
+        
+        switch context {
+            
+            case .filter(let filter, _):
+                
+                properties = filterProperties.filter({ Set(hiddenFilterProperties).contains($0).inverted && filter?.applicableFilterProperties.contains($0) == true })
+                otherProperties = otherFilterProperties.filter({ filter?.applicableFilterProperties.contains($0) == true })
+    
+            case .library:
+            
+                properties = librarySections.filter({ Set(hiddenLibrarySections).contains($0).inverted })
+                otherProperties = otherLibrarySections
+        }
+    }
+    
+    @objc func showItemActions(_ gr: UILongPressGestureRecognizer) {
+        
+        guard gr.state == .began else { return }
+        
+        var title: String {
+            
+            switch context {
+                
+                case .filter: return "Search Categories Settings..."
+                
+                case .library: return "Library Section Settings..."
+            }
+        }
+        
+        let settings = UIAlertAction.init(title: title, style: .default, handler: { [weak self] _ in
+            
+            guard let weakSelf = self, let vc = topViewController else { return }
+            
+            Transitioner.shared.showPropertySettings(from: vc, with: weakSelf.context)
+        })
+        
+        guard let indexPath = collectionView.indexPathForItem(at: gr.location(in: collectionView))/*, let cell = collectionView.cellForItem(at: indexPath) as? PropertyCollectionViewCell*/ else {
+            
+            topViewController?.present(UIAlertController.withTitle(nil, message: nil, style: .actionSheet, actions: settings, .cancel()), animated: true, completion: nil)
+            
+            return
+        }
+        
+        let isOtherCell = indexPath.row > properties.count - 1
+        let property = isOtherCell ? nil : properties[indexPath.row]
+        
+        let move = UIAlertAction.init(title: isOtherCell ? "Ungroup" : "Group into \"Other\"", style: .default, handler: { [weak self] _ in
+            
+            guard let weakSelf = self else { return }
+            
+            if isOtherCell {
+                
+                switch weakSelf.context {
+                    
+                    case .filter:
+                    
+                        var properties = filterProperties
+                        properties.append(contentsOf: otherFilterProperties)
+                    
+                        prefs.set(properties.map({ $0.rawValue }), forKey: .filterProperties)
+                        prefs.set([Int](), forKey: .otherFilterProperties)
+                    
+                    case .library:
+                    
+                        var sections = librarySections
+                        sections.append(contentsOf: otherLibrarySections)
+                        
+                        prefs.set(sections.map({ $0.rawValue }), forKey: .librarySections)
+                        prefs.set([Int](), forKey: .otherLibrarySections)
+                }
+                
+                notifier.post(name: .propertiesUpdated, object: nil, userInfo: [String.filterViewContext: weakSelf.context])
+                
+            } else {
+                
+                property?.perform(.group(index: nil), context: weakSelf.context)
+            }
+        })
+        
+        let hide = UIAlertAction.init(title: "Hide" + (isOtherCell ? " All" : ""), style: .destructive, handler: { [weak self] _ in
+            
+            guard let weakSelf = self else { return }
+            
+            if isOtherCell {
+                
+                switch weakSelf.context {
+                    
+                    case .filter:
+                        
+                        prefs.set(filterProperties.appending(contentsOf: otherFilterProperties).map({ $0.rawValue }), forKey: .filterProperties)
+                        prefs.set(hiddenFilterProperties.appending(contentsOf: otherFilterProperties).map({ $0.rawValue }), forKey: .hiddenFilterProperties)
+                        prefs.set([Int](), forKey: .otherFilterProperties)
+                    
+                    case .library:
+                    
+                        prefs.set(librarySections.appending(contentsOf: otherLibrarySections).map({ $0.rawValue }), forKey: .librarySections)
+                        prefs.set(hiddenLibrarySections.appending(contentsOf: otherLibrarySections).map({ $0.rawValue }), forKey: .hiddenLibrarySections)
+                        prefs.set([Int](), forKey: .otherLibrarySections)
+                }
+                
+                notifier.post(name: .propertiesUpdated, object: nil, userInfo: [String.filterViewContext: weakSelf.context])
+                
+            } else {
+                
+                property?.perform(.hide, context: weakSelf.context)
+            }
+        })
+        
+        topViewController?.present(UIAlertController.withTitle(property?.title ?? "Other", message: nil, style: .actionSheet, actions: hide, move, settings, .cancel()), animated: true, completion: nil)
+    }
+    
+    class func with(context: FilterViewContext) -> FilterView {
         
         let view = Bundle.main.loadNibNamed("FilterView", owner: nil, options: nil)?.first as! FilterView
         
@@ -386,48 +507,67 @@ extension FilterView: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
-        return properties.count
+        return properties.count + (otherProperties.isEmpty ? 0 : 1)
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! PropertyCollectionViewCell
         
-        let property = properties[indexPath.row]
-        let isActive: Bool = {
-            
-            switch context {
-                
-                case . filter(let filter, _): return filter?.filterProperty == property as? Property
-                
-                case .library: return LibrarySection(rawValue: lastUsedLibrarySection) == property as? LibrarySection
-            }
-        }()
-        
-        let text = isActive ? property.title.uppercased() : property.title
-        
-        cell.label.text = text
-        cell.imageView.superview?.isHidden = {
-            
-            if case .library = context { return false }
-            
-            return true
-        }()
-        cell.imageView.image = property.propertyImage
-        cell.label.font = UIFont.myriadPro(ofWeight: isActive ? .bold : .regular, size: 17)
+        prepare(cell, at: indexPath)
         
         return cell
     }
     
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    func prepare(_ cell: PropertyCollectionViewCell, at indexPath: IndexPath) {
+        
+        if otherProperties.isEmpty.inverted && indexPath.row == properties.count {
+            
+            let isActive: Bool = {
+                
+                switch context {
+                    
+                    case . filter(let filter, _): return otherProperties.contains(where: { $0 as? Property == filter?.filterProperty })
+                    
+                    case .library: return otherProperties.contains(where: { $0 as? LibrarySection == LibrarySection(rawValue: lastUsedLibrarySection) })
+                }
+            }()
+            
+            let text = isActive ? "OTHER" : "Other"
+            
+            cell.label.text = text
+            cell.label.fontWeight = (isActive ? FontWeight.bold : .regular).rawValue
+            
+        } else {
+        
+            let property = properties[indexPath.row]
+            let isActive: Bool = {
+                
+                switch context {
+                    
+                    case . filter(let filter, _): return filter?.filterProperty == property as? Property
+                    
+                    case .library: return LibrarySection(rawValue: lastUsedLibrarySection) == property as? LibrarySection
+                }
+            }()
+            
+            let text = isActive ? property.title.uppercased() : property.title
+            
+            cell.label.text = text
+            cell.label.fontWeight = (isActive ? FontWeight.bold : .regular).rawValue
+        }
+    }
+    
+    func selectCell(at indexPath: IndexPath, usingOtherArray useOtherArray: Bool, arrayIndex: Int) {
         
         var indexPaths = [IndexPath]()
+        let relevantArray = useOtherArray ? otherProperties : properties
         
         switch context {
             
             case .filter(let filter, let container):
                 
-                guard let property = properties[indexPath.row] as? Property, let oldProperty = filter?.filterProperty, property != oldProperty, let index = (properties as? [Property])?.index(of: oldProperty) else {
+                guard let property = relevantArray[arrayIndex] as? Property, let oldProperty = filter?.filterProperty, property != oldProperty else {
                     
                     if let searchVC = container as? SearchViewController, searchVC != searchVC.navigationController?.topViewController {
                         
@@ -454,11 +594,27 @@ extension FilterView: UICollectionViewDelegate, UICollectionViewDataSource {
                 
                 indexPaths.append(indexPath)
                 
-                let oldIndexPath = IndexPath.init(row: index, section: 0)
-                
-                if collectionView.indexPathsForVisibleItems.contains(oldIndexPath) {
+                if let index: Int = {
                     
-                    indexPaths.append(oldIndexPath)
+                    if let index = (properties as? [Property])?.index(of: oldProperty) {
+                        
+                        return index
+                        
+                    } else if let _ = (otherProperties as? [Property])?.index(of: oldProperty) {
+                        
+                        return properties.count
+                    }
+                    
+                    return nil
+                    
+                }() {
+                    
+                    let oldIndexPath = IndexPath.init(row: index, section: 0)
+                    
+                    if collectionView.indexPathsForVisibleItems.contains(oldIndexPath), oldIndexPath != indexPath {
+                    
+                        indexPaths.append(oldIndexPath)
+                    }
                 }
                 
                 filter?.clearIfNeeded(with: property)
@@ -487,7 +643,7 @@ extension FilterView: UICollectionViewDelegate, UICollectionViewDataSource {
             
             case .library:
                 
-                guard let section = properties[indexPath.row] as? LibrarySection, let oldSection = LibrarySection(rawValue: prefs.integer(forKey: .lastUsedLibrarySection)), section != oldSection, let index = (properties as? [LibrarySection])?.index(of: oldSection) else {
+                guard let section = relevantArray[arrayIndex] as? LibrarySection, let oldSection = LibrarySection(rawValue: prefs.integer(forKey: .lastUsedLibrarySection)), section != oldSection else {
                     
                     if let container = appDelegate.window?.rootViewController as? ContainerViewController, container.libraryNavigationController?.topViewController != container.libraryNavigationController?.viewControllers.first {
                         
@@ -503,11 +659,27 @@ extension FilterView: UICollectionViewDelegate, UICollectionViewDataSource {
                 
                     indexPaths.append(indexPath)
                     
-                    let oldIndexPath = IndexPath.init(row: index, section: 0)
-                    
-                    if collectionView.indexPathsForVisibleItems.contains(oldIndexPath) {
+                    if let index: Int = {
                         
-                        indexPaths.append(oldIndexPath)
+                        if let index = (properties as? [LibrarySection])?.index(of: oldSection) {
+                            
+                            return index
+                            
+                        } else if let _ = (otherProperties as? [LibrarySection])?.index(of: oldSection) {
+                            
+                            return properties.count
+                        }
+                        
+                        return nil
+                        
+                    }() {
+                        
+                        let oldIndexPath = IndexPath.init(row: index, section: 0)
+                        
+                        if collectionView.indexPathsForVisibleItems.contains(oldIndexPath), oldIndexPath != indexPath {
+                            
+                            indexPaths.append(oldIndexPath)
+                        }
                     }
                     
                     prefs.set(section.rawValue, forKey: .lastUsedLibrarySection)
@@ -522,56 +694,79 @@ extension FilterView: UICollectionViewDelegate, UICollectionViewDataSource {
                 collectionView.deselectItem(at: indexPath, animated: true)
         }
         
-        UIView.animate(withDuration: 0.2, animations: {
+        UIView.animate(withDuration: 0.2, animations: { [weak self] in
+            
+            guard let weakSelf = self else { return }
 
             indexPaths.forEach({
 
-                if collectionView.indexPathsForVisibleItems.contains($0), let cell = collectionView.cellForItem(at: $0) as? PropertyCollectionViewCell {
+                if weakSelf.collectionView.indexPathsForVisibleItems.contains($0), let cell = weakSelf.collectionView.cellForItem(at: $0) as? PropertyCollectionViewCell {
 
                     cell.alpha = 0
                 }
             })
             
-        }, completion: { _ in
+        }, completion: { [weak self] _ in
+            
+            guard let weakSelf = self else { return }
 
             indexPaths.forEach({
 
-                if collectionView.indexPathsForVisibleItems.contains($0), let cell = collectionView.cellForItem(at: $0) as? PropertyCollectionViewCell {
+                if weakSelf.collectionView.indexPathsForVisibleItems.contains($0), let cell = weakSelf.collectionView.cellForItem(at: $0) as? PropertyCollectionViewCell {
                     
                     cell.alpha = 0
-
-                    let property = self.properties[$0.row]
-                    let isActive: Bool = {
-                        
-                        switch self.context {
-                            
-                            case . filter(let filter, _): return filter?.filterProperty == property as? Property
-                            
-                            case .library: return LibrarySection(rawValue: lastUsedLibrarySection) == property as? LibrarySection
-                        }
-                    }()
                     
-                    let text = isActive ? property.title.uppercased() : property.title
-
-                    cell.label.text = text
-                    cell.label.font = UIFont.myriadPro(ofWeight: isActive ? .bold : .regular, size: 17)
+                    weakSelf.prepare(cell, at: $0)
                 }
             })
 
             UIView.animate(withDuration: 0.2, animations: {
+                
+                guard let weakSelf = self else { return }
 
                 indexPaths.forEach({
 
-                    if collectionView.indexPathsForVisibleItems.contains($0), let cell = collectionView.cellForItem(at: $0) as? PropertyCollectionViewCell {
+                    if weakSelf.collectionView.indexPathsForVisibleItems.contains($0), let cell = weakSelf.collectionView.cellForItem(at: $0) as? PropertyCollectionViewCell {
 
                         cell.alpha = 1
-                        collectionView.deselectItem(at: $0, animated: false)
+                        weakSelf.collectionView.deselectItem(at: $0, animated: false)
                     }
                 })
 
-                self.collectionView.performBatchUpdates({  }, completion: { _ in })
+                weakSelf.collectionView.performBatchUpdates({  }, completion: { _ in })
             })
         })
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        if indexPath.row == properties.count {
+            
+            let actions = otherProperties.enumerated().map({ (index, property) -> UIAlertAction in
+                
+                let action = UIAlertAction.init(title: property.title, style: .default, handler: { [weak self] _ in self?.selectCell(at: indexPath, usingOtherArray: true, arrayIndex: index) })
+                
+                var isCurrentProperty: Bool {
+                    
+                    switch self.context {
+                        
+                        case .filter(filter: let filter, container: _): return filter?.filterProperty == property as? Property
+                        
+                        case .library: return LibrarySection(rawValue: lastUsedLibrarySection) == property as? LibrarySection
+                    }
+                }
+                
+                return action.checked(given: isCurrentProperty)
+            })
+            
+            topViewController?.present(UIAlertController.withTitle(nil, message: nil, style: .actionSheet, actions: actions + [.cancel()]), animated: true, completion: nil)
+            
+            collectionView.deselectItem(at: indexPath, animated: true)
+            
+        } else {
+            
+            selectCell(at: indexPath, usingOtherArray: false, arrayIndex: indexPath.row)
+        }
     }
 }
 
@@ -579,14 +774,30 @@ extension FilterView: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        let property = properties[indexPath.row]
+        let isOtherCell = indexPath.row > properties.count - 1
+        
+        let property = isOtherCell ? nil : properties[indexPath.row]
         let isActive: Bool = {
             
             switch self.context {
                 
-                case . filter(let filter, _): return filter?.filterProperty == property as? Property
+                case . filter(let filter, _):
+                    
+                    if isOtherCell, let property = filter?.filterProperty {
+                        
+                        return Set(otherFilterProperties).contains(property)
+                    }
+                    
+                    return filter?.filterProperty == property as? Property
                 
-                case .library: return LibrarySection(rawValue: lastUsedLibrarySection) == property as? LibrarySection
+                case .library:
+                    
+                    if isOtherCell, let section = LibrarySection(rawValue: lastUsedLibrarySection) {
+                        
+                        return Set(otherLibrarySections).contains(section)
+                    }
+                    
+                    return LibrarySection(rawValue: lastUsedLibrarySection) == property as? LibrarySection
             }
         }()
         
@@ -595,19 +806,9 @@ extension FilterView: UICollectionViewDelegateFlowLayout {
             return .init(width: size.width, height: size.height)
         }
         
-        let text = isActive ? property.title.uppercased() : property.title
+        let text = isActive ? property?.title.uppercased() ?? "OTHER" : property?.title ?? "Other"
         
-        let imageWidth: CGFloat = {
-            
-            switch self.context {
-                
-                case .filter: return 0
-                
-                case .library: return 15 + 5
-            }
-        }()
-        
-        let size = Size.init(width: (text as NSString).boundingRect(with: .init(width: CGFloat.greatestFiniteMagnitude, height: 36), options: [.usesFontLeading, .usesLineFragmentOrigin], attributes: [.font: UIFont.myriadPro(ofWeight: isActive ? .bold : .regular, size: 17)], context: nil).width + 32 + imageWidth, height: 36)
+        let size = Size.init(width: (text as NSString).boundingRect(with: .init(width: CGFloat.greatestFiniteMagnitude, height: 36), options: [.usesFontLeading, .usesLineFragmentOrigin], attributes: [.font: UIFont.font(ofWeight: isActive ? .bold : .regular, size: 17)], context: nil).width + 32, height: 36)
         
         cellSizes.setObject(size, forKey: Index.init(indexPath: indexPath, uppercased: isActive))
         

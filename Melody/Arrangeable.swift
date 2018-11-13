@@ -205,10 +205,12 @@ extension Arrangeable {
     
     func updateImage(for button: UIButton) {
         
-        button.setImage(ascending ? #imageLiteral(resourceName: "AscendingLines") : #imageLiteral(resourceName: "DescendingLines"), for: .normal)
+        (button.superview as? BorderedButtonView)?.imageView.image = ascending ? #imageLiteral(resourceName: "AscendingLines") : #imageLiteral(resourceName: "DescendingLines")
     }
     
-    func descriptor(for criteria: SortCriteria) -> NSSortDescriptor {
+    func descriptor(for criteria: SortCriteria, secondary: Bool = false) -> NSSortDescriptor {
+        
+        let localAscending = secondary ? true : self.ascending
         
         switch criteria {
                 
@@ -216,9 +218,9 @@ extension Arrangeable {
                 
                 switch location {
                     
-                    case .album, .playlist, .songs: return .init(key: numbersBelowLetters ? #keyPath(MPMediaItem.sortTitle) : #keyPath(MPMediaItem.validTitle), ascending: ascending, selector: #selector(NSString.localizedStandardCompare(_:)))
+                    case .album, .playlist, .songs: return .init(key: numbersBelowLetters ? #keyPath(MPMediaItem.sortTitle) : #keyPath(MPMediaItem.validTitle), ascending: localAscending, selector: #selector(NSString.localizedStandardCompare(_:)))
                     
-                    case .playlistList: return .init(key: numbersBelowLetters ? #keyPath(MPMediaPlaylist.sortName) : #keyPath(MPMediaPlaylist.validName), ascending: ascending, selector: #selector(NSString.localizedStandardCompare(_:)))
+                    case .playlistList: return .init(key: numbersBelowLetters ? #keyPath(MPMediaPlaylist.sortName) : #keyPath(MPMediaPlaylist.validName), ascending: localAscending, selector: #selector(NSString.localizedStandardCompare(_:)))
                     
                     case .collections: return .init()
                 }
@@ -227,9 +229,9 @@ extension Arrangeable {
                 
                 switch location {
                     
-                    case .album, .songs, .playlist: return .init(key: numbersBelowLetters ? #keyPath(MPMediaItem.sortAlbum) : #keyPath(MPMediaItem.validAlbum), ascending: ascending, selector: #selector(NSString.localizedStandardCompare(_:)))
+                    case .album, .songs, .playlist: return .init(key: numbersBelowLetters ? #keyPath(MPMediaItem.sortAlbum) : #keyPath(MPMediaItem.validAlbum), ascending: localAscending, selector: #selector(NSString.localizedStandardCompare(_:)))
                     
-                    case .collections: return .init(key: numbersBelowLetters ? #keyPath(MPMediaItemCollection.sortAlbumTitle) : #keyPath(MPMediaItemCollection.albumTitle), ascending: ascending, selector: #selector(NSString.localizedStandardCompare(_:)))
+                    case .collections: return .init(key: numbersBelowLetters ? #keyPath(MPMediaItemCollection.sortAlbumTitle) : #keyPath(MPMediaItemCollection.albumTitle), ascending: localAscending, selector: #selector(NSString.localizedStandardCompare(_:)))
                     
                     case .playlistList: return .init()
                 }
@@ -238,9 +240,9 @@ extension Arrangeable {
                 
                 switch location {
                     
-                    case .collections: return .init(key: numbersBelowLetters ? #keyPath(MPMediaItemCollection.sortArtistName) : #keyPath(MPMediaItemCollection.artistName), ascending: ascending, selector: #selector(NSString.localizedStandardCompare(_:)))
+                    case .collections: return .init(key: numbersBelowLetters ? #keyPath(MPMediaItemCollection.sortArtistName) : #keyPath(MPMediaItemCollection.artistName), ascending: localAscending, selector: #selector(NSString.localizedStandardCompare(_:)))
                     
-                    case .playlist, .songs, .album: return .init(key: numbersBelowLetters ? #keyPath(MPMediaItem.sortArtist) : #keyPath(MPMediaItem.validArtist), ascending: ascending, selector: #selector(NSString.localizedStandardCompare(_:)))
+                    case .playlist, .songs, .album: return .init(key: numbersBelowLetters ? #keyPath(MPMediaItem.sortArtist) : #keyPath(MPMediaItem.validArtist), ascending: localAscending, selector: #selector(NSString.localizedStandardCompare(_:)))
                     
                     case .playlistList: return .init()
                 }
@@ -249,60 +251,60 @@ extension Arrangeable {
                 
                 switch location {
                     
-                    case .collections: return .init(key: #keyPath(MPMediaItemCollection.recentlyAdded), ascending: ascending)
+                    case .collections: return .init(key: #keyPath(MPMediaItemCollection.recentlyAdded), ascending: localAscending)
                     
-                    case .album, .songs, .playlist: return .init(key: #keyPath(MPMediaItem.validDateAdded), ascending: ascending)
+                    case .album, .songs, .playlist: return .init(key: #keyPath(MPMediaItem.validDateAdded), ascending: localAscending)
                     
-                    case .playlistList: return .init(key: #keyPath(MPMediaPlaylist.dateCreated), ascending: ascending)
+                    case .playlistList: return .init(key: #keyPath(MPMediaPlaylist.dateCreated), ascending: localAscending)
                 }
                 
             case .duration:
                 
                 switch location {
                     
-                    case .album, .songs, .playlist: return .init(key: #keyPath(MPMediaItem.playbackDuration), ascending: ascending)
+                    case .album, .songs, .playlist: return .init(key: #keyPath(MPMediaItem.playbackDuration), ascending: localAscending)
                         
-                    case .collections, .playlistList: return .init(key: #keyPath(MPMediaItemCollection.totalDuration), ascending: ascending)
+                    case .collections, .playlistList: return .init(key: #keyPath(MPMediaItemCollection.totalDuration), ascending: localAscending)
                 }
                 
             case .genre:
                 
                 switch location {
                     
-                    case .collections: return .init(key: numbersBelowLetters ? #keyPath(MPMediaItemCollection.sortGenre) : #keyPath(MPMediaItemCollection.genre), ascending: ascending, selector: #selector(NSString.localizedStandardCompare(_:)))
+                    case .collections: return .init(key: numbersBelowLetters ? #keyPath(MPMediaItemCollection.sortGenre) : #keyPath(MPMediaItemCollection.genre), ascending: localAscending, selector: #selector(NSString.localizedStandardCompare(_:)))
                     
-                    case .songs, .playlist, .album: return .init(key: numbersBelowLetters ? #keyPath(MPMediaItem.sortGenre) : #keyPath(MPMediaItem.validGenre), ascending: ascending, selector: #selector(NSString.localizedStandardCompare(_:)))
+                    case .songs, .playlist, .album: return .init(key: numbersBelowLetters ? #keyPath(MPMediaItem.sortGenre) : #keyPath(MPMediaItem.validGenre), ascending: localAscending, selector: #selector(NSString.localizedStandardCompare(_:)))
                     
                     case .playlistList: return .init()
                 }
                 
-            case .lastPlayed: return .init(key: #keyPath(MPMediaItem.validLastPlayed), ascending: ascending)
+            case .lastPlayed: return .init(key: #keyPath(MPMediaItem.validLastPlayed), ascending: localAscending)
                 
             case .plays:
                 
                 switch location {
                     
-                    case .collections, .playlistList: return .init(key: #keyPath(MPMediaItemCollection.totalPlays), ascending: ascending)
+                    case .collections, .playlistList: return .init(key: #keyPath(MPMediaItemCollection.totalPlays), ascending: localAscending)
                     
-                    case .songs, .playlist, .album: return .init(key: #keyPath(MPMediaItem.playCount), ascending: ascending)
+                    case .songs, .playlist, .album: return .init(key: #keyPath(MPMediaItem.playCount), ascending: localAscending)
                 }
                 
-            case .rating: return .init(key: #keyPath(MPMediaItem.rating), ascending: ascending)
+            case .rating: return .init(key: #keyPath(MPMediaItem.rating), ascending: localAscending)
                 
             case .year:
                 
                 switch location {
                     
-                    case .collections: return .init(key: #keyPath(MPMediaItemCollection.year), ascending: ascending)
+                    case .collections: return .init(key: #keyPath(MPMediaItemCollection.year), ascending: localAscending)
                     
-                    default: return .init(key: #keyPath(MPMediaItem.year), ascending: ascending)
+                    default: return .init(key: #keyPath(MPMediaItem.year), ascending: localAscending)
                 }
             
             case .standard:
             
                 switch location {
                     
-                    case .album: return .init(key: #keyPath(MPMediaItem.discCount), ascending: ascending)
+                    case .album: return .init(key: #keyPath(MPMediaItem.discCount), ascending: localAscending)
                     
                     case .collections, .playlist, .songs: return .init()
                     
@@ -315,24 +317,25 @@ extension Arrangeable {
                 
                 switch location {
                     
-                    case .playlistList, .collections: return .init(key: #keyPath(MPMediaItemCollection.totalSize), ascending: ascending)
+                    case .playlistList, .collections: return .init(key: #keyPath(MPMediaItemCollection.totalSize), ascending: localAscending)
                     
-                    case .playlist, .songs, .album: return .init(key: #keyPath(MPMediaItem.fileSize), ascending: ascending)
+                    case .playlist, .songs, .album: return .init(key: #keyPath(MPMediaItem.fileSize), ascending: localAscending)
                 }
             
-            case .songCount: return .init(key: #keyPath(MPMediaItemCollection.songCount), ascending: ascending)
+            case .songCount: return .init(key: #keyPath(MPMediaItemCollection.songCount), ascending: localAscending)
             
-            case .albumCount: return .init(key: #keyPath(MPMediaItemCollection.albumCount), ascending: ascending)
+            case .albumCount: return .init(key: #keyPath(MPMediaItemCollection.albumCount), ascending: localAscending)
         }
     }
     
-    func descriptors(for criteria: SortCriteria...) -> [NSSortDescriptor] {
+    func descriptors(for criteria: SortCriteria..., treatFirstAsSecondary: Bool = false) -> [NSSortDescriptor] {
         
         var descriptors = [NSSortDescriptor]()
+        let first = criteria.first
         
         for criterion in criteria {
             
-            descriptors.append(descriptor(for: criterion))
+            descriptors.append(descriptor(for: criterion, secondary: criterion != first || treatFirstAsSecondary))
         }
         
         return descriptors
@@ -382,7 +385,7 @@ extension Arrangeable {
                     
                     switch location {
                         
-                    case .album: return [descriptor(for: sortCriteria)] + [NSSortDescriptor.init(key: #keyPath(MPMediaItem.albumTrackNumber), ascending: ascending)] + descriptors(for: .title, .duration) // changed from Song to MPMediaItem for some reason; may need to change back
+                        case .album: return [descriptor(for: sortCriteria)] + [NSSortDescriptor.init(key: #keyPath(MPMediaItem.albumTrackNumber), ascending: true)] + descriptors(for: .title, .duration, treatFirstAsSecondary: true) // changed from Song to MPMediaItem for some reason; may need to change back + changed from self.ascending to true for second array
                         
                         case .playlistList: return []
                         
@@ -397,11 +400,11 @@ extension Arrangeable {
                         
                         switch location {
                             
-                            case .album, .playlist, .songs: return descriptors(for: .artist, .album, .title)
+                            case .album, .playlist, .songs: return descriptors(for: .artist, .album, .title, treatFirstAsSecondary: true)
                                 
-                            case .collections: return descriptors(for: .album, .artist)
+                            case .collections: return descriptors(for: .album, .artist, treatFirstAsSecondary: true)
                             
-                            case .playlistList: return descriptors(for: .title, .dateAdded)
+                            case .playlistList: return descriptors(for: .title, .dateAdded, treatFirstAsSecondary: true)
                         }
                     }()
                     
@@ -444,7 +447,7 @@ extension Arrangeable {
             case .standard, .random: return []
             
             case .duration:
-            
+            #warning("Duration section headers need work")
                 let props = collections.map({ Int($0.totalDuration) / 60 })
                 let orderedProps = Set(props).sorted(by: { (ascending ? $0 < $1 : $0 > $1) })
                 let sectionTitles = orderedProps.map({ /*$0 > 60 ? "\($0):00:00+" : */"\($0):00+" })
@@ -463,7 +466,7 @@ extension Arrangeable {
                 return getSectionDetails(from: props, withOrderedArray: trueSort, sectionTitles: trueSort, indexTitles: trueSort)
             
             case .year:
-            
+            #warning("Year may need work in case of too many sections")
                 let props = collections.map({ $0.year })
                 let orderedProps = Set(props).sorted(by: { (ascending ? $0 < $1 : $0 > $1) })
                 let sectionTitles = orderedProps.map({ $0 == 0 ? "?" : String.init(describing: $0) })
@@ -636,19 +639,19 @@ extension Arrangeable {
                             
                         case 1: return "under 10"
                             
-                        case 2: return "10 and over"
+                        case 2: return "10+"
                             
-                        case 3: return "20 and over"
+                        case 3: return "20+"
                             
-                        case 4: return "50 and over"
+                        case 4: return "50+"
                             
-                        case 5: return "100 and over"
+                        case 5: return "100+"
                             
-                        case 6: return "200 and over"
+                        case 6: return "200+"
                             
-                        case 7: return "500 and over"
+                        case 7: return "500+"
                             
-                        default: return 1000.formatted + " and over"
+                        default: return 1000.formatted + "+"
                     }
                 })
                 
@@ -682,13 +685,13 @@ extension Arrangeable {
                 
                 let props = collections.map({ FileSize.init(size: $0.totalSize < 1000000 ? 0 : $0.totalSize.divided, suffix: $0.totalSize < 1000000 ? "B" : $0.totalSize.fileSizeSuffix, actualSize: $0.totalSize) })
                 let orderedProps = Set(props).sorted(by: { (ascending ? $0.actualSize < $1.actualSize : $0.actualSize > $1.actualSize) })
-                let sectionTitles = orderedProps.map({ $0.suffix == "B" || $0.suffix == "KB" ? "Under 1 MB" : "\($0.size) \($0.suffix) and over" })
+                let sectionTitles = orderedProps.map({ $0.suffix == "B" || $0.suffix == "KB" ? "Under 1 MB" : "\($0.size) \($0.suffix)+" })
                 let indexTitles = orderedProps.map({ $0.suffix == "B" || $0.suffix == "KB" ? "<1MB" : "\($0.size)\($0.suffix)+" })
                 
                 return getSectionDetails(from: props, withOrderedArray: orderedProps, sectionTitles: sectionTitles, indexTitles: indexTitles)
             
             case .songCount:
-            
+            #warning("Song count may need work in case of too many sections")
                 let props = collections.map({ $0.songCount })
                 let orderedProps = Set(props).sorted(by: { (ascending ? $0 < $1 : $0 > $1) })
                 let sectionTitles = orderedProps.map({ $0.fullCountText(for: .song) })
@@ -697,7 +700,7 @@ extension Arrangeable {
                 return getSectionDetails(from: props, withOrderedArray: orderedProps, sectionTitles: sectionTitles, indexTitles: indexTitles)
             
             case .albumCount:
-            
+            #warning("Album count may need work in case of too many sections")
                 let props = collections.map({ $0.albumCount })
                 let orderedProps = Set(props).sorted(by: { (ascending ? $0 < $1 : $0 > $1) })
                 let sectionTitles = orderedProps.map({ $0.fullCountText(for: .album) })
@@ -914,19 +917,19 @@ extension Arrangeable {
                             
                         case 1: return "under 10"
                             
-                        case 2: return "10 and over"
+                        case 2: return "10+"
                             
-                        case 3: return "20 and over"
+                        case 3: return "20+"
                             
-                        case 4: return "50 and over"
+                        case 4: return "50+"
                             
-                        case 5: return "100 and over"
+                        case 5: return "100+"
                             
-                        case 6: return "200 and over"
+                        case 6: return "200+"
                             
-                        case 7: return "500 and over"
+                        case 7: return "500+"
                             
-                        default: return 1000.formatted + " and over"
+                        default: return 1000.formatted + "+"
                     }
                 })
                 
@@ -1207,12 +1210,12 @@ extension Arrangeable {
                 
                 return getSectionDetails(from: props, withOrderedArray: orderedProps, sectionTitles: sectionTitles, indexTitles: indexTitles)
             
-            
             case .fileSize:
+            #warning("File size may need work in case of too many sections")
             
                 let props = items.map({ FileSize.init(size: $0.fileSize < 1000000 ? 0 : $0.fileSize.divided, suffix: $0.fileSize < 1000000 ? "B" : $0.fileSize.fileSizeSuffix, actualSize: $0.fileSize) })
                 let orderedProps = Set(props).sorted(by: { (ascending ? $0.actualSize < $1.actualSize : $0.actualSize > $1.actualSize) })
-                let sectionTitles = orderedProps.map({ $0.suffix == "B" || $0.suffix == "KB" ? "Under 1 MB" : "\($0.size) \($0.suffix) and over" })
+                let sectionTitles = orderedProps.map({ $0.suffix == "B" || $0.suffix == "KB" ? "Under 1 MB" : "\($0.size) \($0.suffix)+" })
                 let indexTitles = orderedProps.map({ $0.suffix == "B" || $0.suffix == "KB" ? "<1MB" : "\($0.size)\($0.suffix)+" })
             
                 return getSectionDetails(from: props, withOrderedArray: orderedProps, sectionTitles: sectionTitles, indexTitles: indexTitles)

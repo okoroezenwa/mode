@@ -12,17 +12,13 @@ import Foundation
 
 class SearchViewController: UIViewController, Filterable, DynamicSections, AlbumTransitionable, Contained, InfoLoading, ArtistTransitionable, GenreTransitionable, ComposerTransitionable, AlbumArtistTransitionable, PlaylistTransitionable, EntityContainer, OptionsContaining, CellAnimatable, IndexContaining, FilterContainer, SingleItemActionable, EntityVerifiable, TopScrollable, Detailing, Navigatable, ArtworkModifying, BorderButtonContaining {
 
-    @IBOutlet weak var tableView: MELTableView!
-    @IBOutlet weak var emptyStackView: UIStackView!
-    @IBOutlet weak var titleLabel: MELLabel!
-    @IBOutlet weak var clearButtonView: UIView!
-    @IBOutlet weak var clearButtonTrailingConstraint: NSLayoutConstraint!
-    @IBOutlet weak var topView: UIView!
-    @IBOutlet weak var largeActivityIndicator: MELActivityIndicatorView!
-    @IBOutlet weak var activityView: UIView!
-    @IBOutlet weak var activityVisualEffectView: MELVisualEffectView!
+    @IBOutlet var tableView: MELTableView!
+    @IBOutlet var emptyStackView: UIStackView!
+    @IBOutlet var largeActivityIndicator: MELActivityIndicatorView!
+    @IBOutlet var activityView: UIView!
+    @IBOutlet var activityVisualEffectView: MELVisualEffectView!
     @IBOutlet var activityViewVerticalCenterConstraint: NSLayoutConstraint!
-    @IBOutlet weak var emptySubLabel: MELLabel! {
+    @IBOutlet var emptySubLabel: MELLabel! {
         
         didSet {
             
@@ -48,7 +44,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         
         didSet {
             
-            let editView = BorderedButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, action: #selector(SongActionManager.toggleEditing(_:)), target: songManager)
+            let editView = BorderedButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, tapAction: .init(action: #selector(SongActionManager.toggleEditing(_:)), target: songManager))
             editButton = editView.button
             self.editView = editView
             
@@ -122,7 +118,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
     }
     
     var backLabelText: String?
-    let needsEntityBar = false
+    var animateClearButton = false
     
     var artwork: UIImage? {
         
@@ -130,8 +126,34 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         
         set { }
     }
+    var rightViewMode: VisualEffectNavigationBar.RightViewMode = .button(hidden: true) {
+        
+        didSet {
+            
+            guard animateClearButton else {
+
+                animateClearButton = true
+
+                return
+            }
+            
+            container?.visualEffectNavigationBar.prepareRightView(for: rightViewMode)
+            
+            UIView.animate(withDuration: 0.3, animations: {
+                
+                self.container?.view.layoutIfNeeded()
+                
+                if case .button(hidden: let hidden) = self.rightViewMode {
+                    
+                    self.container?.visualEffectNavigationBar.rightButton.alpha = hidden ? 0 : 1
+                    self.container?.visualEffectNavigationBar.clearBorderView.alpha = hidden ? 0 : 1
+                    self.container?.visualEffectNavigationBar.clearButtonView.alpha = hidden ? 0 : 1
+                }
+            })
+        }
+    }
     
-    let inset: CGFloat = 10 + 34 + 10 + 1
+    var inset: CGFloat { return VisualEffectNavigationBar.Location.main.total }
     lazy var preferredTitle: String? = "Search"
     var activeChildViewController: UIViewController?
     
@@ -173,9 +195,10 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
     lazy var rightViewButton: MELButton = {
         
         let button = MELButton.init(frame: .init(x: 0, y: 0, width: 30, height: 30))
+        button.fontWeight = FontWeight.semibold.rawValue
         button.setTitle(nil, for: .normal)
         button.addTarget(self, action: #selector(rightViewButtonTapped), for: .touchUpInside)
-        button.titleLabel?.font = UIFont.myriadPro(ofWeight: .semibold, size: 17)
+//        button.titleLabel?.font = UIFont.font(ofWeight: .semibold, size: 17)
         
         return button
     }()
@@ -266,14 +289,11 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         filterViewContainer.filterView.filterTestButton.setTitle(testTitle, for: .normal)
         
         tableView.register(UINib.init(nibName: "RecentSearchCell", bundle: nil), forCellReuseIdentifier: .recentCell)
-        tableView.contentInset.top = inset
-        tableView.scrollIndicatorInsets.top = inset
-        tableView.tableHeaderView = headerView
+        updateTopInset()
         
         updateKeyboard(with: self)
         
         resetRecentSearches()
-        updateHeaderView()
         
         let swipeRight = UISwipeGestureRecognizer.init(target: self, action: #selector(handleRightSwipe(_:)))
         swipeRight.direction = .right
@@ -298,9 +318,15 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         }
     }
     
+    func updateTopInset() {
+        
+        tableView.contentInset.top = inset
+        tableView.scrollIndicatorInsets.top = inset
+    }
+    
     @objc func updateHeaderView() {
         
-//        tableView.tableHeaderView = emptyCondition ? nil : headerView
+        tableView.tableHeaderView = emptyCondition ? nil : headerView
         tableView.tableHeaderView?.frame.size.height = emptyCondition ? 0 : 48
         
         let array = [editView]
@@ -396,10 +422,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         
         tableView.setEditing(true, animated: true)
         
-        editButton.setTitle("Done", for: .normal)
-        editButton.setImage(.doneImage, for: .normal)
-        
-        UIView.animate(withDuration: 0.3, animations: { self.editButton.superview?.layoutIfNeeded() })
+        editView.animateChange(title: "Done", image: .doneImage)
     }
     
     @objc func handleLeftSwipe(_ sender: Any) {
@@ -408,10 +431,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
             
             tableView.setEditing(false, animated: true)
             
-            editButton.setTitle(.inactiveEditButtonTitle, for: .normal)
-            editButton.setImage(.inactiveEditImage, for: .normal)
-            
-            UIView.animate(withDuration: 0.3, animations: { self.editButton.superview?.layoutIfNeeded() })
+            editView.animateChange(title: .inactiveEditButtonTitle, image: .inactiveEditImage)
         
         } else if let gr = sender as? UISwipeGestureRecognizer, let indexPath = tableView.indexPathForRow(at: gr.location(in: tableView)), filtering {
             
@@ -568,6 +588,14 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
             }
         })
         
+        lifetimeObservers.insert(notifier.addObserver(forName: .showExplicitnessChanged, object: nil, queue: nil, using: { [weak self] _ in
+            
+            guard let weakSelf = self else { return }
+            
+            weakSelf.tableView.reloadRows(at: weakSelf.tableView.indexPathsForVisibleRows ?? [], with: .none)
+            
+        }) as! NSObject)
+        
         lifetimeObservers.insert(iCloudObserver as! NSObject)
         
         lifetimeObservers.insert(notifier.addObserver(forName: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer, queue: nil, using: { [weak self] _ in
@@ -619,6 +647,15 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
             guard let weakSelf = self, let indexPaths = weakSelf.tableView.indexPathsForVisibleRows else { return }
             
             weakSelf.tableView.reloadRows(at: indexPaths, with: .none)
+            
+        }) as! NSObject)
+        
+        lifetimeObservers.insert(notifier.addObserver(forName: .lineHeightsCalculated, object: nil, queue: nil, using: { [weak self] _ in
+            
+            guard let weakSelf = self else { return }
+            
+            weakSelf.tableView.reloadData()
+            weakSelf.updateTopInset()
             
         }) as! NSObject)
     }
@@ -693,12 +730,12 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         animateCells(direction: .vertical)
         if tableView.isEditing { tableView.setEditing(false, animated: false) }
         
-        topView.layoutIfNeeded()
-        searchBar?.updateTextField(with: placeholder.isEmpty ? "Search Library" : placeholder)
-        
-        clearButtonTrailingConstraint.constant = filtering || recentSearches.isEmpty ? -44 : 0
-        
-        UIView.animate(withDuration: 0.3, animations: { self.topView.layoutIfNeeded() })
+//        topView.layoutIfNeeded()
+//        searchBar?.updateTextField(with: placeholder.isEmpty ? "Search Library" : placeholder)
+//
+//        clearButtonTrailingConstraint.constant = filtering || recentSearches.isEmpty ? -44 : 0
+//
+//        UIView.animate(withDuration: 0.3, animations: { self.topView.layoutIfNeeded() })
         
         onlineOverride = false
         
@@ -942,11 +979,11 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         
         emptyStackView.isHidden = true
         
-        topView.layoutIfNeeded()
-        
-        clearButtonTrailingConstraint.constant = -44
-        
-        UIView.animate(withDuration: 0.3, animations: { self.topView.layoutIfNeeded() })
+//        topView.layoutIfNeeded()
+//
+//        clearButtonTrailingConstraint.constant = -44
+//
+//        UIView.animate(withDuration: 0.3, animations: { self.topView.layoutIfNeeded() })
         
         filter(with: "")
     }
@@ -954,6 +991,9 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
     @objc func updateTitleLabel() {
         
         title = filtering ? itemCount.formatted + " \(itemCount == 1 ? "Result" : "Results")" : "Previous Searches"
+        
+        guard container?.activeViewController?.topViewController == self else { return }
+        
         container?.visualEffectNavigationBar.titleLabel.text = title
     }
     
@@ -1131,21 +1171,21 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
             
                 let playlist = playlists[indexPath.row]
                 cell.prepare(with: playlist, count: playlist.count, number: songCountVisible.inverted ? nil : indexPath.row + 1)
-                updateImageView(using: playlist, in: cell, indexPath: indexPath, reusableView: tableView, overridable: self)
+                updateImageView(using: playlist, entityType: .playlist, in: cell, indexPath: indexPath, reusableView: tableView, overridable: self)
             
             case .albums:
             
                 let album = albums[indexPath.row]
                 
                 cell.prepare(with: album, withinArtist: false, number: songCountVisible.inverted ? nil : indexPath.row + 1)
-                updateImageView(using: album, in: cell, indexPath: indexPath, reusableView: tableView, overridable: self)
+                updateImageView(using: album, entityType: .album, in: cell, indexPath: indexPath, reusableView: tableView, overridable: self)
             
             case .artists, .genres, .composers:
                 
                 let collection = collectionArray(from: sectionDetails[indexPath.section].category)[indexPath.row]
             
                 cell.prepare(for: sectionDetails[indexPath.section].category.albumBasedCollectionKind, with: collection, number: songCountVisible.inverted ? nil : indexPath.row + 1)
-                updateImageView(using: collection, in: cell, indexPath: indexPath, reusableView: tableView, overridable: self)
+                updateImageView(using: collection, entityType: sectionDetails[indexPath.section].category.entity, in: cell, indexPath: indexPath, reusableView: tableView, overridable: self)
         }
         
         cell.delegate = self
@@ -1195,7 +1235,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
-        return filtering ? 72 : 57
+        return filtering ? FontManager.shared.entityCellHeight : 57
     }
     
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
@@ -1314,8 +1354,9 @@ extension SearchViewController: UISearchBarDelegate {
         ignoreKeyboardForInset = true
         
         if !filtering {
-            
-            UIView.transition(with: titleLabel, duration: 0.2, options: .transitionCrossDissolve, animations: { self.updateTitleLabel() } , completion: nil)
+
+            updateTitleLabel()
+//            UIView.transition(with: titleLabel, duration: 0.2, options: .transitionCrossDissolve, animations: { self.updateTitleLabel() } , completion: nil)
         }
         
         searchBar.resignFirstResponder()
@@ -1384,26 +1425,12 @@ extension SearchViewController: UIViewControllerPreviewingDelegate {
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
         
-        if let vc = viewControllerToCommit as? BackgroundHideable {
-            
-            vc.modifyBackgroundView(forState: .removed)
-        }
+        performCommitActions(on: viewControllerToCommit)
         
         if searchBar?.isFirstResponder == true {
             
             wasFiltering = true
             searchBar.resignFirstResponder()
-        }
-        
-        if let vc = viewControllerToCommit as? Peekable {
-            
-            vc.peeker = nil
-            vc.oldArtwork = nil
-        }
-        
-        if let vc = viewControllerToCommit as? Arrangeable {
-            
-            vc.updateImage(for: vc.arrangeButton)
         }
         
         show(viewControllerToCommit, sender: nil)
@@ -1419,13 +1446,21 @@ extension SearchViewController: UIViewControllerPreviewingDelegate {
 extension SearchViewController: Attributor {
     
     @objc func updateAttributedText(for view: TableHeaderView?, inSection section: Int) {
-        
+            
         view?.label.updateTheme = false
         view?.label.greyOverride = true
         
         let count = tableView.numberOfRows(inSection: section).formatted
-        let title = sectionDetails[section].0
-        let string = "\(title) (\(count))"
+        let title = sectionDetails.value(at: section)?.0
+        let string: String = {
+            
+            if let title = title {
+                
+                return "\(title) (\(count))"
+            }
+            
+            return ""
+        }()
         
         view?.label.text = string
         view?.label.attributes = [.init(kind: .title, range: string.nsRange(of: count))]
@@ -1619,7 +1654,7 @@ extension SearchViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     
     func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
         
-        let label = view as? MELLabel ?? MELLabel.init(fontWeight: .regular, fontSize: 25, alignment: .center)
+        let label = view as? MELLabel ?? MELLabel.init(fontWeight: .regular, textStyle: .subheading, alignment: .center)
         
         label.text = array[row] ?? "----"
         

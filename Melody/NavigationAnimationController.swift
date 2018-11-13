@@ -48,6 +48,7 @@ class NavigationAnimationController: NSObject, UIViewControllerAnimatedTransitio
         
         if let first = fromVC as? Navigatable, let second = toVC as? Navigatable, let container = appDelegate.window?.rootViewController as? ContainerViewController {
             
+            container.view.layoutIfNeeded()
             container.visualEffectNavigationBar.animateViews(direction: direction, section: .preparation, with: first, and: second)
         }
         
@@ -57,7 +58,6 @@ class NavigationAnimationController: NSObject, UIViewControllerAnimatedTransitio
             
             if needsToUpdateBottomBar {
                 
-                container.view.layoutIfNeeded()
                 container.filterViewContainer.filterView.withinSearchTerm = !container.filterViewContainer.filterView.withinSearchTerm
             }
         }
@@ -106,6 +106,7 @@ class NavigationAnimationController: NSObject, UIViewControllerAnimatedTransitio
                     
                     container.imageView.alpha = 1
                     container.altImageView.alpha = 0
+                    container.view.layoutIfNeeded()
                 }
             })
             

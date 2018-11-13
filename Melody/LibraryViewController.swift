@@ -9,14 +9,12 @@
 import UIKit
 import StoreKit
 
-class LibraryViewController: UIViewController, Contained, OptionsContaining, Navigatable, ArtworkModifying {
+class LibraryViewController: UIViewController, Contained, OptionsContaining, Navigatable, ArtworkModifying, ChildContaining {
     
-    @IBOutlet weak var titleButton: MELButton!
-    @IBOutlet weak var contentView: UIView!
-    @IBOutlet weak var topView: UIView!
-    @IBOutlet weak var emptyStackView: UIStackView!
-    @IBOutlet weak var emptyLabel: MELLabel!
-    @IBOutlet weak var emptySubLabel: MELLabel! {
+    @IBOutlet var containerView: UIView!
+    @IBOutlet var emptyStackView: UIStackView!
+    @IBOutlet var emptyLabel: MELLabel!
+    @IBOutlet var emptySubLabel: MELLabel! {
         
         didSet {
             
@@ -77,15 +75,17 @@ class LibraryViewController: UIViewController, Contained, OptionsContaining, Nav
         }
     }
     
+    var viewControllerSnapshot: UIView? { didSet { oldValue?.removeFromSuperview() } }
+    
     var backLabelText: String?
-    let needsEntityBar = false
     var artwork: UIImage? {
         
         get { return musicPlayer.nowPlayingItem?.actualArtwork?.image(at: .init(width: 20, height: 20)) }
         
         set { }
     }
-    let inset: CGFloat = 10 + 34 + 10 + 1
+    var rightViewMode: VisualEffectNavigationBar.RightViewMode = .none
+    var inset: CGFloat { return VisualEffectNavigationBar.Location.main.total }
     lazy var preferredTitle: String? = title
 
     override func viewDidLoad() {
@@ -315,96 +315,16 @@ class LibraryViewController: UIViewController, Contained, OptionsContaining, Nav
         }
     }
     
-    func updateViews(inSection section: LibrarySection, count: Int, filteredCount: Int? = nil) {
+    func updateViews(inSection section: LibrarySection, count: Int, setTitle: Bool) {
         
-        let text = count.fullCountText(for: section.entity, filteredCount: filteredCount, compilationOverride: section == .compilations, capitalised: true)
+        let text = count.fullCountText(for: section.entity, compilationOverride: section == .compilations, capitalised: true)
         
         title = text
         preferredTitle = section.title.capitalized
         
-        if container?.activeViewController?.topViewController == self {
+        if setTitle {
             
             container?.visualEffectNavigationBar.titleLabel.text = title
-        }
-    }
-    
-    private func removeInactiveViewController(inactiveViewController: UIViewController?) {
-        
-        if let inActiveVC = inactiveViewController {
-            
-            // call before removing child view controller's view from hierarchy
-            inActiveVC.willMove(toParent: nil)
-            
-            UIView.animate(withDuration: 0.3, animations: {
-                
-                inActiveVC.view.transform = CGAffineTransform.init(translationX: 0, y: 50)
-                inActiveVC.view.alpha = 0
-                
-                }, completion: { _ in
-                    
-                    inActiveVC.view.transform = CGAffineTransform.identity
-                    inActiveVC.view.removeFromSuperview()
-                    
-                    // call after removing child view controller's view from hierarchy
-                    inActiveVC.removeFromParent()
-            })
-        }
-    }
-    
-    @objc func changeActiveViewControllerFrom(_ vc: UIViewController?, animated: Bool = true, animateTitle: Bool = false) {
-        
-        guard let activeVC = activeChildViewController, let inActiveVC = vc else { return }
-        
-        addChild(activeVC)
-        activeVC.view.frame = contentView.bounds
-        inActiveVC.willMove(toParent: nil)
-        
-        if animated {
-            
-            activeVC.view.alpha = 0
-            activeVC.view.frame = contentView.bounds.modifiedBy(x: 0, y: 40)
-            contentView.addSubview(activeVC.view)
-            
-            if animateTitle {
-                
-//                container?.visualEffectNavigationBar.animateTitleLabel(direction: .forward, section: .preparation, with: <#T##(title: String?, backLabelText: String?)#>, and: <#T##(title: String?, backLabelText: String?)#>, preferVerticalTransition: <#T##Bool#>)
-            }
-            
-            UIView.animateKeyframes(withDuration: 0.3, delay: 0, options: .calculationModeCubic, animations: {
-                
-                UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 1/2, animations: {
-                    
-                    inActiveVC.view.frame = self.contentView.bounds.modifiedBy(x: 0, y: 40)
-                    inActiveVC.view.alpha = 0
-                })
-                
-                UIView.addKeyframe(withRelativeStartTime: 1/2, relativeDuration: 1/2, animations: {
-                    
-                    activeVC.view.alpha = 1
-                    activeVC.view.frame = self.contentView.bounds
-                })
-                
-            }, completion: { _ in inActiveVC.view.removeFromSuperview() })
-            
-        } else {
-            
-            activeVC.view.frame = contentView.bounds
-            contentView.addSubview(activeVC.view)
-        }
-        
-        inActiveVC.removeFromParent()
-        activeVC.didMove(toParent: self)
-        (activeVC as? LibrarySectionContainer)?.updateTopLabels(withFilteredCount: nil)
-    }
-    
-    private func updateActiveViewController() {
-        
-        if let activeVC = activeChildViewController {
-            
-            addChild(activeVC)
-            activeVC.view.frame = contentView.bounds
-            activeVC.didMove(toParent: self)
-            contentView.addSubview(activeVC.view)
         }
     }
     
@@ -460,5 +380,5 @@ extension LibraryViewController {
 
 protocol LibrarySectionContainer {
     
-    func updateTopLabels(withFilteredCount count: Int?)
+    func updateTopLabels(setTitle: Bool)
 }

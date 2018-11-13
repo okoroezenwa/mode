@@ -10,10 +10,10 @@ import UIKit
 
 class ActionsViewController: UIViewController {
     
-    @IBOutlet weak var optionsStackView: UIStackView!
-    @IBOutlet weak var offlineButton: MELButton!
-    @IBOutlet weak var offlineButtonBorder: MELBorderView!
-    @IBOutlet weak var foldersSwitch: MELSwitch! {
+    @IBOutlet var optionsStackView: UIStackView!
+    @IBOutlet var offlineButton: MELButton!
+    @IBOutlet var offlineButtonBorder: MELBorderView!
+    @IBOutlet var foldersSwitch: MELSwitch! {
         
         didSet {
             
@@ -25,7 +25,7 @@ class ActionsViewController: UIViewController {
             }
         }
     }
-    @IBOutlet weak var emptyPlaylistsSwitch: MELSwitch! {
+    @IBOutlet var emptyPlaylistsSwitch: MELSwitch! {
         
         didSet {
             
@@ -37,29 +37,29 @@ class ActionsViewController: UIViewController {
             }
         }
     }
-    @IBOutlet weak var lockButton: MELButton!
-    @IBOutlet weak var lockButtonBorder: MELBorderView!
-    @IBOutlet weak var settingsButton: UIButton!
-    @IBOutlet weak var emptySearchButton: UIButton!
-    @IBOutlet weak var getInfoButton: UIButton!
-    @IBOutlet weak var artistsButton: UIButton!
-    @IBOutlet weak var albumsButton: UIButton!
-    @IBOutlet weak var songsButton: UIButton!
-    @IBOutlet weak var genresButton: UIButton!
-    @IBOutlet weak var compilationsButton: UIButton!
-    @IBOutlet weak var composersButton: UIButton!
-    @IBOutlet weak var removeDuplicatesButton: MELButton!
-    @IBOutlet weak var playlistsButton: MELButton!
-    @IBOutlet weak var libraryTopStackView: UIStackView!
-    @IBOutlet weak var libraryBottomStackView: UIStackView!
-    @IBOutlet weak var filterButton: UIButton!
-    @IBOutlet weak var switchButton: MELButton!
-    @IBOutlet weak var themeButton: MELButton!
-    @IBOutlet weak var themeButtonBorder: MELBorderView!
-    @IBOutlet weak var allButton: MELButton!
-    @IBOutlet weak var appleMusicButton: MELButton!
-    @IBOutlet weak var yoursButton: MELButton!
-    @IBOutlet weak var dynamicSwitch: MELSwitch! {
+    @IBOutlet var lockButton: MELButton!
+    @IBOutlet var lockButtonBorder: MELBorderView!
+    @IBOutlet var settingsButton: UIButton!
+    @IBOutlet var emptySearchButton: UIButton!
+    @IBOutlet var getInfoButton: UIButton!
+    @IBOutlet var artistsButton: UIButton!
+    @IBOutlet var albumsButton: UIButton!
+    @IBOutlet var songsButton: UIButton!
+    @IBOutlet var genresButton: UIButton!
+    @IBOutlet var compilationsButton: UIButton!
+    @IBOutlet var composersButton: UIButton!
+    @IBOutlet var removeDuplicatesButton: MELButton!
+    @IBOutlet var playlistsButton: MELButton!
+    @IBOutlet var libraryTopStackView: UIStackView!
+    @IBOutlet var libraryBottomStackView: UIStackView!
+    @IBOutlet var filterButton: UIButton!
+    @IBOutlet var switchButton: MELButton!
+    @IBOutlet var themeButton: MELButton!
+    @IBOutlet var themeButtonBorder: MELBorderView!
+    @IBOutlet var allButton: MELButton!
+    @IBOutlet var appleMusicButton: MELButton!
+    @IBOutlet var yoursButton: MELButton!
+    @IBOutlet var dynamicSwitch: MELSwitch! {
         
         didSet {
             
@@ -71,7 +71,7 @@ class ActionsViewController: UIViewController {
             }
         }
     }
-    @IBOutlet weak var boldSwitch: MELSwitch! {
+    @IBOutlet var boldSwitch: MELSwitch! {
         
         didSet {
             
@@ -83,7 +83,7 @@ class ActionsViewController: UIViewController {
             }
         }
     }
-    @IBOutlet weak var unaddedSwitch: MELSwitch! {
+    @IBOutlet var unaddedSwitch: MELSwitch! {
         
         didSet {
             
@@ -95,7 +95,7 @@ class ActionsViewController: UIViewController {
             }
         }
     }
-    @IBOutlet weak var preventSwitch: MELSwitch! {
+    @IBOutlet var preventSwitch: MELSwitch! {
         
         didSet {
             
@@ -107,7 +107,7 @@ class ActionsViewController: UIViewController {
             }
         }
     }
-    @IBOutlet weak var volumeViewContainer: UIView!
+    @IBOutlet var volumeViewContainer: UIView!
     
     enum Configuration { case library, search, collection, nowPlaying, info, collected, queue }
     
@@ -196,7 +196,7 @@ class ActionsViewController: UIViewController {
             
             case .library:
                 
-                array = [emptySearchButton, dynamicSwitch, boldSwitch, switchButton, volumeViewContainer.viewWithTag(1), preventSwitch, removeDuplicatesButton] as [UIView?]
+                array = [emptySearchButton, foldersSwitch, dynamicSwitch, boldSwitch, switchButton, volumeViewContainer.viewWithTag(1), preventSwitch, removeDuplicatesButton] as [UIView?]
                 
                 if collectionsVC?.collectionKind == .playlist {
                     
@@ -235,8 +235,6 @@ class ActionsViewController: UIViewController {
                     }
                     
                 } else {
-                    
-                    array.append(foldersSwitch)
                     
                     if libraryVC?.activeChildViewController is SongsViewController, appDelegate.appleMusicStatus == .appleMusic(libraryAccess: true) {
                     

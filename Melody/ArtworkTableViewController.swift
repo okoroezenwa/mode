@@ -11,18 +11,18 @@ import UIKit
 class ArtworkTableViewController: UITableViewController {
     
     @IBOutlet var cells: [UITableViewCell]!
-    @IBOutlet weak var customImageView: MELImageView!
-    @IBOutlet weak var squareImageView: MELImageView!
-    @IBOutlet weak var slightlyRoundedImageView: MELImageView!
-    @IBOutlet weak var prominentlyRoundedImageView: MELImageView!
-    @IBOutlet weak var fullyRoundedImageView: MELImageView!
-    @IBOutlet weak var listsLabel: MELLabel!
-    @IBOutlet weak var widgetLabel: MELLabel!
-    @IBOutlet weak var infoViewLabel: MELLabel!
-    @IBOutlet weak var miniPlayerLabel: MELLabel!
-    @IBOutlet weak var compactPlayerLabel: MELLabel!
-    @IBOutlet weak var fullPlayerLabel: MELLabel!
-    @IBOutlet weak var automaticLabel: MELLabel!
+    @IBOutlet var customImageView: MELImageView!
+    @IBOutlet var squareImageView: MELImageView!
+    @IBOutlet var slightlyRoundedImageView: MELImageView!
+    @IBOutlet var prominentlyRoundedImageView: MELImageView!
+    @IBOutlet var fullyRoundedImageView: MELImageView!
+    @IBOutlet var listsLabel: MELLabel!
+    @IBOutlet var widgetLabel: MELLabel!
+    @IBOutlet var infoViewLabel: MELLabel!
+    @IBOutlet var miniPlayerLabel: MELLabel!
+    @IBOutlet var compactPlayerLabel: MELLabel!
+    @IBOutlet var fullPlayerLabel: MELLabel!
+    @IBOutlet var automaticLabel: MELLabel!
     @IBOutlet var animatableViews: [UIView]!
     
     enum RadiusSection: Int {

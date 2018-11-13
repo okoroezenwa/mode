@@ -45,13 +45,13 @@
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                             </containerView>
                             <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vQ7-ct-7RK" customClass="MELVisualEffectView" customModule="Mode" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="375" width="320" height="193"/>
+                                <rect key="frame" x="0.0" y="423" width="320" height="145"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="eZx-0Z-fwn">
-                                    <rect key="frame" x="0.0" y="0.0" width="320" height="193"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="145"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="Iav-F0-22y">
-                                            <rect key="frame" x="0.0" y="0.0" width="320" height="193"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="145"/>
                                             <subviews>
                                                 <view opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="R2y-P0-Tgr">
                                                     <rect key="frame" x="0.0" y="0.0" width="320" height="50"/>
@@ -73,6 +73,9 @@
                                                             <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="13"/>
                                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                             <nil key="highlightedColor"/>
+                                                            <userDefinedRuntimeAttributes>
+                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="secondary"/>
+                                                            </userDefinedRuntimeAttributes>
                                                         </label>
                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4pE-og-CKh">
                                                             <rect key="frame" x="50" y="6" width="38" height="38"/>
@@ -98,6 +101,7 @@
                                                             <nil key="highlightedColor"/>
                                                             <userDefinedRuntimeAttributes>
                                                                 <userDefinedRuntimeAttribute type="boolean" keyPath="greyOverride" value="YES"/>
+                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="secondary"/>
                                                             </userDefinedRuntimeAttributes>
                                                         </label>
                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rJa-Au-RsW">
@@ -283,11 +287,11 @@
                                                     </constraints>
                                                 </view>
                                                 <view contentMode="scaleToFill" placeholderIntrinsicWidth="320" placeholderIntrinsicHeight="48" translatesAutoresizingMaskIntoConstraints="NO" id="xhG-3Q-19D" customClass="FilterViewContainer" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="0.0" y="51" width="320" height="48"/>
+                                                    <rect key="frame" x="0.0" y="51" width="320" height="0.0"/>
                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 </view>
                                                 <view opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" translatesAutoresizingMaskIntoConstraints="NO" id="0HE-dV-Qph">
-                                                    <rect key="frame" x="0.0" y="99" width="320" height="50"/>
+                                                    <rect key="frame" x="0.0" y="51" width="320" height="50"/>
                                                     <subviews>
                                                         <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="qUu-nT-8Ja">
                                                             <rect key="frame" x="0.0" y="0.0" width="320" height="50"/>
@@ -461,7 +465,7 @@
                                                     </constraints>
                                                 </view>
                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eoj-fE-5lE">
-                                                    <rect key="frame" x="0.0" y="149" width="320" height="44"/>
+                                                    <rect key="frame" x="0.0" y="101" width="320" height="44"/>
                                                     <subviews>
                                                         <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pES-9g-Eve" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
                                                             <rect key="frame" x="0.0" y="0.0" width="320" height="1"/>
@@ -628,6 +632,9 @@
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="20"/>
                                                                             <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                             <state key="normal" title="0"/>
+                                                                            <userDefinedRuntimeAttributes>
+                                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="sectionHeading"/>
+                                                                            </userDefinedRuntimeAttributes>
                                                                             <connections>
                                                                                 <segue destination="vJL-YB-7qo" kind="presentation" identifier="manageQueue" modalPresentationStyle="overFullScreen" id="h9i-H9-jUd"/>
                                                                             </connections>
@@ -712,11 +719,12 @@
                             <constraint firstItem="gpT-1D-6az" firstAttribute="trailing" secondItem="oWh-Fd-QaA" secondAttribute="trailing" id="PUk-5b-ncj"/>
                             <constraint firstItem="vQ7-ct-7RK" firstAttribute="leading" secondItem="zyf-dH-X6Y" secondAttribute="leading" id="PZ8-vT-Hpl"/>
                             <constraint firstAttribute="trailing" secondItem="VDi-ob-tm0" secondAttribute="trailing" id="YKh-8M-BGM"/>
+                            <constraint firstItem="vQ7-ct-7RK" firstAttribute="top" secondItem="RzV-gA-I3R" secondAttribute="bottom" priority="799" id="lbY-w0-KYc"/>
                             <constraint firstItem="VDi-ob-tm0" firstAttribute="top" secondItem="zyf-dH-X6Y" secondAttribute="topMargin" id="mRA-OP-tzj"/>
                             <constraint firstAttribute="trailing" secondItem="oWh-Fd-QaA" secondAttribute="trailing" id="p8i-ap-XZ8"/>
-                            <constraint firstAttribute="bottom" secondItem="RzV-gA-I3R" secondAttribute="bottom" id="qPx-L0-cCt"/>
+                            <constraint firstAttribute="bottom" secondItem="RzV-gA-I3R" secondAttribute="bottom" priority="800" id="qPx-L0-cCt"/>
                             <constraint firstItem="VDi-ob-tm0" firstAttribute="leading" secondItem="zyf-dH-X6Y" secondAttribute="leading" id="raO-3J-SYB"/>
-                            <constraint firstItem="RzV-gA-I3R" firstAttribute="top" secondItem="zyf-dH-X6Y" secondAttribute="top" id="tkh-GK-wX9"/>
+                            <constraint firstItem="RzV-gA-I3R" firstAttribute="top" secondItem="zyf-dH-X6Y" secondAttribute="top" priority="800" id="tkh-GK-wX9"/>
                             <constraint firstItem="gpT-1D-6az" firstAttribute="bottom" secondItem="oWh-Fd-QaA" secondAttribute="bottom" id="zdl-h2-gH5"/>
                         </constraints>
                     </view>
@@ -742,9 +750,12 @@
                         <outlet property="collectedUpNextViewEqualWidthConstraint" destination="Oka-Eg-0b1" id="hZj-SL-aSC"/>
                         <outlet property="collectedUpNextViewWidthConstraint" destination="v8F-nN-aqf" id="peb-Ip-m9g"/>
                         <outlet property="collectedView" destination="eoj-fE-5lE" id="M2S-K5-Hyo"/>
-                        <outlet property="contentView" destination="VDi-ob-tm0" id="QIa-eT-2lq"/>
+                        <outlet property="containerView" destination="VDi-ob-tm0" id="nft-lr-PNn"/>
                         <outlet property="editButton" destination="3LC-oo-1TP" id="0se-Gv-mc6"/>
                         <outlet property="effectView" destination="RzV-gA-I3R" id="AuO-d6-Ydu"/>
+                        <outlet property="effectViewBottomEffectViewConstraint" destination="lbY-w0-KYc" id="aMk-iM-mWO"/>
+                        <outlet property="effectViewBottomSuperviewConstraint" destination="qPx-L0-cCt" id="Ezg-BW-W4P"/>
+                        <outlet property="effectViewTopSuperviewConstraint" destination="tkh-GK-wX9" id="SxO-RU-cVa"/>
                         <outlet property="filterViewContainer" destination="xhG-3Q-19D" id="0U8-tc-S4f"/>
                         <outlet property="imageView" destination="oWh-Fd-QaA" id="TDA-Ko-dQ6"/>
                         <outlet property="infoView" destination="CSd-gm-qF3" id="54z-ub-yVw"/>

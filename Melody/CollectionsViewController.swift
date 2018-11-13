@@ -10,10 +10,10 @@ import UIKit
 
 class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, GenreTransitionable, PlaylistTransitionable, ComposerTransitionable, FilterContextDiscoverable, CellAnimatable, EntityContainer, BorderButtonContaining, Refreshable, QueryUpdateable, IndexContaining, LibrarySectionContainer, EntityVerifiable, TopScrollable {
     
-    @IBOutlet weak var tableView: MELTableView!
-    @IBOutlet weak var bottomViewHeightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var bottomView: UIView!
-    @IBOutlet weak var actionsButton: MELButton!  {
+    @IBOutlet var tableView: MELTableView!
+    @IBOutlet var bottomViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet var bottomView: UIView!
+    @IBOutlet var actionsButton: MELButton!  {
         
         didSet {
             
@@ -37,6 +37,12 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
         if collectionKind == .playlist {
             
             view.tableHeaderContainer.isHidden = true
+            
+            if presented.inverted {
+                
+                view.showGrouping = true
+                view.groupingButton.addTarget(self, action: #selector(changePlaylistView), for: .touchUpInside)
+            }
             
         } else {
             
@@ -65,11 +71,11 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
         
         didSet {
             
-            let shuffleView = collectionKind == .playlist ? BorderedButtonView.with(title: "New", image: #imageLiteral(resourceName: "AddNoBorderSmall"), action: #selector(showNewPlaylist), target: self) : BorderedButtonView.with(title: .shuffleButtonTitle, image: #imageLiteral(resourceName: "Shuffle13"), action: #selector(shuffle), target: self)
+            let shuffleView = collectionKind == .playlist ? BorderedButtonView.with(title: "New", image: #imageLiteral(resourceName: "AddNoBorderSmall"), tapAction: .init(action: #selector(showNewPlaylist), target: self)) : BorderedButtonView.with(title: .shuffleButtonTitle, image: #imageLiteral(resourceName: "Shuffle13"), tapAction: .init(action: #selector(shuffle), target: self))
             shuffleButton = shuffleView.button
             self.shuffleView = shuffleView
             
-            let arrangeBorderView = BorderedButtonView.with(title: .arrangeButtonTitle, image: #imageLiteral(resourceName: "AscendingLines"), action: #selector(showArranger), target: self)
+            let arrangeBorderView = BorderedButtonView.with(title: .arrangeButtonTitle, image: #imageLiteral(resourceName: "AscendingLines"), tapAction: .init(action: #selector(showArranger), target: self))
             arrangeBorderView.borderView.centre(activityIndicator)
             arrangeButton = arrangeBorderView.button
             self.arrangeBorderView = arrangeBorderView
@@ -78,7 +84,7 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
                 
                 guard !presented else { return nil }
                 
-                let editView = BorderedButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, action: #selector(SongActionManager.toggleEditing(_:)), target: songManager)
+                let editView = BorderedButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, tapAction: .init(action: #selector(SongActionManager.toggleEditing(_:)), target: songManager), longPressAction: .init(action: #selector(SongActionManager.showActionsForAll(_:)), target: songManager))
                 editView.borderView.centre(actionableActivityIndicator)
                 editButton = editView.button
                 self.editView = editView
@@ -267,7 +273,7 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
             if let tableView = tableView, let button = arrangeButton {
                 
                 activityIndicator.startAnimating()
-                button.alpha = 0
+                (button.superview as? BorderedButtonView)?.stackView.alpha = 0
                 
                 collections.reverse()
                 
@@ -301,7 +307,7 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
                 animateCells(direction: .vertical)
                 updateImage(for: button)
                 activityIndicator.stopAnimating()
-                button.alpha = 1
+                (button.superview as? BorderedButtonView)?.stackView.alpha = 1
             }
         }
     }
@@ -316,7 +322,7 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
             
             case .compilation: return set.subtracting([.albumCount, .artist])
             
-            case .artist, .albumArtist: return set.subtracting([.year, .genre, .title])
+            case .artist, .albumArtist: return set.subtracting([.year, .genre, .title, .album])
             
             case .genre, .composer: return set.subtracting([.year, .genre, .artist, .album])
             
@@ -347,7 +353,9 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
                 
                 case .playlist: return [.artist, .genre, .isCompilation, .year]
                 
-                case .artist, .albumArtist, .composer, .genre: return [.artist, .genre, .artwork, .isCompilation, .year, .status]
+                case .artist, .albumArtist: return [.artist, .genre, .isCompilation, .year, .status]
+                
+                case .composer, .genre: return [.artist, .genre, .artwork, .isCompilation, .year, .status]
             }
         }()
         
@@ -440,9 +448,7 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
         if !presented {
             
             adjustInsets(context: .container)
-            
-            tableView.contentInset.top = libraryVC?.inset ?? 0
-            tableView.scrollIndicatorInsets.top = libraryVC?.inset ?? 0
+            updateTopInset()
             
         } else if let presentedVC = libraryVC?.parent as? PresentedContainerViewController {
             
@@ -456,7 +462,7 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
         
         prepareLifetimeObservers()
             
-        updateTopLabels()
+        updateTopLabels(setTitle: true)
         
         tableView.delegate = tableDelegate
         tableView.dataSource = tableDelegate
@@ -475,6 +481,12 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
         
         registerForPreviewing(with: self, sourceView: tableView)
         updateImage(for: arrangeButton)
+    }
+    
+    func updateTopInset() {
+        
+        tableView.contentInset.top = libraryVC?.inset ?? VisualEffectNavigationBar.Location.main.total
+        tableView.scrollIndicatorInsets.top = libraryVC?.inset ?? VisualEffectNavigationBar.Location.main.total
     }
     
     @objc func prepareGestures() {
@@ -668,9 +680,11 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
         unregisterAll(from: transientObservers)
     }
     
-    func updateTopLabels(withFilteredCount count: Int? = nil) {
+    func updateTopLabels(setTitle: Bool) {
         
         if collectionKind == .playlist, !playlistsLoaded {
+            
+            libraryVC?.title = "Playlists..."
             
             return
         }
@@ -693,7 +707,7 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
             }
         }()
         
-        libraryVC?.updateViews(inSection: section, count: collectionKind == .playlist ? collections.count : (collectionsQuery.collections ?? []).count, filteredCount: count)
+        libraryVC?.updateViews(inSection: section, count: collectionKind == .playlist ? collections.count : (collectionsQuery.collections ?? []).count, setTitle: setTitle)
     }
     
     @objc func prepareTransientObservers() {
@@ -923,6 +937,15 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
                 
             }) as! NSObject)
         }
+        
+        lifetimeObservers.insert(notifier.addObserver(forName: .headerHeightCalculated, object: nil, queue: nil, using: { [weak self] _ in
+            
+            guard let weakSelf = self else { return }
+            
+            weakSelf.updateTopInset()
+            weakSelf.updateHeaderView(withCount: weakSelf.collections.count)
+            
+        }) as! NSObject)
     }
     
     @objc func getCurrentQuery() -> MPMediaQuery {
@@ -1007,6 +1030,43 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
         }
     }
     
+    @objc func changePlaylistView() {
+        
+        let appleMusic = UIAlertAction.init(title: "Apple Music Playlists", style: .default, handler: { [weak self] _ in
+            
+            guard let weakSelf = self else { return }
+            
+            weakSelf.changeView(from: weakSelf.currentPlaylistsView, to: .appleMusic)
+        
+        }).checked(given: currentPlaylistsView == .appleMusic)
+        
+        let myPlaylists = UIAlertAction.init(title: "My Playlists", style: .default, handler: { [weak self] _ in
+            
+            guard let weakSelf = self else { return }
+            
+            weakSelf.changeView(from: weakSelf.currentPlaylistsView, to: .user)
+        
+        }).checked(given: currentPlaylistsView == .user)
+        
+        let allPlaylists = UIAlertAction.init(title: "All Playlists", style: .default, handler: { [weak self] _ in
+            
+            guard let weakSelf = self else { return }
+            
+            weakSelf.changeView(from: weakSelf.currentPlaylistsView, to: .all)
+        
+        }).checked(given: currentPlaylistsView == .all)
+        
+        var actions = [allPlaylists]
+        
+        if case .appleMusic = appDelegate.appleMusicStatus {
+            
+            actions.append(myPlaylists)
+            actions.append(appleMusic)
+        }
+        
+        present(UIAlertController.withTitle("Show...", message: nil, style: .actionSheet, actions: actions + [.cancel()]), animated: true, completion: nil)
+    }
+    
     func changeView(from currentView: PlaylistView, to newView: PlaylistView) {
         
 //        if let predicate = predicate(for: currentView) {
@@ -1020,6 +1080,8 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
 //            collectionsQuery.addFilterPredicate(predicate)
 //            recentsQuery?.addFilterPredicate(predicate)
 //        }
+        
+        guard currentView != newView else { return }
         
         updateWithQuery()
         
@@ -1160,7 +1222,7 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
         
         let shuffle = UIAlertAction.init(title: .shuffle(canShuffleAlbums ? .songs : .none), style: .default, handler: { _ in
             
-            musicPlayer.play(songs, startingFrom: nil, shuffleMode: .songs, from: self, withTitle: self.libraryVC?.titleButton.titleLabel?.text, alertTitle: .shuffle(canShuffleAlbums ? .songs : .none))
+            musicPlayer.play(songs, startingFrom: nil, shuffleMode: .songs, from: self, withTitle: "All " ?+ self.libraryVC?.preferredTitle, alertTitle: .shuffle(canShuffleAlbums ? .songs : .none))
         })
         
         array.append(shuffle)
@@ -1169,13 +1231,13 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
         
             let shuffleAlbums = UIAlertAction.init(title: .shuffle(.albums), style: .default, handler: { _ in
                 
-                musicPlayer.play(songs.albumsShuffled, startingFrom: nil, from: self, withTitle: self.libraryVC?.titleButton.titleLabel?.text, alertTitle: .shuffle(.albums))
+                musicPlayer.play(songs.albumsShuffled, startingFrom: nil, from: self, withTitle: "All " ?+ self.libraryVC?.preferredTitle, alertTitle: .shuffle(.albums))
             })
             
             array.append(shuffleAlbums)
         }
         
-        present(UIAlertController.withTitle(nil, message: libraryVC?.titleButton.titleLabel?.text?.lowercased(), style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
+        present(UIAlertController.withTitle(nil, message: "All " ?+ self.libraryVC?.preferredTitle, style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
     }
     
     @objc func getCollection(inSection section: Int, row: Int, filtering: Bool = false) -> MPMediaItemCollection {
@@ -1638,7 +1700,7 @@ extension CollectionsViewController: FullySortable {
     
     @objc func sortItems() {
         
-        arrangeButton.alpha = 0
+        (arrangeButton.superview as? BorderedButtonView)?.stackView.alpha = 0
         activityIndicator.startAnimating()
         
         let mainBlock: ([MPMediaItemCollection], [MPMediaPlaylist], [SortSectionDetails], [PlaylistContainer]) -> () = { [weak self] array, recentArray, details, containers in
@@ -1648,7 +1710,7 @@ extension CollectionsViewController: FullySortable {
                 UniversalMethods.performInMain {
                     
                     self?.activityIndicator.stopAnimating()
-                    self?.arrangeButton.alpha = 1
+                    (self?.arrangeButton.superview as? BorderedButtonView)?.stackView.alpha = 1
                 }
                 
                 return
@@ -1670,11 +1732,11 @@ extension CollectionsViewController: FullySortable {
             
             weakSelf.sections = details
             weakSelf.activityIndicator.stopAnimating()
-            weakSelf.arrangeButton.alpha = 1
+            (weakSelf.arrangeButton.superview as? BorderedButtonView)?.stackView.alpha = 1
             
             guard weakSelf.operation?.isCancelled == false else { return }
             
-            weakSelf.updateTopLabels()
+            weakSelf.updateTopLabels(setTitle: weakSelf.libraryVC?.container?.activeViewController?.topViewController == weakSelf.libraryVC)
             weakSelf.updateHeaderView(withCount: array.count)
             
             var text: String {
@@ -1705,7 +1767,7 @@ extension CollectionsViewController: FullySortable {
                     weakSelf.collectionView?.isHidden = true
                 }
                 
-                weakSelf.animateCells(direction: .vertical)
+                weakSelf.animateCells(direction: .vertical, alphaOnly: weakSelf.highlightedIndex != nil)
                 
                 if weakSelf.collectionKind == .playlist && weakSelf.sortCriteria != .dateAdded {
                     
@@ -1724,7 +1786,7 @@ extension CollectionsViewController: FullySortable {
                 UniversalMethods.performInMain {
                     
                     self?.activityIndicator.stopAnimating()
-                    self?.arrangeButton.alpha = 1
+                    (self?.arrangeButton.superview as? BorderedButtonView)?.stackView.alpha = 1
                 }
                 
                 return
@@ -1824,7 +1886,7 @@ extension CollectionsViewController: FullySortable {
                 UniversalMethods.performInMain {
                     
                     self?.activityIndicator.stopAnimating()
-                    self?.arrangeButton.alpha = 1
+                    (self?.arrangeButton.superview as? BorderedButtonView)?.stackView.alpha = 1
                 }
                 
                 return
@@ -1944,7 +2006,8 @@ extension CollectionsViewController: CollectionActionable {
             guard let weakSelf = self, let operation = weakSelf.actionableOperation, operation.isCancelled.inverted else {
                 
                 self?.actionableActivityIndicator.stopAnimating()
-                self?.editButton.alpha = 1
+                self?.editView?.stackView.alpha = 1
+                self?.editButton.superview?.isUserInteractionEnabled = true
                 self?.showActionsAfterFilling = false
                 
                 return
@@ -1957,7 +2020,8 @@ extension CollectionsViewController: CollectionActionable {
                 guard operation.isCancelled.inverted else {
                     
                     weakSelf.actionableActivityIndicator.stopAnimating()
-                    weakSelf.editButton.alpha = 1
+                    weakSelf.editView?.stackView.alpha = 1
+                    weakSelf.editButton.superview?.isUserInteractionEnabled = true
                     weakSelf.showActionsAfterFilling = false
                     
                     return
@@ -1971,7 +2035,8 @@ extension CollectionsViewController: CollectionActionable {
                 }
                 
                 weakSelf.actionableActivityIndicator.stopAnimating()
-                weakSelf.editButton.alpha = 1
+                weakSelf.editView?.stackView.alpha = 1
+                weakSelf.editButton.superview?.isUserInteractionEnabled = true
                 weakSelf.showActionsAfterFilling = false
             }
         }
@@ -2049,36 +2114,37 @@ extension CollectionsViewController: UIViewControllerPreviewingDelegate {
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
         
-        (viewControllerToCommit as? BackgroundHideable)?.modifyBackgroundView(forState: .removed)
+        performCommitActions(on: viewControllerToCommit)
         
-        if let vc = viewControllerToCommit as? Arrangeable {
-            
-            vc.updateImage(for: vc.arrangeButton)
-        }
-        
-        if let vc = viewControllerToCommit as? Peekable {
-            
-            vc.peeker = nil
-            vc.oldArtwork = nil
-        }
-        
-        if let vc = viewControllerToCommit as? Navigatable, let indexer = vc.activeChildViewController as? IndexContaining {
-            
-            indexer.tableView.contentInset.top = vc.inset
-            indexer.tableView.scrollIndicatorInsets.top = vc.inset
-            
-            if let sortable = indexer as? FullySortable, sortable.highlightedIndex == nil {
-                
-                indexer.tableView.contentOffset.y = -vc.inset
-            }
-            
-            libraryVC?.container?.imageView.image = vc.artworkType.image
-            libraryVC?.container?.visualEffectNavigationBar.backBorderView.alpha = 1
-            libraryVC?.container?.visualEffectNavigationBar.backView.isHidden = false
-            libraryVC?.container?.visualEffectNavigationBar.backLabel.text = vc.backLabelText
-            libraryVC?.container?.visualEffectNavigationBar.titleLabel.text = vc.title
-            libraryVC?.container?.visualEffectNavigationBar.animateRelevantConstraints(direction: .forward, section: .end(completed: true), with: nil, and: indexer.navigatable)
-        }
+//        (viewControllerToCommit as? BackgroundHideable)?.modifyBackgroundView(forState: .removed)
+//
+//        if let vc = viewControllerToCommit as? Arrangeable {
+//
+//            vc.updateImage(for: vc.arrangeButton)
+//        }
+//
+//        if let vc = viewControllerToCommit as? Peekable {
+//
+//            vc.peeker = nil
+//            vc.oldArtwork = nil
+//        }
+//
+//        if let vc = viewControllerToCommit as? Navigatable, let indexer = vc.activeChildViewController as? IndexContaining {
+//
+//            indexer.tableView.contentInset.top = vc.inset
+//            indexer.tableView.scrollIndicatorInsets.top = vc.inset
+//
+//            if let sortable = indexer as? FullySortable, sortable.highlightedIndex == nil {
+//
+//                indexer.tableView.contentOffset.y = -vc.inset
+//            }
+//
+//            libraryVC?.container?.imageView.image = vc.artworkType.image
+//            libraryVC?.container?.visualEffectNavigationBar.backBorderView.alpha = 1
+//            libraryVC?.container?.visualEffectNavigationBar.backView.isHidden = false
+//            libraryVC?.container?.visualEffectNavigationBar.backLabel.text = vc.backLabelText
+//            libraryVC?.container?.visualEffectNavigationBar.titleLabel.text = vc.title
+//        }
         
         show(viewControllerToCommit, sender: nil)
     }

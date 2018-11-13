@@ -163,7 +163,7 @@ extension PropertiesViewController: UITableViewDelegate, UITableViewDataSource {
         cell.textLabel?.text = properties[indexPath.row]
         
 //        cell.selectedBackgroundView = MELBorderView()
-        cell.textLabel?.font = UIFont.myriadPro(ofWeight: .regular, size: 17)
+        cell.textLabel?.font = UIFont.font(ofWeight: .regular, size: 17)
         
         return cell
     }

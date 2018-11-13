@@ -63,7 +63,6 @@
 		BE25606C1E74428E00858C02 /* HeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BE25606B1E74428E00858C02 /* HeaderView.xib */; };
 		BE25606E1E74463800858C02 /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE25606D1E74463800858C02 /* HeaderView.swift */; };
 		BE25AED51FA3CE3E00BE37C1 /* ShadowImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE25AED41FA3CE3D00BE37C1 /* ShadowImageView.swift */; };
-		BE2808821FC9543100D3AB1C /* CheckView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BE2808811FC9543100D3AB1C /* CheckView.xib */; };
 		BE2808861FC9724300D3AB1C /* FilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2808851FC9724300D3AB1C /* FilterView.swift */; };
 		BE2808881FC973A500D3AB1C /* FilterView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BE2808871FC973A500D3AB1C /* FilterView.xib */; };
 		BE28088A1FC97F3200D3AB1C /* PropertyCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = BE2808891FC97F3200D3AB1C /* PropertyCollectionViewCell.xib */; };
@@ -95,6 +94,8 @@
 		BE3AE1301D77235E00B9DC47 /* AlbumItemsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3AE12F1D77235E00B9DC47 /* AlbumItemsViewController.swift */; };
 		BE3BC1072025A627004B0FB1 /* ActionsButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3BC1062025A627004B0FB1 /* ActionsButton.swift */; };
 		BE3BF6BD1E7554B400667D4C /* TipsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3BF6BC1E7554B400667D4C /* TipsTableViewController.swift */; };
+		BE3F1CD3218E0AFE0099907D /* InfoItemCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = BE3F1CD2218E0AFE0099907D /* InfoItemCell.xib */; };
+		BE3F1CD5218E1A9B0099907D /* InfoItemCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3F1CD4218E1A9B0099907D /* InfoItemCollectionViewCell.swift */; };
 		BE3F63211DCE2E71009173AB /* PlaylistCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3F63201DCE2E71009173AB /* PlaylistCollectionViewCell.swift */; };
 		BE42A620213523070094DD0C /* SwipeView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BE42A61F213523070094DD0C /* SwipeView.xib */; };
 		BE42A622213540B10094DD0C /* SwipeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE42A621213540B10094DD0C /* SwipeView.swift */; };
@@ -106,6 +107,8 @@
 		BE42A63021357A850094DD0C /* URL+SoundEmitting.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE42A62A21357A850094DD0C /* URL+SoundEmitting.swift */; };
 		BE43524C2101EEBA0027C02C /* SwipeContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE43524B2101EEBA0027C02C /* SwipeContainer.swift */; };
 		BE47B9781D317B9500503E20 /* InteractionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE47B9771D317B9500503E20 /* InteractionController.swift */; };
+		BE48E028216D2E8F00A7E7C4 /* ChildContaining.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE48E027216D2E8E00A7E7C4 /* ChildContaining.swift */; };
+		BE48E029216D428700A7E7C4 /* UIViewController + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE48E026216D2B7500A7E7C4 /* UIViewController + Extensions.swift */; };
 		BE494D301D2F1310007DE1F6 /* PlaylistItemsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE494D2F1D2F1310007DE1F6 /* PlaylistItemsViewController.swift */; };
 		BE500F1F1F9918EE0005E568 /* QueueInsertViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE500F1E1F9918EE0005E568 /* QueueInsertViewController.swift */; };
 		BE50D7161FA1C5DD00D22D67 /* GradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE50D7151FA1C5DD00D22D67 /* GradientView.swift */; };
@@ -157,6 +160,7 @@
 		BE7C425F1E84499600974EF2 /* String + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7C425E1E84499600974EF2 /* String + Extensions.swift */; };
 		BE7C42611E846D3300974EF2 /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7C42601E846D3200974EF2 /* Queue.swift */; };
 		BE7D96DE2104784E00A0F5D4 /* PropertiesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7D96DD2104784E00A0F5D4 /* PropertiesViewController.swift */; };
+		BE7DE706214BACE30032FCBD /* PropertiesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7DE705214BACE30032FCBD /* PropertiesTableViewController.swift */; };
 		BE7E73B720ADF7B2008A52B7 /* ActionsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7E73B620ADF7B2008A52B7 /* ActionsManager.swift */; };
 		BE8328651D8B4D38001F015E /* NewPlaylistViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8328641D8B4D38001F015E /* NewPlaylistViewController.swift */; };
 		BE89790E1E30C22B008634E6 /* NowPlaying.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE89790D1E30C22B008634E6 /* NowPlaying.swift */; };
@@ -237,6 +241,8 @@
 		BED9BBFF202D96F2007FEC65 /* Switch.xib in Resources */ = {isa = PBXBuildFile; fileRef = BED9BBFE202D96F2007FEC65 /* Switch.xib */; };
 		BED9BC01202D9933007FEC65 /* MELSwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED9BC00202D9932007FEC65 /* MELSwitch.swift */; };
 		BEDAA3071DABF83A006E3EDB /* PresentationAnimationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEDAA3061DABF83A006E3EDB /* PresentationAnimationController.swift */; };
+		BEDB79A62191BC6B0013F9A9 /* InfoLyricsCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEDB79A52191BC6B0013F9A9 /* InfoLyricsCollectionViewCell.swift */; };
+		BEDB79A82191BC870013F9A9 /* InfoLyricsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = BEDB79A72191BC870013F9A9 /* InfoLyricsCell.xib */; };
 		BEDC53AB1EBCE06D00566424 /* CellSecondaryDetailsSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEDC53AA1EBCE06D00566424 /* CellSecondaryDetailsSettingViewController.swift */; };
 		BEDC53AD1EBCECFD00566424 /* SongDetailsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEDC53AC1EBCECFD00566424 /* SongDetailsTableViewCell.swift */; };
 		BEE173841DA6C1BD00559C05 /* ArrangeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE173831DA6C1BD00559C05 /* ArrangeViewController.swift */; };
@@ -263,7 +269,7 @@
 		BEFB93CE21244E6C00590993 /* PlaybackTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEFB93CD21244E6C00590993 /* PlaybackTableViewCell.swift */; };
 		BEFF5565212740A7006CBAEE /* MyriadPro-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = BEFF556321272586006CBAEE /* MyriadPro-Bold.otf */; };
 		BEFF556821284F1B006CBAEE /* MyriadPro-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = BEFF556321272586006CBAEE /* MyriadPro-Bold.otf */; };
-		BEFF556A212873A5006CBAEE /* NavigationBarEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEFF5569212873A5006CBAEE /* NavigationBarEffectView.swift */; };
+		BEFF556A212873A5006CBAEE /* VisualEffectNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEFF5569212873A5006CBAEE /* VisualEffectNavigationBar.swift */; };
 		BEFF556C212874F0006CBAEE /* VisualEffectNavigationBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = BEFF556B212874F0006CBAEE /* VisualEffectNavigationBar.xib */; };
 /* End PBXBuildFile section */
 
@@ -383,7 +389,6 @@
 		BE25606B1E74428E00858C02 /* HeaderView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HeaderView.xib; sourceTree = "<group>"; };
 		BE25606D1E74463800858C02 /* HeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
 		BE25AED41FA3CE3D00BE37C1 /* ShadowImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShadowImageView.swift; sourceTree = "<group>"; };
-		BE2808811FC9543100D3AB1C /* CheckView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CheckView.xib; sourceTree = "<group>"; };
 		BE2808851FC9724300D3AB1C /* FilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterView.swift; sourceTree = "<group>"; };
 		BE2808871FC973A500D3AB1C /* FilterView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FilterView.xib; sourceTree = "<group>"; };
 		BE2808891FC97F3200D3AB1C /* PropertyCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PropertyCollectionViewCell.xib; sourceTree = "<group>"; };
@@ -416,6 +421,8 @@
 		BE3AE12F1D77235E00B9DC47 /* AlbumItemsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbumItemsViewController.swift; sourceTree = "<group>"; };
 		BE3BC1062025A627004B0FB1 /* ActionsButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionsButton.swift; sourceTree = "<group>"; };
 		BE3BF6BC1E7554B400667D4C /* TipsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TipsTableViewController.swift; sourceTree = "<group>"; };
+		BE3F1CD2218E0AFE0099907D /* InfoItemCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = InfoItemCell.xib; sourceTree = "<group>"; };
+		BE3F1CD4218E1A9B0099907D /* InfoItemCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoItemCollectionViewCell.swift; sourceTree = "<group>"; };
 		BE3F63201DCE2E71009173AB /* PlaylistCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaylistCollectionViewCell.swift; sourceTree = "<group>"; };
 		BE42A61F213523070094DD0C /* SwipeView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SwipeView.xib; sourceTree = "<group>"; };
 		BE42A621213540B10094DD0C /* SwipeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeView.swift; sourceTree = "<group>"; };
@@ -427,6 +434,8 @@
 		BE42A62A21357A850094DD0C /* URL+SoundEmitting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URL+SoundEmitting.swift"; sourceTree = "<group>"; };
 		BE43524B2101EEBA0027C02C /* SwipeContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeContainer.swift; sourceTree = "<group>"; };
 		BE47B9771D317B9500503E20 /* InteractionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InteractionController.swift; sourceTree = "<group>"; };
+		BE48E026216D2B7500A7E7C4 /* UIViewController + Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController + Extensions.swift"; sourceTree = "<group>"; };
+		BE48E027216D2E8E00A7E7C4 /* ChildContaining.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildContaining.swift; sourceTree = "<group>"; };
 		BE494D2F1D2F1310007DE1F6 /* PlaylistItemsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaylistItemsViewController.swift; sourceTree = "<group>"; };
 		BE500F1E1F9918EE0005E568 /* QueueInsertViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueueInsertViewController.swift; sourceTree = "<group>"; };
 		BE50D7151FA1C5DD00D22D67 /* GradientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientView.swift; sourceTree = "<group>"; };
@@ -455,6 +464,7 @@
 		BE63F56A1D5862F600D03019 /* MPMusicPlayerController+Other.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MPMusicPlayerController+Other.m"; sourceTree = "<group>"; };
 		BE6432C31E280A9100C640F2 /* ActionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActionsViewController.swift; sourceTree = "<group>"; };
 		BE64473521257481002653B3 /* TimerBased.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerBased.swift; sourceTree = "<group>"; };
+		BE64C4182173A8570049D5DF /* Playground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Playground.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		BE66DF881DC3E5D300CF59CD /* TipsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TipsViewController.swift; sourceTree = "<group>"; };
 		BE66DF921DC415A800CF59CD /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
 		BE66DF961DC416BB00CF59CD /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
@@ -479,6 +489,7 @@
 		BE7C425E1E84499600974EF2 /* String + Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String + Extensions.swift"; sourceTree = "<group>"; };
 		BE7C42601E846D3200974EF2 /* Queue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Queue.swift; sourceTree = "<group>"; };
 		BE7D96DD2104784E00A0F5D4 /* PropertiesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertiesViewController.swift; sourceTree = "<group>"; };
+		BE7DE705214BACE30032FCBD /* PropertiesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertiesTableViewController.swift; sourceTree = "<group>"; };
 		BE7E73B620ADF7B2008A52B7 /* ActionsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionsManager.swift; sourceTree = "<group>"; };
 		BE8328641D8B4D38001F015E /* NewPlaylistViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewPlaylistViewController.swift; sourceTree = "<group>"; };
 		BE89790D1E30C22B008634E6 /* NowPlaying.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NowPlaying.swift; sourceTree = "<group>"; };
@@ -554,6 +565,8 @@
 		BED9BBFE202D96F2007FEC65 /* Switch.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = Switch.xib; sourceTree = "<group>"; };
 		BED9BC00202D9932007FEC65 /* MELSwitch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MELSwitch.swift; sourceTree = "<group>"; };
 		BEDAA3061DABF83A006E3EDB /* PresentationAnimationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PresentationAnimationController.swift; sourceTree = "<group>"; };
+		BEDB79A52191BC6B0013F9A9 /* InfoLyricsCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoLyricsCollectionViewCell.swift; sourceTree = "<group>"; };
+		BEDB79A72191BC870013F9A9 /* InfoLyricsCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = InfoLyricsCell.xib; sourceTree = "<group>"; };
 		BEDC53AA1EBCE06D00566424 /* CellSecondaryDetailsSettingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CellSecondaryDetailsSettingViewController.swift; sourceTree = "<group>"; };
 		BEDC53AC1EBCECFD00566424 /* SongDetailsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongDetailsTableViewCell.swift; sourceTree = "<group>"; };
 		BEE173831DA6C1BD00559C05 /* ArrangeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArrangeViewController.swift; sourceTree = "<group>"; };
@@ -580,7 +593,7 @@
 		BEFB93CB2124421900590993 /* PlaybackCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PlaybackCell.xib; sourceTree = "<group>"; };
 		BEFB93CD21244E6C00590993 /* PlaybackTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackTableViewCell.swift; sourceTree = "<group>"; };
 		BEFF556321272586006CBAEE /* MyriadPro-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MyriadPro-Bold.otf"; sourceTree = "<group>"; };
-		BEFF5569212873A5006CBAEE /* NavigationBarEffectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationBarEffectView.swift; sourceTree = "<group>"; };
+		BEFF5569212873A5006CBAEE /* VisualEffectNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualEffectNavigationBar.swift; sourceTree = "<group>"; };
 		BEFF556B212874F0006CBAEE /* VisualEffectNavigationBar.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = VisualEffectNavigationBar.xib; sourceTree = "<group>"; };
 		CEFDA6C7BA080EA500DCD005 /* Pods_Mode.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Mode.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FE692D708D4291C7BE54BAEB /* Pods-ModeWidget.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ModeWidget.release.xcconfig"; path = "Pods/Target Support Files/Pods-ModeWidget/Pods-ModeWidget.release.xcconfig"; sourceTree = "<group>"; };
@@ -651,6 +664,7 @@
 		BE0F5C181D2D663F00C9E8A1 = {
 			isa = PBXGroup;
 			children = (
+				BE64C4182173A8570049D5DF /* Playground.playground */,
 				BEB47B541F614B6800CAD2C4 /* Mode.entitlements */,
 				BE0CE59A1ED8473E00D8DF6D /* ModeWidget */,
 				BE0F5C231D2D663F00C9E8A1 /* Melody */,
@@ -744,6 +758,7 @@
 		BE15DA291E81179500E44CE2 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				BE48E026216D2B7500A7E7C4 /* UIViewController + Extensions.swift */,
 				BE0D84AA1D5FD27800A737FB /* Extensions.swift */,
 				BE6D57902027079F00F0B7AA /* Fonts + Extensions.swift */,
 				BE15DA2A1E8117B100E44CE2 /* Item + Extensions.swift */,
@@ -853,6 +868,7 @@
 				BE2EADC9203459EE000FE197 /* FullPlayerTableViewController.swift */,
 				BED2C2BC2043401C009BB73F /* LibraryRefreshTableViewController.swift */,
 				BEB76FBF20505066001FCA00 /* RecentsTableViewController.swift */,
+				BE7DE705214BACE30032FCBD /* PropertiesTableViewController.swift */,
 			);
 			name = Settings;
 			sourceTree = "<group>";
@@ -997,7 +1013,7 @@
 				BE99B5351ED6CF130033B796 /* MELLayerView.swift */,
 				BE14BB301EF3BF4D008BDA7B /* MELRefreshControl.swift */,
 				BE25AED41FA3CE3D00BE37C1 /* ShadowImageView.swift */,
-				BEFF5569212873A5006CBAEE /* NavigationBarEffectView.swift */,
+				BEFF5569212873A5006CBAEE /* VisualEffectNavigationBar.swift */,
 			);
 			name = Themable;
 			sourceTree = "<group>";
@@ -1052,6 +1068,7 @@
 				BE2189241EF2CB4700B40CEE /* Refreshable.swift */,
 				BE11A63C1F95334000A852C2 /* LibraryAddable.swift */,
 				BE64473521257481002653B3 /* TimerBased.swift */,
+				BE48E027216D2E8E00A7E7C4 /* ChildContaining.swift */,
 			);
 			name = Protocols;
 			sourceTree = "<group>";
@@ -1106,6 +1123,7 @@
 		BEB3AC711DD881B900682854 /* XIBS */ = {
 			isa = PBXGroup;
 			children = (
+				BEDB79A72191BC870013F9A9 /* InfoLyricsCell.xib */,
 				BE381D5320DA7B6A00D6C2F3 /* SettingsCell.xib */,
 				BED9BBFE202D96F2007FEC65 /* Switch.xib */,
 				BE2A69261F1D561300DEE878 /* VolumeView.xib */,
@@ -1120,13 +1138,13 @@
 				BEB3AC6F1DD881AD00682854 /* SmallPlaylistCollectionCell.xib */,
 				BE21DAFF1F229EF600441BF6 /* TableFooterView.xib */,
 				BEBC4E311FB2DAE200F18E06 /* InputView.xib */,
-				BE2808811FC9543100D3AB1C /* CheckView.xib */,
 				BE2808871FC973A500D3AB1C /* FilterView.xib */,
 				BE2808891FC97F3200D3AB1C /* PropertyCollectionViewCell.xib */,
 				BEBF0E73204616BC001C29CC /* RecentSearchCell.xib */,
 				BEFB93CB2124421900590993 /* PlaybackCell.xib */,
 				BEFF556B212874F0006CBAEE /* VisualEffectNavigationBar.xib */,
 				BE42A61F213523070094DD0C /* SwipeView.xib */,
+				BE3F1CD2218E0AFE0099907D /* InfoItemCell.xib */,
 			);
 			name = XIBS;
 			path = ..;
@@ -1135,10 +1153,12 @@
 		BEB3AC721DD881F200682854 /* Collection View Cells */ = {
 			isa = PBXGroup;
 			children = (
+				BE3F1CD4218E1A9B0099907D /* InfoItemCollectionViewCell.swift */,
 				BE3F63201DCE2E71009173AB /* PlaylistCollectionViewCell.swift */,
 				BEB3AC731DD89F4300682854 /* SmallPlaylistCollectionViewCell.swift */,
 				BE5191981F9398FC0001DD94 /* SectionIndexCollectionViewCell.swift */,
 				BE28088B1FC97F5700D3AB1C /* PropertyCollectionViewCell.swift */,
+				BEDB79A52191BC6B0013F9A9 /* InfoLyricsCollectionViewCell.swift */,
 			);
 			name = "Collection View Cells";
 			path = Melody;
@@ -1397,12 +1417,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE3F1CD3218E0AFE0099907D /* InfoItemCell.xib in Resources */,
 				BE381D5420DA7B6A00D6C2F3 /* SettingsCell.xib in Resources */,
 				BE2A69271F1D561300DEE878 /* VolumeView.xib in Resources */,
 				BEC0B16A2021D506008CBEB5 /* Light App Icon Medium@2x.png in Resources */,
 				BE573CF31E669E0B0021DCBD /* Popovers.storyboard in Resources */,
 				BEC0B1662021D506008CBEB5 /* Light App Icon Medium@3x.png in Resources */,
 				BE9EA2D21DBF9AC5001F8C85 /* NoAccessView.xib in Resources */,
+				BEDB79A82191BC870013F9A9 /* InfoLyricsCell.xib in Resources */,
 				BE1C349D1E672DF100561D28 /* ScrollHeaderSubview.xib in Resources */,
 				BEC0B1692021D506008CBEB5 /* Light App Icon Thin@2x.png in Resources */,
 				BE28088A1FC97F3200D3AB1C /* PropertyCollectionViewCell.xib in Resources */,
@@ -1413,7 +1435,6 @@
 				BEC04C081D30257B0095D856 /* MyriadPro-Semibold.otf in Resources */,
 				BE21DB001F229EF600441BF6 /* TableFooterView.xib in Resources */,
 				BE0F5C311D2D663F00C9E8A1 /* LaunchScreen.storyboard in Resources */,
-				BE2808821FC9543100D3AB1C /* CheckView.xib in Resources */,
 				BEFF556C212874F0006CBAEE /* VisualEffectNavigationBar.xib in Resources */,
 				BEC0B1582021D47E008CBEB5 /* Dark App Icon Medium@3x.png in Resources */,
 				BEC0B15C2021D4A0008CBEB5 /* Dark App Icon Thin@2x.png in Resources */,
@@ -1581,8 +1602,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BEFF556A212873A5006CBAEE /* NavigationBarEffectView.swift in Sources */,
+				BEFF556A212873A5006CBAEE /* VisualEffectNavigationBar.swift in Sources */,
 				BE21DAFE1F229EDF00441BF6 /* TableFooterView.swift in Sources */,
+				BEDB79A62191BC6B0013F9A9 /* InfoLyricsCollectionViewCell.swift in Sources */,
 				BE15DA2D1E81183C00E44CE2 /* Collection + Extensions.swift in Sources */,
 				BEFA28041D32CE3100DE7018 /* NowPlayingViewController.swift in Sources */,
 				BE42A63021357A850094DD0C /* URL+SoundEmitting.swift in Sources */,
@@ -1607,6 +1629,7 @@
 				BE53A9A61DD0D77000FB3073 /* TableHeaderView.swift in Sources */,
 				BEC933D71F6D9B1E00FB5984 /* SwipeActionsView.swift in Sources */,
 				BEE173841DA6C1BD00559C05 /* ArrangeViewController.swift in Sources */,
+				BE7DE706214BACE30032FCBD /* PropertiesTableViewController.swift in Sources */,
 				BE6CB7251D9D603700328C19 /* NowPlayingAnimationController.swift in Sources */,
 				BE42A62D21357A850094DD0C /* SoundEffect.swift in Sources */,
 				BE34A4901DDEDCCF0023A0EB /* CollectionsViewController.swift in Sources */,
@@ -1626,6 +1649,7 @@
 				BE14BB311EF3BF4E008BDA7B /* MELRefreshControl.swift in Sources */,
 				BE99D5481E2222E200D54E14 /* EntityItemsViewController.swift in Sources */,
 				BE2F98791EEE6BC700B91D3C /* RateShareView.swift in Sources */,
+				BE48E028216D2E8F00A7E7C4 /* ChildContaining.swift in Sources */,
 				BEE7F6501E6391E1005927C7 /* Themer.swift in Sources */,
 				BE0136B221205A4A00D7588A /* Song+CoreDataProperties.swift in Sources */,
 				BE47B9781D317B9500503E20 /* InteractionController.swift in Sources */,
@@ -1673,6 +1697,8 @@
 				BE2B48C6201F2C5800A534A2 /* VerticalPresentationContainerViewController.swift in Sources */,
 				BED9566D1F9B2A6B00980DF4 /* Image + Extensions.swift in Sources */,
 				BE42A62F21357A850094DD0C /* VibrationFeedback.swift in Sources */,
+				BE3F1CD5218E1A9B0099907D /* InfoItemCollectionViewCell.swift in Sources */,
+				BE48E029216D428700A7E7C4 /* UIViewController + Extensions.swift in Sources */,
 				BE7A66961E62C91E0091A216 /* MELSlider.swift in Sources */,
 				BEBC4E341FB37D1200F18E06 /* InputView.swift in Sources */,
 				BE89790E1E30C22B008634E6 /* NowPlaying.swift in Sources */,
@@ -1970,6 +1996,8 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				sharedBuildNumber = 12043;
+				sharedVersionNumber = 1.2;
 			};
 			name = Debug;
 		};
@@ -2020,6 +2048,8 @@
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				VALIDATE_PRODUCT = YES;
+				sharedBuildNumber = 12043;
+				sharedVersionNumber = 1.2;
 			};
 			name = Release;
 		};

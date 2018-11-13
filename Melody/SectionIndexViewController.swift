@@ -10,12 +10,12 @@ import UIKit
 
 class SectionIndexViewController: UIViewController {
     
-    @IBOutlet weak var collectionView: UICollectionView!
-    @IBOutlet weak var containerView: UIView!
-    @IBOutlet weak var effectView: MELVisualEffectView!
-    @IBOutlet weak var collectionViewHeightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var effectViewWidthConstraint: NSLayoutConstraint!
-    @IBOutlet weak var effectViewTrailingConstraint: NSLayoutConstraint!
+    @IBOutlet var collectionView: UICollectionView!
+    @IBOutlet var containerView: UIView!
+    @IBOutlet var effectView: MELVisualEffectView!
+    @IBOutlet var collectionViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet var effectViewWidthConstraint: NSLayoutConstraint!
+    @IBOutlet var effectViewTrailingConstraint: NSLayoutConstraint!
     @IBOutlet var shadowImageViewTrailingConstraint: NSLayoutConstraint!
     
     enum IndexKind { case text(String), image(UIImage), view, dot }
@@ -64,7 +64,7 @@ class SectionIndexViewController: UIViewController {
             
             case .stretch: return 44 - 20.5
             
-            case .squeeze: return rowHeight - Array("abcdefghijklmnopqrstuvwxyz#".capitalized).map({ (String($0) as NSString).boundingRect(with: .init(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude), options: [.usesFontLeading, .usesLineFragmentOrigin], attributes: [.font: UIFont.myriadPro(ofWeight: .light, size: fontSize)], context: nil).width }).max()!
+            case .squeeze: return rowHeight - Array("abcdefghijklmnopqrstuvwxyz#".capitalized).map({ (String($0) as NSString).boundingRect(with: .init(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude), options: [.usesFontLeading, .usesLineFragmentOrigin], attributes: [.font: UIFont.font(ofWeight: .light, size: fontSize)], context: nil).width }).max()!
         }
         
     }() // max single, capital character of MP @ 25pt = 20.5. Given a max width for this font size, this leaves (`max` - 20.5) space on both sides combined. Thus, this space will be added to the width of the max string width in the array for the final cell/constraint size.
@@ -193,7 +193,7 @@ class SectionIndexViewController: UIViewController {
                     
                     case .view, .dot, .image: return 20.5
                     
-                    case .text(let string): return (string as NSString).boundingRect(with: .init(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude), options: [.usesFontLeading, .usesLineFragmentOrigin], attributes: [.font: UIFont.myriadPro(ofWeight: .light, size: fontSize)], context: nil).width
+                    case .text(let string): return (string as NSString).boundingRect(with: .init(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude), options: [.usesFontLeading, .usesLineFragmentOrigin], attributes: [.font: UIFont.font(ofWeight: .light, size: fontSize)], context: nil).width
                 }
                 
             }).max() ?? 20.5
@@ -287,7 +287,7 @@ extension SectionIndexViewController: UICollectionViewDelegate, UICollectionView
                 cell.borderView.isHidden = true
                 cell.label.isHidden = false
                 cell.label.text = string
-                cell.label.font = UIFont.myriadPro(ofWeight: fontSize < 19 ? .regular : .light, size: fontSize)
+                cell.label.font = UIFont.font(ofWeight: fontSize < 19 ? .regular : .light, size: fontSize)
         }
         
         return cell

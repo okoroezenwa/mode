@@ -10,32 +10,34 @@ import UIKit
 
 class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell {
     
-    @IBOutlet weak var artworkImageView: UIImageView!
-    @IBOutlet weak var nameLabel: MELLabel!
-    @IBOutlet weak var artistAlbumLabel: MELLabel!
-    @IBOutlet weak var supplemetaryScrollView: UIScrollView!
-    @IBOutlet weak var supplementaryStackView: UIStackView! {
+    @IBOutlet var artworkImageView: UIImageView!
+    @IBOutlet var nameLabel: MELLabel!
+    @IBOutlet var artistAlbumLabel: MELLabel!
+    @IBOutlet var supplemetaryScrollView: UIScrollView!
+    @IBOutlet var supplementaryStackView: UIStackView! {
         
         didSet {
             
             prepareSupplementaryView()
         }
     }
-    @IBOutlet weak var playButton: MELButton!
-    @IBOutlet weak var cloudButton: UIImageView!
-    @IBOutlet weak var durationLabel: MELLabel!
-    @IBOutlet weak var trackNumberLabel: MELLabel!
-    @IBOutlet weak var explicitView: UIView!
-    @IBOutlet weak var artworkContainer: UIView!
-    @IBOutlet weak var playingView: UIView!
-    @IBOutlet weak var optionsView: UIView!
-    @IBOutlet weak var infoButton: MELButton!
-    @IBOutlet weak var infoBorderView: MELBorderView!
+    @IBOutlet var playButton: MELButton!
+    @IBOutlet var cloudButton: UIImageView!
+    @IBOutlet var durationLabel: MELLabel!
+    @IBOutlet var trackNumberLabel: MELLabel!
+    @IBOutlet var explicitView: UIView!
+    @IBOutlet var artworkContainer: UIView!
+    @IBOutlet var playingView: UIView!
+    @IBOutlet var optionsView: UIView!
+    @IBOutlet var infoButton: MELButton!
+    @IBOutlet var infoBorderView: MELBorderView!
     @IBOutlet var editingView: UIView!
     @IBOutlet var stackViewLeadingConstraint: NSLayoutConstraint!
     @IBOutlet var mainView: UIView!
     @IBOutlet var editBorderView: MELBorderView!
     @IBOutlet var mainViewInnerViewLeadingConstraint: NSLayoutConstraint!
+    @IBOutlet var textStackView: UIStackView!
+    @IBOutlet var textContainingStackView: UIStackView!
     
     @objc lazy var playsView = ScrollHeaderSubview.forCell(title: "-", image: #imageLiteral(resourceName: "Plays"))
     
@@ -92,6 +94,7 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell {
         selectedBackgroundView = MELBorderView()
         
         updateCornersAndShadows()
+        updateSpacing()
         
         let tap = UITapGestureRecognizer.init(target: self, action: #selector(tapCell(_:)))
         supplemetaryScrollView.addGestureRecognizer(tap)
@@ -101,6 +104,7 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell {
         notifier.addObserver(self, selector: #selector(modifyIndicator), name: .MPMusicPlayerControllerPlaybackStateDidChange, object: musicPlayer)
         notifier.addObserver(self, selector: #selector(updateCornersAndShadows), name: .cornerRadiusChanged, object: nil)
         notifier.addObserver(self, selector: #selector(modifyInfoButton), name: .infoButtonVisibilityChanged, object: nil)
+        notifier.addObserver(self, selector: #selector(updateSpacing), name: .lineHeightsCalculated, object: nil)
         
 //        let leftSwipe = UISwipeGestureRecognizer.init(target: self, action: #selector(handleLeftSwipe(_:)))
 //        leftSwipe.direction = .left
@@ -116,6 +120,13 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell {
         contentView.preservesSuperviewLayoutMargins = false
     }
     
+    @objc func updateSpacing() {
+        
+        textStackView.spacing = FontManager.shared.cellSpacing
+        textContainingStackView.layoutMargins.bottom = FontManager.shared.cellInset
+        textContainingStackView.layoutMargins.top = FontManager.shared.cellInset
+    }
+    
     @objc func prepareSupplementaryView() {
         
         [SecondaryCategory.loved, .plays, .rating, .lastPlayed, .dateAdded, .genre, .year, .fileSize].forEach({ supplementaryStackView.addArrangedSubview(view(for: $0)) })
@@ -128,7 +139,7 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell {
             (listsCornerRadius ?? cornerRadius).updateCornerRadius(on: $0?.layer, width: width, entityType: entity, globalRadiusType: cornerRadius)
         })
         
-        UniversalMethods.addShadow(to: artworkContainer, shouldRasterise: true)
+        UniversalMethods.addShadow(to: artworkContainer, radius: 4, opacity: 0.35, shouldRasterise: true)
     }
     
     func view(for category: SecondaryCategory) -> ScrollHeaderSubview {
@@ -216,6 +227,7 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell {
         UniversalMethods.performOnMainThread({ self.indicator.state = musicPlayer.nowPlayingItem == song ? (musicPlayer.isPlaying ? .playing : .paused) : .stopped }, afterDelay: 0.1)
         
         artistAlbumLabel.text = (song.artist ??? .unknownArtist) + " — " + (song.albumTitle ??? .untitledAlbum)
+        artistAlbumLabel.attributes = nil
         
         if highlightedSong?.persistentID == song.persistentID {
             
@@ -303,6 +315,10 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell {
             let imageView = MELImageView.init(image: #imageLiteral(resourceName: "ReorderControl"))
             imageView.translatesAutoresizingMaskIntoConstraints = false
             view.centre(imageView, withOffsets: .init(x: 0, y: 1))
+        
+        } else {
+            
+            
         }
 
         super.addSubview(view)
@@ -404,6 +420,7 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell {
         let count = count
         
         artistAlbumLabel.text = count.fullCountText(for: .song)
+        artistAlbumLabel.attributes = nil
         
         let image: UIImage = {
             
@@ -464,6 +481,7 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell {
         
         nameLabel.text = (collectionTitle ??? .unknownArtist)
         artistAlbumLabel.text = set.count.fullCountText(for: .album) + ", " + collection.items.count.fullCountText(for: .song)
+        artistAlbumLabel.attributes = nil
         
         let image: UIImage = {
             
@@ -505,7 +523,10 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell {
         }
         
         //artistLabel.isHidden = withinArtist
-        artistAlbumLabel.text = item.validAlbumArtist
+        let text = album.count.fullCountText(for: .song) + "   " + item.validAlbumArtist
+        
+        artistAlbumLabel.text = text
+        artistAlbumLabel.attributes = [.init(kind: .title, range: text.nsRange(of: item.validAlbumArtist))]
         
         artworkImageView.image = album.representativeItem?.isCompilation == true ? #imageLiteral(resourceName: "NoCompilation75") : #imageLiteral(resourceName: "NoAlbum75")
         

@@ -10,6 +10,7 @@ import Foundation
 
 infix operator ???
 infix operator ?+
+infix operator ~=
 
 public extension String {
     
@@ -27,6 +28,7 @@ public extension String {
     static let primarySizeSuffix = "primarySizeSuffix"
     static let secondarySizeSuffix = "secondarySizeSuffix"
     static let modeURL = "modeapp://"
+    static let filterViewContext = "filterViewContext"
     
     static func shuffle(_ suffix: ShuffleSuffix = .none) -> String {
         
@@ -100,9 +102,9 @@ public extension String {
     // MARK: Selectors
     static let setValueForProperty = "setValue:forProperty:"
     
-    func nsRange(of string: String? = nil) -> NSRange {
+    func nsRange(of string: String? = nil, options: NSString.CompareOptions = []) -> NSRange {
         
-        return (self as NSString).range(of: string ?? self)
+        return (self as NSString).range(of: string ?? self, options: options)
     }
     
     static func ??? (left: String?, right: String) -> String {

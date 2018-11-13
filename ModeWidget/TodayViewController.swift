@@ -11,32 +11,32 @@ import NotificationCenter
 
 class TodayViewController: UIViewController, NCWidgetProviding {
         
-    @IBOutlet weak var label: MarqueeLabel?
-    @IBOutlet weak var altLabel: UILabel?
-    @IBOutlet weak var artwork: UIImageView?
-    @IBOutlet weak var artworkContainer: UIView?
-    @IBOutlet weak var likedStateButton: UIButton?
-    @IBOutlet weak var shuffleButton: UIButton!
-    @IBOutlet weak var repeatButton: UIButton!
-    @IBOutlet weak var likedBorderView: UIView!
-    @IBOutlet weak var shuffleBorderView: UIView!
-    @IBOutlet weak var repeatBorderView: UIView!
-    @IBOutlet weak var infoBorderView: UIView!
-    @IBOutlet weak var stackView: UIStackView!
-    @IBOutlet weak var expandedStackView: UIStackView!
-    @IBOutlet weak var titlesStackView: UIStackView!
-    @IBOutlet weak var nothingPlayingLabel: UILabel!
+    @IBOutlet var label: MarqueeLabel?
+    @IBOutlet var altLabel: UILabel?
+    @IBOutlet var artwork: UIImageView?
+    @IBOutlet var artworkContainer: UIView?
+    @IBOutlet var likedStateButton: UIButton?
+    @IBOutlet var shuffleButton: UIButton!
+    @IBOutlet var repeatButton: UIButton!
+    @IBOutlet var likedBorderView: UIView!
+    @IBOutlet var shuffleBorderView: UIView!
+    @IBOutlet var repeatBorderView: UIView!
+    @IBOutlet var infoBorderView: UIView!
+    @IBOutlet var stackView: UIStackView!
+    @IBOutlet var expandedStackView: UIStackView!
+    @IBOutlet var titlesStackView: UIStackView!
+    @IBOutlet var nothingPlayingLabel: UILabel!
     @IBOutlet var artworkConstraints: [NSLayoutConstraint]!
     @IBOutlet var buttons: [UIButton]!
-    @IBOutlet weak var buttonsStackView: UIStackView!
-    @IBOutlet weak var ratingStackView: UIStackView?
-    @IBOutlet weak var playButton: UIButton!
-    @IBOutlet weak var collectionView: UICollectionView?
-    @IBOutlet weak var timeLabel: UILabel?
-    @IBOutlet weak var elapsedTimeLabel: UILabel?
-    @IBOutlet weak var nextLabel: UILabel!
-    @IBOutlet weak var previousButton: UIButton!
-    @IBOutlet weak var nextButton: UIButton!
+    @IBOutlet var buttonsStackView: UIStackView!
+    @IBOutlet var ratingStackView: UIStackView?
+    @IBOutlet var playButton: UIButton!
+    @IBOutlet var collectionView: UICollectionView?
+    @IBOutlet var timeLabel: UILabel?
+    @IBOutlet var elapsedTimeLabel: UILabel?
+    @IBOutlet var nextLabel: UILabel!
+    @IBOutlet var previousButton: UIButton!
+    @IBOutlet var nextButton: UIButton!
     
     enum QueueLocation { case upNext, previous }
     

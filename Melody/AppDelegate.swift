@@ -80,6 +80,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        Queue.shared.verifyQueue()
         setLibraryTimerIfNeeded()
         
+        if showPlaylistFolders {
+            
+            prefs.set(false, forKey: .showPlaylistFolders)
+        }
+        
         if #available(iOS 10.3, *), !useSystemPlayer {
 
             UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalMinimum)

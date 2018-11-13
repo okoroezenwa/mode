@@ -125,14 +125,24 @@ extension MPMediaItemCollection {
         return rated.reduce(0, { $0 + $1.rating }) / rated.count
     }
     
-    @objc var customArtwork: UIImage? {
+    func customArtwork(for type: Entity) -> UIImage? {
         
-        if responds(to: NSSelectorFromString("artworkCatalog")), let catalog = value(forKey: "artworkCatalog") as? NSObject, catalog.responds(to: NSSelectorFromString("bestImageFromDisk")), let image = catalog.value(forKey: "bestImageFromDisk") as? UIImage {
+        guard let string: String = {
             
-            return image
-        }
+            switch type {
+                
+                case .playlist: return "artworkCatalog"
+                
+                case .artist: return "artistArtworkCatalog"
+                
+                case .albumArtist: return "albumArtistArtworkCatalog"
+                
+                default: return nil
+            }
+            
+        }(), responds(to: NSSelectorFromString(string)), let catalog = value(forKey: string) as? NSObject, catalog.responds(to: NSSelectorFromString("bestImageFromDisk")), let image = catalog.value(forKey: "bestImageFromDisk") as? UIImage else { return nil }
         
-        return nil
+        return image
     }
 }
 

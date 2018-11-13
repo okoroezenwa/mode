@@ -16,6 +16,9 @@ class RecentSearchTableViewCell: UITableViewCell/*, Swipable, SwipeActionsDelega
     @IBOutlet var borderView: MELBorderView!
     @IBOutlet var trailingConstraint: NSLayoutConstraint!
     @IBOutlet var leadingConstraint: NSLayoutConstraint!
+    @IBOutlet var stackView: UIStackView!
+    @IBOutlet var stackViewTopConstraint: NSLayoutConstraint!
+    @IBOutlet var stackViewBottomConstraint: NSLayoutConstraint!
     
     weak var delegate: (FilterContainer & UIViewController)?
 //    weak var swipeDelegate: SwipeActionsDelegate?
@@ -38,6 +41,10 @@ class RecentSearchTableViewCell: UITableViewCell/*, Swipable, SwipeActionsDelega
         preservesSuperviewLayoutMargins = false
         contentView.preservesSuperviewLayoutMargins = false
         
+        updateSpacing()
+        
+        notifier.addObserver(self, selector: #selector(updateSpacing), name: .lineHeightsCalculated, object: nil)
+        
 //        let gr = UIPanGestureRecognizer.init(target: self, action: #selector(revealActions(_:)))
 //        gr.delegate = self
 //        addGestureRecognizer(gr)
@@ -55,6 +62,13 @@ class RecentSearchTableViewCell: UITableViewCell/*, Swipable, SwipeActionsDelega
         super.setHighlighted(highlighted, animated: animated)
         
         borderView.alphaOverride = highlighted ? 0.05 : 0
+    }
+    
+    @objc func updateSpacing() {
+        
+        stackView.spacing = FontManager.shared.cellSpacing
+        stackViewTopConstraint.constant = FontManager.shared.cellInset
+        stackViewBottomConstraint.constant = FontManager.shared.cellInset
     }
     
 //    @objc func revealActions(_ sender: UIPanGestureRecognizer) {

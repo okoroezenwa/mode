@@ -89,9 +89,9 @@ class MELSwitch: UIView {
 
 class Switch: UIView {
 
-    @IBOutlet weak var knob: UIView!
-    @IBOutlet weak var knobLeadingConstraint: NSLayoutConstraint!
-    @IBOutlet weak var knobTrailingConstraint: NSLayoutConstraint!
+    @IBOutlet var knob: UIView!
+    @IBOutlet var knobLeadingConstraint: NSLayoutConstraint!
+    @IBOutlet var knobTrailingConstraint: NSLayoutConstraint!
     @IBOutlet var innerView: UIView!
     @IBOutlet var innerViewConstraints: [NSLayoutConstraint]!
     

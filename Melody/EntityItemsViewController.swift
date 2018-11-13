@@ -8,17 +8,9 @@
 
 import UIKit
 
-class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkModifying, Contained, OptionsContaining, Peekable, ArtistTransitionable, AlbumArtistTransitionable, Navigatable {
+class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkModifying, Contained, OptionsContaining, Peekable, ArtistTransitionable, AlbumArtistTransitionable, Navigatable, ChildContaining {
 
-    @IBOutlet weak var titleLabel: MELLabel!
-    @IBOutlet weak var backLabel: MELLabel!
-    @IBOutlet weak var artistItemsViewHeightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var titleScrollView: UIScrollView!
-    @IBOutlet weak var artistView: UIView!
-    @IBOutlet weak var artworkImageView: UIImageView!
-    @IBOutlet weak var artworkImageViewContainer: UIView!
-    @IBOutlet weak var containerView: UIView!
-    @IBOutlet weak var topView: UIView!
+    @IBOutlet var containerView: UIView!
     
     enum EntityContainerType {
         
@@ -40,9 +32,6 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
     
     var options: LibraryOptions { return LibraryOptions.init(fromVC: activeChildViewController, configuration: .collection, context: contextForContainerType()) }
     
-    var albumsButton: MELButton? { return (appDelegate.window?.rootViewController as? ContainerViewController)?.visualEffectNavigationBar.albumsButton }
-    var songsButton: MELButton? { return (appDelegate.window?.rootViewController as? ContainerViewController)?.visualEffectNavigationBar.songsButton }
-    
     @objc var collection: MPMediaItemCollection?
     var entityContainerType = EntityContainerType.playlist
     var kind = AlbumBasedCollectionKind.artist
@@ -62,6 +51,13 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
     }
     @objc var needsDismissal = false
     @objc var artwork: UIImage?
+    var topArtwork: UIImage?
+    var rightViewMode: VisualEffectNavigationBar.RightViewMode {
+        
+        get { return .artwork(topArtwork, details: (listsCornerRadius ?? cornerRadius).radiusDetails(for: entityForContainerType(), width: inset - 12, globalRadiusType: cornerRadius)) }
+        
+        set { }
+    }
     
     var oldArtwork: UIImage?
     @objc weak var peeker: UIViewController? {
@@ -94,11 +90,13 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         
         didSet {
             
-            guard !firstLaunch else { return }
+            guard !firstLaunch, oldValue != activeChildViewController else { return }
             
             changeActiveViewControllerFrom(oldValue)
         }
     }
+    
+    var viewControllerSnapshot: UIView? { didSet { oldValue?.removeFromSuperview() } }
     
     @objc lazy var temporaryImageView: UIImageView = {
         
@@ -108,8 +106,7 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
     }()
     
     @objc lazy var temporaryEffectView = MELVisualEffectView()
-    var needsEntityBar: Bool { return entityContainerType == .collection }
-    var inset: CGFloat { return 10 + 15 + 10 + 34 + 10 + 1 + (needsEntityBar ? 44 : 0) }
+    var inset: CGFloat { return VisualEffectNavigationBar.Location.entity.inset }
     lazy var preferredTitle: String? = title
     
     @objc lazy var artistSongsViewController: ArtistSongsViewController = {
@@ -160,26 +157,16 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
             }
         }()
         
-        if entityContainerType == .collection {
-            
-            artistItemsViewHeightConstraint.constant = 44
-            artistView.isHidden = false
-            updateButton(for: .albums)
-            updateButton(for: .songs)
-            
-            [albumsButton, songsButton].forEach({ $0?.addTarget(self, action: #selector(switchSection(_:)), for: .touchUpInside) })
-        }
-        
         updateActiveViewController()
         prepareLifetimeObservers()
-        titleScrollView.scrollsToTop = false
         
         notifier.addObserver(self, selector: #selector(updateCornersAndShadows), name: .cornerRadiusChanged, object: nil)
-        
+
         updateCornersAndShadows()
         
-        let collectionImage = collection?.customArtwork?.scaled(to: artworkImageView.frame.size, by: 2)
-        let image = query?.items?.first(where: { $0.actualArtwork != nil })?.actualArtwork?.image(at: artworkImageView.frame.size)
+        let size = (appDelegate.window?.rootViewController as? ContainerViewController)?.visualEffectNavigationBar.artworkImageView.frame.size ?? .zero
+        let collectionImage = collection?.customArtwork(for: entityForContainerType())?.scaled(to: size, by: 2)
+        let image = query?.items?.first(where: { $0.actualArtwork != nil })?.actualArtwork?.image(at: size)
         
         var noImage: UIImage {
             
@@ -226,19 +213,17 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         }()
         
         artwork = (shouldUseCollectionArtwork ? collectionImage ?? image : image)?.at(.init(width: 20, height: 20)) //?? #imageLiteral(resourceName: "NoArt")
-        artworkImageView.image = collectionImage ?? image //?? noImage
+        topArtwork = collectionImage ?? image ?? noImage
         
         if let _ = peeker, let container = appDelegate.window?.rootViewController as? ContainerViewController {
             
-            oldArtwork = container.imageView.image
+//            oldArtwork = container.imageView.image
+            ArtworkManager.shared.currentlyPeeking = self
             
             UIView.transition(with: container.imageView, duration: 0.5, options: .transitionCrossDissolve, animations: { container.imageView.image = self.artworkType.image }, completion: nil)
             
             temporaryImageView.image = artworkType.image
         }
-        
-        titleLabel.text = title
-        backLabel.text = backLabelText
         
         let edge = UIScreenEdgePanGestureRecognizer.init(target: self, action: #selector(updateSections))
         edge.edges = .right
@@ -307,8 +292,10 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
     
     @objc func updateCornersAndShadows() {
         
-        (listsCornerRadius ?? cornerRadius).updateCornerRadius(on: artworkImageView.layer, width: artworkImageView.bounds.width, entityType: entityContainerType.entity, globalRadiusType: cornerRadius)
-        
+        guard container?.activeViewController?.topViewController == self, let artworkImageView = container?.visualEffectNavigationBar.artworkImageView, let artworkImageViewContainer = container?.visualEffectNavigationBar.artworkContainer else { return }
+
+        (listsCornerRadius ?? cornerRadius).updateCornerRadius(on: artworkImageView.layer, width: artworkImageView.bounds.width, entityType: entityForContainerType(), globalRadiusType: cornerRadius)
+
         UniversalMethods.addShadow(to: artworkImageViewContainer, radius: 8, opacity: 0.35, shouldRasterise: true)
     }
 
@@ -417,12 +404,6 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
                     weakSelf.artistSongsViewController.updateWithQuery()
                 }
             }
-            
-            if weakSelf.entityContainerType == .collection {
-                
-                weakSelf.updateButton(for: .albums)
-                weakSelf.updateButton(for: .songs)
-            }
         })
         
         lifetimeObservers.insert(iCloudObserver as! NSObject)
@@ -449,12 +430,6 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
                 
                 updateable.updateWithQuery()
             }
-            
-            if weakSelf.entityContainerType == .collection {
-                
-                weakSelf.updateButton(for: .albums)
-                weakSelf.updateButton(for: .songs)
-            }
         })
         
         lifetimeObservers.insert(libraryObserver as! NSObject)
@@ -479,6 +454,17 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         })
         
         lifetimeObservers.insert(settingsObserver as! NSObject)
+        
+        if peeker != nil {
+            
+            lifetimeObservers.insert(notifier.addObserver(forName: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer, queue: nil, using: { [weak self] _ in
+                
+                guard let weakSelf = self else { return }
+                
+                weakSelf.oldArtwork = ArtworkManager.shared.activeContainer?.modifier?.artworkType.image
+                
+            }) as! NSObject)
+        }
     }
     
     @objc func getCurrentQuery() -> MPMediaQuery? {
@@ -556,17 +542,17 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         }
     }
     
-    @objc func cornerRadiusForContainerType() -> CGFloat {
-        
-        switch entityContainerType {
-            
-            case .album: return ceil((14/45) * artworkImageViewContainer.bounds.width)
-            
-            case .playlist: return ceil((6/45) * artworkImageViewContainer.bounds.width)
-            
-            case .collection: return 33// the width that should always be, as the view is the same across devices //artworkImageViewContainer.bounds.width / 2
-        }
-    }
+//    @objc func cornerRadiusForContainerType() -> CGFloat {
+//
+//        switch entityContainerType {
+//
+//            case .album: return ceil((14/45) * artworkImageViewContainer.bounds.width)
+//
+//            case .playlist: return ceil((6/45) * artworkImageViewContainer.bounds.width)
+//
+//            case .collection: return 33// the width that should always be, as the view is the same across devices //artworkImageViewContainer.bounds.width / 2
+//        }
+//    }
     
     func contextForContainerType() -> InfoViewController.Context? {
         
@@ -586,128 +572,85 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         }
     }
     
-    @objc func selectedArtistButton() -> UIButton? {
+    @objc func showGroupings() {
         
-        switch activeChildViewController {
+        let albumCount = query?.collections?.count ?? 0
+        let songCount = query?.items?.count ?? 0
+        
+        let songs = UIAlertAction.init(title: "Songs (\(songCount.formatted))", style: .default, handler: { [weak self] _ in
             
-            case let x where x == artistSongsViewController: return songsButton
+            self?.activeChildViewController = self?.artistSongsViewController
+        
+        }).checked(given: activeChildViewController == artistSongsViewController)
+        
+        let albums = UIAlertAction.init(title: "Albums (\(albumCount.formatted))", style: .default, handler: { [weak self] _ in
             
-            case let x where x == artistAlbumsViewController: return albumsButton
-            
-            default: fatalError("No other activeVC should use this")
-        }
+            self?.activeChildViewController = self?.artistAlbumsViewController
+        
+        }).checked(given: activeChildViewController == artistAlbumsViewController)
+        
+        present(UIAlertController.withTitle(title, message: nil, style: .actionSheet, actions: songs, albums, .cancel()), animated: true, completion: nil)
     }
-    
-//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-//        
-//        guard let identifier = segue.identifier else { return }
-//        
-//        switch identifier {
-//            
-//            case "toOptions":
-//                
-//            
-//            
-//            default: break
-//        }
-//    }
-//    
-//    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
-//        
-//        switch identifier {
-//            
-//            case "toOptions": return contextForContainerType() != nil
-//            
-//            default: return true
-//        }
-//    }
     
     @IBAction func dismissVC() {
         
         _ = navigationController?.popViewController(animated: true)
     }
-    
-    @objc func changeActiveViewControllerFrom(_ vc: UIViewController?) {
-        
-        guard let activeVC = activeChildViewController, let inActiveVC = vc else { return }
-        
-        inActiveVC.willMove(toParent: nil)
-        
-        addChild(activeVC)
-        
-        activeVC.view.alpha = 0
-        activeVC.view.frame = containerView.bounds
-        activeVC.view.transform = CGAffineTransform.init(translationX: 0, y: 50)
-        containerView.addSubview(activeVC.view)
-        
-        // call before adding child view controller's view as subview
-        activeVC.didMove(toParent: self)
-        
-        UIView.animateKeyframes(withDuration: 0.3, delay: 0, options: .calculationModeCubic, animations: {
-            
-            UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 1/2, animations: {
-                
-                inActiveVC.view.transform = CGAffineTransform.init(translationX: 0, y: 50)
-                inActiveVC.view.alpha = 0
-            })
-            
-            UIView.addKeyframe(withRelativeStartTime: 1/2, relativeDuration: 1/2, animations: {
-                
-                activeVC.view.transform = CGAffineTransform.identity
-                activeVC.view.alpha = 1
-            })
-            
-        }, completion: { _ in
-            
-            inActiveVC.view.transform = CGAffineTransform.identity
-            inActiveVC.view.removeFromSuperview()
-            
-            // call after removing child view controller's view from hierarchy
-            inActiveVC.removeFromParent()
-        })
-    }
-    
-    private func updateActiveViewController() {
-        
-        if let activeVC = activeChildViewController {
-            
-            // call before adding child view controller's view as subview
-            addChild(activeVC)
-            
-            activeVC.view.frame = containerView.bounds
-            containerView.addSubview(activeVC.view)
-            
-            // call before adding child view controller's view as subview
-            activeVC.didMove(toParent: self)
-        }
-    }
-    
-    func updateButton(for startPoint: StartPoint, withCount count: Int? = nil) {
-        
-        switch startPoint {
-            
-            case .albums:
-                
-                guard let albums = query?.collections?.count else { return }
-            
-                albumsButton?.setTitle(albums.fullCountText(for: .album, filteredCount: count).capitalized, for: .normal)
-                
-            case .songs:
-                
-                guard let songs = query?.items?.count else { return }
-            
-                songsButton?.setTitle(songs.fullCountText(for: .song, filteredCount: count).capitalized, for: .normal)
-        }
-        
-        switch activeChildViewController {
-            
-            case let x where x == artistSongsViewController: songsButton?.update(for: .selected)
-            
-            case let x where x == artistAlbumsViewController: albumsButton?.update(for: .selected)
-            
-            default: break
-        }
-    }
+//
+//    @objc func changeActiveViewControllerFrom(_ vc: UIViewController?) {
+//
+//        guard let activeVC = activeChildViewController, let inActiveVC = vc else { return }
+//
+//        inActiveVC.willMove(toParent: nil)
+//
+//        addChild(activeVC)
+//
+//        activeVC.view.alpha = 0
+//        activeVC.view.frame = containerView.bounds
+//        activeVC.view.transform = CGAffineTransform.init(translationX: 0, y: 50)
+//        containerView.addSubview(activeVC.view)
+//
+//        // call before adding child view controller's view as subview
+//        activeVC.didMove(toParent: self)
+//
+//        UIView.animateKeyframes(withDuration: 0.3, delay: 0, options: .calculationModeCubic, animations: {
+//
+//            UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 1/2, animations: {
+//
+//                inActiveVC.view.transform = CGAffineTransform.init(translationX: 0, y: 50)
+//                inActiveVC.view.alpha = 0
+//            })
+//
+//            UIView.addKeyframe(withRelativeStartTime: 1/2, relativeDuration: 1/2, animations: {
+//
+//                activeVC.view.transform = CGAffineTransform.identity
+//                activeVC.view.alpha = 1
+//            })
+//
+//        }, completion: { _ in
+//
+//            inActiveVC.view.transform = CGAffineTransform.identity
+//            inActiveVC.view.removeFromSuperview()
+//
+//            // call after removing child view controller's view from hierarchy
+//            inActiveVC.removeFromParent()
+//        })
+//    }
+//
+//    private func updateActiveViewController() {
+//
+//        if let activeVC = activeChildViewController {
+//
+//            // call before adding child view controller's view as subview
+//            addChild(activeVC)
+//
+//            activeVC.view.frame = containerView.bounds
+//            containerView.addSubview(activeVC.view)
+//
+//            // call before adding child view controller's view as subview
+//            activeVC.didMove(toParent: self)
+//        }
+//    }
     
     @objc @discardableResult func performTransition(to vc: UIViewController, sender: Any?, perform3DTouchActions: Bool = false) -> UIViewController? {
         
@@ -720,48 +663,17 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         return nil
     }
     
-    @IBAction func switchSection(_ sender: UIButton) {
-        
-        guard sender != selectedArtistButton(), entityContainerType == .collection else { return }
-        
-        UIApplication.shared.beginIgnoringInteractionEvents()
-        
-        UniversalMethods.performOnMainThread({ UIApplication.shared.endIgnoringInteractionEvents() }, afterDelay: 0.3)
-        
-        for button in [albumsButton, songsButton] {
-            
-            if button == sender {
-                
-                if sender == albumsButton, activeChildViewController != artistAlbumsViewController {
-                    
-                    button?.update(for: .selected)
-                    
-                    activeChildViewController = artistAlbumsViewController
-                    
-                } else if sender == songsButton, activeChildViewController != artistSongsViewController {
-                    
-                    button?.update(for: .selected)
-                    
-                    activeChildViewController = artistSongsViewController
-                }
-            
-            } else {
-                
-                button?.update(for: .unselected, capitalised: true)
-            }
-        }
-    }
-    
     deinit {
         
         if isInDebugMode, deinitBannersEnabled {
             
-//            UniversalMethods.banner(withTitle: "EVC going away...").show(for: 0.3)
+            UniversalMethods.banner(withTitle: "EVC going away...").show(for: 0.3)
         }
         
         if let _ = peeker, let container = appDelegate.window?.rootViewController as? ContainerViewController {
             
-            UIView.transition(with: container.imageView, duration: 0.5, options: .transitionCrossDissolve, animations: { container.imageView.image = self.oldArtwork }, completion: nil)
+            ArtworkManager.shared.currentlyPeeking = nil
+            UIView.transition(with: container.imageView, duration: 0.5, options: .transitionCrossDissolve, animations: { container.imageView.image = ArtworkManager.shared.activeContainer?.modifier?.artworkType.image/*self.oldArtwork*/ }, completion: nil)
         }
         
         unregisterAll(from: lifetimeObservers)

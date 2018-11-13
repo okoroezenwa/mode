@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="12118" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.13.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12086"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.9"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -46,11 +45,23 @@
                                 <constraint firstAttribute="trailing" secondItem="SM3-hx-9xd" secondAttribute="trailing" priority="900" constant="4" id="xlb-i9-WHm"/>
                             </constraints>
                         </view>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalCompressionResistancePriority="751" text="Property" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.80000001192092896" translatesAutoresizingMaskIntoConstraints="NO" id="bjC-CT-CkJ" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ij9-tn-wT9">
                             <rect key="frame" x="14" y="0.0" width="72" height="32"/>
-                            <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="15"/>
-                            <nil key="highlightedColor"/>
-                        </label>
+                            <subviews>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalCompressionResistancePriority="751" text="Property" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.80000001192092896" translatesAutoresizingMaskIntoConstraints="NO" id="bjC-CT-CkJ" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                    <rect key="frame" x="0.0" y="0.0" width="72" height="32"/>
+                                    <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="15"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                            </subviews>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <constraints>
+                                <constraint firstAttribute="trailing" secondItem="bjC-CT-CkJ" secondAttribute="trailing" id="DFx-1v-eHa"/>
+                                <constraint firstItem="bjC-CT-CkJ" firstAttribute="top" secondItem="Ij9-tn-wT9" secondAttribute="top" id="YsQ-5t-jx8"/>
+                                <constraint firstAttribute="bottom" secondItem="bjC-CT-CkJ" secondAttribute="bottom" id="gZF-wc-iVP"/>
+                                <constraint firstItem="bjC-CT-CkJ" firstAttribute="leading" secondItem="Ij9-tn-wT9" secondAttribute="leading" id="rgh-2p-6Rb"/>
+                            </constraints>
+                        </view>
                     </subviews>
                 </stackView>
             </subviews>
@@ -70,6 +81,7 @@
                 <outlet property="imageViewContainerWidthConstraint" destination="Krx-5Z-b1I" id="NcY-ya-zF8"/>
                 <outlet property="imageViewTrailingConstraint" destination="xlb-i9-WHm" id="ZnY-DE-8Vm"/>
                 <outlet property="label" destination="bjC-CT-CkJ" id="aZX-WM-Kdf"/>
+                <outlet property="labelBottomConstraint" destination="gZF-wc-iVP" id="uxs-4W-kFh"/>
                 <outlet property="topConstraint" destination="Q4l-ps-AUG" id="GgA-N9-XN1"/>
             </connections>
             <point key="canvasLocation" x="-26" y="316"/>

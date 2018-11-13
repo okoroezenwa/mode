@@ -64,9 +64,10 @@
                                                                     <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no"/>
                                                                     <userDefinedRuntimeAttributes>
                                                                         <userDefinedRuntimeAttribute type="boolean" keyPath="bordered" value="YES"/>
-                                                                        <userDefinedRuntimeAttribute type="number" keyPath="fontSize">
-                                                                            <integer key="value" value="17"/>
+                                                                        <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                            <integer key="value" value="1"/>
                                                                         </userDefinedRuntimeAttribute>
+                                                                        <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="body"/>
                                                                     </userDefinedRuntimeAttributes>
                                                                 </textField>
                                                             </subviews>

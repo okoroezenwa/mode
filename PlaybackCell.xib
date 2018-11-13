@@ -39,6 +39,7 @@
                                                 <nil key="highlightedColor"/>
                                                 <userDefinedRuntimeAttributes>
                                                     <userDefinedRuntimeAttribute type="boolean" keyPath="greyOverride" value="NO"/>
+                                                    <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="prompt"/>
                                                 </userDefinedRuntimeAttributes>
                                             </label>
                                         </subviews>
@@ -62,6 +63,7 @@
                                                 <nil key="highlightedColor"/>
                                                 <userDefinedRuntimeAttributes>
                                                     <userDefinedRuntimeAttribute type="boolean" keyPath="greyOverride" value="NO"/>
+                                                    <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="prompt"/>
                                                 </userDefinedRuntimeAttributes>
                                             </label>
                                         </subviews>

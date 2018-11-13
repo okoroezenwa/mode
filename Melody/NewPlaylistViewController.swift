@@ -10,28 +10,28 @@ import UIKit
 
 class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer, SingleItemActionable, BorderButtonContaining {
 
-    @IBOutlet weak var tableView: MELTableView!
-    @IBOutlet weak var bottomView: UIView!
-    @IBOutlet weak var stackView: UIStackView! {
+    @IBOutlet var tableView: MELTableView!
+    @IBOutlet var bottomView: UIView!
+    @IBOutlet var stackView: UIStackView! {
         
         didSet {
             
-            let addView = BorderedButtonView.with(title: "Add", image: #imageLiteral(resourceName: "AddNoBorderSmall"), action: #selector(addSongs), target: self)
+            let addView = BorderedButtonView.with(title: "Add", image: #imageLiteral(resourceName: "AddNoBorderSmall"), tapAction: .init(action: #selector(addSongs), target: self))
             addButton = addView.button
             self.addView = addView
             
-            let clearView = BorderedButtonView.with(title: "Clear...", image: #imageLiteral(resourceName: "Discard"), action: #selector(clear), target: self)
+            let clearView = BorderedButtonView.with(title: "Clear...", image: #imageLiteral(resourceName: "Discard"), tapAction: .init(action: #selector(clear), target: self))
             clearButton = clearView.button
             self.clearView = clearView
             
-            let editView = BorderedButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, action: #selector(SongActionManager.toggleEditing(_:)), target: songManager)
+            let editView = BorderedButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, tapAction: .init(action: #selector(SongActionManager.toggleEditing(_:)), target: songManager))
             editButton = editView.button
             self.editView = editView
             
             for view in [addView, clearView, editView] {
                 
-                view.button.contentEdgeInsets.top = 10
-                view.button.contentEdgeInsets.bottom = 0
+//                view.button.contentEdgeInsets.top = 10
+//                view.button.contentEdgeInsets.bottom = 0
                 view.borderViewBottomConstraint.constant = 2
                 view.borderViewTopConstraint.constant = 10
 //                view.borderView.layer.cornerRadius = 8
@@ -39,8 +39,8 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
             }
         }
     }
-    @IBOutlet weak var nameSearchBar: MELSearchBar!
-    @IBOutlet weak var bottomViewBottomConstraint: NSLayoutConstraint!
+    @IBOutlet var nameSearchBar: MELSearchBar!
+    @IBOutlet var bottomViewBottomConstraint: NSLayoutConstraint!
     
     @objc var addButton: MELButton!
     @objc var clearButton: MELButton!
@@ -55,6 +55,8 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
     @objc var actionableSongs: [MPMediaItem] { return manager?.queue ?? playlistItems }
     let applicableActions = [SongAction.remove]
     @objc lazy var songManager: SongActionManager = { return SongActionManager.init(actionable: self) }()
+    
+    lazy var ignoreManager = false
     
     // TODO:- Replace with protocol to modify main playlist (maybe also in playlistsVC)
     var manager: QueueManager?
@@ -96,8 +98,6 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
     override func viewDidLoad() {
         
         super.viewDidLoad()
-
-        tableView.rowHeight = 72
         
         view.layoutIfNeeded()
         
@@ -105,6 +105,7 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
         
         notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+        notifier.addObserver(tableView, selector: #selector(UITableView.reloadData), name: .lineHeightsCalculated, object: nil)
         
         let swipeRight = UISwipeGestureRecognizer.init(target: songManager, action: #selector(SongActionManager.toggleEditing(_:)))
         swipeRight.direction = .right
@@ -114,7 +115,7 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
         swipeLeft.direction = .left
         tableView.addGestureRecognizer(swipeLeft)
         
-        notifier.addObserver(self, selector: #selector(updateEntityCountVisibility), name: .entityCountVisibilityChanged, object: nil)
+        [Notification.Name.entityCountVisibilityChanged, .showExplicitnessChanged].forEach({ notifier.addObserver(self, selector: #selector(updateEntityCountVisibility), name: $0, object: nil) }) 
         notifier.addObserver(self, selector: #selector(updateNowPlaying), name: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer)
         
         nameSearchBar.setImage(#imageLiteral(resourceName: "Playlists16"), for: .search, state: .normal)
@@ -578,6 +579,11 @@ extension NewPlaylistViewController: UITableViewDelegate, UITableViewDataSource 
         }
         
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        
+        return FontManager.shared.entityCellHeight
     }
     
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {

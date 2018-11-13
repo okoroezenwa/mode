@@ -51,6 +51,7 @@ class TableDelegate: NSObject, Detailing {
         
         notifier.addObserver(self, selector: #selector(updateEntityCountVisibility), name: .entityCountVisibilityChanged, object: nil)
         notifier.addObserver(self, selector: #selector(updateNumbersBelowLetters), name: .numbersBelowLettersChanged, object: nil)
+        notifier.addObserver(self, selector: #selector(updateTableView), name: .activeFontChanged, object: nil)
         
         switch location {
             
@@ -64,6 +65,11 @@ class TableDelegate: NSObject, Detailing {
             
             default: break
         }
+    }
+    
+    @objc func updateTableView() {
+        
+        container?.tableView.reloadData()
     }
     
     @objc func updateRatingIfNeeded(_ notification: Notification) {
@@ -145,13 +151,43 @@ class TableDelegate: NSObject, Detailing {
         
         switch location {
             
-            case .songs, .playlist, .artistSongs(withinArtist: false): return ([.artist, .genre, .album, .composer, .albumArtist], true)
+            case .songs, .playlist: return ([.artist, .genre, .album, .composer, .albumArtist], true)
     
             case .album: return ([albumArtistsAvailable ? .albumArtist : .artist, .genre, .composer], false)
+            
+            case .artistSongs(withinArtist: false):
+            
+                var array = [Entity.artist, .genre, .album, .composer, .albumArtist]
+                
+                if let entityVC = (container as? ArtistSongsViewController)?.entityVC {
+                    
+                    if entityVC.kind == .composer {
+                        
+                        array.remove(at: 3)
+                        
+                    } else if entityVC.kind == .genre {
+                        
+                        array.remove(at: 1)
+                    }
+                }
+            
+                return (array, true)
     
             case .artistSongs(withinArtist: true): return ([.genre, .album, .composer], false)
     
-            case .artistAlbums(withinArtist: false): return ([albumArtistsAvailable ? .albumArtist : .artist, .genre, .album], false)
+            case .artistAlbums(withinArtist: false):
+                
+                var array = [albumArtistsAvailable ? Entity.albumArtist : .artist, .genre, .album]
+                
+                if let entityVC = (container as? ArtistAlbumsViewController)?.entityVC {
+                    
+                    if entityVC.kind == .genre {
+                        
+                        array.remove(at: 1)
+                    }
+                }
+                
+                return (array, false)
     
             case .artistAlbums(withinArtist: true): return ([.genre, .album], false)
     
@@ -574,7 +610,7 @@ extension TableDelegate {
                     cell.swipeDelegate = self
                     
                     let loader: InfoLoading? = filtering ? container?.filterContainer : container
-                    loader?.updateImageView(using: album, in: cell, indexPath: indexPath, reusableView: tableView)
+                    loader?.updateImageView(using: album, entityType: .album, in: cell, indexPath: indexPath, reusableView: tableView)
                 }
             
             case .collections(let kind):
@@ -606,7 +642,7 @@ extension TableDelegate {
                         cell.swipeDelegate = self
                         
                         let loader: InfoLoading? = filtering ? container?.filterContainer : container
-                        loader?.updateImageView(using: collection, in: cell, indexPath: indexPath, reusableView: tableView)
+                        loader?.updateImageView(using: collection, entityType: .album, in: cell, indexPath: indexPath, reusableView: tableView)
                     
                     case .artist, .composer, .genre, .albumArtist:
                         
@@ -615,7 +651,7 @@ extension TableDelegate {
                         cell.swipeDelegate = self
                         
                         let loader: InfoLoading? = filtering ? container?.filterContainer : container
-                        loader?.updateImageView(using: collection, in: cell, indexPath: indexPath, reusableView: tableView)
+                        loader?.updateImageView(using: collection, entityType: kind.entity, in: cell, indexPath: indexPath, reusableView: tableView)
                     
                     case .playlist:
                         
@@ -658,7 +694,7 @@ extension TableDelegate {
                         }
                         
                         let loader: InfoLoading? = filtering ? container?.filterContainer : container
-                        loader?.updateImageView(using: collection, in: cell, indexPath: indexPath, reusableView: tableView, overridable: container as? OnlineOverridable)
+                        loader?.updateImageView(using: collection, entityType: .playlist, in: cell, indexPath: indexPath, reusableView: tableView, overridable: container as? OnlineOverridable)
                 }
         }
         
@@ -722,10 +758,10 @@ extension TableDelegate {
 //            let index = collectionsVC .sortCriteria == .random ? indexPath.row : (collectionsVC .sections[indexPath.section].startingPoint + indexPath.row)
 //            let container = playlistContainers[index]
 //
-//            return cellSizes[container.playlist.id] ?? 72
+//            return cellSizes[container.playlist.id] ?? FontManager.shared.entityCellHeight
 //        }
         
-        return 72
+        return FontManager.shared.entityCellHeight
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int, filtering: Bool) -> CGFloat {
@@ -816,41 +852,36 @@ extension TableDelegate {
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int, filtering: Bool) -> UIView? {
         
         guard filtering.inverted, !container!.entities.isEmpty, let header = tableView.sectionHeader else { return nil }
-        
-        if filtering {
             
-            header.label.text = nil
+        switch container!.sortCriteria {
             
-        } else {
+            case .random: header.label.text = nil
             
-            switch container!.sortCriteria {
+            case .standard:
                 
-                case .random: header.label.text = nil
-                
-                case .standard:
+                let text: String? = {
                     
-                    let text: String? = {
-                        
 //                        if let vc = container as? ArtistSongsViewController, let entityVC = vc.entityVC, Set([AlbumBasedCollectionKind.artist, .albumArtist]).contains(entityVC.kind) {
 //
 //                            return container?.sections[section].title//.capitalized
 //                        }
+                    
+                    switch location {
                         
-                        switch location {
-                            
-                            case .album: return container?.sections[section].title//.capitalized
-                            
-                            case .collections(kind: .playlist): return container?.sections[section].title//.capitalized
-                            
-                            default: return self.sectionIndexTitles(for: tableView)?[section]
-                        }
-                    }()
-                
-                    header.label.text = text?.lowercased()
-                
-                default: header.label.text = container?.sections[section].title.lowercased()//.capitalized
-            }
+                        case .album: return container?.sections[section].title//.capitalized
+                        
+                        case .collections(kind: .playlist): return container?.sections[section].title//.capitalized
+                        
+                        default: return self.sectionIndexTitles(for: tableView)?[section]
+                    }
+                }()
+            
+                header.label.text = text?.lowercased().appending(sectionCountVisible ? " (\(tableView.numberOfRows(inSection: section)))" : "")
+            
+            default: header.label.text = container?.sections[section].title.lowercased().appending(sectionCountVisible ? " (\(tableView.numberOfRows(inSection: section).formatted))" : "")//.capitalized
         }
+        
+        header.label.attributes = sectionCountVisible ? [Attributes.init(kind: .title, range: (header.label.text ?? "").nsRange(of: tableView.numberOfRows(inSection: section).formatted, options: .backwards))] : nil
         
         header.canShowLeftButton = {
             
@@ -963,9 +994,15 @@ extension TableDelegate {
                         loader?.update(category: category, using: entity as! MPMediaItem, in: cell, at: $0, reusableView: tableView)
                     }
                 
-                case .collections, .artistAlbums:
+                case .artistAlbums:
+                
                     let loader: InfoLoading? = filtering ? container?.filterContainer : container
-                    loader?.updateImageView(using: entity as! MPMediaItemCollection, in: cell, indexPath: $0, reusableView: tableView, overridable: container as? OnlineOverridable)
+                    loader?.updateImageView(using: entity as! MPMediaItemCollection, entityType: .album, in: cell, indexPath: $0, reusableView: tableView, overridable: container as? OnlineOverridable)
+                
+                case .collections(let kind):
+                    
+                    let loader: InfoLoading? = filtering ? container?.filterContainer : container
+                    loader?.updateImageView(using: entity as! MPMediaItemCollection, entityType: kind.entity, in: cell, indexPath: $0, reusableView: tableView, overridable: container as? OnlineOverridable)
             }
         })
     }

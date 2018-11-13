@@ -22,7 +22,9 @@ protocol FilterContainer: LargeActivityIndicatorContaining, UISearchBarDelegate,
     var recentSearches: [RecentSearch] { get set }
     var category: SearchCategory { get set }
     var filtering: Bool { get set }
+    var emptyCondition: Bool { get }
     func filter(with searchText: String)
+    func updateHeaderView()
 }
 
 extension FilterContainer where Self: UIViewController {
@@ -143,11 +145,16 @@ extension FilterContainer where Self: UIViewController {
             let results = try managedContext.fetch(recentSearchFetch)
             
             recentSearches = Array(results.reversed())
-            updateDeleteButton()
+            
+            if filtering.inverted {
+            
+                self.updateDeleteButton()
+            }
             
             if filtering.inverted {
                 
                 tableView.reloadData()
+                updateHeaderView()
             }
             
         } catch let error {
@@ -160,11 +167,9 @@ extension FilterContainer where Self: UIViewController {
         
         if let searchVC = self as? SearchViewController {
             
-            searchVC.emptyStackView.isHidden = filtering ? true : !recentSearches.isEmpty
-            searchVC.topView.layoutIfNeeded()
-            searchVC.clearButtonTrailingConstraint.constant = filtering || recentSearches.isEmpty ? -44 : 0
+            searchVC.rightViewMode = .button(hidden: filtering ? true : recentSearches.isEmpty)
             
-            UIView.animate(withDuration: 0.3, animations: { searchVC.topView.layoutIfNeeded() })
+            searchVC.emptyStackView.isHidden = filtering ? true : !recentSearches.isEmpty
             
         } else if let filterVC = self as? FilterViewController, let parent = filterVC.parent as? PresentedContainerViewController {
             
@@ -263,14 +268,16 @@ extension FilterContainer where Self: UIViewController {
         
         [PropertyTest.contains, .isExactly, .beginsWith, .endsWith, .isOver, .isUnder].filter({ sender.filterTests.contains($0) }).forEach({ test in
             
-            actions.append(UIAlertAction.init(title: sender.title(for: test, property: sender.filterProperty), style: .default, handler: { [weak self] _ in
+            let action = UIAlertAction.init(title: sender.title(for: test, property: sender.filterProperty), style: .default, handler: { [weak self] _ in
                 
                 guard let weakSelf = self else { return }
                 
                 sender.propertyTest = test
                 weakSelf.updateTestView()
                 weakSelf.requiredInputView?.pickerView.reloadAllComponents()
-            }))
+            })
+            
+            actions.append(action.checked(given: test == sender.propertyTest))
         })
         
         present(UIAlertController.withTitle(nil, message: sender.filterProperty.title.capitalized, style: .actionSheet, actions: actions + [.cancel()]), animated: true, completion: nil)

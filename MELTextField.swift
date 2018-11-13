@@ -11,7 +11,23 @@ import UIKit
 class MELTextField: UITextField {
     
     @objc var bordered = false
-    @objc var fontSize: CGFloat = 15
+    @objc var allowFontChange = true
+    
+    @objc var fontWeight = FontWeight.regular.rawValue {
+        
+        didSet {
+            
+            changeFont()
+        }
+    }
+    
+    @objc var textStyle = TextStyle.body.rawValue {
+        
+        didSet {
+            
+            changeFont()
+        }
+    }
     
     override var placeholder: String? {
         
@@ -28,7 +44,12 @@ class MELTextField: UITextField {
         changeThemeColor()
         returnKeyType = .done
         
-        font = .myriadPro(ofWeight: .regular, size: fontSize)
+        if allowFontChange {
+            
+            changeFont()
+            
+            notifier.addObserver(self, selector: #selector(changeFont), name: .activeFontChanged, object: nil)
+        }
         
         notifier.addObserver(self, selector: #selector(changeThemeColor), name: .themeChanged, object: nil)
     }
@@ -47,13 +68,20 @@ class MELTextField: UITextField {
         preparePlaceholder()
     }
     
+    @objc func changeFont() {
+        
+        font = UIFont.font(ofWeight: FontWeight(rawValue: fontWeight) ?? .regular, size: (TextStyle(rawValue: textStyle) ?? .body).textSize())
+        
+        preparePlaceholder()
+    }
+    
     func preparePlaceholder() {
         
         guard let placeholder = placeholder else { return }
         
         attributedPlaceholder = NSAttributedString.init(string: placeholder, attributes: [
             
-            .font: UIFont.myriadPro(ofWeight: .regular, size: fontSize),
+            .font: UIFont.font(ofWeight: FontWeight(rawValue: fontWeight) ?? .regular, size: (TextStyle(rawValue: textStyle) ?? .body).textSize()),
             .foregroundColor: Themer.themeColour(alpha: 0.3)
         ])
     }

@@ -197,14 +197,16 @@ extension Filterable {
                     case .playlist: return (collection as? MPMediaPlaylist)?.validName.lowercased().folded
                 }
             
-            case .artwork:
+            case .artwork: return collection.customArtwork(for: kind.entity) != nil
             
-                switch kind {
+                /*switch kind {
                     
-                    case .playlist: return collection.customArtwork != nil
+                    case .playlist: return collection.customArtwork(for: .playlist) != nil
+                    
+                    case .
                     
                     default: return nil
-                }
+                }*/
             
             case .dateAdded:
             

@@ -11,12 +11,12 @@ import StoreKit
 
 class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTransitionable, PreviewTransitionable, InteractivePresenter, TimerBased, SongActionable, Boldable, EntityVerifiable, Peekable, BackgroundHideable, ArtworkModifying, ArtworkModifierContaining {
 
-    @IBOutlet weak var songName: MELButton!
-    @IBOutlet weak var artistButton: MELButton!
-    @IBOutlet weak var albumButton: MELButton!
-    @IBOutlet weak var albumArt: UIImageView!
-    @IBOutlet weak var albumArtContainer: UIView!
-    @IBOutlet weak var closeButtonBorder: UIView! {
+    @IBOutlet var songName: MELButton!
+    @IBOutlet var artistButton: MELButton!
+    @IBOutlet var albumButton: MELButton!
+    @IBOutlet var albumArt: UIImageView!
+    @IBOutlet var albumArtContainer: UIView!
+    @IBOutlet var closeButtonBorder: UIView! {
         
         didSet {
             
@@ -24,28 +24,28 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
             UniversalMethods.addShadow(to: closeButtonBorder, radius: 10, opacity: 0.3, path: UIBezierPath.init(roundedRect: .init(x: 0, y: 0, width: 26, height: 26), cornerRadius: 13).cgPath)
         }
     }
-    @IBOutlet weak var divider: MELLabel!
-    @IBOutlet weak var playPauseButton: MELButton!
-    @IBOutlet weak var previous: MELButton!
-    @IBOutlet weak var nextButton: MELButton!
-    @IBOutlet weak var shuffle: MELButton?
-    @IBOutlet weak var startTime: MELLabel?
-    @IBOutlet weak var stopTime: MELLabel?
-    @IBOutlet weak var timeSlider: MELSlider!
-    @IBOutlet weak var queue: MELButton!
-    @IBOutlet weak var lyricsButton: MELButton!
-    @IBOutlet weak var lyricsVisualEffectView: MELVisualEffectView!
-    @IBOutlet weak var nowPlayingView: UIView!
+    @IBOutlet var divider: MELLabel!
+    @IBOutlet var playPauseButton: MELButton!
+    @IBOutlet var previous: MELButton!
+    @IBOutlet var nextButton: MELButton!
+    @IBOutlet var shuffle: MELButton?
+    @IBOutlet var startTime: MELLabel?
+    @IBOutlet var stopTime: MELLabel?
+    @IBOutlet var timeSlider: MELSlider!
+    @IBOutlet var queue: MELButton!
+    @IBOutlet var lyricsButton: MELButton!
+    @IBOutlet var lyricsVisualEffectView: MELVisualEffectView!
+    @IBOutlet var nowPlayingView: UIView!
     @IBOutlet var horizontalConstraints: [NSLayoutConstraint]!
-    @IBOutlet weak var songNameWidthConstraint: NSLayoutConstraint!
-    @IBOutlet weak var albumWidthConstraint: NSLayoutConstraint!
+    @IBOutlet var songNameWidthConstraint: NSLayoutConstraint!
+    @IBOutlet var albumWidthConstraint: NSLayoutConstraint!
     @IBOutlet var albumArtContainerTopConstraint: NSLayoutConstraint!
     @IBOutlet var albumArtContainerBottomConstraint: NSLayoutConstraint!
-    @IBOutlet weak var nowPlayingViewTopConstraint: NSLayoutConstraint!
-    @IBOutlet weak var detailsView: UIView!
-    @IBOutlet weak var songNameScrollView: UIScrollView!
-    @IBOutlet weak var songDetailsScrollView: UIScrollView!
-    @IBOutlet weak var volumeViewContainer: UIView! {
+    @IBOutlet var nowPlayingViewTopConstraint: NSLayoutConstraint!
+    @IBOutlet var detailsView: UIView!
+    @IBOutlet var songNameScrollView: UIScrollView!
+    @IBOutlet var songDetailsScrollView: UIScrollView!
+    @IBOutlet var volumeViewContainer: UIView! {
         
         didSet {
             
@@ -61,10 +61,10 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
     }
     @IBOutlet var volumeViewContainerEqualHeightConstraint: NSLayoutConstraint!
     @IBOutlet var volumeViewContainerHeightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var timeViewHeightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var addButtonLeadingConstraint: NSLayoutConstraint?
-    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-    @IBOutlet weak var actionsButton: MELButton! {
+    @IBOutlet var timeViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet var addButtonLeadingConstraint: NSLayoutConstraint?
+    @IBOutlet var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet var actionsButton: MELButton! {
         
         didSet {
             
@@ -74,15 +74,15 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
             LongPressManager.shared.gestureRecognisers.append(Weak.init(value: gr))
         }
     }
-    @IBOutlet weak var repeatView: MELBorderView?
-    @IBOutlet weak var repeatButton: MELButton?
-    @IBOutlet weak var statusBarBackground: UIView!
-    @IBOutlet weak var imageView: UIImageView!
-    @IBOutlet weak var effectView: MELVisualEffectView!
-    @IBOutlet weak var artworkIntermediaryView: UIView!
-    @IBOutlet weak var shuffleView: MELBorderView?
-    @IBOutlet weak var queueChevronTrailingConstraint: NSLayoutConstraint!
-    @IBOutlet weak var editButton: MELButton! {
+    @IBOutlet var repeatView: MELBorderView?
+    @IBOutlet var repeatButton: MELButton?
+    @IBOutlet var statusBarBackground: UIView!
+    @IBOutlet var imageView: UIImageView!
+    @IBOutlet var effectView: MELVisualEffectView!
+    @IBOutlet var artworkIntermediaryView: UIView!
+    @IBOutlet var shuffleView: MELBorderView?
+    @IBOutlet var queueChevronTrailingConstraint: NSLayoutConstraint!
+    @IBOutlet var editButton: MELButton! {
         
         didSet {
             
@@ -152,6 +152,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         
         set { }
     }
+    var topArtwork: UIImage?
     var modifier: ArtworkModifying? { return self }
     
     var useContinuousCorners: Bool {
@@ -178,7 +179,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         
         if let _ = peeker, let imageView = container?.imageView {
         
-            oldArtwork = container?.imageView.image
+            ArtworkManager.shared.currentlyPeeking = self
             UIView.transition(with: imageView, duration: 0.5, options: .transitionCrossDissolve, animations: { imageView.image = self.artworkType.image }, completion: nil)
         }
         
@@ -254,9 +255,10 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         albumButton.addGestureRecognizer(albumHold)
         LongPressManager.shared.gestureRecognisers.append(Weak.init(value: albumHold))
         
-        let doubleTap = UITapGestureRecognizer.init(target: self, action: #selector(changeArtworkSize(_:)))
-        doubleTap.numberOfTapsRequired = 2
-        albumArtContainer.addGestureRecognizer(doubleTap)
+        let mixHold = UILongPressGestureRecognizer.init(target: self, action: #selector(changeArtworkSize(_:)))
+        mixHold.minimumPressDuration = longPressDuration
+        albumArtContainer.addGestureRecognizer(mixHold)
+        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: mixHold))
         
         let optionsHold = UILongPressGestureRecognizer.init(target: self, action: #selector(showOptions(_:)))
         optionsHold.minimumPressDuration = longPressDuration
@@ -266,6 +268,13 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         let edge = UIScreenEdgePanGestureRecognizer.init(target: self, action: #selector(goToQueue))
         edge.edges = .right
         view.addGestureRecognizer(edge)
+        
+        let tap = UITapGestureRecognizer.init(target: self, action: #selector(viewLyrics))
+        albumArtContainer.addGestureRecognizer(tap)
+        
+        let doubleTap = UITapGestureRecognizer.init(target: self, action: #selector(changeArtworkSize(_:)))
+        doubleTap.numberOfTapsRequired = 2
+        albumArtContainer.addGestureRecognizer(doubleTap)
     }
     
     @IBAction func showSongActions() {
@@ -292,9 +301,9 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         performSegue(withIdentifier: "toQueue", sender: nil)
     }
     
-    @objc func changeArtworkSize(_ gr: UITapGestureRecognizer) {
+    @objc func changeArtworkSize(_ gr: UILongPressGestureRecognizer) {
         
-        guard !isSmallScreen else { return }
+        guard gr.state == .began, !isSmallScreen else { return }
         
         prefs.set(!dynamicStatusBar, forKey: .dynamicStatusBar)
         updateArtworkImageView(changingArt: true, animated: true)
@@ -404,6 +413,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
             
             if weakSelf.from3DTouch {
                 
+                weakSelf.oldArtwork = ArtworkManager.shared.activeContainer?.modifier?.artworkType.image
                 weakSelf.updateMoveButtons(visible: true)
             }
             
@@ -872,13 +882,6 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         
         modifyLyricsView(hidden: lyricsVisible)
     }
-    
-    @IBAction func viewFullLyrcs(_ sender: UILongPressGestureRecognizer) {
-        
-        guard activeItem != nil, sender.state == .began else { return }
-        
-        performSegue(withIdentifier: "toLyrics", sender: nil)
-    }
 
     @objc func modifyQueueLabel() {
         
@@ -893,7 +896,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         
         let string = musicPlayer.fullQueueCount(withInitialSpace: false, parentheses: false).uppercased()
         queue.setTitle(string, for: .normal)
-        queue.attributes = [Attributes.init(name: .font, value: .other(UIFont.myriadPro(ofWeight: .regular, size: 13)), range: string.nsRange(of: "OF"))]
+        queue.attributes = [Attributes.init(name: .font, value: .other(UIFont.font(ofWeight: .regular, size: 13)), range: string.nsRange(of: "OF"))]
         
         queueChevronTrailingConstraint.constant = queue.intrinsicContentSize.width + 3
         
@@ -1099,15 +1102,6 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
             
             case "toArtistUnwind", "toAlbumUnwind": useAlternateAnimation = true
             
-            case "toLyrics":
-            
-                if let presentedVC = segue.destination as? PresentedContainerViewController {
-                    
-                    presentedVC.showLyrics = true
-                    presentedVC.context = .info
-                    presentedVC.optionsContext = .song(location: .queue(loaded: false, index: musicPlayer.nowPlayingItemIndex), at: 0, within: [musicPlayer.nowPlayingItem].compactMap({ $0 }))
-                }
-            
             case "embed":
             
                 guard let lyricsVC = segue.destination as? LyricsViewController else { return }
@@ -1149,7 +1143,9 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
 
         if let _ = peeker, let imageView = container?.imageView {
             
-            UIView.transition(with: imageView, duration: 0.5, options: .transitionCrossDissolve, animations: { imageView.image = self.oldArtwork }, completion: nil)
+            ArtworkManager.shared.currentlyPeeking = nil
+            
+            UIView.transition(with: imageView, duration: 0.5, options: .transitionCrossDissolve, animations: { imageView.image = ArtworkManager.shared.activeContainer?.modifier?.artworkType.image/*self.oldArtwork*/ }, completion: nil)
         }
         
         notifier.removeObserver(self)
@@ -1194,39 +1190,14 @@ extension NowPlayingViewController: UIViewControllerPreviewingDelegate {
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
         
-        if let vc = viewControllerToCommit as? BackgroundHideable {
-            
-            vc.modifyBackgroundView(forState: .removed)
-        }
-        
-        if let vc = viewControllerToCommit as? Peekable {
-            
-            vc.peeker = nil
-            vc.oldArtwork = nil
-        }
-        
-        if let vc = viewControllerToCommit as? Navigatable, let indexer = vc.activeChildViewController as? IndexContaining {
-            
-            indexer.tableView.contentInset.top = vc.inset
-            indexer.tableView.scrollIndicatorInsets.top = vc.inset
-            
-            if let sortable = indexer as? FullySortable, sortable.highlightedIndex == nil {
-            
-                indexer.tableView.contentOffset.y = -vc.inset
-            }
-            
-            container?.imageView.image = vc.artworkType.image
-            container?.visualEffectNavigationBar.backBorderView.alpha = 1
-            container?.visualEffectNavigationBar.backView.isHidden = false
-            container?.visualEffectNavigationBar.backLabel.text = vc.backLabelText
-            container?.visualEffectNavigationBar.titleLabel.text = vc.title
-            container?.visualEffectNavigationBar.animateRelevantConstraints(direction: .forward, section: .end(completed: true), with: nil, and: indexer.navigatable)
-        }
+        performCommitActions(on: viewControllerToCommit)
         
         pop(to: viewControllerToCommit, queue: viewControllerToCommit is QueueViewController)
     }
     
     override var previewActionItems: [UIPreviewActionItem] {
+        
+        guard musicPlayer.nowPlayingItem != nil else { return [] }
         
         let show = UIPreviewAction.init(title: "Show...", style: .default, handler: { [weak self] _, VC in
             

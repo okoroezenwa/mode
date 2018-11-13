@@ -10,10 +10,10 @@ import UIKit
 
 class PlaybackTableViewCell: UITableViewCell, TimerBased {
     
-    @IBOutlet weak var playPauseButton: MELButton!
-    @IBOutlet weak var startTime: MELLabel?
-    @IBOutlet weak var stopTime: MELLabel?
-    @IBOutlet weak var timeSlider: MELSlider!
+    @IBOutlet var playPauseButton: MELButton!
+    @IBOutlet var startTime: MELLabel?
+    @IBOutlet var stopTime: MELLabel?
+    @IBOutlet var timeSlider: MELSlider!
     @IBOutlet var shuffle: MELButton?
     @IBOutlet var repeatButton: MELButton?
     
@@ -29,6 +29,9 @@ class PlaybackTableViewCell: UITableViewCell, TimerBased {
         super.awakeFromNib()
         
         modifyPlayPauseButton()
+        updateSpacing()
+        
+        notifier.addObserver(self, selector: #selector(updateSpacing), name: .lineHeightsCalculated, object: nil)
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -44,5 +47,11 @@ class PlaybackTableViewCell: UITableViewCell, TimerBased {
             timeSlider.minimumValue = 0
             timeSlider.maximumValue = Float(nowPlaying.playbackDuration)
         }
+    }
+    
+    @objc func updateSpacing() {
+        
+        repeatButton?.titleEdgeInsets.top = FontManager.shared.buttonInset
+        shuffle?.titleEdgeInsets.top = FontManager.shared.buttonInset
     }
 }

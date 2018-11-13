@@ -11,16 +11,16 @@ import AVKit
 
 class VolumeView: UIView {
 
-    @IBOutlet weak var sliderVolumeViewLeadingConstraint: NSLayoutConstraint!
-    @IBOutlet weak var sliderVolumeViewTrailingConstraint: NSLayoutConstraint!
-    @IBOutlet weak var sliderVolumeView: MELVolumeView!
-    @IBOutlet weak var routeAlternateButton: MELButton!
-    @IBOutlet weak var routeButtonVolumeView: MELVolumeView!
-    @IBOutlet weak var routeButtonVolumeViewWidthConstraint: NSLayoutConstraint!
-    @IBOutlet weak var avRoutePickerViewContainer: UIView!
-    @IBOutlet weak var avRoutePickerViewContainerWidthConstraint: NSLayoutConstraint!
-    @IBOutlet weak var avRoutePickerViewContainerTrailingConstraint: NSLayoutConstraint!
-    @IBOutlet weak var avRoutePickerViewContainerLeadingConstraint: NSLayoutConstraint!
+    @IBOutlet var sliderVolumeViewLeadingConstraint: NSLayoutConstraint!
+    @IBOutlet var sliderVolumeViewTrailingConstraint: NSLayoutConstraint!
+    @IBOutlet var sliderVolumeView: MELVolumeView!
+    @IBOutlet var routeAlternateButton: MELButton!
+    @IBOutlet var routeButtonVolumeView: MELVolumeView!
+    @IBOutlet var routeButtonVolumeViewWidthConstraint: NSLayoutConstraint!
+    @IBOutlet var avRoutePickerViewContainer: UIView!
+    @IBOutlet var avRoutePickerViewContainerWidthConstraint: NSLayoutConstraint!
+    @IBOutlet var avRoutePickerViewContainerTrailingConstraint: NSLayoutConstraint!
+    @IBOutlet var avRoutePickerViewContainerLeadingConstraint: NSLayoutConstraint!
     
     var leadingConstraint: CGFloat = 0 {
         

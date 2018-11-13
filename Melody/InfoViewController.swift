@@ -10,9 +10,9 @@ import UIKit
 
 class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTransitionable, ArtistTransitionable, PlaylistTransitionable, GenreTransitionable, ComposerTransitionable, PreviewTransitionable, EntityVerifiable, InfoLoading, BorderButtonContaining, AlbumArtistTransitionable, FilterContaining, ArtworkModifying {
 
-    @IBOutlet weak var collectionView: MELCollectionView!
-    @IBOutlet weak var playButton: MELButton!
-    @IBOutlet weak var actionsButton: MELButton! {
+    @IBOutlet var collectionView: MELCollectionView!
+    @IBOutlet var playButton: MELButton!
+    @IBOutlet var actionsButton: MELButton! {
         
         didSet {
             
@@ -22,10 +22,10 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
             LongPressManager.shared.gestureRecognisers.append(Weak.init(value: gr))
         }
     }
-    @IBOutlet weak var shuffleButton: MELButton!
-    @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
-    @IBOutlet weak var previousButton: MELButton!
-    @IBOutlet weak var nextButton: MELButton!
+    @IBOutlet var shuffleButton: MELButton!
+    @IBOutlet var flowLayout: UICollectionViewFlowLayout!
+    @IBOutlet var previousButton: MELButton!
+    @IBOutlet var nextButton: MELButton!
     
     enum Context {
         
@@ -53,6 +53,9 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
     
     enum EntityState { case single, combined(previousIndex: Int) }
     
+    lazy var applicableSections = InfoSection.applicableSections(for: self.context.entity)
+    lazy var sections = self.prepareSections()
+    
     var headerView: InfoCollectionReusableView! {
         
         didSet {
@@ -62,9 +65,9 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
             updateCornersAndShadows()
             prepareViews()
             
-            addToButton.addTarget(songManager, action: #selector(SongActionManager.showActionsForAll(_:)), for: .touchUpInside)
-            queueButton.addTarget(self, action: #selector(addToQueue(_:)), for: .touchUpInside)
-            insertButton.addTarget(self, action: #selector(addSongs), for: .touchUpInside)
+            headerView.addToView.tapAction = .init(action: #selector(SongActionManager.showActionsForAll(_:)), target: songManager)
+            headerView.queueView.tapAction = .init(action: #selector(addToQueue), target: self)
+            headerView.insertView.tapAction = .init(action: #selector(addSongs), target: self)
         }
     }
     
@@ -114,6 +117,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
     
 //    var relevantWidth = screenWidth - 12
     var artwork: UIImage?
+    var topArtwork: UIImage?
     
     var borderedButtons = [BorderedButtonView?]()
     
@@ -307,6 +311,11 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
         albumArtistButton.superview?.addGestureRecognizer(tapAlbumArtist)
     }
     
+    func prepareSections() -> [(InfoSection, String)] {
+        
+        return visibleInfoItems.filter({ applicableSections.contains($0) }).map({ ($0, "-") })
+    }
+    
     @objc func getInfo(_ sender: UILongPressGestureRecognizer) {
         
         guard sender.state == .began else { return }
@@ -495,7 +504,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
         show(actionsVC, sender: nil)
     }
     
-    @IBAction func addToQueue(_ sender: UIButton) {
+    @objc func addToQueue() {
         
         Transitioner.shared.addToQueue(from: self, kind: .queries([query]), context: .other, index: (parent as? PresentedContainerViewController)?.index ?? -1, title: titleButton.title(for: .normal))
     }
@@ -798,7 +807,7 @@ extension InfoViewController: UICollectionViewDelegate, UICollectionViewDataSour
         
         let playlist = playlists[indexPath.row]
         
-        updateImageView(using: playlist, in: cell, indexPath: indexPath, reusableView: collectionView)
+        updateImageView(using: playlist, entityType: .playlist, in: cell, indexPath: indexPath, reusableView: collectionView)
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -827,7 +836,7 @@ extension InfoViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        return CGSize.init(width: width, height: width + 17 + 4 + 14 + 10 - 4 + (indexPath.row < 3 ? 4 : 2))
+        return CGSize.init(width: width, height: width + FontManager.shared.collectionViewCellConstant + 10 - 4 + (indexPath.row < 3 ? 4 : 2))
     }
 }
 
@@ -956,34 +965,35 @@ extension InfoViewController: UIViewControllerPreviewingDelegate {
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
         
-        if let vc = viewControllerToCommit as? BackgroundHideable {
-            
-            vc.modifyBackgroundView(forState: .removed)
-        }
+        performCommitActions(on: viewControllerToCommit)
         
-        if let vc = viewControllerToCommit as? Peekable {
-            
-            vc.peeker = nil
-            vc.oldArtwork = nil
-        }
-        
-        if let vc = viewControllerToCommit as? Navigatable, let indexer = vc.activeChildViewController as? IndexContaining {
-            
-            indexer.tableView.contentInset.top = vc.inset
-            indexer.tableView.scrollIndicatorInsets.top = vc.inset
-            
-            if let sortable = indexer as? FullySortable, sortable.highlightedIndex == nil {
-                
-                indexer.tableView.contentOffset.y = -vc.inset
-            }
-            
-            container?.imageView.image = vc.artworkType.image
-            container?.visualEffectNavigationBar.backBorderView.alpha = 1
-            container?.visualEffectNavigationBar.backView.isHidden = false
-            container?.visualEffectNavigationBar.backLabel.text = vc.backLabelText
-            container?.visualEffectNavigationBar.titleLabel.text = vc.title
-            container?.visualEffectNavigationBar.animateRelevantConstraints(direction: .forward, section: .end(completed: true), with: nil, and: indexer.navigatable)
-        }
+//        if let vc = viewControllerToCommit as? BackgroundHideable {
+//
+//            vc.modifyBackgroundView(forState: .removed)
+//        }
+//
+//        if let vc = viewControllerToCommit as? Peekable {
+//
+//            vc.peeker = nil
+//            vc.oldArtwork = nil
+//        }
+//
+//        if let vc = viewControllerToCommit as? Navigatable, let indexer = vc.activeChildViewController as? IndexContaining {
+//
+//            indexer.tableView.contentInset.top = vc.inset
+//            indexer.tableView.scrollIndicatorInsets.top = vc.inset
+//
+//            if let sortable = indexer as? FullySortable, sortable.highlightedIndex == nil {
+//
+//                indexer.tableView.contentOffset.y = -vc.inset
+//            }
+//
+//            container?.imageView.image = vc.artworkType.image
+//            container?.visualEffectNavigationBar.backBorderView.alpha = 1
+//            container?.visualEffectNavigationBar.backView.isHidden = false
+//            container?.visualEffectNavigationBar.backLabel.text = vc.backLabelText
+//            container?.visualEffectNavigationBar.titleLabel.text = vc.title
+//        }
         
         viewController = viewControllerToCommit
         
@@ -1004,7 +1014,7 @@ extension InfoViewController {
     
     func prepareLyrics(with text: String) {
         
-        let font = UIFont.myriadPro(ofWeight: infoBoldTextEnabled ? .regular : .light, size: 20)
+        let font = UIFont.font(ofWeight: infoBoldTextEnabled ? .regular : .light, size: 20)
         
         let size = (text as NSString).boundingRect(with: .init(width: screenWidth - 12 - 5 - 5, height: .greatestFiniteMagnitude), options: [.usesLineFragmentOrigin, .usesFontLeading], attributes: [.font: font], context: nil)
         
@@ -1943,7 +1953,7 @@ extension InfoViewController: UICollectionViewDataSourcePrefetching {
             
             guard let cell = collectionView.cellForItem(at: $0) as? PlaylistCollectionViewCell else { return }
             
-            updateImageView(using: playlists[$0.row], in: cell, indexPath: $0, reusableView: collectionView)
+            updateImageView(using: playlists[$0.row], entityType: .playlist, in: cell, indexPath: $0, reusableView: collectionView)
         })
     }
     

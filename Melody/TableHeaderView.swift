@@ -10,23 +10,24 @@ import UIKit
 
 class TableHeaderView: UITableViewHeaderFooterView {
 
-    @IBOutlet weak var label: MELLabel! {
+    @IBOutlet var label: MELLabel! {
         
         didSet {
             
             textLabel?.text = nil
         }
     }
-    @IBOutlet weak var button: MELButton!
-    @IBOutlet weak var altButton: UIButton!
-    @IBOutlet weak var labelLeadingConstraint: NSLayoutConstraint!
-    @IBOutlet weak var rightButton: UIButton!
-    @IBOutlet weak var rightButtonViewConstraint: NSLayoutConstraint!
+    @IBOutlet var button: MELButton!
+    @IBOutlet var altButton: UIButton!
+    @IBOutlet var labelLeadingConstraint: NSLayoutConstraint!
+    @IBOutlet var rightButton: UIButton!
+    @IBOutlet var rightButtonViewConstraint: NSLayoutConstraint!
     @IBOutlet var leftButtonWidthConstraint: NSLayoutConstraint!
     @IBOutlet var leftButtonBottomConstraint: NSLayoutConstraint!
     @IBOutlet var leftButtonLeadingConstraint: NSLayoutConstraint!
     @IBOutlet var leftButtonBorderView: MELBorderView!
     @IBOutlet var leftButtonBorderViewTrailingConstraint: NSLayoutConstraint!
+    @IBOutlet var labelBottomConstraint: NSLayoutConstraint!
     
     weak var attributor: Attributor? {
         
@@ -72,6 +73,20 @@ class TableHeaderView: UITableViewHeaderFooterView {
     @objc var canShowLeftButton = false
     
     @objc var section = 0
+    
+    override func awakeFromNib() {
+        
+        super.awakeFromNib()
+        
+        updateSpacing()
+        
+        notifier.addObserver(self, selector: #selector(updateSpacing), name: .lineHeightsCalculated, object: nil)
+    }
+    
+    @objc func updateSpacing() {
+        
+        labelBottomConstraint.constant = activeFont == .avenirNext ? 2 : 4
+    }
     
     @objc func changeThemeColor() {
 

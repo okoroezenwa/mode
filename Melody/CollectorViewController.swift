@@ -10,10 +10,10 @@ import UIKit
 
 class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable, EntityContainer, Peekable, SingleItemActionable, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, GenreTransitionable, ComposerTransitionable, EntityVerifiable, BorderButtonContaining, Detailing {
     
-    @IBOutlet weak var tableView: MELTableView!
-    @IBOutlet weak var bottomView: UIView!
-    @IBOutlet weak var actionsView: UIView!
-    @IBOutlet weak var actionsButton: MELButton! {
+    @IBOutlet var tableView: MELTableView!
+    @IBOutlet var bottomView: UIView!
+    @IBOutlet var actionsView: UIView!
+    @IBOutlet var actionsButton: MELButton! {
         
         didSet {
             
@@ -23,7 +23,7 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
             LongPressManager.shared.gestureRecognisers.append(Weak.init(value: gr))
         }
     }
-    @IBOutlet weak var stackView: UIStackView! {
+    @IBOutlet var stackView: UIStackView! {
         
         didSet {
             
@@ -31,18 +31,18 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
 //            lockButton = lockView.button
 //            self.lockView = lockView
             
-            let clearView = BorderedButtonView.with(title: "Clear...", image: #imageLiteral(resourceName: "Discard"), action: #selector(clear), target: self)
+            let clearView = BorderedButtonView.with(title: "Clear...", image: #imageLiteral(resourceName: "Discard"), tapAction: .init(action: #selector(clear), target: self))
             clearButton = clearView.button
             self.clearView = clearView
             
-            let editView = BorderedButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, action: #selector(SongActionManager.toggleEditing(_:)), target: songManager)
+            let editView = BorderedButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, tapAction: .init(action: #selector(SongActionManager.toggleEditing(_:)), target: songManager))
             editButton = editView.button
             self.editView = editView
             
             for view in [/*lockView, */clearView, editView] {
                 
-                view.button.contentEdgeInsets.top = 10
-                view.button.contentEdgeInsets.bottom = 0
+//                view.button.contentEdgeInsets.top = 10
+//                view.button.contentEdgeInsets.bottom = 0
                 view.borderViewBottomConstraint.constant = 2
                 view.borderViewTopConstraint.constant = 10
                 stackView.addArrangedSubview(view)
@@ -127,13 +127,15 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
         
         super.viewDidLoad()
         
-        if let _ = peeker {
+        if let _ = peeker, let container = appDelegate.window?.rootViewController as? ContainerViewController {
             
-            temporaryImageView.image = ArtworkManager.shared.activeContainer?.modifier?.artworkType.image
+            ArtworkManager.shared.currentlyPeeking = self
+            
+//            oldArtwork = container.imageView.image
+            temporaryImageView.image = container.imageView.image
         }
 
         tableView.tableFooterView = UIView.init(frame: .zero)
-        tableView.rowHeight = 72
         
         let swipeRight = UISwipeGestureRecognizer.init(target: songManager, action: #selector(SongActionManager.toggleEditing(_:)))
         swipeRight.direction = .right
@@ -149,7 +151,8 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
         
         notifier.addObserver(self, selector: #selector(updateUpNextButton), name: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer)
         notifier.addObserver(self, selector: #selector(updateForChangedItems), name: .managerItemsChanged, object: nil)
-        notifier.addObserver(self, selector: #selector(updateEntityCountVisibility), name: .entityCountVisibilityChanged, object: nil)
+        notifier.addObserver(tableView, selector: #selector(UITableView.reloadData), name: .lineHeightsCalculated, object: nil)
+        [Notification.Name.entityCountVisibilityChanged, .showExplicitnessChanged].forEach({ notifier.addObserver(self, selector: #selector(updateEntityCountVisibility), name: $0, object: nil) })
     }
     
     @objc func updateEntityCountVisibility() {
@@ -219,6 +222,11 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
     }
     
     @objc func updateUpNextButton() {
+        
+        if peeker != nil {
+        
+            oldArtwork = ArtworkManager.shared.activeContainer?.modifier?.artworkType.image
+        }
         
         upNextButton.lightOverride = musicPlayer.nowPlayingItem == nil
         upNextButton.isUserInteractionEnabled = musicPlayer.nowPlayingItem != nil
@@ -475,6 +483,13 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
             UniversalMethods.banner(withTitle: "QIVC going away...").show(for: 0.3)
         }
         
+        if let _ = peeker, let container = appDelegate.window?.rootViewController as? ContainerViewController {
+            
+            ArtworkManager.shared.currentlyPeeking = nil
+            
+            UIView.transition(with: container.imageView, duration: 0.5, options: .transitionCrossDissolve, animations: { container.imageView.image = ArtworkManager.shared.activeContainer?.modifier?.artworkType.image/*self.oldArtwork*/ }, completion: nil)
+        }
+        
         notifier.removeObserver(self)
     }
 }
@@ -510,6 +525,11 @@ extension CollectorViewController: UITableViewDelegate, UITableViewDataSource {
         }
         
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        
+        return FontManager.shared.entityCellHeight
     }
     
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {

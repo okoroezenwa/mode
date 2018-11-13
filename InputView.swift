@@ -10,7 +10,7 @@ import UIKit
 
 class InputView: UIView {
 
-    @IBOutlet weak var pickerView: UIPickerView!
+    @IBOutlet var pickerView: UIPickerView!
     
     override func awakeFromNib() {
         

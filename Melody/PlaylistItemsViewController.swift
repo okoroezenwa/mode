@@ -10,12 +10,12 @@ import UIKit
 import CoreData
 import StoreKit
 
-class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, AlbumTransitionable, AlbumArtistTransitionable, GenreTransitionable, ComposerTransitionable, ArtistTransitionable, InfoLoading, QueryUpdateable, CellAnimatable, SingleItemActionable, BorderButtonContaining, Refreshable, IndexContaining, EntityVerifiable, TopScrollable, EntityContainer {
+class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, AlbumTransitionable, AlbumArtistTransitionable, GenreTransitionable, ComposerTransitionable, ArtistTransitionable, InfoLoading, QueryUpdateable, CellAnimatable, SingleItemActionable, BorderButtonContaining, Refreshable, EntityVerifiable, TopScrollable, EntityContainer {
 
-    @IBOutlet weak var tableView: MELTableView!
-    @IBOutlet weak var emptyStackView: UIStackView!
-    @IBOutlet weak var emptyLabel: UILabel!
-    @IBOutlet weak var emptySubLabel: UILabel!
+    @IBOutlet var tableView: MELTableView!
+    @IBOutlet var emptyStackView: UIStackView!
+    @IBOutlet var emptyLabel: UILabel!
+    @IBOutlet var emptySubLabel: UILabel!
     @objc lazy var headerView: HeaderView = {
         
         let view = HeaderView.fresh
@@ -38,16 +38,16 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
         
         didSet {
             
-            let shuffleView = BorderedButtonView.with(title: .shuffleButtonTitle, image: #imageLiteral(resourceName: "Shuffle13"), action: #selector(shuffle), target: self)
+            let shuffleView = BorderedButtonView.with(title: .shuffleButtonTitle, image: #imageLiteral(resourceName: "Shuffle13"), tapAction: .init(action: #selector(shuffle), target: self))
             shuffleButton = shuffleView.button
             self.shuffleView = shuffleView
             
-            let arrangeBorderView = BorderedButtonView.with(title: .arrangeButtonTitle, image: #imageLiteral(resourceName: "AscendingLines"), action: #selector(showArranger), target: self)
+            let arrangeBorderView = BorderedButtonView.with(title: .arrangeButtonTitle, image: #imageLiteral(resourceName: "AscendingLines"), tapAction: .init(action: #selector(showArranger), target: self))
             arrangeBorderView.borderView.centre(activityIndicator)
             arrangeButton = arrangeBorderView.button
             self.arrangeBorderView = arrangeBorderView
             
-            let editView = BorderedButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, action: #selector(SongActionManager.toggleEditing(_:)), target: songManager)
+            let editView = BorderedButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, tapAction: .init(action: #selector(SongActionManager.toggleEditing(_:)), target: songManager), longPressAction: .init(action: #selector(SongActionManager.showActionsForAll(_:)), target: songManager))
             editButton = editView.button
             self.editView = editView
             
@@ -88,7 +88,7 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
             
             let allHold = UILongPressGestureRecognizer.init(target: songManager, action: #selector(SongActionManager.showActionsForAll(_:)))
             allHold.minimumPressDuration = longPressDuration
-            editButton.addGestureRecognizer(allHold)
+            (editButton.superview as? BorderedButtonView)?.addGestureRecognizer(allHold)
             LongPressManager.shared.gestureRecognisers.append(Weak.init(value: allHold))
         }
     }
@@ -259,10 +259,7 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
         prepareLifetimeObservers()
         
         adjustInsets(context: .container)
-        
-        let inset = entityVC?.peeker != nil ? 0 : entityVC?.inset ?? 0
-        tableView.contentInset.top = inset
-        tableView.scrollIndicatorInsets.top = inset
+        updateTopInset()
         
         tableView.delegate = tableDelegate
         tableView.dataSource = tableDelegate
@@ -285,6 +282,13 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
         prepareGestures()
     }
     
+    func updateTopInset() {
+        
+        let inset = entityVC?.peeker != nil ? 0 : entityVC?.inset ?? VisualEffectNavigationBar.Location.entity.inset
+        tableView.contentInset.top = inset
+        tableView.scrollIndicatorInsets.top = inset
+    }
+    
     @objc func prepareSupplementaryInfo() {
         
         supplementaryOperation?.cancel()
@@ -297,23 +301,6 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
             let dateCreated = weakSelf.playlist?.dateCreated.timeIntervalSinceNow.shortStringRepresentation
             let totalDuration = items.map({ $0.playbackDuration }).reduce(0, +).stringRepresentation(as: .short)
             
-//            let image: UIImage? = {
-//
-//                switch weakSelf.playlist?.likedState {
-//
-//                    case .some(.liked): return #imageLiteral(resourceName: "Loved")
-//
-//                    case .some(.disliked): return #imageLiteral(resourceName: "Unloved")
-//
-//                    case .some(.none): return #imageLiteral(resourceName: "NoLove")
-//
-//                    default:
-//
-//                        weakSelf.headerView.showLoved = false
-//                        return nil
-//                }
-//            }()
-            
             guard weakSelf.supplementaryOperation?.isCancelled == false else { return }
             
             OperationQueue.main.addOperation({
@@ -321,7 +308,6 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
                 weakSelf.dateCreatedLabel.text = dateCreated
                 weakSelf.songCountLabel.text = songCount
                 weakSelf.totalDurationLabel.text = totalDuration
-//                weakSelf.likedStateButton.setImage(image, for: .normal)
             })
         })
         
@@ -402,7 +388,7 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
                     descriptionTextView.textContainerInset.bottom = -4
                 }
                 
-                return descriptionTextView.intrinsicContentSize.height
+                return ceil(descriptionTextView.intrinsicContentSize.height) + FontManager.shared.descriptionConstant
                 
             } else {
                 
@@ -431,12 +417,12 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
         guard let text = playlist?.descriptionText else { return false }
         
         let style = NSMutableParagraphStyle.init()
-        style.lineHeightMultiple = 1.15
+        style.lineHeightMultiple = FontManager.shared.textLineHeight
         
         let attributed = NSAttributedString.init(string: text, attributes: [
             
             .paragraphStyle: style,
-            .font: UIFont.myriadPro(ofWeight: .regular, size: 15),
+            .font: UIFont.font(ofWeight: .regular, size: 17),
             .foregroundColor: Themer.textColour(for: .title)
         ])
         
@@ -749,6 +735,14 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
             
         }) as! NSObject)
         
+        lifetimeObservers.insert(notifier.addObserver(forName: .showExplicitnessChanged, object: nil, queue: nil, using: { [weak self] _ in
+            
+            guard let weakSelf = self else { return }
+            
+            weakSelf.tableView.reloadRows(at: weakSelf.tableView.indexPathsForVisibleRows ?? [], with: .none)
+            
+        }) as! NSObject)
+        
         lifetimeObservers.insert(notifier.addObserver(forName: .songsAddedToPlaylists, object: nil, queue: nil, using: { [weak self] notification in
             
             guard let weakSelf = self, let id = weakSelf.playlist?.persistentID, let ids = notification.userInfo?[String.addedPlaylists] as? [MPMediaEntityPersistentID], Set(ids).contains(id) else { return }
@@ -769,6 +763,19 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
             weakSelf.updateWithQuery()
             
         })) as! NSObject)
+        
+        lifetimeObservers.insert(notifier.addObserver(forName: .lineHeightsCalculated, object: nil, queue: nil, using: { [weak self] _ in
+            
+            guard let weakSelf = self else { return }
+            
+            weakSelf.updateTopInset()
+            
+            if weakSelf.hasDescriptionText {
+            
+                weakSelf.updateHeaderView(withCount: weakSelf.songs.count)
+            }
+            
+        }) as! NSObject)
     }
     
     @objc func getCurrentQuery() -> MPMediaQuery? {
@@ -926,7 +933,7 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
             
             array.append(shuffleAlbums)
             
-            present(UIAlertController.withTitle(nil, message: entityVC?.titleLabel.text, style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
+            present(UIAlertController.withTitle(nil, message: entityVC?.title, style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
             
         } else {
             
@@ -976,7 +983,7 @@ extension PlaylistItemsViewController: FullySortable {
     
     @objc func sortItems() {
         
-        arrangeButton.alpha = 0
+        (arrangeButton.superview as? BorderedButtonView)?.stackView.alpha = 0
         activityIndicator.startAnimating()
         
         let mainBlock: ([MPMediaItem], [SortSectionDetails]) -> () = { [weak self] array, details in
@@ -984,7 +991,7 @@ extension PlaylistItemsViewController: FullySortable {
             guard let weakSelf = self, weakSelf.operation?.isCancelled == false else {
 
                 self?.activityIndicator.stopAnimating()
-                self?.arrangeButton.alpha = 1
+                (self?.arrangeButton.superview as? BorderedButtonView)?.stackView.alpha = 1
 
                 return
             }
@@ -992,7 +999,7 @@ extension PlaylistItemsViewController: FullySortable {
             weakSelf.songs = array
             weakSelf.sections = details
             weakSelf.activityIndicator.stopAnimating()
-            weakSelf.arrangeButton.alpha = 1
+            (weakSelf.arrangeButton.superview as? BorderedButtonView)?.stackView.alpha = 1
             weakSelf.updateEmptyLabel(withCount: weakSelf.songs.count)
             weakSelf.updateHeaderView(withCount: weakSelf.songs.count)
             weakSelf.tableView.reloadData()
@@ -1005,7 +1012,7 @@ extension PlaylistItemsViewController: FullySortable {
 
                 if weakSelf.entityVC?.peeker == nil {
 
-                    weakSelf.animateCells(direction: .vertical)
+                    weakSelf.animateCells(direction: .vertical, alphaOnly: weakSelf.highlightedIndex != nil)
                 }
 
                 weakSelf.scrollToHighlightedRow()
@@ -1021,7 +1028,7 @@ extension PlaylistItemsViewController: FullySortable {
                 OperationQueue.main.addOperation { [weak self] in
                     
                     self?.activityIndicator.stopAnimating()
-                    self?.arrangeButton.alpha = 1
+                    (self?.arrangeButton.superview as? BorderedButtonView)?.stackView.alpha = 1
                     
                     guard (self?.playlistQuery?.items ?? []).isEmpty else { return }
                     
@@ -1056,7 +1063,7 @@ extension PlaylistItemsViewController: FullySortable {
                 UniversalMethods.performInMain {
                     
                     self?.activityIndicator.stopAnimating()
-                    self?.arrangeButton.alpha = 1
+                    (self?.arrangeButton.superview as? BorderedButtonView)?.stackView.alpha = 1
                 }
                 
                 return
@@ -1069,7 +1076,7 @@ extension PlaylistItemsViewController: FullySortable {
                 guard weakSelf.operation?.isCancelled == false else {
 
                     weakSelf.activityIndicator.stopAnimating()
-                    weakSelf.arrangeButton.alpha = 1
+                    (weakSelf.arrangeButton.superview as? BorderedButtonView)?.stackView.alpha = 1
 
                     return
                 }

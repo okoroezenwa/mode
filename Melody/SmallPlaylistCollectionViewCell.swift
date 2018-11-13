@@ -10,11 +10,11 @@ import UIKit
 
 class SmallPlaylistCollectionViewCell: UICollectionViewCell {
     
-    @IBOutlet weak var artworkImageView: UIImageView!
-    @IBOutlet weak var nameLabel: MELLabel!
-    @IBOutlet weak var songCountLabel: MELLabel!
-    @IBOutlet weak var artworkContainer: UIView!
-    @IBOutlet weak var containerView: UIView!
+    @IBOutlet var artworkImageView: UIImageView!
+    @IBOutlet var nameLabel: MELLabel!
+    @IBOutlet var songCountLabel: MELLabel!
+    @IBOutlet var artworkContainer: UIView!
+    @IBOutlet var containerView: UIView!
     
     override var isSelected: Bool {
         

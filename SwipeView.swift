@@ -88,7 +88,7 @@ class SwipeView: MELBorderView {
     let scale: CGFloat = 0.7
     var radius: CGFloat = 0
     
-    lazy var constant: CGFloat = { (radius / 2) - ((container?.swipeDelegate?.leftSwipeActions.first?.title ?? "") as NSString).boundingRect(with: .init(width: .greatestFiniteMagnitude, height: label.frame.height), options: [.usesFontLeading, .usesLineFragmentOrigin], attributes: [.font: UIFont.myriadPro(ofWeight: .regular, size: 17)], context: nil).width - 10 }()
+    lazy var constant: CGFloat = { (radius / 2) - ((container?.swipeDelegate?.leftSwipeActions.first?.title ?? "") as NSString).boundingRect(with: .init(width: .greatestFiniteMagnitude, height: label.frame.height), options: [.usesFontLeading, .usesLineFragmentOrigin], attributes: [.font: UIFont.font(ofWeight: .regular, size: 17)], context: nil).width - 10 }()
     
     override func awakeFromNib() {
         

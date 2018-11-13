@@ -10,22 +10,22 @@ import UIKit
 
 class TextViewController: UIViewController {
 
-    @IBOutlet weak var searchBar: MELSearchBar! {
+    @IBOutlet var searchBar: MELSearchBar! {
         
         didSet {
             
             searchBar.setImage(nil, for: .search, state: .normal)
         }
     }
-    @IBOutlet weak var textView: MELTextView! {
+    @IBOutlet var textView: MELTextView! {
         
         didSet {
             
             textView.textContainerInset = .init(top: 7, left: 7, bottom: 0, right: 7)
         }
     }
-    @IBOutlet weak var creatorView: UIView!
-    @IBOutlet weak var searchBarBottomConstraint: NSLayoutConstraint!
+    @IBOutlet var creatorView: UIView!
+    @IBOutlet var searchBarBottomConstraint: NSLayoutConstraint!
     
     @objc weak var newPlaylistVC: NewPlaylistViewController?
     var textFieldWasFirstResponder = false

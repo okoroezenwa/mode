@@ -10,7 +10,7 @@ import UIKit
 
 class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, InfoLoading, AlbumTransitionable, GenreTransitionable, ArtistTransitionable, AlbumArtistTransitionable, ComposerTransitionable, QueryUpdateable, CellAnimatable, SingleItemActionable, BorderButtonContaining, Refreshable, IndexContaining, EntityVerifiable, TopScrollable, EntityContainer {
     
-    @IBOutlet weak var tableView: MELTableView!
+    @IBOutlet var tableView: MELTableView!
     
     @objc lazy var headerView: HeaderView = {
         
@@ -18,6 +18,8 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
         self.actionsStackView = view.actionsStackView
         self.stackView = view.scrollStackView
         view.showInfo = true
+        view.showGrouping = true
+        view.groupingButton.addTarget(entityVC, action: #selector(EntityItemsViewController.showGroupings), for: .touchUpInside)
         view.infoButton.addTarget(entityVC, action: #selector(EntityItemsViewController.showOptions), for: .touchUpInside)
         
         return view
@@ -26,16 +28,16 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
         
         didSet {
             
-            let shuffleView = BorderedButtonView.with(title: .shuffleButtonTitle, image: #imageLiteral(resourceName: "Shuffle13"), action: #selector(shuffle), target: self)
+            let shuffleView = BorderedButtonView.with(title: .shuffleButtonTitle, image: #imageLiteral(resourceName: "Shuffle13"), tapAction: .init(action: #selector(shuffle), target: self))
             shuffleButton = shuffleView.button
             self.shuffleView = shuffleView
             
-            let arrangeBorderView = BorderedButtonView.with(title: .arrangeButtonTitle, image: #imageLiteral(resourceName: "AscendingLines"), action: #selector(showArranger), target: self)
+            let arrangeBorderView = BorderedButtonView.with(title: .arrangeButtonTitle, image: #imageLiteral(resourceName: "AscendingLines"), tapAction: .init(action: #selector(showArranger), target: self))
             arrangeBorderView.borderView.centre(activityIndicator)
             arrangeButton = arrangeBorderView.button
             self.arrangeBorderView = arrangeBorderView
             
-            let editView = BorderedButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, action: #selector(SongActionManager.toggleEditing(_:)), target: songManager)
+            let editView = BorderedButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, tapAction: .init(action: #selector(SongActionManager.toggleEditing(_:)), target: songManager), longPressAction: .init(action: #selector(SongActionManager.showActionsForAll(_:)), target: songManager))
             editButton = editView.button
             self.editView = editView
             
@@ -46,19 +48,22 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
         
         didSet {
             
+            let count = ScrollHeaderSubview.with(title: "–", image: #imageLiteral(resourceName: "Songs10"), useSmallerImage: true)
+            songCountLabel = count.label
+            
             let order = ScrollHeaderSubview.with(title: arrangementLabelText, image: #imageLiteral(resourceName: "Order10"))
             orderLabel = order.label
             
-            let duration = ScrollHeaderSubview.with(title: "Duration", image: #imageLiteral(resourceName: "Time10"))
+            let duration = ScrollHeaderSubview.with(title: "–", image: #imageLiteral(resourceName: "Time10"))
             totalDurationLabel = duration.label
             
-            let created = ScrollHeaderSubview.with(title: "Created", image: #imageLiteral(resourceName: "DateAdded"), useSmallerImage: true)
+            let created = ScrollHeaderSubview.with(title: "–", image: #imageLiteral(resourceName: "DateAdded"), useSmallerImage: true)
             dateCreatedLabel = created.label
             
-            let plays = ScrollHeaderSubview.with(title: "Plays", image: #imageLiteral(resourceName: "Plays"))
+            let plays = ScrollHeaderSubview.with(title: "–", image: #imageLiteral(resourceName: "Plays"))
             playsLabel = plays.label
             
-            for view in [order, duration, created, plays] {
+            for view in [count, order, duration, created, plays] {
                 
                 stackView.addArrangedSubview(view)
             }
@@ -82,6 +87,7 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
     @objc var totalDurationLabel: MELLabel!
     @objc var dateCreatedLabel: MELLabel!
     @objc var playsLabel: MELLabel!
+    @objc var songCountLabel: MELLabel!
     
     @objc var shuffleView: BorderedButtonView!
     @objc var arrangeBorderView: BorderedButtonView!
@@ -179,7 +185,7 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
             
             guard let entityVC = entityVC else { return [] }
             
-            let set: Set<SortCriteria> = [.duration, .artist, .album, .plays, .lastPlayed, .genre, .rating, .dateAdded, .title, .fileSize]
+            let set: Set<SortCriteria> = [.duration, .artist, .album, .plays, .lastPlayed, .genre, .rating, .dateAdded, .title, .fileSize, .year]
             
             switch entityVC.kind {
                 
@@ -269,9 +275,7 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
         currentArtistQuery = entityVC?.query?.copy() as? MPMediaQuery
         currentArtistQuery?.groupingType = .title
         
-        let inset = entityVC?.peeker != nil ? 0 : entityVC?.inset ?? 0
-        tableView.contentInset.top = inset
-        tableView.scrollIndicatorInsets.top = inset
+        updateTopInset()
         adjustInsets(context: .container)
         
         prepareLifetimeObservers()
@@ -291,6 +295,13 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
         updateHeaderView(withCount: (currentArtistQuery?.items ?? []).count)
         
         prepareGestures()
+    }
+    
+    func updateTopInset() {
+        
+        let inset = entityVC?.peeker != nil ? 0 : entityVC?.inset ?? VisualEffectNavigationBar.Location.entity.inset
+        tableView.contentInset.top = inset
+        tableView.scrollIndicatorInsets.top = inset
     }
     
     @objc func prepareGestures() {
@@ -349,6 +360,7 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
             let duration = collection.totalDuration.stringRepresentation(as: .short)
             let created = collection.recentlyAdded.timeIntervalSinceNow.shortStringRepresentation
             let plays = collection.totalPlays.formatted
+            let count = (weakSelf.currentArtistQuery?.items?.count ?? 0).formatted
             
             guard weakSelf.supplementaryOperation?.isCancelled == false else { return }
             
@@ -357,6 +369,7 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
                 weakSelf.totalDurationLabel.text = duration
                 weakSelf.dateCreatedLabel.text = created
                 weakSelf.playsLabel.text = plays
+                weakSelf.songCountLabel.text = count
             })
         })
         
@@ -494,6 +507,14 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
             
         }) as! NSObject)
         
+        lifetimeObservers.insert(notifier.addObserver(forName: .showExplicitnessChanged, object: nil, queue: nil, using: { [weak self] _ in
+            
+            guard let weakSelf = self else { return }
+            
+            weakSelf.tableView.reloadRows(at: weakSelf.tableView.indexPathsForVisibleRows ?? [], with: .none)
+            
+        }) as! NSObject)
+        
         lifetimeObservers.insert((notifier.addObserver(forName: .libraryUpdated, object: appDelegate, queue: nil, using: { [weak self] _ in
             
             guard let weakSelf = self else { return }
@@ -501,6 +522,14 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
             weakSelf.updateWithQuery()
             
         })) as! NSObject)
+        
+        lifetimeObservers.insert(notifier.addObserver(forName: .lineHeightsCalculated, object: nil, queue: nil, using: { [weak self] _ in
+            
+            guard let weakSelf = self else { return }
+            
+            weakSelf.updateTopInset()
+            
+        }) as! NSObject)
     }
     
     @objc func updateWithQuery() {
@@ -602,7 +631,7 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
             
             array.append(shuffleAlbums)
             
-            present(UIAlertController.withTitle(nil, message: entityVC?.titleLabel.text, style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
+            present(UIAlertController.withTitle(nil, message: entityVC?.title, style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
             
         } else {
             
@@ -700,7 +729,7 @@ extension ArtistSongsViewController: FullySortable {
         
         guard let _ = viewIfLoaded else { return }
         
-        arrangeButton.alpha = 0
+        (arrangeButton.superview as? BorderedButtonView)?.stackView.alpha = 0
         activityIndicator.startAnimating()
         
         let mainBlock: ([MPMediaItem], [SortSectionDetails]) -> () = { [weak self] array, details in
@@ -708,7 +737,7 @@ extension ArtistSongsViewController: FullySortable {
             guard let weakSelf = self, weakSelf.operation?.isCancelled == false else {
                 
                 self?.activityIndicator.stopAnimating()
-                self?.arrangeButton.alpha = 1
+                (self?.arrangeButton.superview as? BorderedButtonView)?.stackView.alpha = 1
                 
                 return
             }
@@ -716,7 +745,7 @@ extension ArtistSongsViewController: FullySortable {
             weakSelf.songs = array
             weakSelf.sections = details
             weakSelf.activityIndicator.stopAnimating()
-            weakSelf.arrangeButton.alpha = 1
+            (weakSelf.arrangeButton.superview as? BorderedButtonView)?.stackView.alpha = 1
             weakSelf.updateHeaderView(withCount: (weakSelf.currentArtistQuery?.items ?? []).count)
             
             if weakSelf.filtering, let filterContainer = weakSelf.filterContainer, let text = filterContainer.searchBar?.text {
@@ -729,7 +758,7 @@ extension ArtistSongsViewController: FullySortable {
                 
                 if weakSelf.entityVC?.peeker == nil {
                     
-                    weakSelf.animateCells(direction: .vertical)
+                    weakSelf.animateCells(direction: .vertical, alphaOnly: weakSelf.highlightedIndex != nil)
                 }
                 
                 weakSelf.scrollToHighlightedRow()
@@ -744,7 +773,7 @@ extension ArtistSongsViewController: FullySortable {
                 UniversalMethods.performInMain {
                     
                     self?.activityIndicator.stopAnimating()
-                    self?.arrangeButton.alpha = 1
+                    (self?.arrangeButton.superview as? BorderedButtonView)?.stackView.alpha = 1
                 }
                 
                 return
@@ -778,7 +807,7 @@ extension ArtistSongsViewController: FullySortable {
                 UniversalMethods.performInMain {
                     
                     self?.activityIndicator.stopAnimating()
-                    self?.arrangeButton.alpha = 1
+                    (self?.arrangeButton.superview as? BorderedButtonView)?.stackView.alpha = 1
                 }
                 
                 return

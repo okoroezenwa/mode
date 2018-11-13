@@ -10,9 +10,9 @@ import UIKit
 
 class GesturesTableViewController: UITableViewController {
     
-    @IBOutlet weak var shortImageView: MELImageView!
-    @IBOutlet weak var mediumImageView: MELImageView!
-    @IBOutlet weak var longImageView: MELImageView!
+    @IBOutlet var shortImageView: MELImageView!
+    @IBOutlet var mediumImageView: MELImageView!
+    @IBOutlet var longImageView: MELImageView!
     @IBOutlet var cells: [UITableViewCell]!
     
     var sections: SectionDictionary = [

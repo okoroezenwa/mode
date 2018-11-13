@@ -8,52 +8,229 @@
 
 import UIKit
 
+typealias LineHeights = [TextStyle: CGFloat]
+
 extension UIFont {
     
-    enum MyriadProWeigths: String {
+    class func name(for font: Font, of weight: FontWeight) -> String {
         
-        case light = "MyriadPro-Light"
-        case lightItalic = "MyriadPro-LightIt"
-        case regular = "MyriadPro-Regular"
-        case regularItalic = "MyriadPro-It"
-        case semibold = "MyriadPro-Semibold"
-        case semiboldItalic = "MyriadPro-SemiboldIt"
+        switch font {
+            
+            case .system: return ""
+            
+            case .avenirNext:
+            
+                switch weight {
+                    
+                    case .light: return "AvenirNext-Regular"
+                    
+                    case .regular: return "AvenirNext-Medium"
+                    
+                    case .semibold: return "AvenirNext-DemiBold"
+                    
+                    case .bold: return "AvenirNext-Bold"
+                }
+            
+            case .myriadPro:
+            
+                switch weight {
+                    
+                    case .light: return "MyriadPro-Light"
+                    
+                    case .regular: return "MyriadPro-Regular"
+                    
+                    case .semibold: return "MyriadPro-SemiBold"
+                    
+                    case .bold: return "MyriadPro-Bold"
+                }
+        }
     }
     
-    enum AvenirWeigths: String {
+    class func specificFont(from font: Font, weight: FontWeight, size: CGFloat) -> UIFont {
         
-        case light = "AvenirNext-UltraLight"
-        case lightItalic = "AvenirNext-UltraLightItalic"
-        case regular = "AvenirNext-Regular"
-        case regularItalic = "AvenirNext-Italic"
-        case demibold = "AvenirNext-DemiBold"
-        case demiboldItalic = "AvenirNext-DemiBoldItalic"
+        switch font {
+            
+            case .system: return .systemFont(ofSize: size, weight: weight.systemWeight)
+            
+            default: return UIFont(name: name(for: font, of: weight), size: size) ?? .systemFont(ofSize: size, weight: weight.systemWeight)
+        }
     }
     
-    enum SFWeigths: String {
-        
-        case light = "AvenirNext-UltraLight"
-        case lightItalic = "AvenirNext-UltraLightItalic"
-        case regular = "AvenirNext-Regular"
-        case regularItalic = "AvenirNext-Italic"
-        case demibold = "AvenirNext-DemiBold"
-        case demiboldItalic = "AvenirNext-DemiBoldItalic"
-    }
-    
-    enum FontWeight: String {
-        
-        case light = "MyriadPro-Light"
-        case lightItalic = "MyriadPro-LightIt"
-        case regular = "MyriadPro-Regular"
-        case regularItalic = "MyriadPro-It"
-        case semibold = "MyriadPro-Semibold"
-        case semiboldItalic = "MyriadPro-SemiboldIt"
-        case bold = "MyriadPro-Bold"
-        case boldItalic = "MyriadPro-BoldIt"
+    class func font(ofWeight weight: FontWeight, size: CGFloat) -> UIFont {
+            
+        return specificFont(from: activeFont, weight: weight, size: size)
     }
     
     class func myriadPro(ofWeight weight: FontWeight, size: CGFloat) -> UIFont {
         
-        return UIFont(name: weight.rawValue, size: size) ?? UIFont.systemFont(ofSize: size)
+        return UIFont(name: name(for: .myriadPro, of: weight), size: size) ?? UIFont.systemFont(ofSize: size, weight: weight.systemWeight)
+    }
+    
+    class func avenir(ofWeight weight: FontWeight, size: CGFloat) -> UIFont {
+        
+        return UIFont(name: name(for: .avenirNext, of: weight), size: size) ?? UIFont.systemFont(ofSize: size, weight: weight.systemWeight)
+    }
+}
+
+class FontManager: NSObject {
+    
+    @objc static let shared = FontManager()
+    
+    lazy var entityCellHeight = self.cellHeight
+    lazy var heightsDictionary = self.styleHeights
+    lazy var collectionViewCellConstant = self.collectionCellConstant
+    
+    private override init() {
+        
+        super.init()
+        
+        notifier.addObserver(self, selector: #selector(updateConstants), name: .activeFontChanged, object: nil)
+    }
+    
+    @objc func updateConstants() {
+        
+        heightsDictionary = styleHeights
+        entityCellHeight = cellHeight
+        collectionViewCellConstant = collectionCellConstant
+        
+        notifier.post(name: .lineHeightsCalculated, object: nil)
+    }
+}
+
+extension FontManager {
+    
+    var styleHeights: LineHeights {
+        
+        return TextStyle.allCases.reduce(LineHeights(), {
+            
+            var dictionary = $0
+            dictionary[$1] = ceil(("y" as NSString).boundingRect(with: .init(width: 100, height: CGFloat.greatestFiniteMagnitude), options: .usesLineFragmentOrigin, attributes: [.font: UIFont.font(ofWeight: .regular, size: $1.textSize())], context: nil).height)
+            
+            return dictionary
+        })
+    }
+    
+    var cellSpacing: CGFloat {
+        
+        switch activeFont {
+            
+            case .myriadPro: return 5
+            
+            case .system: return 3
+            
+            case .avenirNext: return 0
+        }
+    }
+    
+    var cellConstant: CGFloat {
+        
+        switch activeFont {
+            
+            case .myriadPro: return 1
+            
+            case .system: return 3
+            
+            case .avenirNext: return 6
+        }
+    }
+    
+    var cellInset: CGFloat {
+        
+        switch activeFont {
+            
+            case .myriadPro: return 8
+            
+            case .system: return 5
+            
+            case .avenirNext: return 4
+        }
+    }
+    
+    var cellHeight: CGFloat {
+        
+        let heights = [TextStyle.body, TextStyle.secondary, TextStyle.secondary].reduce(0, { $0 + (heightsDictionary[$1] ?? 0) })
+            
+        return heights + (2 * cellSpacing) + (2 * cellInset) + cellConstant
+    }
+    
+    var sectionHeaderSpacing: CGFloat {
+        
+        switch activeFont {
+            
+            case .myriadPro: return 20 + 4
+            
+            case .system: return 18 + 4
+            
+            case .avenirNext: return 20
+        }
+    }
+    
+    var collectionCellConstant: CGFloat {
+        
+        let heights = [TextStyle.body, TextStyle.secondary].reduce(0, { $0 + (heightsDictionary[$1] ?? 0) })
+        
+        return heights + (2 * cellSpacing) - (activeFont == .myriadPro ? 2 : 0) + 3
+    }
+    
+    var buttonInset: CGFloat {
+        
+        switch activeFont {
+            
+            case .myriadPro: return 2
+            
+            case .system: return 0
+            
+            case .avenirNext: return 1
+        }
+    }
+    
+    var navigationBarSpacing: CGFloat {
+        
+        switch activeFont {
+            
+            case .myriadPro: return 10
+            
+            case .system: return 8
+            
+            case .avenirNext: return 6
+        }
+    }
+    
+    var backLabelHeight: CGFloat { return ceil(max(16, FontManager.shared.heightsDictionary[.prompt] ?? 0)) }
+    
+    var textLineHeight: CGFloat {
+        
+        switch activeFont {
+            
+            case .myriadPro: return 1.15
+            
+            case .system: return 1.08
+            
+            case .avenirNext: return 1
+        }
+    }
+    
+    var descriptionConstant: CGFloat {
+        
+        switch activeFont {
+            
+            case .myriadPro: return 0
+            
+            case .system: return 4
+            
+            case .avenirNext: return 2
+        }
+    }
+    
+    var navigationBarTopConstant: CGFloat {
+        
+        switch activeFont {
+            
+            case .system: return 2
+            
+            case .avenirNext: return 3
+            
+            case .myriadPro: return 0
+        }
     }
 }

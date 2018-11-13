@@ -27,7 +27,7 @@ extension SongActionable {
         
         var selection: [UIAlertAction] {
             
-            if let container = self as? EntityContainer, (sender is UIButton || (sender is UILongPressGestureRecognizer && container.tableView.isEditing)) {
+            if let container = self as? EntityContainer, (sender is UIButton || sender is UITapGestureRecognizer || (sender is UILongPressGestureRecognizer && container.tableView.isEditing)) {
                 
                 return [UIAlertAction.init(title: "End Editing", style: .default, handler: { [weak self] action in
                 
@@ -289,7 +289,7 @@ class SongActionManager: NSObject {
                     collectionActionable.actionableActivityIndicator.startAnimating()
                     collectionActionable.shouldFillActionableSongs = true
                     collectionActionable.showActionsAfterFilling = true
-                    collectionActionable.editButton.alpha = 0
+                    (collectionActionable.editButton.superview as? BorderedButtonView)?.stackView.alpha = 0
                     
                     if collectionActionable.actionableSongs.isEmpty {
                         
@@ -361,14 +361,38 @@ class SongActionManager: NSObject {
             
             if isEditing {
                 
-                if sender is UIGestureRecognizer || sender is UIAlertAction || ((container is CollectorViewController || container is NewPlaylistViewController || (container is FilterViewController && (container as? FilterViewController)?.filtering == false)) && sender is UIButton) || sender is SwipeAction || sender is Notification {
+                if sender is UILongPressGestureRecognizer || sender is UISwipeGestureRecognizer || sender is UIAlertAction || ((container is CollectorViewController || container is NewPlaylistViewController || (container is FilterViewController && (container as? FilterViewController)?.filtering == false)) && (sender is UIButton || sender is UITapGestureRecognizer)) || sender is SwipeAction || sender is Notification {
                     
-                    actionable.editButton.setTitle(.inactiveEditButtonTitle, for: .normal)
-                    actionable.editButton.setImage(.inactiveEditImage, for: .normal)
+                    if let superview = actionable.editButton.superview as? BorderedButtonView {
+                        
+                        superview.animateChange(title: .inactiveEditButtonTitle, image: .inactiveEditImage)
                     
-                    let view = container is NewPlaylistViewController ? actionable.editButton.superview?.superview : actionable.editButton.superview
-                    
-                    UIView.animate(withDuration: 0.3, animations: { view?.layoutIfNeeded() })
+                    } else if let snapshot = actionable.editButton.snapshotView(afterScreenUpdates: false) {
+                        
+                        actionable.editButton.superview?.superview?.addSubview(snapshot)
+                        snapshot.frame = actionable.editButton.frame
+                        actionable.editButton.alpha = 0
+                        actionable.editButton.transform = .init(scaleX: 0.2, y: 0.2)
+                        
+                        actionable.editButton.setTitle(.inactiveEditButtonTitle, for: .normal)
+                        actionable.editButton.setImage(.inactiveEditImage, for: .normal)
+                        
+                        UIView.animateKeyframes(withDuration: 0.3, delay: 0, options: .calculationModeCubic, animations: {
+                            
+                            UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 1/2, animations: {
+                                
+                                snapshot.transform = .init(scaleX: 0.2, y: 0.2)
+                                snapshot.alpha = 0
+                            })
+                            
+                            UIView.addKeyframe(withRelativeStartTime: 1/2, relativeDuration: 1/2, animations: {
+                                
+                                actionable.editButton.transform = .identity
+                                actionable.editButton.alpha = 1
+                            })
+                            
+                        }, completion: { _ in snapshot.removeFromSuperview() })
+                    }
                 }
             }
             
@@ -376,7 +400,7 @@ class SongActionManager: NSObject {
                 
                 container.handleLeftSwipe(actionable.editButton as Any)
                 
-            } else if sender is UIButton, !(container is CollectorViewController || container is NewPlaylistViewController), isEditing {
+            } else if sender is UIButton || sender is UITapGestureRecognizer, !(container is CollectorViewController || container is NewPlaylistViewController), isEditing {
                 
                 if let filterVC = actionable as? FilterViewController, filterVC.filtering.inverted {
                     
@@ -389,7 +413,8 @@ class SongActionManager: NSObject {
                         collectionActionable.actionableActivityIndicator.startAnimating()
                         collectionActionable.shouldFillActionableSongs = true
                         collectionActionable.showActionsAfterFilling = true
-                        collectionActionable.editButton.alpha = 0
+                        (collectionActionable.editButton.superview as? BorderedButtonView)?.stackView.alpha = 0
+                        collectionActionable.editButton.superview?.isUserInteractionEnabled = false
                         
                         if collectionActionable.actionableSongs.isEmpty {
                             
@@ -424,12 +449,36 @@ class SongActionManager: NSObject {
                     vc.nameSearchBar.resignFirstResponder()
                 }
                 
-                actionable.editButton.setTitle(details.title, for: .normal)
-                actionable.editButton.setImage(details.image, for: .normal)
+                if let superview = actionable.editButton.superview as? BorderedButtonView {
+                    
+                    superview.animateChange(title: details.title, image: details.image)
                 
-                let view = container is NewPlaylistViewController ? actionable.editButton.superview?.superview : actionable.editButton.superview
-                
-                UIView.animate(withDuration: 0.3, animations: { view?.layoutIfNeeded() })
+                } else if let snapshot = actionable.editButton.snapshotView(afterScreenUpdates: false) {
+                    
+                    actionable.editButton.superview?.superview?.addSubview(snapshot)
+                    snapshot.frame = actionable.editButton.frame
+                    actionable.editButton.alpha = 0
+                    actionable.editButton.transform = .init(scaleX: 0.2, y: 0.2)
+                    
+                    actionable.editButton.setTitle(details.title, for: .normal)
+                    actionable.editButton.setImage(details.image, for: .normal)
+                    
+                    UIView.animateKeyframes(withDuration: 0.3, delay: 0, options: .calculationModeCubic, animations: {
+                        
+                        UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 1/2, animations: {
+                            
+                            snapshot.transform = .init(scaleX: 0.2, y: 0.2)
+                            snapshot.alpha = 0
+                        })
+                        
+                        UIView.addKeyframe(withRelativeStartTime: 1/2, relativeDuration: 1/2, animations: {
+                            
+                            actionable.editButton.transform = .identity
+                            actionable.editButton.alpha = 1
+                        })
+                        
+                    }, completion: { _ in snapshot.removeFromSuperview() })
+                }
             }
             
             container.handleRightSwipe(sender)

@@ -49,7 +49,6 @@ enum Position { case leading, middle(single: Bool), trailing }
 enum RefreshMode: Int { case ask, offline, theme, filter, refresh }
 
 enum BackgroundArtwork: Int { case none, sectionAdaptive, nowPlayingAdaptive }
-#warning("Artwork handling needs to be improved")
 
 enum AnimationOrientation { case horizontal, vertical }
 
@@ -60,9 +59,6 @@ enum FilterPickerViewOptions: String { case iCloud, device, yes = "true", no = "
 enum IconLineWidth: Int { case thin, medium, wide }
 
 enum IconTheme: Int { case dark, light, match }
-
-enum Font: Int { case myriadPro, avenirNext }
-#warning("Fonts need completing")
 
 enum SeparationMethod: Int { case overlay, smaller, below }
 
@@ -275,7 +271,7 @@ enum CollectionsKind {
     }
 }
 
-enum LibrarySection: Int, TitleContaining {
+enum LibrarySection: Int, PropertyStripPresented {
     
     case songs, artists, albums, genres, composers, compilations, playlists
     
@@ -513,7 +509,7 @@ enum Location {
     }
 }
 
-enum Property: Int, TitleContaining, CaseIterable {
+enum Property: Int, PropertyStripPresented, CaseIterable {
     
     case title, artist, album, dateAdded, lastPlayed, genre, composer, plays, duration, year, rating, status, size, trackCount, albumCount, isCloud, artwork, isExplicit, isCompilation
     
@@ -795,5 +791,168 @@ enum ArtworkType {
             
             case .colour(let colour): return .new(withColour: colour, size: .artworkSize)
         }
+    }
+}
+
+enum FilterViewContext: Equatable {
+    
+    case filter(filter: Filterable?, container: (FilterContainer & UIViewController)?), library
+    
+    enum Operation { case group(index: Int?), ungroup(index: Int?), hide, unhide }
+
+    static func ==(lhs: FilterViewContext, rhs: FilterViewContext) -> Bool {
+        
+        switch lhs {
+            
+            case .filter(let filter, _):
+            
+                switch rhs {
+                    
+                    case .filter(filter: let otherFilter, container: _): return filter == nil && otherFilter == nil
+                    
+                    default: return false
+                }
+            
+            case .library:
+            
+                switch rhs {
+                    
+                    case .library: return true
+                    
+                    default: return false
+                }
+        }
+    }
+    
+    static func ~=(lhs: FilterViewContext, rhs: FilterViewContext) -> Bool {
+        
+        switch lhs {
+            
+            case .filter:
+            
+                if case .filter = rhs { return true }
+            
+                return false
+            
+            case .library: return rhs == .library
+        }
+    }
+}
+
+enum Font: Int, CaseIterable {
+    
+    case system, myriadPro, avenirNext
+    
+    var name: String {
+        
+        switch self {
+            
+            case .system: return "System"
+            
+            case .myriadPro: return "Myriad Pro"
+            
+            case .avenirNext: return "Avenir Next"
+        }
+    }
+}
+
+enum FontWeight: Int, CaseIterable {
+    
+    case light, regular, semibold, bold
+
+    var systemWeight: UIFont.Weight {
+
+        switch self {
+
+            case .light: return .light
+
+            case .regular: return .medium
+            
+            case .semibold: return .semibold
+            
+            case .bold: return .bold
+        }
+    }
+}
+
+enum TextStyle: String, CaseIterable {
+    
+    case heading, subheading, modalHeading, sectionHeading, body, secondary, nowPlayingTitle, nowPlayingSubtitle, infoTitle, infoBody, prompt, tiny, accessory, veryTiny
+    
+    func textSize() -> CGFloat {
+        
+        switch self {
+            
+            case .heading: return 34
+            
+            case .subheading: return 25
+            
+            case .modalHeading: return 22
+            
+            case .sectionHeading: return 22
+            
+            case .body: return 17
+            
+            case .secondary: return 14
+            
+            case .nowPlayingTitle: return 25
+            
+            case .nowPlayingSubtitle: return 22
+            
+            case .infoTitle: return 25
+            
+            case .infoBody: return 20
+            
+            case .prompt: return 15
+            
+            case .accessory: return 15
+            
+            case .tiny: return 12
+            
+            case .veryTiny: return 10
+        }
+    }
+}
+
+enum BarBlurBehavour: Int, CaseIterable {
+    
+    case none, top, bottom, all
+    
+    var title: String {
+        
+        switch self {
+            
+            case .none: return "None"
+            
+            case .top: return "Blur Top"
+            
+            case .bottom: return "Blur Bottom"
+            
+            case .all: return "Blur Both Bars"
+        }
+    }
+}
+
+enum InfoSection: String, CaseIterable {
+    
+    case genre, composer, albumArtist, type, duration, plays, added, updated, placement, bpm, skips, grouping, comments, copyright
+    
+    static func applicableSections(for entityType: Entity) -> Set<InfoSection> {
+        
+        var set: Set<InfoSection> {
+            
+            switch entityType {
+                
+                case .album: return [.composer, .type, .albumArtist, .updated, .placement, .bpm, .grouping, .comments]
+                
+                case .artist, .albumArtist, .genre, .composer: return [.genre, .composer, .type, .albumArtist, .updated, .placement, .bpm, .grouping, .comments, .copyright]
+                
+                case .playlist: return [.genre, .composer, .albumArtist, .placement, .bpm, .grouping, .comments, .copyright]
+                
+                case .song: return [.type, .updated]
+            }
+        }
+        
+        return Set(InfoSection.allCases).subtracting(set)
     }
 }

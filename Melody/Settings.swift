@@ -90,8 +90,10 @@ var usePlaylistCustomBackground: Bool { return prefs.bool(forKey: .usePlaylistCu
 var useArtistCustomBackground: Bool { return prefs.bool(forKey: .useArtistCustomBackground) }
 var primarySizeSuffix: Int { return prefs.integer(forKey: .primarySizeSuffix) }
 var secondarySizeSuffix: Int { return prefs.integer(forKey: .secondarySizeSuffix) }
-var filterProperties: [Property] { return prefs.array(forKey: .filterProperties)?.compactMap({ $0 as? Int }).compactMap({ Property(rawValue: $0) }) ?? [] }
-var librarySections: [LibrarySection]{ return prefs.array(forKey: .librarySections)?.compactMap({ $0 as? Int }).compactMap({ LibrarySection(rawValue: $0) }) ?? [] }
+var filterProperties: [Property] { return prefs.array(forKey: .filterProperties)?.compactMap({ Property.from($0 as? Property.RawValue) }) ?? [] }
+var librarySections: [LibrarySection]{ return prefs.array(forKey: .librarySections)?.compactMap({ LibrarySection.from($0 as? LibrarySection.RawValue) }) ?? [] }
+var otherFilterProperties: [Property] { return prefs.array(forKey: .otherFilterProperties)?.compactMap({ Property.from($0 as? Property.RawValue) }) ?? [] }
+var otherLibrarySections: [LibrarySection]{ return prefs.array(forKey: .otherLibrarySections)?.compactMap({ LibrarySection.from($0 as? LibrarySection.RawValue) }) ?? [] }
 var useCompactCollector: Bool { return prefs.bool(forKey: .useCompactCollector) }
 var cornerRadius: CornerRadius { return CornerRadius(rawValue: prefs.integer(forKey: .cornerRadius)) ?? .automatic }
 var widgetCornerRadius: CornerRadius? { return CornerRadius(rawValue: prefs.integer(forKey: .widgetCornerRadius)) }
@@ -127,6 +129,14 @@ var removeArtistPunctuation: Bool { return prefs.bool(forKey: .removeArtistPunct
 var removeArtistAmpersands: Bool { return prefs.bool(forKey: .removeArtistAmpersands) }
 var replaceTitleCensoredWords: Bool { return prefs.bool(forKey: .replaceTitleCensoredWords) }
 var replaceArtistCensoredWords: Bool { return prefs.bool(forKey: .replaceArtistCensoredWords) }
+var sectionCountVisible: Bool { return prefs.bool(forKey: .sectionCountVisible) }
+var useWhiteColorBackground: Bool { return prefs.bool(forKey: .useWhiteColorBackground) }
+var useBlackColorBackground: Bool { return prefs.bool(forKey: .useBlackColorBackground) }
+var hiddenFilterProperties: [Property] { return prefs.array(forKey: .hiddenFilterProperties)?.compactMap({ Property.from($0 as? Property.RawValue) }) ?? [] }
+var hiddenLibrarySections: [LibrarySection] { return prefs.array(forKey: .hiddenLibrarySections)?.compactMap({ LibrarySection.from($0 as? LibrarySection.RawValue) }) ?? [] }
+var activeFont: Font { return Font(rawValue: prefs.integer(forKey: .activeFont)) ?? .system }
+var barBlurBehaviour: BarBlurBehavour { return BarBlurBehavour(rawValue: prefs.integer(forKey: .barBlurBehaviour)) ?? .all }
+var visibleInfoItems: [InfoSection] { return prefs.array(forKey: .visibleInfoItems)?.compactMap({ InfoSection.from($0 as? InfoSection.RawValue) }) ?? [] }
 
 class Settings {
     
@@ -232,6 +242,8 @@ class Settings {
             .filterProperties: Property.allCases.map({ $0.rawValue }),
             .librarySections: [LibrarySection.playlists, .songs, .artists, .albums, .genres, .composers, .compilations].map({ $0.rawValue }),
             .useCompactCollector: true,
+            .otherFilterProperties: [Int](),
+            .otherLibrarySections: [Int](),
             .widgetCornerRadius: CornerRadius.large.rawValue,
             .listsCornerRadius: CornerRadius.automatic.rawValue,
             .infoCornerRadius: CornerRadius.automatic.rawValue,
@@ -264,6 +276,14 @@ class Settings {
             .removeArtistPunctuation: true,
             .removeArtistAmpersands: true,
             .replaceArtistCensoredWords: true,
+            .sectionCountVisible: false,//isInDebugMode,
+            .useWhiteColorBackground: false,
+            .useBlackColorBackground: false,
+            .hiddenFilterProperties: [Int](),
+            .hiddenLibrarySections: [Int](),
+            .activeFont: Font.myriadPro.rawValue,
+            .barBlurBehaviour: BarBlurBehavour.all.rawValue,
+            .visibleInfoItems: InfoSection.allCases.map({ $0.rawValue })
         ])
         
         sharedDefaults.register(defaults: [
@@ -378,7 +398,7 @@ class Settings {
     }
     
     static var defaultSeparationMethod: SeparationMethod { return isiPhoneX ? .below : .smaller }
-    static var defaultRefreshInterval: LibraryRefreshInterval = .none // { return isInDebugMode ? .none : .fiveMinutes }
+    static var defaultRefreshInterval: LibraryRefreshInterval = .none
     static var defaultRecentlyUpdatedPlaylistSorts: [PlaylistView] { return isInDebugMode ? [.appleMusic] : [] }
     static var defaultTabBarBehaviour: TabBarTapBehaviour { return isInDebugMode ? .scrollToTop : .returnThenScroll }
     static var defaultGestureDuration: GestureDuration { return isInDebugMode ? .short : .medium }
@@ -478,6 +498,10 @@ extension String {
     static let useArtistCustomBackground = "useArtistCustomBackground"
     static let filterProperties = "filterProperties"
     static let librarySections = "librarySections"
+    static let otherFilterProperties = "otherFilterProperties"
+    static let otherLibrarySections = "otherLibrarySections"
+    static let hiddenFilterProperties = "hiddenFilterProperties"
+    static let hiddenLibrarySections = "hiddenLibrarySections"
     static let useCompactCollector = "useCompactCollector"
     static let listsCornerRadius = "listsCornerRadius"
     static let infoCornerRadius = "infoCornerRadius"
@@ -510,6 +534,12 @@ extension String {
     static let removeTitlePunctuation = "removeTitlePunctuation"
     static let removeTitleAmpersands = "removeTitleAmpersands"
     static let replaceTitleCensoredWords = "replaceTitleCensoredWords"
+    static let sectionCountVisible = "sectionCountVisible"
+    static let useWhiteColorBackground = "useWhiteColorBackground"
+    static let useBlackColorBackground = "useBlackColorBackground"
+    static let activeFont = "activeFont"
+    static let barBlurBehaviour = "barBlurBehaviour"
+    static let visibleInfoItems = "visibleInfoItems"
 }
 
 // MARK: - Notification Settings Constants
@@ -563,6 +593,15 @@ extension NSNotification.Name {
     static let numbersBelowLettersChanged = Notification.Name.init("numbersBelowLettersChanged")
     static let lyricsTextAlignmentChanged = nameByAppending(to: .lyricsTextAlignment)
     static let lyricsTextOptionsChanged = nameByAppending(to: "lyricsTextOptions")
+    static let showExplicitnessChanged = nameByAppending(to: .showExplicitness)
+    static let sectionCountVisiblityChanged = nameByAppending(to: .sectionCountVisible)
+    static let useWhiteColorBackgroundChanged = nameByAppending(to: .useWhiteColorBackground)
+    static let useBlackColorBackgroundChanged = nameByAppending(to: .useBlackColorBackground)
+    static let activeFontChanged = nameByAppending(to: .activeFont)
+    static let barBlurBehaviourChanged = nameByAppending(to: .barBlurBehaviour)
+    static let lineHeightsCalculated = Notification.Name.init("lineHeightsCalculated")
+    static let headerHeightCalculated = Notification.Name.init("headerHeightCalculated")
+    static let visibleInfoItemsChanged = nameByAppending(to: .visibleInfoItems)
     
     static func nameByAppending(to text: String) -> Notification.Name {
         

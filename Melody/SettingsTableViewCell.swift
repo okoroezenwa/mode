@@ -17,6 +17,7 @@ class SettingsTableViewCell: UITableViewCell {
     @IBOutlet var check: MELImageView!
     @IBOutlet var itemSwitch: MELSwitch!
     @IBOutlet var borderViews: [MELBorderView]!
+    @IBOutlet var stackView: UIStackView!
     
     override func awakeFromNib() {
         
@@ -26,6 +27,17 @@ class SettingsTableViewCell: UITableViewCell {
         
         preservesSuperviewLayoutMargins = false
         contentView.preservesSuperviewLayoutMargins = false
+        
+        updateSpacing()
+        
+        notifier.addObserver(self, selector: #selector(updateSpacing), name: .lineHeightsCalculated, object: nil)
+    }
+    
+    @objc func updateSpacing() {
+        
+        stackView.spacing = FontManager.shared.cellSpacing
+        stackView.layoutMargins.bottom = FontManager.shared.cellInset
+        stackView.layoutMargins.top = FontManager.shared.cellInset
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -41,11 +53,25 @@ class SettingsTableViewCell: UITableViewCell {
         
         borderViews.forEach({ $0.alphaOverride = highlighted ? 0.05 : 0 })
     }
+    
+    override func addSubview(_ view: UIView) {
+        
+        if view.className.contains("ReorderControl") {
+            
+            view.subviews.forEach({ $0.removeFromSuperview() })
+            
+            let imageView = MELImageView.init(image: #imageLiteral(resourceName: "ReorderControl"))
+            imageView.translatesAutoresizingMaskIntoConstraints = false
+            view.centre(imageView, withOffsets: .init(x: 0, y: 1))
+        }
+        
+        super.addSubview(view)
+    }
 
     func prepare(with setting: Setting, animated: Bool = false) {
         
         titleLabel.text = setting.title
-        titleLabel.textAlignment = setting.accessoryType == .none ? .center : .left
+//        titleLabel.textAlignment = setting.accessoryType == .none ? .center : .left
         subtitleLabel.text = setting.subtitle
         subtitleLabel.isHidden = setting.subtitle == nil
         tertiaryLabel.text = setting.tertiaryDetail
@@ -65,7 +91,7 @@ class SettingsTableViewCell: UITableViewCell {
                 return true
             }
         }()
-        borderViews.forEach({ $0.isHidden = setting.accessoryType != .none })
+//        borderViews.forEach({ $0.isHidden = setting.accessoryType != .none })
         
         titleLabel.lightOverride = setting.inactive()
         subtitleLabel.lightOverride = setting.inactive()

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.13.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.9"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -22,7 +22,7 @@
             <subviews>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zkE-h5-Hbz" customClass="MELButton" customModule="Mode" customModuleProvider="target">
                     <rect key="frame" x="0.0" y="0.0" width="200" height="48"/>
-                    <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="16"/>
+                    <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                     <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     <inset key="contentEdgeInsets" minX="0.0" minY="10" maxX="0.0" maxY="0.0"/>
                     <inset key="titleEdgeInsets" minX="5" minY="0.0" maxX="0.0" maxY="0.0"/>
@@ -31,7 +31,51 @@
                 </button>
                 <view userInteractionEnabled="NO" alpha="0.05000000074505806" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qa6-6m-8pD" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
                     <rect key="frame" x="8" y="10" width="184" height="38"/>
+                    <subviews>
+                        <stackView opaque="NO" contentMode="scaleToFill" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="HRw-Ua-Lqv">
+                            <rect key="frame" x="59.5" y="0.0" width="65.5" height="38"/>
+                            <subviews>
+                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HrG-Nl-8RQ">
+                                    <rect key="frame" x="4" y="0.0" width="15" height="38"/>
+                                    <subviews>
+                                        <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="3Fd-pK-WKe" customClass="MELImageView" customModule="Mode" customModuleProvider="target">
+                                            <rect key="frame" x="0.0" y="0.0" width="15" height="36"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="15" id="ENz-l6-nKv"/>
+                                            </constraints>
+                                        </imageView>
+                                    </subviews>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <constraints>
+                                        <constraint firstItem="3Fd-pK-WKe" firstAttribute="leading" secondItem="HrG-Nl-8RQ" secondAttribute="leading" id="1YE-YY-QgL"/>
+                                        <constraint firstItem="3Fd-pK-WKe" firstAttribute="top" secondItem="HrG-Nl-8RQ" secondAttribute="top" id="8hq-hX-Fvl"/>
+                                        <constraint firstAttribute="trailing" secondItem="3Fd-pK-WKe" secondAttribute="trailing" id="Ifv-uW-ghE"/>
+                                        <constraint firstAttribute="bottom" secondItem="3Fd-pK-WKe" secondAttribute="bottom" constant="2" id="eeq-dL-55t"/>
+                                    </constraints>
+                                </view>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mSh-Ne-vzz" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                    <rect key="frame" x="23" y="0.0" width="38.5" height="38"/>
+                                    <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
+                                    <nil key="textColor"/>
+                                    <nil key="highlightedColor"/>
+                                    <userDefinedRuntimeAttributes>
+                                        <userDefinedRuntimeAttribute type="number" keyPath="scaleFactor">
+                                            <real key="value" value="0.69999999999999996"/>
+                                        </userDefinedRuntimeAttribute>
+                                    </userDefinedRuntimeAttributes>
+                                </label>
+                            </subviews>
+                            <edgeInsets key="layoutMargins" top="0.0" left="4" bottom="0.0" right="4"/>
+                        </stackView>
+                    </subviews>
                     <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="bottom" secondItem="HRw-Ua-Lqv" secondAttribute="bottom" id="0Za-kP-YzR"/>
+                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="HRw-Ua-Lqv" secondAttribute="trailing" id="Axf-bG-VSN"/>
+                        <constraint firstItem="HRw-Ua-Lqv" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="qa6-6m-8pD" secondAttribute="leading" id="GhH-Xz-hbd"/>
+                        <constraint firstItem="HRw-Ua-Lqv" firstAttribute="centerX" secondItem="qa6-6m-8pD" secondAttribute="centerX" id="JYf-RJ-LeZ"/>
+                        <constraint firstItem="HRw-Ua-Lqv" firstAttribute="top" secondItem="qa6-6m-8pD" secondAttribute="top" id="e1u-ZB-QPs"/>
+                    </constraints>
                 </view>
             </subviews>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -54,6 +98,10 @@
                 <outlet property="borderViewTopConstraint" destination="Jga-mN-TC7" id="1LU-vk-gJc"/>
                 <outlet property="borderViewTrailingConstraint" destination="pQZ-zJ-ETY" id="IEW-eS-pf3"/>
                 <outlet property="button" destination="zkE-h5-Hbz" id="rgX-Lp-koT"/>
+                <outlet property="imageView" destination="3Fd-pK-WKe" id="91g-JN-Kes"/>
+                <outlet property="imageViewBottomConstraint" destination="eeq-dL-55t" id="Cg3-Ai-Epr"/>
+                <outlet property="label" destination="mSh-Ne-vzz" id="nnU-SS-LOT"/>
+                <outlet property="stackView" destination="HRw-Ua-Lqv" id="wFE-Hz-5bX"/>
             </connections>
         </view>
     </objects>

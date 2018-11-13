@@ -11,18 +11,18 @@ import CoreData
 
 class FilterViewController: UIViewController, InfoLoading, SingleItemActionable, CellAnimatable, FilterContainer, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, GenreTransitionable, ComposerTransitionable, PlaylistTransitionable, EntityVerifiable, Arrangeable, Refreshable, BorderButtonContaining {
     
-    @IBOutlet weak var tableView: MELTableView!
-    @IBOutlet weak var filterViewContainer: FilterViewContainer! {
+    @IBOutlet var tableView: MELTableView!
+    @IBOutlet var filterViewContainer: FilterViewContainer! {
         
         didSet {
             
             filterViewContainer.context = .filter(filter: sender, container: self)
         }
     }
-    @IBOutlet weak var bottomViewBottomConstraint: NSLayoutConstraint!
-    @IBOutlet weak var largeActivityIndicator: MELActivityIndicatorView!
-    @IBOutlet weak var activityView: UIView!
-    @IBOutlet weak var activityVisualEffectView: MELVisualEffectView!
+    @IBOutlet var bottomViewBottomConstraint: NSLayoutConstraint!
+    @IBOutlet var largeActivityIndicator: MELActivityIndicatorView!
+    @IBOutlet var activityView: UIView!
+    @IBOutlet var activityVisualEffectView: MELVisualEffectView!
     @IBOutlet var activityViewVerticalCenterConstraint: NSLayoutConstraint!
     
     lazy var headerView: HeaderView = {
@@ -47,7 +47,7 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
 //            arrangeButton = arrangeBorderView.button
 //            self.arrangeBorderView = arrangeBorderView
             
-            let editView = BorderedButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, action: #selector(SongActionManager.toggleEditing(_:)), target: songManager)
+            let editView = BorderedButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, tapAction: .init(action: #selector(SongActionManager.toggleEditing(_:)), target: songManager), longPressAction: .init(action: #selector(SongActionManager.showActionsForAll(_:)), target: songManager))
             editButton = editView.button
             self.editView = editView
             
@@ -137,7 +137,7 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         let button = MELButton.init(frame: .init(x: 0, y: 0, width: 30, height: 30))
         button.setTitle(nil, for: .normal)
         button.addTarget(self, action: #selector(rightViewButtonTapped), for: .touchUpInside)
-        button.titleLabel?.font = UIFont.myriadPro(ofWeight: .semibold, size: 17)
+        button.fontWeight = FontWeight.semibold.rawValue
         
         return button
     }()
@@ -251,7 +251,6 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         
         sender?.filtering = true
         tableContainer?.filterContainer = self
-//        tableView.tableHeaderView = headerView
         
 //        let refreshControl = MELRefreshControl.init()
 //        refreshControl.addTarget(refresher, action: #selector(Refresher.refresh(_:)), for: .valueChanged)
@@ -283,6 +282,7 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillHideNotification, object: nil)
         notifier.addObserver(self, selector: #selector(updateCollectedView(_:)), name: .managerItemsChanged, object: nil)
+        [Notification.Name.entityCountVisibilityChanged, .showExplicitnessChanged].forEach({ notifier.addObserver(self, selector: #selector(updateEntityCountVisibility), name: $0, object: nil) })
         
         if case .collections(_, .playlist) = entities { } else {
             
@@ -317,6 +317,13 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         
             searchBar.becomeFirstResponder()
         }
+    }
+    
+    @objc func updateEntityCountVisibility() {
+        
+        guard let indexPaths = tableView.indexPathsForVisibleRows else { return }
+        
+        tableView.reloadRows(at: indexPaths, with: .none)
     }
     
     @objc func updateNowPlaying() {
@@ -715,7 +722,7 @@ extension FilterViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
-        return filtering ? 72 : 57
+        return filtering ? FontManager.shared.entityCellHeight : 57
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -876,7 +883,7 @@ extension FilterViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     
     func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
         
-        let label = view as? MELLabel ?? MELLabel.init(fontWeight: .regular, fontSize: 25, alignment: .center)
+        let label = view as? MELLabel ?? MELLabel.init(fontWeight: .regular, textStyle: .subheading, alignment: .center)
         
         label.text = array[row] ?? "----"
         

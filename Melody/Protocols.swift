@@ -185,10 +185,93 @@ protocol InteractivePresenter {
     var presenter: PresentationAnimationController { get }
 }
 
-protocol TitleContaining {
+protocol PropertyStripPresented {
     
     var title: String { get }
     var propertyImage: UIImage? { get }
+}
+
+extension PropertyStripPresented {
+    
+    func perform(_ operation: FilterViewContext.Operation, context: FilterViewContext) {
+        
+        switch operation {
+            
+            case .group(index: let index):
+            
+                switch context {
+                    
+                    case .filter:
+                    
+                        guard let property = self as? Property, let arrayIndex = filterProperties.firstIndex(of: property), Set(otherFilterProperties).contains(property).inverted else { return }
+                    
+                        prefs.set(filterProperties.removing(from: arrayIndex).map({ $0.rawValue }), forKey: .filterProperties)
+                        prefs.set(otherFilterProperties.inserting(property, at: index ?? otherFilterProperties.endIndex).map({ $0.rawValue }), forKey: .otherFilterProperties)
+                    
+                    case .library:
+                    
+                        guard let section = self as? LibrarySection, let arrayIndex = librarySections.firstIndex(of: section), Set(otherLibrarySections).contains(section).inverted else { return }
+                        
+                        prefs.set(librarySections.removing(from: arrayIndex).map({ $0.rawValue }), forKey: .librarySections)
+                        prefs.set(otherLibrarySections.inserting(section, at: index ?? otherLibrarySections.endIndex).map({ $0.rawValue }), forKey: .otherLibrarySections)
+                }
+            
+            case .ungroup(index: let index):
+            
+                switch context {
+                    
+                    case .filter:
+                        
+                        guard let property = self as? Property, let arrayIndex = otherFilterProperties.firstIndex(of: property), Set(filterProperties).contains(property).inverted else { return }
+                        
+                        prefs.set(otherFilterProperties.removing(from: arrayIndex).map({ $0.rawValue }), forKey: .otherFilterProperties)
+                        prefs.set(filterProperties.inserting(property, at: index ?? filterProperties.endIndex).map({ $0.rawValue }), forKey: .filterProperties)
+                    
+                    case .library:
+                        
+                        guard let section = self as? LibrarySection, let arrayIndex = otherLibrarySections.firstIndex(of: section), Set(librarySections).contains(section).inverted else { return }
+                        
+                        prefs.set(otherLibrarySections.removing(from: arrayIndex).map({ $0.rawValue }), forKey: .otherLibrarySections)
+                        prefs.set(librarySections.inserting(section, at: index ?? librarySections.endIndex).map({ $0.rawValue }), forKey: .librarySections)
+                }
+            
+            case .hide:
+            
+                switch context {
+                    
+                    case .filter:
+                    
+                        guard let property = self as? Property, Set(hiddenFilterProperties).contains(property).inverted else { return }
+                    
+                        prefs.set(hiddenFilterProperties.appending(property).map({ $0.rawValue }), forKey: .hiddenFilterProperties)
+                    
+                    case .library:
+                    
+                        guard let section = self as? LibrarySection, Set(hiddenLibrarySections).contains(section).inverted else { return }
+                        
+                        prefs.set(hiddenLibrarySections.appending(section).map({ $0.rawValue }), forKey: .hiddenLibrarySections)
+                }
+            
+            case .unhide:
+            
+                switch context {
+                    
+                    case .filter:
+                    
+                        guard let property = self as? Property, let index = hiddenFilterProperties.firstIndex(of: property) else { return }
+                    
+                        prefs.set(hiddenFilterProperties.removing(from: index).map({ $0.rawValue }), forKey: .hiddenFilterProperties)
+                    
+                    case .library:
+                    
+                        guard let section = self as? LibrarySection, let index = hiddenLibrarySections.firstIndex(of: section) else { return }
+                        
+                        prefs.set(hiddenLibrarySections.removing(from: index).map({ $0.rawValue }), forKey: .hiddenLibrarySections)
+                }
+        }
+        
+        notifier.post(name: .propertiesUpdated, object: nil, userInfo: [String.filterViewContext: context])
+    }
 }
 
 protocol EntityContainer: UITableViewDelegate, TableViewContaining {
@@ -235,22 +318,30 @@ protocol CellAnimatable: TableViewContaining { }
 
 extension CellAnimatable {
     
-    func animateCells(direction: AnimationOrientation = .horizontal) {
+    func animateCells(direction: AnimationOrientation = .horizontal, alphaOnly: Bool = false) {
         
         let cells = tableView.visibleCells
         
         for cell in cells {
             
             cell.alpha = 0
-            cell.transform = .init(translationX: direction == .horizontal ? tableView.bounds.size.width : 0, y: direction == .horizontal ? 0 : 40)
+            
+            if alphaOnly.inverted {
+            
+                cell.transform = .init(translationX: direction == .horizontal ? tableView.bounds.size.width : 0, y: direction == .horizontal ? 0 : 40)
+            }
         }
         
         for cell in cells.enumerated() {
             
-            UIView.animate(withDuration: 0.8, delay: /*direction == .horizontal ? */0.02 * Double(cell.offset)/* : 0*/, usingSpringWithDamping: /*direction == .horizontal ? */0.8/* : 0.65*/, initialSpringVelocity: direction == .horizontal ? 0 : 20, options: [.curveLinear, .allowUserInteraction], animations: {
+            UIView.animate(withDuration: 0.8, delay: 0.02 * Double(cell.offset), usingSpringWithDamping: 0.8, initialSpringVelocity: direction == .horizontal ? 0 : 20, options: [.curveLinear, .allowUserInteraction], animations: {
                 
                 cell.element.alpha = 1
-                cell.element.transform = .identity
+                
+                if alphaOnly.inverted {
+                
+                    cell.element.transform = .identity
+                }
                 
             }, completion: nil)
         }
@@ -288,13 +379,13 @@ protocol Boldable {
 
 extension Boldable {
     
-    func changeSize(to weight: UIFont.FontWeight) {
+    func changeSize(to weight: FontWeight) {
         
         for container in boldableLabels {
             
             guard let size = container?.actualFont?.pointSize else { return }
             
-            container?.actualFont = UIFont.myriadPro(ofWeight: weight, size: size)
+            container?.actualFont = UIFont.font(ofWeight: weight, size: size)
         }
     }
 }
@@ -360,20 +451,20 @@ extension BorderButtonContaining {
                 
                     view.borderViewLeadingConstraint.constant = 10
                     view.borderViewTrailingConstraint.constant = borderedButtons.count < 3 ? 5 : edgeConstraint
-                    view.button.contentEdgeInsets.left = borderedButtons.count < 3 ? 5 : edgeConstraint
+//                    view.button.contentEdgeInsets.left = borderedButtons.count < 3 ? 5 : edgeConstraint
                 
                 case .middle(single: let single):
                 
                     view.borderViewLeadingConstraint.constant = single ? 10 : middleConstraint
                     view.borderViewTrailingConstraint.constant = single ? 10 : middleConstraint
-                    view.button.contentEdgeInsets.left = 0
-                    view.button.contentEdgeInsets.right = 0
+//                    view.button.contentEdgeInsets.left = 0
+//                    view.button.contentEdgeInsets.right = 0
                 
                 case .trailing:
                 
                     view.borderViewLeadingConstraint.constant = borderedButtons.count < 3 ? 5 : edgeConstraint
                     view.borderViewTrailingConstraint.constant = 10
-                    view.button.contentEdgeInsets.right = borderedButtons.count < 3 ? 5 : edgeConstraint
+//                    view.button.contentEdgeInsets.right = borderedButtons.count < 3 ? 5 : edgeConstraint
             }
         }
     }

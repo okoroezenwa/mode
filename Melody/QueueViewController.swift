@@ -10,15 +10,15 @@ import UIKit
 
 class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITableViewDataSource, UITableViewDelegate, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, GenreTransitionable, ComposerTransitionable, InfoLoading, BackgroundHideable, Dismissable, EntityContainer, CellAnimatable, Peekable, SingleItemActionable, IndexContaining, LargeActivityIndicatorContaining, EntityVerifiable, Detailing {
     
-    @IBOutlet weak var tableView: MELTableView!
-    @IBOutlet weak var bottomView: UIView!
-    @IBOutlet weak var queueStackView: UIStackView!
-    @IBOutlet weak var queueStackViewHeightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var activityIndicator: MELActivityIndicatorView!
-    @IBOutlet weak var largeActivityIndicator: MELActivityIndicatorView!
-    @IBOutlet weak var activityView: UIView!
-    @IBOutlet weak var activityVisualEffectView: MELVisualEffectView!
-    @IBOutlet weak var actionsButton: MELButton! {
+    @IBOutlet var tableView: MELTableView!
+    @IBOutlet var bottomView: UIView!
+    @IBOutlet var queueStackView: UIStackView!
+    @IBOutlet var queueStackViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet var activityIndicator: MELActivityIndicatorView!
+    @IBOutlet var largeActivityIndicator: MELActivityIndicatorView!
+    @IBOutlet var activityView: UIView!
+    @IBOutlet var activityVisualEffectView: MELVisualEffectView!
+    @IBOutlet var actionsButton: MELButton! {
         
         didSet {
             
@@ -28,7 +28,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             LongPressManager.shared.gestureRecognisers.append(Weak.init(value: gr))
         }
     }
-    @IBOutlet weak var editButton: MELButton! {
+    @IBOutlet var editButton: MELButton! {
         
         didSet {
             
@@ -139,9 +139,10 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         
         super.viewDidLoad()
         
-        if let _ = peeker {
+        if let _ = peeker, let container = appDelegate.window?.rootViewController as? ContainerViewController {
             
-            temporaryImageView.image = ArtworkManager.shared.activeContainer?.modifier?.artworkType.image
+            ArtworkManager.shared.currentlyPeeking = self
+            temporaryImageView.image = container.imageView.image
         }
         
         shouldReturnToContainer = false
@@ -155,6 +156,10 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         notifier.addObserver(self, selector: #selector(reload), name: .shuffleInvoked, object: nil)
         
         notifier.addObserver(self, selector: #selector(updateQueue), name: .queueUpdated, object: musicPlayer)
+        
+        notifier.addObserver(self, selector: #selector(updateExplicitVisibility), name: .showExplicitnessChanged, object: nil)
+        
+        notifier.addObserver(tableView, selector: #selector(UITableView.reloadData), name: .lineHeightsCalculated, object: nil)
         
         if presented {
             
@@ -205,6 +210,13 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         tableView.tableFooterView = UIView.init(frame: .zero)
         
         updateQueue()
+    }
+    
+    @objc func updateExplicitVisibility() {
+        
+        guard let indexPaths = tableView.indexPathsForVisibleRows else { return }
+        
+        tableView.reloadRows(at: indexPaths, with: .none)
     }
     
     @objc func applicationChangedState(_ notification: Notification) {
@@ -991,6 +1003,13 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             
             UniversalMethods.banner(withTitle: "QVC going away...").show(for: 0.3)
         }
+        
+        if let _ = peeker, let container = appDelegate.window?.rootViewController as? ContainerViewController {
+            
+            ArtworkManager.shared.currentlyPeeking = nil
+            
+            UIView.transition(with: container.imageView, duration: 0.5, options: .transitionCrossDissolve, animations: { container.imageView.image = ArtworkManager.shared.activeContainer?.modifier?.artworkType.image/*self.oldArtwork*/ }, completion: nil)
+        }
     }
 
     // MARK: - Table view data source
@@ -1331,7 +1350,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
-        return indexPath.section == 1 && indexPath.row == 1 ? 88 : 72
+        return indexPath.section == 1 && indexPath.row == 1 ? 88 : FontManager.shared.entityCellHeight
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -1635,6 +1654,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             
             header?.attributor = nil
             header?.label.text = "now playing"
+            header?.label.attributes = nil
         }
         
         header?.altButton.addTarget(self, action: #selector(viewSections), for: .touchUpInside)

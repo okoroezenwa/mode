@@ -10,28 +10,31 @@ import UIKit
 
 class HeaderView: UIView, InfoLoading {
 
-    @IBOutlet weak var descriptionTextView: MELTextView!
-    @IBOutlet weak var descriptionTextViewHeightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var scrollStackView: UIStackView!
-    @IBOutlet weak var collectionViewHeightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var collectionViewHeaderHeightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var artistView: UIView!
-    @IBOutlet weak var artistButton: MELButton!
-    @IBOutlet weak var actionsStackView: UIStackView!
+    @IBOutlet var descriptionTextView: MELTextView!
+    @IBOutlet var descriptionTextViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet var scrollStackView: UIStackView!
+    @IBOutlet var collectionViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet var collectionViewHeaderHeightConstraint: NSLayoutConstraint!
+    @IBOutlet var artistView: UIView!
+    @IBOutlet var artistButton: MELButton!
+    @IBOutlet var actionsStackView: UIStackView!
     @IBOutlet var likedView: UIView!
     @IBOutlet var insertView: UIView!
     @IBOutlet var infoView: UIView!
-    @IBOutlet weak var chevron: MELImageView!
-    @IBOutlet weak var chevronBorder: UIView!
-    @IBOutlet weak var likedStateButton: MELButton!
-    @IBOutlet weak var tableHeaderContainer: UIView!
-    @IBOutlet weak var collectionView: UICollectionView!
-    @IBOutlet weak var loadingEffectView: MELVisualEffectView!
-    @IBOutlet weak var activityIndicatorView: MELActivityIndicatorView!
+    @IBOutlet var groupingView: UIView!
+    @IBOutlet var chevron: MELImageView!
+    @IBOutlet var chevronBorder: UIView!
+    @IBOutlet var likedStateButton: MELButton!
+    @IBOutlet var tableHeaderContainer: UIView!
+    @IBOutlet var collectionView: UICollectionView!
+    @IBOutlet var loadingEffectView: MELVisualEffectView!
+    @IBOutlet var activityIndicatorView: MELActivityIndicatorView!
     @IBOutlet var buttonsStackView: UIStackView!
     @IBOutlet var addButton: MELButton!
     @IBOutlet var infoButton: MELButton!
+    @IBOutlet var groupingButton: MELButton!
     @IBOutlet var scrollStackViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet var chevronContainerCenterYConstraint: NSLayoutConstraint!
     
     enum Context {
         
@@ -71,7 +74,7 @@ class HeaderView: UIView, InfoLoading {
     var context = Context.playlists([])
     
     let width = screenWidth / 2.75
-    lazy var size: CGSize = { return CGSize.init(width: width, height: width + 17 + 4 + 14 - 0.001) }()
+    lazy var size: CGSize = { return CGSize.init(width: width, height: width + FontManager.shared.collectionViewCellConstant - 0.001) }()
     
     @objc lazy var header = TableHeaderView.with(leftButtonVisible: true)
     
@@ -121,12 +124,20 @@ class HeaderView: UIView, InfoLoading {
             updateScrollStackView()
         }
     }
+    @objc var showGrouping = false {
+        
+        didSet {
+            
+            groupingView.isHidden = !showGrouping
+            updateScrollStackView()
+        }
+    }
     
     @objc var showRecents = false {
         
         didSet {
             
-            collectionViewHeightConstraint.constant = showRecents ? ((UIScreen.main.bounds.width) / 2.75) + 17 + 4 + 14 : 0
+            collectionViewHeightConstraint.constant = showRecents ? width + FontManager.shared.collectionViewCellConstant : 0
             collectionView.isHidden = !showRecents
             collectionViewHeaderHeightConstraint.constant = showRecents ? .textHeaderHeight : 0
             tableHeaderContainer.isHidden = !showRecents
@@ -248,12 +259,36 @@ class HeaderView: UIView, InfoLoading {
         super.awakeFromNib()
         
         updateScrollStackView()
+        updateSpacing(self)
+        
+        notifier.addObserver(self, selector: #selector(updateSpacing), name: .lineHeightsCalculated, object: nil)
     }
     
     func updateScrollStackView() {
         
-        scrollStackView.layoutMargins.left = showArtistView.inverted && showLoved.inverted && showInfo.inverted && showInsert.inverted ? 16 : 0
-        buttonsStackView.layoutMargins.left = showArtistView ? 0 : (showLoved || showInfo || showInsert) ? 16 : 0
+        scrollStackView.layoutMargins.left = showArtistView.inverted && showLoved.inverted && showInfo.inverted && showInsert.inverted && showGrouping.inverted ? 16 : 0
+        buttonsStackView.layoutMargins.left = showArtistView ? 0 : (showLoved || showInfo || showInsert || showGrouping) ? 16 : 0
+    }
+    
+    @objc func updateSpacing(_ sender: Any) {
+        
+        chevronContainerCenterYConstraint.constant = {
+            
+            switch activeFont {
+                
+                case .system, .avenirNext: return 6
+                
+                case .myriadPro: return 4
+            }
+        }()
+        
+        collectionViewHeightConstraint.constant = showRecents ? width + FontManager.shared.collectionViewCellConstant : 0
+        collectionViewHeaderHeightConstraint.constant = showRecents ? .textHeaderHeight : 0
+        
+        if sender is Notification, showRecents {
+            
+            notifier.post(name: .headerHeightCalculated, object: nil)
+        }
     }
 }
 
@@ -289,19 +324,19 @@ extension HeaderView: UICollectionViewDelegate, UICollectionViewDataSource {
             
                 let playlist = playlists[indexPath.row]
                 
-                updateImageView(using: playlist, in: cell, indexPath: indexPath, reusableView: collectionView, overridable: viewController as? OnlineOverridable)
+                updateImageView(using: playlist, entityType: .playlist, in: cell, indexPath: indexPath, reusableView: collectionView, overridable: viewController as? OnlineOverridable)
             
             case .albums(let albums):
             
                 let album = albums[indexPath.row]
             
-                updateImageView(using: album, in: cell, indexPath: indexPath, reusableView: collectionView)
+                updateImageView(using: album, entityType: .album, in: cell, indexPath: indexPath, reusableView: collectionView)
             
-            case .collections(kind: _, let collections):
+            case .collections(kind: let kind, let collections):
             
                 let collection = collections[indexPath.row]
                 
-                updateImageView(using: collection, in: cell, indexPath: indexPath, reusableView: collectionView)
+                updateImageView(using: collection, entityType: kind.entity, in: cell, indexPath: indexPath, reusableView: collectionView)
         }
     }
     

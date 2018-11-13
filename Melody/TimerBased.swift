@@ -88,7 +88,7 @@ extension TimerBased {
             
             if prefersBoldOnTap == true {
                 
-                repeatButton??.titleLabel?.font = UIFont.myriadPro(ofWeight: changingMusicPlayer ? .regular : .semibold, size: 17)
+                repeatButton??.fontWeight = (changingMusicPlayer ? FontWeight.regular : .semibold).rawValue
             }
             
             if changingMusicPlayer {
@@ -103,7 +103,7 @@ extension TimerBased {
             
             if prefersBoldOnTap == true {
                 
-                repeatButton??.titleLabel?.font = UIFont.myriadPro(ofWeight: .semibold, size: 17)
+                repeatButton??.fontWeight = FontWeight.semibold.rawValue
             }
             
             if changingMusicPlayer {
@@ -118,7 +118,7 @@ extension TimerBased {
             
             if prefersBoldOnTap == true {
                 
-                repeatButton??.titleLabel?.font = UIFont.myriadPro(ofWeight: changingMusicPlayer ? .semibold : .regular, size: 17)
+                repeatButton??.fontWeight = (changingMusicPlayer ? FontWeight.semibold : .regular).rawValue
             }
             
             if changingMusicPlayer {
@@ -143,7 +143,7 @@ extension TimerBased {
                 
                 if prefersBoldOnTap == true {
                     
-                    shuffle??.titleLabel?.font = UIFont.myriadPro(ofWeight: changingMusicPlayer ? .semibold : .regular, size: 17)
+                    shuffle??.fontWeight = (changingMusicPlayer ? FontWeight.semibold : .regular).rawValue
                     shuffle??.setImage(#imageLiteral(resourceName: changingMusicPlayer ? "ShuffleBold" : "Shuffle"), for: .normal)
                 }
                 
@@ -158,7 +158,7 @@ extension TimerBased {
                 
                 if prefersBoldOnTap == true {
                     
-                    shuffle??.titleLabel?.font = UIFont.myriadPro(ofWeight: changingMusicPlayer ? .regular : .semibold, size: 17)
+                    shuffle??.fontWeight = (changingMusicPlayer ? FontWeight.regular : .semibold).rawValue
                     shuffle??.setImage(#imageLiteral(resourceName: changingMusicPlayer ? "Shuffle" : "ShuffleBold"), for: .normal)
                 }
                 

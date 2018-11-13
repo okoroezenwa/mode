@@ -52,7 +52,7 @@ extension InfoLoading {
                 return nil
             }()
             
-            if let image = (entity as? MPMediaItemCollection)?.customArtwork?.scaled(to: infoVC.artworkImageView.bounds.size, by: 2) ?? item?.actualArtwork?.image(at: infoVC.artworkImageView.bounds.size) {
+            if let image = (entity as? MPMediaItemCollection)?.customArtwork(for: infoVC.context.entity)?.scaled(to: infoVC.artworkImageView.bounds.size, by: 2) ?? item?.actualArtwork?.image(at: infoVC.artworkImageView.bounds.size) {
                 
                 OperationQueue.main.addOperation({
                     
@@ -152,7 +152,7 @@ extension InfoLoading {
         }
     }
     
-    func updateImageView(using collection: MPMediaItemCollection, in cell: ArtworkContainingCell, indexPath: IndexPath, reusableView: AnyObject, overridable: OnlineOverridable? = nil) {
+    func updateImageView(using collection: MPMediaItemCollection, entityType type: Entity, in cell: ArtworkContainingCell, indexPath: IndexPath, reusableView: AnyObject, overridable: OnlineOverridable? = nil) {
         
         let bool: Bool = {
             
@@ -163,7 +163,7 @@ extension InfoLoading {
         
         guard let persistentID: MPMediaEntityPersistentID = {
             
-            if collection.customArtwork != nil {
+            if collection.customArtwork(for: type) != nil {
                 
                 return collection.persistentID
                 
@@ -207,7 +207,7 @@ extension InfoLoading {
                 
                 if bool {
                     
-                    if let image = collection.customArtwork?.scaled(to: size, by: 2) ?? item?.actualArtwork?.image(at: size) {
+                    if let image = collection.customArtwork(for: type)?.scaled(to: size, by: 2) ?? item?.actualArtwork?.image(at: size) {
                         
                         guard operation?.isCancelled == false else { return }
                         
@@ -236,7 +236,7 @@ extension InfoLoading {
                     
                 } else {
                     
-                    if let image = collection.customArtwork?.scaled(to: size, by: 2) ?? item?.actualArtwork?.image(at: size) {
+                    if let image = collection.customArtwork(for: type)?.scaled(to: size, by: 2) ?? item?.actualArtwork?.image(at: size) {
                         
                         guard operation?.isCancelled == false else { return }
                         

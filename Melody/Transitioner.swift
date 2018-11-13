@@ -204,4 +204,14 @@ class Transitioner: NSObject {
             sender.present(vc, animated: true, completion: nil)
         }
     }
+    
+    func showPropertySettings(from sender: UIViewController, with context: FilterViewContext) {
+        
+        guard let vc = presentedStoryboard.instantiateViewController(withIdentifier: "presentedVC") as? PresentedContainerViewController else { return }
+        
+        vc.context = .propertySettings
+        vc.filterContext = context
+        
+        sender.present(vc, animated: true, completion: nil)
+    }
 }

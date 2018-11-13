@@ -10,7 +10,7 @@ import UIKit
 
 class TableFooterView: UITableViewHeaderFooterView {
 
-    @IBOutlet weak var label: MELLabel! {
+    @IBOutlet var label: MELLabel! {
         
         didSet {
             

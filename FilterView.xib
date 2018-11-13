@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14269.12" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.13.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14252.5"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.9"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -130,10 +130,16 @@
                             <subviews>
                                 <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="999" horizontalCompressionResistancePriority="749" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="a50-jF-sXp" customClass="MELButton" customModule="Mode" customModuleProvider="target">
                                     <rect key="frame" x="0.0" y="0.0" width="66" height="36"/>
-                                    <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="15"/>
+                                    <fontDescription key="fontDescription" name="AvenirNext-Regular" family="Avenir Next" pointSize="15"/>
                                     <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                     <inset key="contentEdgeInsets" minX="14" minY="10" maxX="15" maxY="0.0"/>
                                     <state key="normal" title="contains"/>
+                                    <userDefinedRuntimeAttributes>
+                                        <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                            <integer key="value" value="1"/>
+                                        </userDefinedRuntimeAttribute>
+                                        <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="accessory"/>
+                                    </userDefinedRuntimeAttributes>
                                     <connections>
                                         <action selector="rightButtonTapped" destination="yf0-iH-lPr" eventType="touchUpInside" id="Pbs-TJ-emL"/>
                                     </connections>
@@ -310,6 +316,7 @@
                 <outlet property="filterInputViewHeightConstraint" destination="KuV-oQ-2hX" id="Uif-dU-pcV"/>
                 <outlet property="filterTestBorderView" destination="m2m-CS-c57" id="zvC-8e-fCS"/>
                 <outlet property="filterTestButton" destination="a50-jF-sXp" id="qyG-Wd-08T"/>
+                <outlet property="gradientView" destination="iWC-kT-eK1" id="SQi-fi-G8x"/>
                 <outlet property="searchBar" destination="XlL-bv-YTu" id="axo-Rg-8lj"/>
                 <outlet property="searchButtonContainer" destination="JiW-Sc-FkO" id="ehE-i2-7df"/>
                 <outlet property="searchButtonContainerWidthConstraint" destination="zZg-Do-Cnv" id="81P-lj-9Iy"/>

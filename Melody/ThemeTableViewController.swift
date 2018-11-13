@@ -10,7 +10,7 @@ import UIKit
 
 class ThemeTableViewController: UITableViewController {
 
-    @IBOutlet weak var nightSwitch: MELSwitch! {
+    @IBOutlet var nightSwitch: MELSwitch! {
         
         didSet {
             
@@ -22,7 +22,7 @@ class ThemeTableViewController: UITableViewController {
             }
         }
     }
-    @IBOutlet weak var timeSwitch: MELSwitch! {
+    @IBOutlet var timeSwitch: MELSwitch! {
         
         didSet {
             
@@ -34,7 +34,7 @@ class ThemeTableViewController: UITableViewController {
             }
         }
     }
-    @IBOutlet weak var brightnessSwitch: MELSwitch! {
+    @IBOutlet var brightnessSwitch: MELSwitch! {
         
         didSet {
             
@@ -46,15 +46,15 @@ class ThemeTableViewController: UITableViewController {
             }
         }
     }
-    @IBOutlet weak var anyImageView: MELImageView!
-    @IBOutlet weak var allImageView: MELImageView!
-    @IBOutlet weak var brightnessSlider: MELSlider!
-    @IBOutlet weak var fromButton: MELButton!
-    @IBOutlet weak var fromBorderView: MELBorderView!
-    @IBOutlet weak var toButton: MELButton!
-    @IBOutlet weak var toBorderView: MELBorderView!
-    @IBOutlet weak var lowerTimeDescriptionButton: MELButton!
-    @IBOutlet weak var higherTimeDescriptionButton: MELButton!
+    @IBOutlet var anyImageView: MELImageView!
+    @IBOutlet var allImageView: MELImageView!
+    @IBOutlet var brightnessSlider: MELSlider!
+    @IBOutlet var fromButton: MELButton!
+    @IBOutlet var fromBorderView: MELBorderView!
+    @IBOutlet var toButton: MELButton!
+    @IBOutlet var toBorderView: MELBorderView!
+    @IBOutlet var lowerTimeDescriptionButton: MELButton!
+    @IBOutlet var higherTimeDescriptionButton: MELButton!
     @IBOutlet var cells: [UITableViewCell]!
     
     lazy var previousBrightnessValue = UIScreen.main.brightness

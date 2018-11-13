@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.13.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina3_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.9"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -14,6 +17,9 @@
         </array>
         <array key="MyriadPro-Regular.otf">
             <string>MyriadPro-Regular</string>
+        </array>
+        <array key="MyriadPro-Semibold.otf">
+            <string>MyriadPro-Semibold</string>
         </array>
     </customFonts>
     <scenes>
@@ -61,6 +67,12 @@
                                                 <state key="normal" title="Clear..." image="Discard">
                                                     <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                 </state>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                        <integer key="value" value="1"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="body"/>
+                                                </userDefinedRuntimeAttributes>
                                                 <connections>
                                                     <action selector="clearQueue:" destination="9EO-ML-dX3" eventType="touchUpInside" id="Vxl-gD-Qdx"/>
                                                 </connections>
@@ -83,6 +95,12 @@
                                                 <inset key="titleEdgeInsets" minX="5" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="5" maxY="2"/>
                                                 <state key="normal" title="Edit" image="Add"/>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                        <integer key="value" value="1"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="body"/>
+                                                </userDefinedRuntimeAttributes>
                                             </button>
                                         </subviews>
                                         <constraints>
@@ -208,7 +226,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="onDrag" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="ZEq-NA-3Zz" customClass="MELTableView" customModule="Mode" customModuleProvider="target">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="onDrag" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="ZEq-NA-3Zz" customClass="MELTableView" customModule="Mode" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="117" width="320" height="312"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <userDefinedRuntimeAttributes>
@@ -234,6 +252,12 @@
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                <integer key="value" value="1"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="body"/>
+                                        </userDefinedRuntimeAttributes>
                                     </textView>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -266,6 +290,12 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="36" height="50"/>
                                                         <inset key="contentEdgeInsets" minX="8" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                         <state key="normal" title="G"/>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                <integer key="value" value="1"/>
+                                                            </userDefinedRuntimeAttribute>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="body"/>
+                                                        </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <action selector="changeValue:" destination="Kuh-Ag-Xsi" eventType="touchUpInside" id="neA-5u-JTa"/>
                                                         </connections>
@@ -298,6 +328,12 @@
                                             <searchBar contentMode="redraw" searchBarStyle="minimal" text="" translatesAutoresizingMaskIntoConstraints="NO" id="dDq-hD-RW3" customClass="MELSearchBar" customModule="Mode" customModuleProvider="target">
                                                 <rect key="frame" x="36" y="0.0" width="248" height="50"/>
                                                 <textInputTraits key="textInputTraits" autocapitalizationType="words"/>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                        <integer key="value" value="1"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="body"/>
+                                                </userDefinedRuntimeAttributes>
                                                 <connections>
                                                     <outlet property="delegate" destination="Kuh-Ag-Xsi" id="M2g-kb-Lxa"/>
                                                 </connections>
@@ -309,6 +345,12 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="36" height="50"/>
                                                         <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="8" maxY="0.0"/>
                                                         <state key="normal" title="P"/>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                <integer key="value" value="1"/>
+                                                            </userDefinedRuntimeAttribute>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="body"/>
+                                                        </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <action selector="changeValue:" destination="Kuh-Ag-Xsi" eventType="touchUpInside" id="YID-3p-RpO"/>
                                                         </connections>
@@ -421,13 +463,13 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Qen-R1-L51">
-                                            <rect key="frame" x="0.0" y="20" width="375" height="1480"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="0.0" height="1500"/>
                                             <subviews>
                                                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="mbd-lQ-e6C">
-                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="1480"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="1500"/>
                                                     <subviews>
                                                         <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dHX-sg-XOD">
-                                                            <rect key="frame" x="0.0" y="0.0" width="375" height="166"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="0.0" height="166"/>
                                                             <subviews>
                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VLd-xB-4l6">
                                                                     <rect key="frame" x="0.0" y="0.0" width="156" height="166"/>
@@ -458,22 +500,28 @@
                                                                     </constraints>
                                                                 </view>
                                                                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="Xxl-ZJ-9BI">
-                                                                    <rect key="frame" x="156" y="0.0" width="219" height="166"/>
+                                                                    <rect key="frame" x="156" y="0.0" width="0.0" height="166"/>
                                                                     <subviews>
                                                                         <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1iK-Sl-kLD">
-                                                                            <rect key="frame" x="0.0" y="0.0" width="219" height="46"/>
+                                                                            <rect key="frame" x="0.0" y="0.0" width="0.0" height="46"/>
                                                                             <subviews>
                                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="E1F-BA-FrD" customClass="GradientView" customModule="Mode" customModuleProvider="target">
-                                                                                    <rect key="frame" x="0.0" y="0.0" width="219" height="46"/>
+                                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="46"/>
                                                                                     <subviews>
                                                                                         <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" horizontalHuggingPriority="253" verticalHuggingPriority="253" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Xda-hQ-0go">
-                                                                                            <rect key="frame" x="0.0" y="0.0" width="219" height="46"/>
+                                                                                            <rect key="frame" x="0.0" y="0.0" width="0.0" height="46"/>
                                                                                             <subviews>
                                                                                                 <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="253" verticalHuggingPriority="753" verticalCompressionResistancePriority="753" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CFL-Dy-6mH" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                                                                    <rect key="frame" x="0.0" y="0.0" width="157" height="46"/>
+                                                                                                    <rect key="frame" x="0.0" y="0.0" width="143" height="46"/>
                                                                                                     <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="25"/>
                                                                                                     <inset key="contentEdgeInsets" minX="10" minY="16" maxX="10" maxY="5"/>
                                                                                                     <state key="normal" title="Entity Name"/>
+                                                                                                    <userDefinedRuntimeAttributes>
+                                                                                                        <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                                                            <integer key="value" value="0"/>
+                                                                                                        </userDefinedRuntimeAttribute>
+                                                                                                        <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="infoTitle"/>
+                                                                                                    </userDefinedRuntimeAttributes>
                                                                                                     <connections>
                                                                                                         <action selector="viewInContext" destination="9S9-Nb-Hqt" eventType="touchUpInside" id="anu-Bm-V66"/>
                                                                                                     </connections>
@@ -502,16 +550,22 @@
                                                                             </constraints>
                                                                         </stackView>
                                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="IFq-Qq-Pj7" customClass="GradientView" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="0.0" y="46" width="219" height="40"/>
+                                                                            <rect key="frame" x="0.0" y="46" width="0.0" height="40"/>
                                                                             <subviews>
                                                                                 <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" horizontalHuggingPriority="253" verticalHuggingPriority="253" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EF1-AL-bAo">
-                                                                                    <rect key="frame" x="0.0" y="0.0" width="219" height="40"/>
+                                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="40"/>
                                                                                     <subviews>
                                                                                         <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="253" verticalHuggingPriority="753" verticalCompressionResistancePriority="753" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BCG-L6-D71" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                                                            <rect key="frame" x="0.0" y="0.0" width="149" height="40"/>
+                                                                                            <rect key="frame" x="0.0" y="0.0" width="136" height="40"/>
                                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                                             <inset key="contentEdgeInsets" minX="10" minY="10" maxX="10" maxY="10"/>
                                                                                             <state key="normal" title="Alternate Field"/>
+                                                                                            <userDefinedRuntimeAttributes>
+                                                                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                                                    <integer key="value" value="0"/>
+                                                                                                </userDefinedRuntimeAttribute>
+                                                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="infoBody"/>
+                                                                                            </userDefinedRuntimeAttributes>
                                                                                             <connections>
                                                                                                 <action selector="alternateButton1Action" destination="9S9-Nb-Hqt" eventType="touchUpInside" id="FxL-fq-XF0"/>
                                                                                             </connections>
@@ -536,16 +590,22 @@
                                                                             </constraints>
                                                                         </view>
                                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="K5z-gQ-3Ga" customClass="GradientView" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="0.0" y="86" width="219" height="40"/>
+                                                                            <rect key="frame" x="0.0" y="86" width="0.0" height="40"/>
                                                                             <subviews>
                                                                                 <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" horizontalHuggingPriority="253" verticalHuggingPriority="253" horizontalCompressionResistancePriority="751" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uEI-nE-Yvp">
-                                                                                    <rect key="frame" x="0.0" y="0.0" width="219" height="40"/>
+                                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="40"/>
                                                                                     <subviews>
                                                                                         <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="253" verticalHuggingPriority="753" verticalCompressionResistancePriority="753" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="99a-7G-naQ" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                                                            <rect key="frame" x="0.0" y="0.0" width="149" height="40"/>
+                                                                                            <rect key="frame" x="0.0" y="0.0" width="136" height="40"/>
                                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                                             <inset key="contentEdgeInsets" minX="10" minY="5" maxX="10" maxY="10"/>
                                                                                             <state key="normal" title="Alternate Field"/>
+                                                                                            <userDefinedRuntimeAttributes>
+                                                                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                                                    <integer key="value" value="0"/>
+                                                                                                </userDefinedRuntimeAttribute>
+                                                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="infoBody"/>
+                                                                                            </userDefinedRuntimeAttributes>
                                                                                             <connections>
                                                                                                 <action selector="alternateButton2Action" destination="9S9-Nb-Hqt" eventType="touchUpInside" id="0YN-C2-j5Z"/>
                                                                                             </connections>
@@ -570,16 +630,22 @@
                                                                             </constraints>
                                                                         </view>
                                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wcV-Is-K5f" customClass="GradientView" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="0.0" y="126" width="219" height="40"/>
+                                                                            <rect key="frame" x="0.0" y="126" width="0.0" height="40"/>
                                                                             <subviews>
                                                                                 <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" horizontalHuggingPriority="253" verticalHuggingPriority="253" horizontalCompressionResistancePriority="751" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="M4g-wM-7hQ">
-                                                                                    <rect key="frame" x="0.0" y="0.0" width="219" height="40"/>
+                                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="40"/>
                                                                                     <subviews>
                                                                                         <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="253" verticalHuggingPriority="753" verticalCompressionResistancePriority="753" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oyk-Qv-ETu" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                                                            <rect key="frame" x="0.0" y="0.0" width="149" height="40"/>
+                                                                                            <rect key="frame" x="0.0" y="0.0" width="136" height="40"/>
                                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                                             <inset key="contentEdgeInsets" minX="10" minY="5" maxX="10" maxY="10"/>
                                                                                             <state key="normal" title="Alternate Field"/>
+                                                                                            <userDefinedRuntimeAttributes>
+                                                                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                                                    <integer key="value" value="0"/>
+                                                                                                </userDefinedRuntimeAttribute>
+                                                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="infoBody"/>
+                                                                                            </userDefinedRuntimeAttributes>
                                                                                         </button>
                                                                                     </subviews>
                                                                                     <constraints>
@@ -605,20 +671,20 @@
                                                             </subviews>
                                                         </stackView>
                                                         <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d1O-bS-Dt1">
-                                                            <rect key="frame" x="0.0" y="166" width="375" height="70"/>
+                                                            <rect key="frame" x="0.0" y="166" width="0.0" height="90"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" priority="900" constant="58" id="Pph-z8-jIv"/>
                                                             </constraints>
                                                         </stackView>
                                                         <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="0aL-we-kPU">
-                                                            <rect key="frame" x="0.0" y="236" width="375" height="62"/>
+                                                            <rect key="frame" x="0.0" y="256" width="0.0" height="62"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="62" placeholder="YES" id="8zM-qa-9zt"/>
                                                                 <constraint firstAttribute="height" priority="900" constant="62" id="ieI-tk-UJh"/>
                                                             </constraints>
                                                         </stackView>
                                                         <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Kot-PG-m3g">
-                                                            <rect key="frame" x="0.0" y="298" width="375" height="44"/>
+                                                            <rect key="frame" x="0.0" y="318" width="0.0" height="44"/>
                                                             <subviews>
                                                                 <view contentMode="scaleToFill" horizontalHuggingPriority="253" horizontalCompressionResistancePriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="Q7e-Pt-A0H">
                                                                     <rect key="frame" x="0.0" y="0.0" width="119" height="44"/>
@@ -629,6 +695,12 @@
                                                                             <inset key="contentEdgeInsets" minX="35" minY="14" maxX="20" maxY="10"/>
                                                                             <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="0.0" maxY="1"/>
                                                                             <state key="normal" title="explicit"/>
+                                                                            <userDefinedRuntimeAttributes>
+                                                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                                    <integer key="value" value="0"/>
+                                                                                </userDefinedRuntimeAttribute>
+                                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="infoBody"/>
+                                                                            </userDefinedRuntimeAttributes>
                                                                         </button>
                                                                         <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Check" translatesAutoresizingMaskIntoConstraints="NO" id="mWc-wF-j11" customClass="MELImageView" customModule="Mode" customModuleProvider="target">
                                                                             <rect key="frame" x="16" y="18" width="11" height="8"/>
@@ -648,14 +720,20 @@
                                                                     </constraints>
                                                                 </view>
                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5dh-Tc-byi">
-                                                                    <rect key="frame" x="119" y="0.0" width="256" height="44"/>
+                                                                    <rect key="frame" x="119" y="0.0" width="0.0" height="44"/>
                                                                     <subviews>
                                                                         <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="07Y-px-3iu" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="0.0" y="0.0" width="256" height="44"/>
+                                                                            <rect key="frame" x="0.0" y="0.0" width="0.0" height="44"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <inset key="contentEdgeInsets" minX="35" minY="14" maxX="0.0" maxY="10"/>
                                                                             <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="0.0" maxY="1"/>
                                                                             <state key="normal" title="compilation"/>
+                                                                            <userDefinedRuntimeAttributes>
+                                                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                                    <integer key="value" value="0"/>
+                                                                                </userDefinedRuntimeAttribute>
+                                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="infoBody"/>
+                                                                            </userDefinedRuntimeAttributes>
                                                                         </button>
                                                                         <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Check" translatesAutoresizingMaskIntoConstraints="NO" id="MkA-sT-TKr" customClass="MELImageView" customModule="Mode" customModuleProvider="target">
                                                                             <rect key="frame" x="16" y="18" width="11" height="8"/>
@@ -680,19 +758,25 @@
                                                             </constraints>
                                                         </stackView>
                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="Eq5-OG-hLk">
-                                                            <rect key="frame" x="0.0" y="342" width="375" height="76"/>
+                                                            <rect key="frame" x="0.0" y="362" width="0.0" height="76"/>
                                                             <subviews>
                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VcJ-Gn-Abx" customClass="GradientView" customModule="Mode" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="76"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="76"/>
                                                                     <subviews>
                                                                         <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FvK-sP-R5C" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="0.0" y="0.0" width="375" height="76"/>
+                                                                            <rect key="frame" x="0.0" y="0.0" width="0.0" height="76"/>
                                                                             <subviews>
                                                                                 <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="253" verticalHuggingPriority="753" verticalCompressionResistancePriority="753" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1pA-G2-wv3" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                                                    <rect key="frame" x="0.0" y="0.0" width="75" height="76"/>
+                                                                                    <rect key="frame" x="0.0" y="0.0" width="69" height="76"/>
                                                                                     <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                                     <inset key="contentEdgeInsets" minX="10" minY="46" maxX="10" maxY="10"/>
                                                                                     <state key="normal" title="Genre"/>
+                                                                                    <userDefinedRuntimeAttributes>
+                                                                                        <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                                            <integer key="value" value="0"/>
+                                                                                        </userDefinedRuntimeAttribute>
+                                                                                        <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="infoBody"/>
+                                                                                    </userDefinedRuntimeAttributes>
                                                                                     <connections>
                                                                                         <action selector="genreButtonAction" destination="9S9-Nb-Hqt" eventType="touchUpInside" id="iAL-1Q-Mw0"/>
                                                                                     </connections>
@@ -707,12 +791,16 @@
                                                                             </constraints>
                                                                         </scrollView>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="genre" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QVn-4k-5FW" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="14" width="355" height="23.5"/>
+                                                                            <rect key="frame" x="10" y="14" width="0.0" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
                                                                             <userDefinedRuntimeAttributes>
                                                                                 <userDefinedRuntimeAttribute type="boolean" keyPath="greyOverride" value="YES"/>
+                                                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                                    <integer key="value" value="0"/>
+                                                                                </userDefinedRuntimeAttribute>
+                                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="sectionHeading"/>
                                                                             </userDefinedRuntimeAttributes>
                                                                         </label>
                                                                     </subviews>
@@ -738,19 +826,25 @@
                                                             </subviews>
                                                         </stackView>
                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="EgW-Ub-W5k">
-                                                            <rect key="frame" x="0.0" y="418" width="375" height="76"/>
+                                                            <rect key="frame" x="0.0" y="438" width="0.0" height="76"/>
                                                             <subviews>
                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="esZ-B6-V0t" customClass="GradientView" customModule="Mode" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="76"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="76"/>
                                                                     <subviews>
                                                                         <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="byO-6G-n5e" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="0.0" y="0.0" width="375" height="76"/>
+                                                                            <rect key="frame" x="0.0" y="0.0" width="0.0" height="76"/>
                                                                             <subviews>
                                                                                 <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="253" verticalHuggingPriority="753" verticalCompressionResistancePriority="753" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3tg-PD-d70" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                                                    <rect key="frame" x="0.0" y="0.0" width="135" height="76"/>
+                                                                                    <rect key="frame" x="0.0" y="0.0" width="122" height="76"/>
                                                                                     <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                                     <inset key="contentEdgeInsets" minX="10" minY="46" maxX="10" maxY="10"/>
                                                                                     <state key="normal" title="Composer(s)"/>
+                                                                                    <userDefinedRuntimeAttributes>
+                                                                                        <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                                            <integer key="value" value="0"/>
+                                                                                        </userDefinedRuntimeAttribute>
+                                                                                        <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="infoBody"/>
+                                                                                    </userDefinedRuntimeAttributes>
                                                                                     <connections>
                                                                                         <action selector="composerButtonAction" destination="9S9-Nb-Hqt" eventType="touchUpInside" id="1Nm-Dz-eTB"/>
                                                                                     </connections>
@@ -766,12 +860,16 @@
                                                                             </constraints>
                                                                         </scrollView>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="composer" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iJp-Tc-pFS" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="14" width="355" height="23.5"/>
+                                                                            <rect key="frame" x="10" y="14" width="0.0" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
                                                                             <userDefinedRuntimeAttributes>
                                                                                 <userDefinedRuntimeAttribute type="boolean" keyPath="greyOverride" value="YES"/>
+                                                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                                    <integer key="value" value="0"/>
+                                                                                </userDefinedRuntimeAttribute>
+                                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="sectionHeading"/>
                                                                             </userDefinedRuntimeAttributes>
                                                                         </label>
                                                                     </subviews>
@@ -797,19 +895,25 @@
                                                             </subviews>
                                                         </stackView>
                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="M3i-XT-tIt">
-                                                            <rect key="frame" x="0.0" y="494" width="375" height="76"/>
+                                                            <rect key="frame" x="0.0" y="514" width="0.0" height="76"/>
                                                             <subviews>
                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hrH-PV-jHn" customClass="GradientView" customModule="Mode" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="76"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="76"/>
                                                                     <subviews>
                                                                         <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ar7-Je-6kl" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="0.0" y="0.0" width="375" height="76"/>
+                                                                            <rect key="frame" x="0.0" y="0.0" width="0.0" height="76"/>
                                                                             <subviews>
                                                                                 <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="253" verticalHuggingPriority="753" verticalCompressionResistancePriority="753" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XUb-F7-pIs" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                                                    <rect key="frame" x="0.0" y="0.0" width="151" height="76"/>
+                                                                                    <rect key="frame" x="0.0" y="0.0" width="139" height="76"/>
                                                                                     <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                                     <inset key="contentEdgeInsets" minX="10" minY="46" maxX="10" maxY="10"/>
                                                                                     <state key="normal" title="Album Artist(s)"/>
+                                                                                    <userDefinedRuntimeAttributes>
+                                                                                        <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                                            <integer key="value" value="0"/>
+                                                                                        </userDefinedRuntimeAttribute>
+                                                                                        <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="infoBody"/>
+                                                                                    </userDefinedRuntimeAttributes>
                                                                                     <connections>
                                                                                         <action selector="albumArtistButtonAction" destination="9S9-Nb-Hqt" eventType="touchUpInside" id="Ywh-zW-PAU"/>
                                                                                     </connections>
@@ -825,12 +929,16 @@
                                                                             </constraints>
                                                                         </scrollView>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="album artist" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Es4-VN-Luo" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="14" width="355" height="23.5"/>
+                                                                            <rect key="frame" x="10" y="14" width="0.0" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
                                                                             <userDefinedRuntimeAttributes>
                                                                                 <userDefinedRuntimeAttribute type="boolean" keyPath="greyOverride" value="YES"/>
+                                                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                                    <integer key="value" value="0"/>
+                                                                                </userDefinedRuntimeAttribute>
+                                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="sectionHeading"/>
                                                                             </userDefinedRuntimeAttributes>
                                                                         </label>
                                                                     </subviews>
@@ -856,18 +964,22 @@
                                                             </subviews>
                                                         </stackView>
                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="yHN-Ih-cM1">
-                                                            <rect key="frame" x="0.0" y="570" width="375" height="76"/>
+                                                            <rect key="frame" x="0.0" y="590" width="0.0" height="76"/>
                                                             <subviews>
-                                                                <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hbG-Rw-7Ke">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hbG-Rw-7Ke">
+                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="40"/>
                                                                     <subviews>
-                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" ambiguous="YES" text="duration + size" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Rvc-Hj-1qZ" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="14" width="355" height="20"/>
+                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="duration + size" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Rvc-Hj-1qZ" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                                                            <rect key="frame" x="10" y="14" width="0.0" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
                                                                             <userDefinedRuntimeAttributes>
                                                                                 <userDefinedRuntimeAttribute type="boolean" keyPath="greyOverride" value="YES"/>
+                                                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                                    <integer key="value" value="0"/>
+                                                                                </userDefinedRuntimeAttribute>
+                                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="sectionHeading"/>
                                                                             </userDefinedRuntimeAttributes>
                                                                         </label>
                                                                     </subviews>
@@ -879,14 +991,20 @@
                                                                         <constraint firstItem="Rvc-Hj-1qZ" firstAttribute="top" secondItem="hbG-Rw-7Ke" secondAttribute="top" priority="900" constant="14" id="qVX-fJ-1jc"/>
                                                                     </constraints>
                                                                 </view>
-                                                                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Cfx-Gk-Gcv" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="43.5" width="375" height="32.5"/>
+                                                                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Cfx-Gk-Gcv" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
+                                                                    <rect key="frame" x="0.0" y="40" width="0.0" height="36"/>
                                                                     <subviews>
-                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" ambiguous="YES" text="Song Duration + File Size" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RQQ-Gk-goI" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="6" width="226.5" height="20"/>
+                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="Song Duration + File Size" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RQQ-Gk-goI" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                                                            <rect key="frame" x="10" y="6" width="199.5" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
+                                                                            <userDefinedRuntimeAttributes>
+                                                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                                    <integer key="value" value="0"/>
+                                                                                </userDefinedRuntimeAttribute>
+                                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="infoBody"/>
+                                                                            </userDefinedRuntimeAttributes>
                                                                         </label>
                                                                     </subviews>
                                                                     <constraints>
@@ -903,18 +1021,22 @@
                                                             </constraints>
                                                         </stackView>
                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="qnt-6D-Bwh">
-                                                            <rect key="frame" x="0.0" y="646" width="375" height="76"/>
+                                                            <rect key="frame" x="0.0" y="666" width="0.0" height="76"/>
                                                             <subviews>
-                                                                <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qKN-hb-JVF">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qKN-hb-JVF">
+                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="40"/>
                                                                     <subviews>
-                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" ambiguous="YES" text="plays" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cmd-8i-ALl" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="14" width="355" height="20"/>
+                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="plays" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cmd-8i-ALl" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                                                            <rect key="frame" x="10" y="14" width="0.0" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
                                                                             <userDefinedRuntimeAttributes>
                                                                                 <userDefinedRuntimeAttribute type="boolean" keyPath="greyOverride" value="YES"/>
+                                                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                                    <integer key="value" value="0"/>
+                                                                                </userDefinedRuntimeAttribute>
+                                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="sectionHeading"/>
                                                                             </userDefinedRuntimeAttributes>
                                                                         </label>
                                                                     </subviews>
@@ -926,14 +1048,20 @@
                                                                         <constraint firstAttribute="trailing" secondItem="cmd-8i-ALl" secondAttribute="trailing" constant="10" id="eoH-4R-4iP"/>
                                                                     </constraints>
                                                                 </view>
-                                                                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aew-Si-MG9" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="43.5" width="375" height="32.5"/>
+                                                                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aew-Si-MG9" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
+                                                                    <rect key="frame" x="0.0" y="40" width="0.0" height="36"/>
                                                                     <subviews>
-                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" ambiguous="YES" text="Plays + Last Played" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="D4Z-85-sll" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="6" width="176" height="20"/>
+                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="Plays + Last Played" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="D4Z-85-sll" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                                                            <rect key="frame" x="10" y="6" width="148.5" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
+                                                                            <userDefinedRuntimeAttributes>
+                                                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                                    <integer key="value" value="0"/>
+                                                                                </userDefinedRuntimeAttribute>
+                                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="infoBody"/>
+                                                                            </userDefinedRuntimeAttributes>
                                                                         </label>
                                                                     </subviews>
                                                                     <constraints>
@@ -947,18 +1075,22 @@
                                                             </subviews>
                                                         </stackView>
                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="jtJ-pI-VCd">
-                                                            <rect key="frame" x="0.0" y="722" width="375" height="76"/>
+                                                            <rect key="frame" x="0.0" y="742" width="0.0" height="76"/>
                                                             <subviews>
-                                                                <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vj9-0H-7eR">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="36.5"/>
+                                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vj9-0H-7eR">
+                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="40"/>
                                                                     <subviews>
-                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" ambiguous="YES" text="added" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LKb-MW-vvk" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="14" width="355" height="20"/>
+                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="added" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LKb-MW-vvk" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                                                            <rect key="frame" x="10" y="14" width="0.0" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
                                                                             <userDefinedRuntimeAttributes>
                                                                                 <userDefinedRuntimeAttribute type="boolean" keyPath="greyOverride" value="YES"/>
+                                                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                                    <integer key="value" value="0"/>
+                                                                                </userDefinedRuntimeAttribute>
+                                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="sectionHeading"/>
                                                                             </userDefinedRuntimeAttributes>
                                                                         </label>
                                                                     </subviews>
@@ -970,14 +1102,20 @@
                                                                         <constraint firstItem="LKb-MW-vvk" firstAttribute="top" secondItem="vj9-0H-7eR" secondAttribute="top" priority="900" constant="14" id="vlT-tC-hzt"/>
                                                                     </constraints>
                                                                 </view>
-                                                                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Prl-Ij-Doa" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="36.5" width="375" height="39.5"/>
+                                                                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Prl-Ij-Doa" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
+                                                                    <rect key="frame" x="0.0" y="40" width="0.0" height="36"/>
                                                                     <subviews>
-                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" ambiguous="YES" text="Date Added" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wVr-4C-TvG" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="6" width="107" height="20"/>
+                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="Date Added" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wVr-4C-TvG" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                                                            <rect key="frame" x="10" y="6" width="96" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
+                                                                            <userDefinedRuntimeAttributes>
+                                                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                                    <integer key="value" value="0"/>
+                                                                                </userDefinedRuntimeAttribute>
+                                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="infoBody"/>
+                                                                            </userDefinedRuntimeAttributes>
                                                                         </label>
                                                                     </subviews>
                                                                     <constraints>
@@ -991,18 +1129,22 @@
                                                             </subviews>
                                                         </stackView>
                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="b1S-oa-aRy">
-                                                            <rect key="frame" x="0.0" y="798" width="375" height="76"/>
+                                                            <rect key="frame" x="0.0" y="818" width="0.0" height="76"/>
                                                             <subviews>
-                                                                <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OfC-Ar-RsR">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OfC-Ar-RsR">
+                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="40"/>
                                                                     <subviews>
-                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" ambiguous="YES" text="updated" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yEt-Om-hf2" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="14" width="355" height="20"/>
+                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="updated" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yEt-Om-hf2" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                                                            <rect key="frame" x="10" y="14" width="0.0" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
                                                                             <userDefinedRuntimeAttributes>
                                                                                 <userDefinedRuntimeAttribute type="boolean" keyPath="greyOverride" value="YES"/>
+                                                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                                    <integer key="value" value="0"/>
+                                                                                </userDefinedRuntimeAttribute>
+                                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="sectionHeading"/>
                                                                             </userDefinedRuntimeAttributes>
                                                                         </label>
                                                                     </subviews>
@@ -1014,14 +1156,20 @@
                                                                         <constraint firstAttribute="bottom" secondItem="yEt-Om-hf2" secondAttribute="bottom" priority="900" constant="6" id="YTy-5d-rPY"/>
                                                                     </constraints>
                                                                 </view>
-                                                                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="409-fZ-JV0" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="43.5" width="375" height="32.5"/>
+                                                                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="409-fZ-JV0" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
+                                                                    <rect key="frame" x="0.0" y="40" width="0.0" height="36"/>
                                                                     <subviews>
-                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" ambiguous="YES" text="Date Updated" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qdy-YX-S4F" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="6" width="125.5" height="20"/>
+                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="Date Updated" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qdy-YX-S4F" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                                                            <rect key="frame" x="10" y="6" width="112.5" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
+                                                                            <userDefinedRuntimeAttributes>
+                                                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                                    <integer key="value" value="0"/>
+                                                                                </userDefinedRuntimeAttribute>
+                                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="infoBody"/>
+                                                                            </userDefinedRuntimeAttributes>
                                                                         </label>
                                                                     </subviews>
                                                                     <constraints>
@@ -1035,18 +1183,22 @@
                                                             </subviews>
                                                         </stackView>
                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="xHU-eQ-XKg">
-                                                            <rect key="frame" x="0.0" y="874" width="375" height="76"/>
+                                                            <rect key="frame" x="0.0" y="894" width="0.0" height="76"/>
                                                             <subviews>
-                                                                <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Uae-UX-srw">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="36.5"/>
+                                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Uae-UX-srw">
+                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="40"/>
                                                                     <subviews>
-                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" ambiguous="YES" text="album placement" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gdH-7s-moc" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="14" width="355" height="20"/>
+                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="album placement" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gdH-7s-moc" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                                                            <rect key="frame" x="10" y="14" width="0.0" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
                                                                             <userDefinedRuntimeAttributes>
                                                                                 <userDefinedRuntimeAttribute type="boolean" keyPath="greyOverride" value="YES"/>
+                                                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                                    <integer key="value" value="0"/>
+                                                                                </userDefinedRuntimeAttribute>
+                                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="sectionHeading"/>
                                                                             </userDefinedRuntimeAttributes>
                                                                         </label>
                                                                     </subviews>
@@ -1058,14 +1210,20 @@
                                                                         <constraint firstItem="gdH-7s-moc" firstAttribute="leading" secondItem="Uae-UX-srw" secondAttribute="leading" constant="10" id="mCo-D9-GSR"/>
                                                                     </constraints>
                                                                 </view>
-                                                                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6bP-nA-Jc9" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="36.5" width="375" height="39.5"/>
+                                                                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6bP-nA-Jc9" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
+                                                                    <rect key="frame" x="0.0" y="40" width="0.0" height="36"/>
                                                                     <subviews>
-                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" ambiguous="YES" text="Track Count, Disc Count" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gUE-Hk-DYf" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="6" width="219" height="20"/>
+                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="Track Count, Disc Count" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gUE-Hk-DYf" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                                                            <rect key="frame" x="10" y="6" width="190" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
+                                                                            <userDefinedRuntimeAttributes>
+                                                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                                    <integer key="value" value="0"/>
+                                                                                </userDefinedRuntimeAttribute>
+                                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="infoBody"/>
+                                                                            </userDefinedRuntimeAttributes>
                                                                         </label>
                                                                     </subviews>
                                                                     <constraints>
@@ -1079,18 +1237,22 @@
                                                             </subviews>
                                                         </stackView>
                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="qZx-1d-ekK">
-                                                            <rect key="frame" x="0.0" y="950" width="375" height="76"/>
+                                                            <rect key="frame" x="0.0" y="970" width="0.0" height="76"/>
                                                             <subviews>
-                                                                <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xyS-Rd-8RL">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="36.5"/>
+                                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xyS-Rd-8RL">
+                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="40"/>
                                                                     <subviews>
-                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" ambiguous="YES" text="beats per minute" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="61c-14-GU0" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="14" width="355" height="20"/>
+                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="beats per minute" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="61c-14-GU0" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                                                            <rect key="frame" x="10" y="14" width="0.0" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
                                                                             <userDefinedRuntimeAttributes>
                                                                                 <userDefinedRuntimeAttribute type="boolean" keyPath="greyOverride" value="YES"/>
+                                                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                                    <integer key="value" value="0"/>
+                                                                                </userDefinedRuntimeAttribute>
+                                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="sectionHeading"/>
                                                                             </userDefinedRuntimeAttributes>
                                                                         </label>
                                                                     </subviews>
@@ -1102,14 +1264,20 @@
                                                                         <constraint firstItem="61c-14-GU0" firstAttribute="top" secondItem="xyS-Rd-8RL" secondAttribute="top" priority="900" constant="14" id="zej-Tm-6xR"/>
                                                                     </constraints>
                                                                 </view>
-                                                                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="n36-cc-lNF" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="36.5" width="375" height="39.5"/>
+                                                                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="n36-cc-lNF" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
+                                                                    <rect key="frame" x="0.0" y="40" width="0.0" height="36"/>
                                                                     <subviews>
-                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" ambiguous="YES" text="BPM" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WE9-4c-mXD" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="6" width="44.5" height="20"/>
+                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="BPM" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WE9-4c-mXD" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                                                            <rect key="frame" x="10" y="6" width="35.5" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
+                                                                            <userDefinedRuntimeAttributes>
+                                                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                                    <integer key="value" value="0"/>
+                                                                                </userDefinedRuntimeAttribute>
+                                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="infoBody"/>
+                                                                            </userDefinedRuntimeAttributes>
                                                                         </label>
                                                                     </subviews>
                                                                     <constraints>
@@ -1123,18 +1291,22 @@
                                                             </subviews>
                                                         </stackView>
                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="yUX-Ey-xCv">
-                                                            <rect key="frame" x="0.0" y="1026" width="375" height="76"/>
+                                                            <rect key="frame" x="0.0" y="1046" width="0.0" height="76"/>
                                                             <subviews>
-                                                                <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RWA-im-9fv">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RWA-im-9fv">
+                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="40"/>
                                                                     <subviews>
-                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" ambiguous="YES" text="skips" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="e2a-HO-Pxn" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="14" width="355" height="20"/>
+                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="skips" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="e2a-HO-Pxn" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                                                            <rect key="frame" x="10" y="14" width="0.0" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
                                                                             <userDefinedRuntimeAttributes>
                                                                                 <userDefinedRuntimeAttribute type="boolean" keyPath="greyOverride" value="YES"/>
+                                                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                                    <integer key="value" value="0"/>
+                                                                                </userDefinedRuntimeAttribute>
+                                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="sectionHeading"/>
                                                                             </userDefinedRuntimeAttributes>
                                                                         </label>
                                                                     </subviews>
@@ -1146,14 +1318,20 @@
                                                                         <constraint firstItem="e2a-HO-Pxn" firstAttribute="leading" secondItem="RWA-im-9fv" secondAttribute="leading" constant="10" id="z7M-UM-b6W"/>
                                                                     </constraints>
                                                                 </view>
-                                                                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bnm-hb-X2A" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="43.5" width="375" height="32.5"/>
+                                                                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bnm-hb-X2A" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
+                                                                    <rect key="frame" x="0.0" y="40" width="0.0" height="36"/>
                                                                     <subviews>
-                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" ambiguous="YES" text="Skip Count" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Y8H-ne-mu9" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="6" width="100" height="20"/>
+                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="Skip Count" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Y8H-ne-mu9" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                                                            <rect key="frame" x="10" y="6" width="87.5" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
+                                                                            <userDefinedRuntimeAttributes>
+                                                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                                    <integer key="value" value="0"/>
+                                                                                </userDefinedRuntimeAttribute>
+                                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="infoBody"/>
+                                                                            </userDefinedRuntimeAttributes>
                                                                         </label>
                                                                     </subviews>
                                                                     <constraints>
@@ -1167,18 +1345,22 @@
                                                             </subviews>
                                                         </stackView>
                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="Kuc-aR-GBN">
-                                                            <rect key="frame" x="0.0" y="1102" width="375" height="76"/>
+                                                            <rect key="frame" x="0.0" y="1122" width="0.0" height="76"/>
                                                             <subviews>
-                                                                <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4mN-i8-3mE">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4mN-i8-3mE">
+                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="40"/>
                                                                     <subviews>
-                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" ambiguous="YES" text="grouping" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9SU-oX-CRU" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="14" width="355" height="20"/>
+                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="grouping" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9SU-oX-CRU" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                                                            <rect key="frame" x="10" y="14" width="0.0" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
                                                                             <userDefinedRuntimeAttributes>
                                                                                 <userDefinedRuntimeAttribute type="boolean" keyPath="greyOverride" value="YES"/>
+                                                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                                    <integer key="value" value="0"/>
+                                                                                </userDefinedRuntimeAttribute>
+                                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="sectionHeading"/>
                                                                             </userDefinedRuntimeAttributes>
                                                                         </label>
                                                                     </subviews>
@@ -1190,14 +1372,20 @@
                                                                         <constraint firstItem="9SU-oX-CRU" firstAttribute="leading" secondItem="4mN-i8-3mE" secondAttribute="leading" constant="10" id="h7r-qe-vHK"/>
                                                                     </constraints>
                                                                 </view>
-                                                                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5tY-fs-Gf0" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="43.5" width="375" height="32.5"/>
+                                                                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5tY-fs-Gf0" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
+                                                                    <rect key="frame" x="0.0" y="40" width="0.0" height="36"/>
                                                                     <subviews>
-                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" ambiguous="YES" text="User Grouping" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IWJ-U8-94H" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="6" width="130.5" height="20"/>
+                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="User Grouping" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IWJ-U8-94H" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                                                            <rect key="frame" x="10" y="6" width="116.5" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
+                                                                            <userDefinedRuntimeAttributes>
+                                                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                                    <integer key="value" value="0"/>
+                                                                                </userDefinedRuntimeAttribute>
+                                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="infoBody"/>
+                                                                            </userDefinedRuntimeAttributes>
                                                                         </label>
                                                                     </subviews>
                                                                     <constraints>
@@ -1211,18 +1399,22 @@
                                                             </subviews>
                                                         </stackView>
                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="n6u-D0-5Bk">
-                                                            <rect key="frame" x="0.0" y="1178" width="375" height="76"/>
+                                                            <rect key="frame" x="0.0" y="1198" width="0.0" height="76"/>
                                                             <subviews>
-                                                                <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4f7-uy-BUf">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4f7-uy-BUf">
+                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="40"/>
                                                                     <subviews>
-                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" ambiguous="YES" text="comments" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nZB-Gl-YA8" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="14" width="355" height="20"/>
+                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="comments" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nZB-Gl-YA8" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                                                            <rect key="frame" x="10" y="14" width="0.0" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
                                                                             <userDefinedRuntimeAttributes>
                                                                                 <userDefinedRuntimeAttribute type="boolean" keyPath="greyOverride" value="YES"/>
+                                                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                                    <integer key="value" value="0"/>
+                                                                                </userDefinedRuntimeAttribute>
+                                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="sectionHeading"/>
                                                                             </userDefinedRuntimeAttributes>
                                                                         </label>
                                                                     </subviews>
@@ -1234,14 +1426,20 @@
                                                                         <constraint firstAttribute="trailing" secondItem="nZB-Gl-YA8" secondAttribute="trailing" constant="10" id="r6Z-N4-59b"/>
                                                                     </constraints>
                                                                 </view>
-                                                                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="he6-pV-WKH" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="43.5" width="375" height="32.5"/>
+                                                                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="he6-pV-WKH" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
+                                                                    <rect key="frame" x="0.0" y="40" width="0.0" height="36"/>
                                                                     <subviews>
-                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" ambiguous="YES" text="User Comments" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Z3D-y3-AEG" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="6" width="146" height="20"/>
+                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="User Comments" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Z3D-y3-AEG" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                                                            <rect key="frame" x="10" y="6" width="129" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
+                                                                            <userDefinedRuntimeAttributes>
+                                                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                                    <integer key="value" value="0"/>
+                                                                                </userDefinedRuntimeAttribute>
+                                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="infoBody"/>
+                                                                            </userDefinedRuntimeAttributes>
                                                                         </label>
                                                                     </subviews>
                                                                     <constraints>
@@ -1255,18 +1453,22 @@
                                                             </subviews>
                                                         </stackView>
                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="hOY-lQ-ugP">
-                                                            <rect key="frame" x="0.0" y="1254" width="375" height="76"/>
+                                                            <rect key="frame" x="0.0" y="1274" width="0.0" height="76"/>
                                                             <subviews>
-                                                                <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6IJ-b5-N5b">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6IJ-b5-N5b">
+                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="40"/>
                                                                     <subviews>
-                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" ambiguous="YES" text="copyright" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ans-if-1JF" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="14" width="355" height="20"/>
+                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="copyright" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ans-if-1JF" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                                                            <rect key="frame" x="10" y="14" width="0.0" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
                                                                             <userDefinedRuntimeAttributes>
                                                                                 <userDefinedRuntimeAttribute type="boolean" keyPath="greyOverride" value="YES"/>
+                                                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                                    <integer key="value" value="0"/>
+                                                                                </userDefinedRuntimeAttribute>
+                                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="sectionHeading"/>
                                                                             </userDefinedRuntimeAttributes>
                                                                         </label>
                                                                     </subviews>
@@ -1278,14 +1480,20 @@
                                                                         <constraint firstAttribute="bottom" secondItem="ans-if-1JF" secondAttribute="bottom" priority="900" constant="6" id="rAw-wg-96V"/>
                                                                     </constraints>
                                                                 </view>
-                                                                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="COS-NO-QUm" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="43.5" width="375" height="32.5"/>
+                                                                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="COS-NO-QUm" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
+                                                                    <rect key="frame" x="0.0" y="40" width="0.0" height="36"/>
                                                                     <subviews>
-                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" ambiguous="YES" text="Copyright Info" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lQX-eo-njJ" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="6" width="127.5" height="20"/>
+                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="Copyright Info" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lQX-eo-njJ" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                                                            <rect key="frame" x="10" y="6" width="115" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
+                                                                            <userDefinedRuntimeAttributes>
+                                                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                                    <integer key="value" value="0"/>
+                                                                                </userDefinedRuntimeAttribute>
+                                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="infoBody"/>
+                                                                            </userDefinedRuntimeAttributes>
                                                                         </label>
                                                                     </subviews>
                                                                     <constraints>
@@ -1299,13 +1507,13 @@
                                                             </subviews>
                                                         </stackView>
                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="C7p-gj-0jb">
-                                                            <rect key="frame" x="0.0" y="1330" width="375" height="100"/>
+                                                            <rect key="frame" x="0.0" y="1350" width="0.0" height="100"/>
                                                             <subviews>
                                                                 <view tag="1" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JAn-no-zNp">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="40"/>
                                                                     <subviews>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" text="lyrics" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Nep-fU-4zG" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="14" width="355" height="23.5"/>
+                                                                            <rect key="frame" x="10" y="14" width="0.0" height="20"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
@@ -1323,10 +1531,16 @@
                                                                     </constraints>
                                                                 </view>
                                                                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" editable="NO" text="Lyrics" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="WOf-Xd-ThM" customClass="MELTextView" customModule="Mode" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="43.5" width="375" height="56.5"/>
+                                                                    <rect key="frame" x="0.0" y="40" width="0.0" height="60"/>
                                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                                     <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                                                    <userDefinedRuntimeAttributes>
+                                                                        <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                            <integer key="value" value="0"/>
+                                                                        </userDefinedRuntimeAttribute>
+                                                                        <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="infoBody"/>
+                                                                    </userDefinedRuntimeAttributes>
                                                                 </textView>
                                                             </subviews>
                                                             <constraints>
@@ -1334,16 +1548,20 @@
                                                             </constraints>
                                                         </stackView>
                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qtR-GL-WCY">
-                                                            <rect key="frame" x="0.0" y="1430" width="375" height="50"/>
+                                                            <rect key="frame" x="0.0" y="1450" width="0.0" height="50"/>
                                                             <subviews>
                                                                 <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="n9J-kS-CRx" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="50"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="50"/>
                                                                     <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="20"/>
                                                                     <inset key="contentEdgeInsets" minX="38" minY="14" maxX="0.0" maxY="10"/>
                                                                     <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="0.0" maxY="1"/>
                                                                     <state key="normal" title="searching playlists..."/>
                                                                     <userDefinedRuntimeAttributes>
                                                                         <userDefinedRuntimeAttribute type="boolean" keyPath="greyOverride" value="YES"/>
+                                                                        <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                            <integer key="value" value="0"/>
+                                                                        </userDefinedRuntimeAttribute>
+                                                                        <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="sectionHeading"/>
                                                                     </userDefinedRuntimeAttributes>
                                                                 </button>
                                                                 <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VgR-dd-Ae5" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
@@ -1621,7 +1839,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jYR-fz-bu9" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="FpX-xB-QXM" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="368" y="1158"/>
+            <point key="canvasLocation" x="366.5625" y="1157.5"/>
         </scene>
         <!--Collector View Controller-->
         <scene sceneID="uHl-S4-avK">
@@ -1977,6 +2195,10 @@
                                                         <textInputTraits key="textInputTraits" autocapitalizationType="words"/>
                                                         <userDefinedRuntimeAttributes>
                                                             <userDefinedRuntimeAttribute type="boolean" keyPath="capitalise" value="YES"/>
+                                                            <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                <integer key="value" value="1"/>
+                                                            </userDefinedRuntimeAttribute>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="body"/>
                                                         </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <outlet property="delegate" destination="Uz3-1f-hrv" id="zGA-rd-Tu4"/>
@@ -2078,19 +2300,23 @@
                                         <rect key="frame" x="0.0" y="0.0" width="320" height="374"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="description" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="v4O-UX-gxC" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="16" width="300" height="26"/>
-                                                <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="22"/>
+                                                <rect key="frame" x="10" y="16" width="300" height="22"/>
+                                                <fontDescription key="fontDescription" name="MyriadPro-Semibold" family="Myriad Pro" pointSize="22"/>
                                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                                 <nil key="highlightedColor"/>
                                                 <userDefinedRuntimeAttributes>
                                                     <userDefinedRuntimeAttribute type="boolean" keyPath="greyOverride" value="YES"/>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                        <integer key="value" value="2"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="sectionHeading"/>
                                                 </userDefinedRuntimeAttributes>
                                             </label>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EeX-q6-P5C" customClass="GradientView" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="50" width="320" height="324"/>
+                                                <rect key="frame" x="0.0" y="46" width="320" height="328"/>
                                                 <subviews>
                                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" keyboardDismissMode="onDrag" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="PeY-LN-vYt" customClass="MELTextView" customModule="Mode" customModuleProvider="target">
-                                                        <rect key="frame" x="0.0" y="0.0" width="320" height="324"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="320" height="328"/>
                                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                         <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
@@ -2114,7 +2340,7 @@
                                                 </userDefinedRuntimeAttributes>
                                             </view>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Woy-9c-9Ge">
-                                                <rect key="frame" x="0.0" y="0.0" width="320" height="50"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="320" height="46"/>
                                                 <connections>
                                                     <action selector="enterDescriptionText:" destination="Uz3-1f-hrv" eventType="touchUpInside" id="3DY-Hb-N5d"/>
                                                     <action selector="focusDescription" destination="HY4-3W-yW7" eventType="touchUpInside" id="OGn-iw-JYk"/>
@@ -2141,11 +2367,15 @@
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="751" text="creator" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aUi-6k-74B" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
                                                 <rect key="frame" x="10" y="10" width="300" height="20"/>
-                                                <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="22"/>
+                                                <fontDescription key="fontDescription" name="MyriadPro-Semibold" family="Myriad Pro" pointSize="22"/>
                                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                                 <nil key="highlightedColor"/>
                                                 <userDefinedRuntimeAttributes>
                                                     <userDefinedRuntimeAttribute type="boolean" keyPath="greyOverride" value="YES"/>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                        <integer key="value" value="2"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="sectionHeading"/>
                                                 </userDefinedRuntimeAttributes>
                                             </label>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iRa-NK-VJ3">

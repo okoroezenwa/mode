@@ -10,7 +10,7 @@ import UIKit
 
 class FullPlayerTableViewController: UITableViewController {
     
-    @IBOutlet weak var bolderTitleSwitch: MELSwitch! {
+    @IBOutlet var bolderTitleSwitch: MELSwitch! {
         
         didSet {
             
@@ -22,7 +22,7 @@ class FullPlayerTableViewController: UITableViewController {
             }
         }
     }
-    @IBOutlet weak var minimiseSwitch: MELSwitch! {
+    @IBOutlet var minimiseSwitch: MELSwitch! {
         
         didSet {
             
@@ -34,7 +34,7 @@ class FullPlayerTableViewController: UITableViewController {
             }
         }
     }
-    @IBOutlet weak var closeButtonSwitch: MELSwitch! {
+    @IBOutlet var closeButtonSwitch: MELSwitch! {
         
         didSet {
             
@@ -46,7 +46,7 @@ class FullPlayerTableViewController: UITableViewController {
             }
         }
     }
-    @IBOutlet weak var separateSwitch: MELSwitch! {
+    @IBOutlet var separateSwitch: MELSwitch! {
         
         didSet {
             
@@ -58,7 +58,7 @@ class FullPlayerTableViewController: UITableViewController {
             }
         }
     }
-    @IBOutlet weak var avoidSwitch: MELSwitch! {
+    @IBOutlet var avoidSwitch: MELSwitch! {
         
         didSet {
             
@@ -70,7 +70,7 @@ class FullPlayerTableViewController: UITableViewController {
             }
         }
     }
-    @IBOutlet weak var supplementarySwitch: MELSwitch! {
+    @IBOutlet var supplementarySwitch: MELSwitch! {
         
         didSet {
             
@@ -82,13 +82,13 @@ class FullPlayerTableViewController: UITableViewController {
             }
         }
     }
-    @IBOutlet weak var starSwitch: MELSwitch!
-    @IBOutlet weak var likedSwitch: MELSwitch!
-    @IBOutlet weak var shareSwitch: MELSwitch!
-    @IBOutlet weak var volumeSwitch: MELSwitch!
-    @IBOutlet weak var overlayImageView: MELImageView!
-    @IBOutlet weak var smallerImageView: MELImageView!
-    @IBOutlet weak var belowImageView: MELImageView!
+    @IBOutlet var starSwitch: MELSwitch!
+    @IBOutlet var likedSwitch: MELSwitch!
+    @IBOutlet var shareSwitch: MELSwitch!
+    @IBOutlet var volumeSwitch: MELSwitch!
+    @IBOutlet var overlayImageView: MELImageView!
+    @IBOutlet var smallerImageView: MELImageView!
+    @IBOutlet var belowImageView: MELImageView!
     @IBOutlet var cells: [UITableViewCell]!
     @IBOutlet var separationSubviews: [UIView]!
     @IBOutlet var supplementarySubviews: [UIView]!

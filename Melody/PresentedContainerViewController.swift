@@ -10,13 +10,13 @@ import UIKit
 
 class PresentedContainerViewController: UIViewController, ArtworkModifierContaining {
     
-    @IBOutlet weak var containerView: UIView!
-    @IBOutlet weak var effectView: MELVisualEffectView!
-    @IBOutlet weak var titleLabel: MELLabel!
-    @IBOutlet weak var leftButton: MELButton!
-    @IBOutlet weak var rightButton: MELButton!
-    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-    @IBOutlet weak var topConstraint: NSLayoutConstraint!
+    @IBOutlet var containerView: UIView!
+    @IBOutlet var effectView: MELVisualEffectView!
+    @IBOutlet var titleLabel: MELLabel!
+    @IBOutlet var leftButton: MELButton!
+    @IBOutlet var rightButton: MELButton!
+    @IBOutlet var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet var topConstraint: NSLayoutConstraint!
     @IBOutlet var cornerRadiusView: UIView! {
         
         didSet {
@@ -25,14 +25,14 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
             cornerRadiusView.layer.cornerRadius = 14
         }
     }
-    @IBOutlet weak var rightBorderView: MELBorderView!
-    @IBOutlet weak var parentViewLeadingConstraint: NSLayoutConstraint!
-    @IBOutlet weak var parentViewTrailingConstraint: NSLayoutConstraint!
-    @IBOutlet weak var largeActivityIndicator: MELActivityIndicatorView!
+    @IBOutlet var rightBorderView: MELBorderView!
+    @IBOutlet var parentViewLeadingConstraint: NSLayoutConstraint!
+    @IBOutlet var parentViewTrailingConstraint: NSLayoutConstraint!
+    @IBOutlet var largeActivityIndicator: MELActivityIndicatorView!
     @IBOutlet var promptLabel: MELLabel!
     @IBOutlet var topStackViewConstraint: NSLayoutConstraint!
     
-    enum ChildContext { case items, playlists, upNext, newPlaylist, settings, tips, queue, playlistDetails, info, songDetails, queueGuard, theme, gestures, playback, tabBar, background, filter, artwork, icon, fullPlayer, libraryRefresh, recents, properties, lyricsInfo }
+    enum ChildContext { case items, playlists, upNext, newPlaylist, settings, tips, queue, playlistDetails, info, songDetails, queueGuard, theme, gestures, playback, tabBar, background, filter, artwork, icon, fullPlayer, libraryRefresh, recents, properties, lyricsInfo, propertySettings }
     
     var context = ChildContext.items
     var manager: QueueManager?
@@ -58,6 +58,7 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
     var transitionAnimation: (() -> ())?
     var transitionCancellation: (() -> ())?
     lazy var optionsContext = InfoViewController.Context.song(location: .queue(loaded: true, index: musicPlayer.nowPlayingItemIndex), at: 0, within: [musicPlayer.nowPlayingItem].compactMap({ $0 }))
+    lazy var filterContext = FilterViewContext.library
     override var transitioningDelegate: UIViewControllerTransitioningDelegate? {
         
         get { return self.altAnimator ?? self.animator }
@@ -246,6 +247,13 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
         
         return vc
     }()
+    @objc lazy var propertySettingsVC: PropertiesTableViewController = {
+        
+        let vc = settingsStoryboard.instantiateViewController(withIdentifier: String.init(describing: PropertiesTableViewController.self)) as! PropertiesTableViewController
+        vc.context = filterContext
+        
+        return vc
+    }()
     @objc var activeViewController: UIViewController? {
         
         didSet {
@@ -333,11 +341,14 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
                 case .properties: return propertiesVC
                 
                 case .lyricsInfo: return lyricsInfoVC
+                
+                case .propertySettings: return propertySettingsVC
             }
         }()
         
         notifier.addObserver(self, selector: #selector(unwindToStart), name: .endQueueModification, object: nil)
         notifier.addObserver(self, selector: #selector(updateStatusBar), name: .themeChanged, object: nil)
+        notifier.addObserver(self, selector: #selector(updateTopConstraint), name: .lineHeightsCalculated, object: nil)
         
         let gr = UILongPressGestureRecognizer.init(target: self, action: #selector(unwindToMain(_:)))
         gr.minimumPressDuration = longPressDuration
@@ -507,6 +518,15 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
                 case .properties: return title ?? ""
                 
                 case .lyricsInfo: return "Lyrics Details"
+                
+                case .propertySettings:
+                
+                    switch filterContext {
+                        
+                        case .library: return "Library Sections"
+                        
+                        case .filter: return "Search Categories"
+                    }
             }
         }()
         
@@ -561,7 +581,7 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
                     
                     rightButton.setImage(#imageLiteral(resourceName: "Lightbulb"), for: .normal)
                 }
-        case .tips, .playlists, .songDetails, .queueGuard, .theme, .gestures, .playback, .tabBar, .background, .artwork, .icon, .fullPlayer, .libraryRefresh, .recents, .items, .properties, .lyricsInfo:
+        case .tips, .playlists, .songDetails, .queueGuard, .theme, .gestures, .playback, .tabBar, .background, .artwork, .icon, .fullPlayer, .libraryRefresh, .recents, .items, .properties, .lyricsInfo, .propertySettings:
                 
                 if updateConstraintsAndButtons {
                     
@@ -585,7 +605,7 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
     func updatePrompt(animated: Bool) {
         
         promptLabel.text = prompt
-        topStackViewConstraint.constant = prompt == nil ? 44 : 57
+        updateTopConstraint()
             
         UIView.animate(withDuration: animated ? 0.3 : 0, delay: 0, options: .allowUserInteraction, animations: {
             
@@ -593,6 +613,13 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
             self.view.layoutIfNeeded()
         
         }, completion: nil)
+    }
+    
+    @objc func updateTopConstraint() {
+        
+        let spacing: CGFloat = activeFont == .myriadPro ? 4 : 2
+        
+        topStackViewConstraint.constant = prompt == nil ? 44 : (FontManager.shared.heightsDictionary[.modalHeading] ?? 0) + (FontManager.shared.heightsDictionary[.prompt] ?? 0) + 16 + spacing // 8 + 8
     }
     
     private func removeInactiveViewController(inactiveViewController: UIViewController?) {
@@ -690,7 +717,7 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
             
                 dismissVC()
             
-            case .songDetails, .tips, .queueGuard, .theme, .gestures, .playback, .tabBar, .background, .artwork, .icon, .fullPlayer, .libraryRefresh, .recents, .items, .properties, .lyricsInfo: break
+            case .songDetails, .tips, .queueGuard, .theme, .gestures, .playback, .tabBar, .background, .artwork, .icon, .fullPlayer, .libraryRefresh, .recents, .items, .properties, .lyricsInfo, .propertySettings: break
             
             case /*.items,*/ .upNext:
                 

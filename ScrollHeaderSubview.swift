@@ -10,13 +10,14 @@ import UIKit
 
 class ScrollHeaderSubview: UIView {
 
-    @IBOutlet weak var imageViewContainer: UIView!
-    @IBOutlet weak var imageView: MELImageView!
-    @IBOutlet weak var label: MELLabel!
-    @IBOutlet weak var imageViewContainerWidthConstraint: NSLayoutConstraint!
-    @IBOutlet weak var imageViewTrailingConstraint: NSLayoutConstraint!
-    @IBOutlet weak var topConstraint: NSLayoutConstraint!
-    @IBOutlet weak var bottomConstraint: NSLayoutConstraint!
+    @IBOutlet var imageViewContainer: UIView!
+    @IBOutlet var imageView: MELImageView!
+    @IBOutlet var label: MELLabel!
+    @IBOutlet var imageViewContainerWidthConstraint: NSLayoutConstraint!
+    @IBOutlet var imageViewTrailingConstraint: NSLayoutConstraint!
+    @IBOutlet var topConstraint: NSLayoutConstraint!
+    @IBOutlet var bottomConstraint: NSLayoutConstraint!
+    @IBOutlet var labelBottomConstraint: NSLayoutConstraint!
     
     @objc var showImage = true {
         
@@ -33,7 +34,7 @@ class ScrollHeaderSubview: UIView {
         
         let view = Bundle.main.loadNibNamed("ScrollHeaderSubview", owner: nil, options: nil)?.first as! ScrollHeaderSubview
         view.label.text = title
-        view.label.font = UIFont.myriadPro(ofWeight: .regular, size: 17)
+        view.label.textStyle = TextStyle.body.rawValue
         view.imageView.image = image
         view.imageViewContainerWidthConstraint.constant = useSmallerImage ? 14 : 16
         
@@ -48,10 +49,24 @@ class ScrollHeaderSubview: UIView {
         view.bottomConstraint.constant = 0
         view.imageViewTrailingConstraint.constant = useSmallerDistance ? 2 : 4
         view.label.text = title
-        view.label.font = UIFont.myriadPro(ofWeight: .regular, size: 14)
+        view.label.textStyle = TextStyle.secondary.rawValue
         view.imageView.image = image
         view.imageViewContainerWidthConstraint.constant = imageSize
         
         return view
+    }
+    
+    override func awakeFromNib() {
+        
+        super.awakeFromNib()
+        
+        updateSpacing()
+        
+        notifier.addObserver(self, selector: #selector(updateSpacing), name: .lineHeightsCalculated, object: nil)
+    }
+    
+    @objc func updateSpacing() {
+        
+        labelBottomConstraint.constant = abs(2 - FontManager.shared.buttonInset)
     }
 }

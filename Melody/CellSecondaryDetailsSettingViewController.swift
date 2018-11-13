@@ -10,7 +10,7 @@ import UIKit
 
 class CellSecondaryDetailsSettingViewController: UIViewController {
 
-    @IBOutlet weak var tableView: MELTableView!
+    @IBOutlet var tableView: MELTableView!
     
     let array = [SecondaryCategory.loved, .plays, .lastPlayed, .rating, .genre, .dateAdded, .year, .fileSize]
     var secondaryArray = songSecondaryDetails ?? []

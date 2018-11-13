@@ -10,8 +10,8 @@ import UIKit
 
 class EffectBanner: UIView {
 
-    @IBOutlet weak var imageView: UIImageView!
-    @IBOutlet weak var label: UILabel!
-    @IBOutlet weak var buttonsStackView: UIStackView!
-    @IBOutlet weak var effectView: UIVisualEffectView!
+    @IBOutlet var imageView: UIImageView!
+    @IBOutlet var label: UILabel!
+    @IBOutlet var buttonsStackView: UIStackView!
+    @IBOutlet var effectView: UIVisualEffectView!
 }

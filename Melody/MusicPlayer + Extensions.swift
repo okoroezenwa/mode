@@ -64,7 +64,7 @@ public extension MPMusicPlayerController {
                 notifier.post(name: .saveQueue, object: self, userInfo: [String.queueItems: items])
             }
             
-            self.stop()
+            self.pause()//stop()
             
             let queueBlock: (() -> ()) = {
                 
@@ -142,14 +142,15 @@ public extension MPMusicPlayerController {
                     
                     if isSameItem {
                         
-                        self.currentPlaybackTime = time
+//                        self.currentPlaybackTime = time
                         self.prepareToPlay()
-                        self.currentPlaybackTime = time
+//                        self.currentPlaybackTime = time
                     }
                     
                     if (shouldRespectState && wasPlaying.inverted).inverted {
                     
                         self.play()
+                        self.currentPlaybackTime = time
                     
                     } else {
                         
@@ -157,6 +158,8 @@ public extension MPMusicPlayerController {
                             
                             self.pause()
                         }
+                        
+                        self.currentPlaybackTime = time
                     }
                 }
                 
@@ -385,7 +388,17 @@ public extension MPMusicPlayerController {
             return
         }
         
-        if #available(iOS 10.3, *), (useSystemPlayer && forceOldStyleQueue.inverted) || (useSystemPlayer.inverted && forceOldStyleQueue) {
+        let test: Bool = {
+            
+            if #available(iOS 11.3, *) {
+                
+                return false
+            }
+            
+            return true
+        }()
+        
+        if #available(iOS 10.3, *), (useSystemPlayer && forceOldStyleQueue.inverted) || (useSystemPlayer.inverted && forceOldStyleQueue && test) {
             
             var descriptor: MPMusicPlayerMediaItemQueueDescriptor? {
                 

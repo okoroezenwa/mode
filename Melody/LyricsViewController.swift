@@ -34,9 +34,18 @@ class LyricsViewController: UIViewController {
         
         super.viewDidLoad()
         
-        
-        
         updateBottomView(to: .hidden, animated: false)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        
+        super.viewDidAppear(animated)
+        
+        if let nowPlayingVC = parent as? NowPlayingViewController {
+            
+            let tap = UITapGestureRecognizer.init(target: nowPlayingVC, action: #selector(NowPlayingViewController.viewLyrics))
+            view.addGestureRecognizer(tap)
+        }
     }
     
     func prepareLyrics(updateBootomView: Bool) {

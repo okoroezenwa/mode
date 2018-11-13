@@ -10,10 +10,10 @@ import UIKit
 
 class QueueInsertViewController: UIViewController, BorderButtonContaining {
 
-    @IBOutlet weak var queueStackView: UIStackView!
-    @IBOutlet weak var shuffleLabel: MELLabel!
-    @IBOutlet weak var albumsLabel: MELLabel!
-    @IBOutlet weak var shuffleSwitch: MELSwitch! {
+    @IBOutlet var queueStackView: UIStackView!
+    @IBOutlet var shuffleLabel: MELLabel!
+    @IBOutlet var albumsLabel: MELLabel!
+    @IBOutlet var shuffleSwitch: MELSwitch! {
         
         didSet {
             
@@ -27,7 +27,7 @@ class QueueInsertViewController: UIViewController, BorderButtonContaining {
             }
         }
     }
-    @IBOutlet weak var albumsSwitch: MELSwitch! {
+    @IBOutlet var albumsSwitch: MELSwitch! {
         
         didSet {
             
@@ -48,9 +48,9 @@ class QueueInsertViewController: UIViewController, BorderButtonContaining {
     var byAlbums = false
     var context = Context.other
     
-    let nextView = BorderedButtonView.with(title: "Next", image: #imageLiteral(resourceName: "PlayNext"), action: nil, target: nil)
-    let afterView = BorderedButtonView.with(title: "After...", image: #imageLiteral(resourceName: "PlayAfter"), action: nil, target: nil)
-    let laterView = BorderedButtonView.with(title: "Last", image: #imageLiteral(resourceName: "PlayLater"), action: nil, target: nil)
+    let nextView = BorderedButtonView.with(title: "Next", image: #imageLiteral(resourceName: "PlayNext"), tapAction: nil)
+    let afterView = BorderedButtonView.with(title: "After...", image: #imageLiteral(resourceName: "PlayAfter"), tapAction: nil)
+    let laterView = BorderedButtonView.with(title: "Last", image: #imageLiteral(resourceName: "PlayLater"), tapAction: nil)
     
     var labelTitle: String { return title ?? singleSongTitle ?? query?.items?.count.fullCountText(for: .song) ?? songs.count.fullCountText(for: .song) }
     
@@ -116,10 +116,10 @@ class QueueInsertViewController: UIViewController, BorderButtonContaining {
             
             $0.borderViewTopConstraint.constant = 9
             $0.borderViewBottomConstraint.constant = 16
-            $0.button.contentEdgeInsets.top = 0
-            $0.button.contentEdgeInsets.bottom = 4.5
+//            $0.button.contentEdgeInsets.top = 0
+//            $0.button.contentEdgeInsets.bottom = 4.5
             queueStackView.addArrangedSubview($0)
-            $0.button.addTarget(self, action: #selector(addToQueue(_:)), for: .touchUpInside)
+            $0.tapAction = .init(action: #selector(addToQueue(_:)), target: self)
             
             if !$0.isHidden {
                 
@@ -145,9 +145,9 @@ class QueueInsertViewController: UIViewController, BorderButtonContaining {
         albumsSwitch.isUserInteractionEnabled = shuffled && canShuffle && canShuffleAlbums
     }
     
-    @objc func addToQueue(_ sender: UIButton) {
+    @objc func addToQueue(_ sender: UITapGestureRecognizer) {
         
-        if sender == afterView.button {
+        if sender.view == afterView {
             
             guard let presentedVC = presentedStoryboard.instantiateViewController(withIdentifier: "presentedVC") as? PresentedContainerViewController else { return }
             
@@ -206,7 +206,7 @@ class QueueInsertViewController: UIViewController, BorderButtonContaining {
             
             let alertType: MPMusicPlayerController.QueueModificationAlert = title?.isEmpty == false ? .entity(name: labelTitle) : .arbitrary(count: items.count)
             
-            musicPlayer.insert(kind, sender == nextView.button ? .next : .last, alertType: alertType, from: self, withTitle: labelTitle, subtitle: nil, alertTitle: "\(shuffled ? .shuffle() : "Play") \(sender == nextView.button ? "Next" : "Later")", completionKind: .completion({
+            musicPlayer.insert(kind, sender.view == nextView ? .next : .last, alertType: alertType, from: self, withTitle: labelTitle, subtitle: nil, alertTitle: "\(shuffled ? .shuffle() : "Play") \(sender.view == nextView ? "Next" : "Later")", completionKind: .completion({
                 
                 if case .collector = self.context {
                     

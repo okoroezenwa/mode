@@ -10,8 +10,8 @@ import UIKit
 
 class VerticalPresentationContainerViewController: UIViewController {
 
-    @IBOutlet weak var imageView: ShadowImageView!
-    @IBOutlet weak var effectView: MELVisualEffectView! {
+    @IBOutlet var imageView: ShadowImageView!
+    @IBOutlet var effectView: MELVisualEffectView! {
         
         didSet {
             
@@ -19,9 +19,9 @@ class VerticalPresentationContainerViewController: UIViewController {
             effectView.layer.cornerRadius = 15
         }
     }
-    @IBOutlet weak var titleLabel: MELLabel!
-    @IBOutlet weak var containerView: UIView!
-    @IBOutlet weak var containerViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet var titleLabel: MELLabel!
+    @IBOutlet var containerView: UIView!
+    @IBOutlet var containerViewHeightConstraint: NSLayoutConstraint!
     
     enum Context { case insert, sort, actions }
     

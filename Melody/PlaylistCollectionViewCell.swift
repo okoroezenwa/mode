@@ -12,20 +12,22 @@ class PlaylistCollectionViewCell: UICollectionViewCell, ArtworkContainingCell {
     
     weak var delegate: PlaylistCollectionCellDelegate?
     
-    @IBOutlet weak var artworkImageView: UIImageView!
-    @IBOutlet weak var nameLabel: MELLabel!
-    @IBOutlet weak var songCountLabel: MELLabel!
-    @IBOutlet weak var artworkContainer: UIView!
-    @IBOutlet weak var selectedView: UIView!
-    @IBOutlet weak var playButton: UIButton!
-    @IBOutlet weak var playButtonBorder: UIView!
-    @IBOutlet weak var secondaryLabelBottomConstraint: NSLayoutConstraint!
-    @IBOutlet weak var artworkImageViewLeadingConstraint: NSLayoutConstraint!
-    @IBOutlet weak var artworkImageViewTrailingConstraint: NSLayoutConstraint!
-    @IBOutlet weak var artworkImageViewTopConstraint: NSLayoutConstraint!
+    @IBOutlet var artworkImageView: UIImageView!
+    @IBOutlet var nameLabel: MELLabel!
+    @IBOutlet var songCountLabel: MELLabel!
+    @IBOutlet var artworkContainer: UIView!
+    @IBOutlet var selectedView: UIView!
+    @IBOutlet var playButton: UIButton!
+    @IBOutlet var playButtonBorder: UIView!
+    @IBOutlet var stackViewBottomConstraint: NSLayoutConstraint!
+    @IBOutlet var artworkImageViewLeadingConstraint: NSLayoutConstraint!
+    @IBOutlet var artworkImageViewTrailingConstraint: NSLayoutConstraint!
+    @IBOutlet var artworkImageViewTopConstraint: NSLayoutConstraint!
     @IBOutlet var playView: UIView!
     @IBOutlet var accessoryView: UIView!
     @IBOutlet var accessoryBorderView: UIView!
+    @IBOutlet var stackView: UIStackView!
+    @IBOutlet var stackViewTopConstraint: NSLayoutConstraint!
     
     var details: (entity: Entity, width: CGFloat?) = (.playlist, nil) {
 
@@ -58,11 +60,19 @@ class PlaylistCollectionViewCell: UICollectionViewCell, ArtworkContainingCell {
         super.awakeFromNib()
         
         updateCornersAndShadows()
+        updateSpacing()
+        
         ([accessoryBorderView, playButtonBorder] as [UIView]).forEach({ UniversalMethods.addShadow(to: $0, radius: 2, opacity: 0.5, path: $0.shadowPath(cornerRadius: 12)) })
         
         notifier.addObserver(self, selector: #selector(modifyInfoButton), name: .infoButtonVisibilityChanged, object: nil)
-
         notifier.addObserver(self, selector: #selector(updateCornersAndShadows), name: .cornerRadiusChanged, object: nil)
+        notifier.addObserver(self, selector: #selector(updateSpacing), name: .lineHeightsCalculated, object: nil)
+    }
+    
+    @objc func updateSpacing() {
+        
+        stackView.spacing = FontManager.shared.cellSpacing - (activeFont == .myriadPro ? 5 : 0)
+        stackViewTopConstraint.constant = FontManager.shared.cellSpacing - (activeFont == .myriadPro ? 3 : 0) + 3
     }
     
     @objc func modifyInfoButton() {
@@ -77,7 +87,7 @@ class PlaylistCollectionViewCell: UICollectionViewCell, ArtworkContainingCell {
             (listsCornerRadius ?? cornerRadius).updateCornerRadius(on: $0?.layer, width: (details.width ?? artworkImageView.bounds.width) - 16, entityType: details.entity, globalRadiusType: cornerRadius)
         })
         
-        UniversalMethods.addShadow(to: artworkContainer, radius: 4, opacity: 0.3, shouldRasterise: true)
+        UniversalMethods.addShadow(to: artworkContainer, radius: 4, opacity: 0.35, shouldRasterise: true)
     }
     
     func prepare(with playlist: MPMediaPlaylist, count: Int, editingMode editing: Bool = false, direction: UICollectionView.ScrollDirection = .horizontal, position: Position = .leading, topConstraint: CGFloat = 0) {
@@ -109,7 +119,7 @@ class PlaylistCollectionViewCell: UICollectionViewCell, ArtworkContainingCell {
             artworkImageViewTopConstraint.constant = insets.top
             artworkImageViewLeadingConstraint.constant = insets.left
             artworkImageViewTrailingConstraint.constant = insets.right
-            secondaryLabelBottomConstraint.constant = insets.bottom
+            stackViewBottomConstraint.constant = insets.bottom
         }
         
         nameLabel.text = playlist.validName

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14269.12" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.13.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_0" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14252.5"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.9"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -50,7 +50,7 @@
             <objects>
                 <tableViewController storyboardIdentifier="TabBarTableViewController" id="1yj-Ye-guh" customClass="TabBarTableViewController" customModule="Mode" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="none" rowHeight="54" sectionHeaderHeight="18" sectionFooterHeight="18" contentViewInsetsToSafeArea="NO" id="0Eg-H2-Hvn" customClass="MELTableView" customModule="Mode" customModuleProvider="target">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="620"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <sections/>
@@ -64,7 +64,6 @@
                             <outlet property="delegate" destination="1yj-Ye-guh" id="yFc-am-biR"/>
                         </connections>
                     </tableView>
-                    <size key="freeformSize" width="320" height="620"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="BV8-HD-exb" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -88,7 +87,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="54"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Up Next" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KP1-u3-Y7d" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Queue" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KP1-u3-Y7d" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
                                                     <rect key="frame" x="18" y="18.5" width="256" height="17"/>
                                                     <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                     <nil key="textColor"/>
@@ -702,7 +701,7 @@
                                                     </userDefinedRuntimeAttributes>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YoC-VB-ZOO" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="41" y="17" width="42" height="20"/>
+                                                    <rect key="frame" x="41" y="18.5" width="38.5" height="17"/>
                                                     <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -1301,7 +1300,7 @@
             <objects>
                 <tableViewController storyboardIdentifier="LibraryRefreshTableViewController" id="qcI-zJ-fgq" customClass="LibraryRefreshTableViewController" customModule="Mode" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="uYe-eF-jvC" customClass="MELTableView" customModule="Mode" customModuleProvider="target">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="700"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <sections/>
@@ -1315,7 +1314,6 @@
                             <outlet property="delegate" destination="qcI-zJ-fgq" id="uOf-QJ-lPZ"/>
                         </connections>
                     </tableView>
-                    <size key="freeformSize" width="320" height="700"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1ig-bg-BPO" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -1855,7 +1853,7 @@
             <objects>
                 <tableViewController storyboardIdentifier="QueueTableViewController" id="hen-EG-Oqo" customClass="QueueTableViewController" customModule="Mode" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="none" rowHeight="54" sectionHeaderHeight="18" sectionFooterHeight="18" contentViewInsetsToSafeArea="NO" id="Lku-8a-Jkr" customClass="MELTableView" customModule="Mode" customModuleProvider="target">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="750"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <color key="separatorColor" white="0.0" alpha="0.080000000000000002" colorSpace="calibratedWhite"/>
@@ -1871,7 +1869,6 @@
                             <outlet property="delegate" destination="hen-EG-Oqo" id="KG2-Mt-DKz"/>
                         </connections>
                     </tableView>
-                    <size key="freeformSize" width="320" height="750"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kM6-W5-Uhx" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -1882,7 +1879,7 @@
             <objects>
                 <tableViewController storyboardIdentifier="RecentsTableViewController" id="Ecp-t4-sRW" customClass="RecentsTableViewController" customModule="Mode" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="none" rowHeight="54" sectionHeaderHeight="18" sectionFooterHeight="18" contentViewInsetsToSafeArea="NO" id="DjU-Nr-yuv" customClass="MELTableView" customModule="Mode" customModuleProvider="target">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="750"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <sections/>
@@ -1896,11 +1893,34 @@
                             <outlet property="delegate" destination="Ecp-t4-sRW" id="A9Z-g8-Jdi"/>
                         </connections>
                     </tableView>
-                    <size key="freeformSize" width="320" height="750"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="w5F-D2-e5r" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="5966.25" y="-188.02816901408451"/>
+            <point key="canvasLocation" x="6083" y="-248"/>
+        </scene>
+        <!--Properties Table View Controller-->
+        <scene sceneID="yri-iL-4wc">
+            <objects>
+                <tableViewController storyboardIdentifier="PropertiesTableViewController" id="hAX-E9-UUd" customClass="PropertiesTableViewController" customModule="Mode" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="none" allowsSelection="NO" rowHeight="54" sectionHeaderHeight="18" sectionFooterHeight="18" contentViewInsetsToSafeArea="NO" id="YbC-IS-5hS" customClass="MELTableView" customModule="Mode" customModuleProvider="target">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        <sections/>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="boolean" keyPath="header" value="YES"/>
+                            <userDefinedRuntimeAttribute type="boolean" keyPath="footer" value="YES"/>
+                            <userDefinedRuntimeAttribute type="boolean" keyPath="settings" value="YES"/>
+                        </userDefinedRuntimeAttributes>
+                        <connections>
+                            <outlet property="dataSource" destination="hAX-E9-UUd" id="rfg-BI-j9l"/>
+                            <outlet property="delegate" destination="hAX-E9-UUd" id="09c-Yq-U0y"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Rpq-Ie-BLf" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="6083" y="528"/>
         </scene>
     </scenes>
     <resources>

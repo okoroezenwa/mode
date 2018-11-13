@@ -70,6 +70,10 @@
                                     <nil key="highlightedColor"/>
                                     <userDefinedRuntimeAttributes>
                                         <userDefinedRuntimeAttribute type="boolean" keyPath="greyOverride" value="YES"/>
+                                        <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                            <integer key="value" value="2"/>
+                                        </userDefinedRuntimeAttribute>
+                                        <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="sectionHeading"/>
                                     </userDefinedRuntimeAttributes>
                                 </label>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vZL-Z0-HOO">
@@ -162,6 +166,7 @@
                 <outlet property="altButton" destination="vZL-Z0-HOO" id="rSP-6L-i3Z"/>
                 <outlet property="button" destination="nDO-hp-fnA" id="0db-JL-iIe"/>
                 <outlet property="label" destination="pd0-qL-KSC" id="kjd-n9-jP5"/>
+                <outlet property="labelBottomConstraint" destination="hUp-fQ-Xkv" id="t6j-d1-AoN"/>
                 <outlet property="labelLeadingConstraint" destination="Vcr-WA-HBD" id="wK4-xZ-AWb"/>
                 <outlet property="leftButtonBorderView" destination="Vz6-Fm-scF" id="Pka-vR-VBO"/>
                 <outlet property="leftButtonBorderViewTrailingConstraint" destination="k32-Om-Ak8" id="dTQ-IJ-mF8"/>

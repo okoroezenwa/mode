@@ -10,10 +10,10 @@ import UIKit
 
 class SectionIndexCollectionViewCell: UICollectionViewCell {
     
-    @IBOutlet weak var label: MELLabel!
-    @IBOutlet weak var borderView: MELBorderView!
-    @IBOutlet weak var borderViewProportionalWidthConstraint: NSLayoutConstraint!
-    @IBOutlet weak var borderViewWidthConstraint: NSLayoutConstraint!
+    @IBOutlet var label: MELLabel!
+    @IBOutlet var borderView: MELBorderView!
+    @IBOutlet var borderViewProportionalWidthConstraint: NSLayoutConstraint!
+    @IBOutlet var borderViewWidthConstraint: NSLayoutConstraint!
     
     override func awakeFromNib() {
         

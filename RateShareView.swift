@@ -10,10 +10,10 @@ import UIKit
 
 class RateShareView: UIView {
 
-    @IBOutlet weak var ratingView: UIView!
-    @IBOutlet weak var ratingStackView: UIStackView!
-    @IBOutlet weak var shareButton: MELButton!
-    @IBOutlet weak var likedStateButton: MELButton!
+    @IBOutlet var ratingView: UIView!
+    @IBOutlet var ratingStackView: UIStackView!
+    @IBOutlet var shareButton: MELButton!
+    @IBOutlet var likedStateButton: MELButton!
     
     @objc weak var entity: MPMediaEntity? {
         
