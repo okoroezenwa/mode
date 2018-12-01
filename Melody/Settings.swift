@@ -136,7 +136,7 @@ var hiddenFilterProperties: [Property] { return prefs.array(forKey: .hiddenFilte
 var hiddenLibrarySections: [LibrarySection] { return prefs.array(forKey: .hiddenLibrarySections)?.compactMap({ LibrarySection.from($0 as? LibrarySection.RawValue) }) ?? [] }
 var activeFont: Font { return Font(rawValue: prefs.integer(forKey: .activeFont)) ?? .system }
 var barBlurBehaviour: BarBlurBehavour { return BarBlurBehavour(rawValue: prefs.integer(forKey: .barBlurBehaviour)) ?? .all }
-var visibleInfoItems: [InfoSection] { return prefs.array(forKey: .visibleInfoItems)?.compactMap({ InfoSection.from($0 as? InfoSection.RawValue) }) ?? [] }
+//var visibleInfoItems: [InfoSection] { return prefs.array(forKey: .visibleInfoItems)?.compactMap({ InfoSection.from($0 as? InfoSection.RawValue) }) ?? [] }
 
 class Settings {
     
@@ -157,7 +157,7 @@ class Settings {
         
         prefs.register(defaults: [
             
-            .dynamicStatusBar: true,
+            .dynamicStatusBar: isiPhoneX.inverted,
             .nowPlayingBoldTitle: false,
             .boldSectionTitles: false, // unused
             .playOnlyShortcut: true,
@@ -197,7 +197,7 @@ class Settings {
             .prefersSmallerArt: isiPhoneX,
             .showNowPlayingVolumeView: true,
             .darkTheme: false,
-            .showExplicitness: true, // incomplete
+            .showExplicitness: true,
             .songCountVisible: true,
             .playlistsView: PlaylistView.all.rawValue,
             .songCellCategories: Settings.songSecondarySubviews,
@@ -276,14 +276,14 @@ class Settings {
             .removeArtistPunctuation: true,
             .removeArtistAmpersands: true,
             .replaceArtistCensoredWords: true,
-            .sectionCountVisible: false,//isInDebugMode,
+            .sectionCountVisible: false,
             .useWhiteColorBackground: false,
             .useBlackColorBackground: false,
             .hiddenFilterProperties: [Int](),
             .hiddenLibrarySections: [Int](),
-            .activeFont: Font.myriadPro.rawValue,
-            .barBlurBehaviour: BarBlurBehavour.all.rawValue,
-            .visibleInfoItems: InfoSection.allCases.map({ $0.rawValue })
+            .activeFont: Font.system.rawValue,
+            .barBlurBehaviour: BarBlurBehavour.all.rawValue/*,
+            .visibleInfoItems: InfoSection.allCases.map({ $0.rawValue })*/
         ])
         
         sharedDefaults.register(defaults: [
@@ -412,7 +412,7 @@ class Settings {
 // MARK: - String Settings Constants
 extension String {
     
-    // MARK: - Sortable
+    // MARK: - Collection
     static let songsSort = "songsSort"
     static let songsOrder = "songsOrder"
     static let albumsSort = "albumsSort"

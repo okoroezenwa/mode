@@ -782,7 +782,7 @@ extension EntityItemsViewController: EntityVerifiable {
         
         let shuffleArray: [UIPreviewActionItem] = (query?.items ?? []).count > 1 ? canShuffleAlbums ? [shuffleGroup] : [shuffle] : []
         
-        let array: [UIPreviewActionItem] = [play] + shuffleArray + [info] + [queue]// + (entityContainerType == .album ? [artist] : [])
+        let array: [UIPreviewActionItem] = [play] + shuffleArray + [info] + (musicPlayer.nowPlayingItem == nil ? [] : [queue])// + (entityContainerType == .album ? [artist] : [])
         
         return array
     }

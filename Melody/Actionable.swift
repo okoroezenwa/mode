@@ -797,13 +797,15 @@ extension SingleItemActionable {
                     
                     }(), let song: MPMediaItem = (item as? MPMediaItemCollection)?.items.first ?? item as? MPMediaItem, let verifiable = vc as? EntityVerifiable else { return }
                     
-                    var actions = [UIAlertAction]()
+                    var settings = [Setting]()
                     
-                    actions.append(self.singleItemAlertAction(for: .info(context: context), entity: entity, using: item, from: vc, useAlternateTitle: alternateTitle))
+                    let actionDetails = self.singleItemActionDetails(for: .info(context: context), entity: entity, using: item, from: vc, useAlternateTitle: alternateTitle)
+                    
+                    settings.append(Setting.init(title: actionDetails.title, subtitle: item.title(for: entity, basedOn: entity), image: #imageLiteral(resourceName: "InfoNoBorder22"), accessoryType: .chevron(tap: actionDetails.handler, preview: nil)))
                     
                     details.entities.filter({ verifiable.verifyLibraryStatus(of: song, itemProperty: $0, animated: false, updateButton: false) == .present }).forEach({ verifiedEntity in
                         
-                        let action = UIAlertAction.init(title: "\(entity == verifiedEntity ? "This " : "")" + verifiedEntity.title(albumArtistOverride: details.albumArtOverride).capitalized, style: .default, handler: { _ in
+                        settings.append(Setting.init(title: "\(entity == verifiedEntity ? "This " : "")" + verifiedEntity.title(albumArtistOverride: details.albumArtOverride).capitalized, subtitle: item.title(for: verifiedEntity, basedOn: entity), image: verifiedEntity.images.size22, accessoryType: .chevron(tap: {
                             
                             if entity == .playlist {
                                 
@@ -812,7 +814,7 @@ extension SingleItemActionable {
                                 transitioner.playlistQuery = MPMediaQuery.init(filterPredicates: [.for(.playlist, using: playlist)]).grouped(by: .playlist)
                                 
                                 verifiable.performUnwindSegue(with: .playlist, isEntityAvailable: true, title: "playlist", completion: {
-                                
+                                    
                                     if let container = vc as? FilterContainer & UIViewController {
                                         
                                         container.saveRecentSearch(withTitle: container.searchBar.text, resignFirstResponder: false)
@@ -829,12 +831,29 @@ extension SingleItemActionable {
                                     container.saveRecentSearch(withTitle: container.searchBar.text, resignFirstResponder: false)
                                 }
                             })
-                        })
-                        
-                        actions.append(action)
+                            
+                        }, preview: { source in
+                            
+                            guard let vc = entityStoryboard.instantiateViewController(withIdentifier: "entityItems") as? EntityItemsViewController else { return nil }
+                            
+                            var highlightedAlbum: MPMediaItemCollection? {
+                                
+                                switch entity {
+                                    
+                                    case .album: return item as? MPMediaItemCollection
+                                    
+                                    case .song: return MPMediaQuery.init(filterPredicates: [.for(.album, using: song.albumPersistentID)]).grouped(by: .album).collections?.first
+                                    
+                                    default: return nil
+                                }
+                            }
+                            
+                            return Transitioner.shared.transition(to: verifiedEntity, vc: vc, from: source, sender: MPMediaQuery.init(filterPredicates: [.for(entity == verifiedEntity ? entity : verifiedEntity, using: entity == verifiedEntity ? item.persistentID : verifiedEntity.persistentID(from: song))]).grouped(by: verifiedEntity.grouping).collections?.first, highlightedItem: entity == .song ? song : nil, highlightedAlbum: highlightedAlbum, preview: true, titleOverride: ((appDelegate.window?.rootViewController as? ContainerViewController)?.activeViewController?.topViewController as? Navigatable)?.preferredTitle)
+                            
+                        })))
                     })
                     
-                    vc.present(UIAlertController.withTitle(title, message: "Show...", style: .actionSheet, actions: actions + [.cancel()]), animated: true, completion: nil)
+                    Transitioner.shared.showAlert(from: vc, context: .show, with: settings)
                 })
             
             case .rate:

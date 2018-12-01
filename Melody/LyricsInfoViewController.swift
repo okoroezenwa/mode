@@ -95,7 +95,7 @@ extension LyricsInfoViewController: UITableViewDelegate, UITableViewDataSource {
             
                 let cell = tableView.dequeueReusableCell(withIdentifier: .settingsCell, for: indexPath) as! SettingsTableViewCell
             
-                cell.prepare(with: Setting.init(title: "Lyrics Settings", accessoryType: .chevron))
+                cell.prepare(with: Setting.init(title: "Lyrics Settings", accessoryType: .chevron(tap: nil, preview: nil)))
             
                 return cell
             

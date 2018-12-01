@@ -149,24 +149,21 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
         
         didSet {
             
-            if let tableView = tableView, let button = arrangeButton, let id = entityVC?.collection?.persistentID {
+            if let _ = tableView, let button = arrangeButton, let id = entityVC?.collection?.persistentID {
                 
-                songs.reverse()
+                UniversalMethods.saveSortableItem(withPersistentID: id, order: ascending, sortCriteria: sortCriteria, kind: .artistSongs)
                 
-                if filtering {
+                if applySort {
                     
-                    filteredEntities.reverse()
+                    sortItems()
                 }
                 
-                sections = /*entityVC?.kind == .artist ? altSections().details : */prepareSections(from: songs)
-                UniversalMethods.saveSortableItem(withPersistentID: id, order: ascending, sortCriteria: sortCriteria, kind: .artistSongs)
-                tableView.reloadData()
-                animateCells(direction: .vertical)
                 updateImage(for: button)
             }
         }
     }
     var location: SortLocation = .songs
+    var applySort = true
     var sortCriteria = SortCriteria.standard {
         
         didSet {

@@ -133,22 +133,18 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
     @objc var albumArtistQuery: MPMediaQuery?
     
     @objc var hasDescriptionText: Bool { return playlist?.descriptionText != nil && playlist?.descriptionText != "" }
+    var applySort = true
     @objc var ascending = true {
         
         didSet {
             
-            if let tableView = tableView, let button = arrangeButton {
+            if let _ = tableView, let button = arrangeButton {
                 
-                songs.reverse()
-                
-                if filtering {
+                if applySort {
                     
-                    filteredEntities.reverse()
+                    sortItems()
                 }
                 
-                sections = prepareSections(from: songs)
-                tableView.reloadData()
-                animateCells(direction: .vertical)
                 updateImage(for: button)
                 
                 if let playlist = playlist {

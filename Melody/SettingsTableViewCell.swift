@@ -18,6 +18,12 @@ class SettingsTableViewCell: UITableViewCell {
     @IBOutlet var itemSwitch: MELSwitch!
     @IBOutlet var borderViews: [MELBorderView]!
     @IBOutlet var stackView: UIStackView!
+    @IBOutlet var leadingImageView: MELImageView!
+    @IBOutlet var leadingImageViewWidthConstraint: NSLayoutConstraint!
+    @IBOutlet var labelsStackView: UIStackView!
+    @IBOutlet var leadingImageViewLeadingConstraint: NSLayoutConstraint!
+    
+    enum Context { case setting, alert(cancel: Bool) }
     
     override func awakeFromNib() {
         
@@ -68,15 +74,25 @@ class SettingsTableViewCell: UITableViewCell {
         super.addSubview(view)
     }
 
-    func prepare(with setting: Setting, animated: Bool = false) {
+    func prepare(with setting: Setting, animated: Bool = false, context: Context = .setting, alignment: NSTextAlignment = .left) {
         
         titleLabel.text = setting.title
-//        titleLabel.textAlignment = setting.accessoryType == .none ? .center : .left
+        titleLabel.textAlignment = alignment
         subtitleLabel.text = setting.subtitle
         subtitleLabel.isHidden = setting.subtitle == nil
         tertiaryLabel.text = setting.tertiaryDetail
         tertiaryLabel.isHidden = setting.tertiaryDetail == nil
-        chevron.superview?.isHidden = setting.accessoryType != .chevron
+        leadingImageView.image = setting.image
+        leadingImageView.superview?.isHidden = setting.image == nil
+        chevron.superview?.isHidden = {
+            
+            if case .chevron = setting.accessoryType {
+                
+                return false
+            }
+            
+            return true
+        }()
         check.superview?.isHidden = { if case .check(let bool) = setting.accessoryType { return bool().inverted } else { return true } }()
         itemSwitch.isHidden = {
             
@@ -92,6 +108,33 @@ class SettingsTableViewCell: UITableViewCell {
             }
         }()
 //        borderViews.forEach({ $0.isHidden = setting.accessoryType != .none })
+        
+        switch context {
+            
+            case .setting:
+            
+                if titleLabel.textStyle != TextStyle.body.rawValue {
+                    
+                    titleLabel.textStyle = TextStyle.body.rawValue
+                }
+            
+                titleLabel.fontWeight = FontWeight.regular.rawValue
+                labelsStackView.layoutMargins.left = 10
+                leadingImageViewLeadingConstraint.constant = 10
+                leadingImageViewWidthConstraint.constant = 17
+            
+            case .alert(let cancel):
+            
+                if titleLabel.textStyle != TextStyle.alert.rawValue {
+                    
+                    titleLabel.textStyle = TextStyle.alert.rawValue
+                }
+            
+                titleLabel.fontWeight = (cancel ? .semibold : FontWeight.regular).rawValue
+                labelsStackView.layoutMargins.left = 16
+                leadingImageViewLeadingConstraint.constant = 16
+                leadingImageViewWidthConstraint.constant = 22
+        }
         
         titleLabel.lightOverride = setting.inactive()
         subtitleLabel.lightOverride = setting.inactive()
@@ -113,7 +156,7 @@ struct Setting {
     
     enum AccessoryType: Equatable {
         
-        case none, chevron, check(() -> (Bool)), onOff(isOn: () -> (Bool), action: (() -> ()))
+        case none, chevron(tap: (() -> ())?, preview: ((UIViewController) -> UIViewController?)?), check(() -> (Bool)), onOff(isOn: () -> (Bool), action: (() -> ()))
         
         static func ==(lhs: AccessoryType, rhs: AccessoryType) -> Bool {
             
@@ -125,7 +168,7 @@ struct Setting {
                 
                 case .check(let bool): if case .check(let otherBool) = rhs { return bool() == otherBool() } else { return false }
                 
-                case .onOff(_): if case .onOff(_) = rhs { return true } else { return false }
+                case .onOff: if case .onOff = rhs { return true } else { return false }
             }
         }
     }

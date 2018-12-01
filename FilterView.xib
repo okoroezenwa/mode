@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.13.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.9"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -108,13 +108,27 @@
                                         <outlet property="delegate" destination="yf0-iH-lPr" id="Dgx-Vv-xtF"/>
                                     </connections>
                                 </collectionView>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hold to Edit" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JW4-Nx-qqq" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                    <rect key="frame" x="10" y="14" width="223.5" height="17"/>
+                                    <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
+                                    <nil key="textColor"/>
+                                    <nil key="highlightedColor"/>
+                                    <userDefinedRuntimeAttributes>
+                                        <userDefinedRuntimeAttribute type="boolean" keyPath="lightOverride" value="YES"/>
+                                        <userDefinedRuntimeAttribute type="boolean" keyPath="hidden" value="YES"/>
+                                    </userDefinedRuntimeAttributes>
+                                </label>
                             </subviews>
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <constraints>
+                                <constraint firstItem="JW4-Nx-qqq" firstAttribute="centerX" secondItem="iWC-kT-eK1" secondAttribute="centerX" id="9rR-Qp-mOJ"/>
+                                <constraint firstItem="JW4-Nx-qqq" firstAttribute="leading" secondItem="iWC-kT-eK1" secondAttribute="leading" constant="10" id="HsE-RT-agf"/>
                                 <constraint firstItem="5EA-Lu-wOh" firstAttribute="top" secondItem="iWC-kT-eK1" secondAttribute="top" id="cB0-i0-m7y"/>
                                 <constraint firstItem="5EA-Lu-wOh" firstAttribute="leading" secondItem="iWC-kT-eK1" secondAttribute="leading" id="irh-rc-YNC"/>
                                 <constraint firstAttribute="bottom" secondItem="5EA-Lu-wOh" secondAttribute="bottom" id="jLi-fM-Bem"/>
                                 <constraint firstAttribute="trailing" secondItem="5EA-Lu-wOh" secondAttribute="trailing" id="maF-dO-LFk"/>
+                                <constraint firstAttribute="trailing" secondItem="JW4-Nx-qqq" secondAttribute="trailing" constant="10" id="mi7-Qp-Xwf"/>
+                                <constraint firstAttribute="bottom" secondItem="JW4-Nx-qqq" secondAttribute="bottom" constant="5" id="n86-MN-HXQ"/>
                             </constraints>
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="number" keyPath="midStart">
@@ -311,6 +325,7 @@
                 <outlet property="collectedLabel" destination="36a-cg-cog" id="IIE-sN-KeF"/>
                 <outlet property="collectedView" destination="dfK-ax-aGh" id="hib-uT-eux"/>
                 <outlet property="collectionView" destination="5EA-Lu-wOh" id="b4J-me-HRE"/>
+                <outlet property="editLabel" destination="JW4-Nx-qqq" id="q6h-fP-xMZ"/>
                 <outlet property="filterInputView" destination="ygA-zI-vhK" id="Uzp-7p-F9N"/>
                 <outlet property="filterInputViewBottomConstraint" destination="0vv-kX-Qvy" id="Jpy-AK-XvW"/>
                 <outlet property="filterInputViewHeightConstraint" destination="KuV-oQ-2hX" id="Uif-dU-pcV"/>

@@ -159,23 +159,20 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Inf
     
     var sections = [SortSectionDetails]()
     var highlightedIndex: Int?
+    var applySort = true
     @objc var ascending = true {
         
         didSet {
             
-            if let tableView = tableView, let button = arrangeButton, let id = album?.representativeItem?.albumPersistentID {
+            if let _ = tableView, let button = arrangeButton, let id = album?.representativeItem?.albumPersistentID {
                 
-                songs.reverse()
+                UniversalMethods.saveSortableItem(withPersistentID: id, order: ascending, sortCriteria: sortCriteria, kind: SortableKind.album)
                 
-                if filtering {
+                if applySort {
                     
-                    filteredEntities.reverse()
+                    sortItems()
                 }
                 
-                sections = prepareSections(from: songs)
-                UniversalMethods.saveSortableItem(withPersistentID: id, order: ascending, sortCriteria: sortCriteria, kind: SortableKind.album)
-                tableView.reloadData()
-                animateCells(direction: .vertical)
                 updateImage(for: button)
             }
         }

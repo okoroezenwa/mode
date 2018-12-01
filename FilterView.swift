@@ -53,6 +53,7 @@ class FilterView: UIView {
     @IBOutlet var actionsButtonContainer: UIView!
     @IBOutlet var actionsButtonContainerWidthConstraint: NSLayoutConstraint!
     @IBOutlet var gradientView: GradientView!
+    @IBOutlet var editLabel: MELLabel!
     
     enum ClearButtonState { case hidden, visible }
     
@@ -192,6 +193,8 @@ class FilterView: UIView {
                 properties = librarySections.filter({ Set(hiddenLibrarySections).contains($0).inverted })
                 otherProperties = otherLibrarySections
         }
+        
+        editLabel.isHidden = (properties.isEmpty && otherProperties.isEmpty).inverted
     }
     
     @objc func showItemActions(_ gr: UILongPressGestureRecognizer) {

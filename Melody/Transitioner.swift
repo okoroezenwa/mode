@@ -115,8 +115,10 @@ class Transitioner: NSObject {
         
         if let verticalPresentedVC = vc as? VerticalPresentationContainerViewController {
             
+            verticalPresentedVC.segments = [("Ascending", #imageLiteral(resourceName: "Ascending17")), ("Descending", #imageLiteral(resourceName: "Descending17"))]
             verticalPresentedVC.context = .sort
             verticalPresentedVC.arrangeVC.sorter = sorter
+            
 //            PopoverDelegate.shared.prepare(vc: verticalPresentedVC, preferredSize: .init(width: 350, height: 169), sourceView: sourceView ?? sorter.arrangeButton, sourceRect: sourceRect ?? sorter.arrangeButton.bounds.modifiedBy(width: 0, height: 5), permittedDirections: [.up, .down])
             
             return verticalPresentedVC.arrangeVC
@@ -211,6 +213,17 @@ class Transitioner: NSObject {
         
         vc.context = .propertySettings
         vc.filterContext = context
+        
+        sender.present(vc, animated: true, completion: nil)
+    }
+    
+    func showAlert(from sender: UIViewController, context: AlertTableViewController.Context, with array: [Setting]) {
+        
+        guard let vc = popoverStoryboard.instantiateViewController(withIdentifier: String.init(describing: VerticalPresentationContainerViewController.self)) as? VerticalPresentationContainerViewController else { return }
+        
+        vc.context = .show
+        vc.alertVC.context = context
+        vc.alertVC.array = array
         
         sender.present(vc, animated: true, completion: nil)
     }

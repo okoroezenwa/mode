@@ -88,6 +88,9 @@
 		BE31DDB01FE41DB00029CC41 /* ArtworkTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE31DDAF1FE41DB00029CC41 /* ArtworkTableViewController.swift */; };
 		BE3445D51E5729BB00E6AE3B /* Transitioner.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3445D41E5729BB00E6AE3B /* Transitioner.swift */; };
 		BE34A4901DDEDCCF0023A0EB /* CollectionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE34A48F1DDEDCCF0023A0EB /* CollectionsViewController.swift */; };
+		BE34C96D21A9C40A00236BAE /* GestureSelectableCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = BE34C96C21A9C40A00236BAE /* GestureSelectableCell.xib */; };
+		BE34C96F21A9C62700236BAE /* GestureSelectableCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE34C96E21A9C62700236BAE /* GestureSelectableCollectionViewCell.swift */; };
+		BE358980219EA1F300637E9F /* AlertTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE35897F219EA1F300637E9F /* AlertTableViewController.swift */; };
 		BE381D5420DA7B6A00D6C2F3 /* SettingsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = BE381D5320DA7B6A00D6C2F3 /* SettingsCell.xib */; };
 		BE3A5FAB1D81B01500F4F2F2 /* LibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3A5FAA1D81B01500F4F2F2 /* LibraryViewController.swift */; };
 		BE3AADCF1F29D74A00559D9C /* MarqueeLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3AADCE1F29D74A00559D9C /* MarqueeLabel.swift */; };
@@ -415,6 +418,9 @@
 		BE31DDAF1FE41DB00029CC41 /* ArtworkTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtworkTableViewController.swift; sourceTree = "<group>"; };
 		BE3445D41E5729BB00E6AE3B /* Transitioner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Transitioner.swift; sourceTree = "<group>"; };
 		BE34A48F1DDEDCCF0023A0EB /* CollectionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionsViewController.swift; sourceTree = "<group>"; };
+		BE34C96C21A9C40A00236BAE /* GestureSelectableCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GestureSelectableCell.xib; sourceTree = "<group>"; };
+		BE34C96E21A9C62700236BAE /* GestureSelectableCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureSelectableCollectionViewCell.swift; sourceTree = "<group>"; };
+		BE35897F219EA1F300637E9F /* AlertTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertTableViewController.swift; sourceTree = "<group>"; };
 		BE381D5320DA7B6A00D6C2F3 /* SettingsCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SettingsCell.xib; sourceTree = "<group>"; };
 		BE3A5FAA1D81B01500F4F2F2 /* LibraryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibraryViewController.swift; sourceTree = "<group>"; };
 		BE3AADCE1F29D74A00559D9C /* MarqueeLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MarqueeLabel.swift; sourceTree = "<group>"; };
@@ -813,6 +819,7 @@
 				BE6432C31E280A9100C640F2 /* ActionsViewController.swift */,
 				BE500F1E1F9918EE0005E568 /* QueueInsertViewController.swift */,
 				BE2CC8DE1FC2A6A30012FD5F /* SectionIndexViewController.swift */,
+				BE35897F219EA1F300637E9F /* AlertTableViewController.swift */,
 			);
 			name = "Popover Contained";
 			sourceTree = "<group>";
@@ -1145,6 +1152,7 @@
 				BEFF556B212874F0006CBAEE /* VisualEffectNavigationBar.xib */,
 				BE42A61F213523070094DD0C /* SwipeView.xib */,
 				BE3F1CD2218E0AFE0099907D /* InfoItemCell.xib */,
+				BE34C96C21A9C40A00236BAE /* GestureSelectableCell.xib */,
 			);
 			name = XIBS;
 			path = ..;
@@ -1159,6 +1167,7 @@
 				BE5191981F9398FC0001DD94 /* SectionIndexCollectionViewCell.swift */,
 				BE28088B1FC97F5700D3AB1C /* PropertyCollectionViewCell.swift */,
 				BEDB79A52191BC6B0013F9A9 /* InfoLyricsCollectionViewCell.swift */,
+				BE34C96E21A9C62700236BAE /* GestureSelectableCollectionViewCell.swift */,
 			);
 			name = "Collection View Cells";
 			path = Melody;
@@ -1329,7 +1338,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0830;
-				LastUpgradeCheck = 0930;
+				LastUpgradeCheck = 1010;
 				ORGANIZATIONNAME = "Ezenwa Okoro";
 				TargetAttributes = {
 					BE0CE5961ED8473E00D8DF6D = {
@@ -1428,6 +1437,7 @@
 				BE1C349D1E672DF100561D28 /* ScrollHeaderSubview.xib in Resources */,
 				BEC0B1692021D506008CBEB5 /* Light App Icon Thin@2x.png in Resources */,
 				BE28088A1FC97F3200D3AB1C /* PropertyCollectionViewCell.xib in Resources */,
+				BE34C96D21A9C40A00236BAE /* GestureSelectableCell.xib in Resources */,
 				BEC0B1592021D47E008CBEB5 /* Dark App Icon Medium@2x.png in Resources */,
 				BE73B1E31D96708C0059D084 /* SongCell.xib in Resources */,
 				BEC0B16B2021D506008CBEB5 /* Light App Icon Thin@3x.png in Resources */,
@@ -1625,6 +1635,7 @@
 				BE99B5361ED6CF130033B796 /* MELLayerView.swift in Sources */,
 				BE7A66941E6253120091A216 /* MELLabel.swift in Sources */,
 				BE43524C2101EEBA0027C02C /* SwipeContainer.swift in Sources */,
+				BE34C96F21A9C62700236BAE /* GestureSelectableCollectionViewCell.swift in Sources */,
 				BEC933D91F6D9B2400FB5984 /* SwipeAnimator.swift in Sources */,
 				BE53A9A61DD0D77000FB3073 /* TableHeaderView.swift in Sources */,
 				BEC933D71F6D9B1E00FB5984 /* SwipeActionsView.swift in Sources */,
@@ -1738,6 +1749,7 @@
 				BE7223B61ECE7B3500A7C071 /* InfoCollectionReusableView.swift in Sources */,
 				BEFA282A1D3426E500DE7018 /* UIDevice+Extensions.swift in Sources */,
 				BEB57D9E1D569A9A0078264A /* UIImage+UIStatusBarStyle.m in Sources */,
+				BE358980219EA1F300637E9F /* AlertTableViewController.swift in Sources */,
 				BEE7F6451E6362A5005927C7 /* MELImageView.swift in Sources */,
 				BEB76FC020505067001FCA00 /* RecentsTableViewController.swift in Sources */,
 				BE0C1E2E1F1E67820010FDD7 /* LongPressManager.swift in Sources */,
@@ -1996,7 +2008,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				sharedBuildNumber = 12043;
+				sharedBuildNumber = 14781;
 				sharedVersionNumber = 1.2;
 			};
 			name = Debug;
@@ -2048,7 +2060,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				VALIDATE_PRODUCT = YES;
-				sharedBuildNumber = 12043;
+				sharedBuildNumber = 14781;
 				sharedVersionNumber = 1.2;
 			};
 			name = Release;
@@ -2073,7 +2085,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OBJC_BRIDGING_HEADER = "Melody/Melody-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;

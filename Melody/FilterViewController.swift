@@ -172,6 +172,7 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         }
     }
     lazy var actualSortCriteria: SortCriteria = { sorter?.sortCriteria ?? .standard }()
+    var applySort = true
     var ascending: Bool {
         
         get { return actualAscending }
@@ -513,25 +514,61 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
                 return
             }
             
-            if sender.filterOperation == nil { UniversalMethods.performInMain{ weakSelf.updateLoadingViews(hidden: true) }; return }
-            if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
-            
-            [{ tableContainer.filteredEntities = array },
-             { weakSelf.updateHeaderView() },
-             { weakSelf.tableView.reloadData() },
-             { weakSelf.tableView.setContentOffset(.zero, animated: false)},
-             { weakSelf.animateCells(direction: .vertical) },
-             { weakSelf.updateHeader(count: array.count) },
-             { weakSelf.updateLoadingViews(hidden: true) },
-             { weakSelf.updateTitleLabel() }].forEach({ closure in
+            if sender.filterOperation == nil {
                 
-                OperationQueue.main.addOperation({
+                UniversalMethods.performInMain { weakSelf.updateLoadingViews(hidden: true) }
+                
+                return
+            }
+            
+            if let operation = weakSelf.filterOperations[text], operation.isCancelled {
+                
+                UniversalMethods.performInMain { weakSelf.updateLoadingViews(hidden: true) }
                     
-                    if sender.filterOperation == nil { UniversalMethods.performInMain{ weakSelf.updateLoadingViews(hidden: true) }; return }
-                    if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
-                    
-                    closure()
-                })
+                return
+            }
+            
+            OperationQueue.main.addOperation({
+                
+                if sender.filterOperation == nil { weakSelf.updateLoadingViews(hidden: true); return }
+                if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
+                
+                tableContainer.filteredEntities = array
+                
+                if sender.filterOperation == nil { weakSelf.updateLoadingViews(hidden: true); return }
+                if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
+                
+                weakSelf.updateHeaderView()
+                
+                if sender.filterOperation == nil { weakSelf.updateLoadingViews(hidden: true); return }
+                if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
+                
+                weakSelf.tableView.reloadData()
+                
+                if sender.filterOperation == nil { weakSelf.updateLoadingViews(hidden: true); return }
+                if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
+                
+                weakSelf.tableView.setContentOffset(.zero, animated: false)
+                
+                if sender.filterOperation == nil { weakSelf.updateLoadingViews(hidden: true); return }
+                if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
+                
+                weakSelf.animateCells(direction: .vertical)
+                
+                if sender.filterOperation == nil { weakSelf.updateLoadingViews(hidden: true); return }
+                if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
+                
+                weakSelf.updateHeader(count: array.count)
+                
+                if sender.filterOperation == nil { weakSelf.updateLoadingViews(hidden: true); return }
+                if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
+                
+                weakSelf.updateLoadingViews(hidden: true)
+                
+                if sender.filterOperation == nil { weakSelf.updateLoadingViews(hidden: true); return }
+                if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
+                
+                weakSelf.updateTitleLabel()
             })
         })
         

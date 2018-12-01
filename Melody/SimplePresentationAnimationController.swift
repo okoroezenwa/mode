@@ -61,7 +61,7 @@ class SimplePresentationAnimationController: NSObject, UIViewControllerAnimatedT
                     
                     case .horizontal: subview.frame.origin.x += subview.frame.width
                     
-                    case .vertical: subview.frame.origin.y += subview.frame.height
+                    case .vertical: subview.frame.origin.y += (subview.frame.height/* + 30*/)
                 }
             }
         }
@@ -82,7 +82,7 @@ class SimplePresentationAnimationController: NSObject, UIViewControllerAnimatedT
                     
                             case .horizontal: $0.frame.origin.x -= $0.frame.width
                             
-                            case .vertical: $0.frame.origin.y -= $0.frame.height
+                            case .vertical: $0.frame.origin.y -= ($0.frame.height/* - 30*/)
                         }
                     })
                     
@@ -96,7 +96,7 @@ class SimplePresentationAnimationController: NSObject, UIViewControllerAnimatedT
                     
                             case .horizontal: $0.frame.origin.x += $0.frame.width
                             
-                            case .vertical: $0.frame.origin.y += $0.frame.height
+                            case .vertical: $0.frame.origin.y += ($0.frame.height/* + 30*/)
                         }
                     })
                     

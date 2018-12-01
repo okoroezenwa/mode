@@ -166,22 +166,29 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
         }
     }
     var location: SortLocation = .songs
+    var applySort = true
     var ascending = prefs.bool(forKey: .songsOrder) {
         
         didSet {
             
-            if let tableView = tableView, let button = arrangeButton {
+            if let _ = tableView, let button = arrangeButton {
                 
-                songs.reverse()
+//                songs.reverse()
+//
+//                if filtering {
+//
+//                    filteredEntities.reverse()
+//                }
+//
+//                sections = prepareSections(from: songs)
+//                tableView.reloadData()
+//                animateCells(direction: .vertical)
                 
-                if filtering {
+                if applySort {
                     
-                    filteredEntities.reverse()
+                    sortItems()
                 }
                 
-                sections = prepareSections(from: songs)
-                tableView.reloadData()
-                animateCells(direction: .vertical)
                 updateImage(for: button)
                 prefs.set(ascending, forKey: .songsOrder)
             }

@@ -79,6 +79,8 @@ class FontManager: NSObject {
     lazy var entityCellHeight = self.cellHeight
     lazy var heightsDictionary = self.styleHeights
     lazy var collectionViewCellConstant = self.collectionCellConstant
+    lazy var settingCellHeight = self.settingHeight(for: .body)
+    lazy var alertCellHeight = self.settingHeight(for: .body)
     
     private override init() {
         
@@ -92,6 +94,8 @@ class FontManager: NSObject {
         heightsDictionary = styleHeights
         entityCellHeight = cellHeight
         collectionViewCellConstant = collectionCellConstant
+        settingCellHeight = settingHeight(for: .body)
+        alertCellHeight = settingHeight(for: .body)
         
         notifier.post(name: .lineHeightsCalculated, object: nil)
     }
@@ -151,6 +155,13 @@ extension FontManager {
         let heights = [TextStyle.body, TextStyle.secondary, TextStyle.secondary].reduce(0, { $0 + (heightsDictionary[$1] ?? 0) })
             
         return heights + (2 * cellSpacing) + (2 * cellInset) + cellConstant
+    }
+    
+    func settingHeight(for mainStyle: TextStyle) -> CGFloat {
+        
+        let heights = [mainStyle, TextStyle.secondary].reduce(0, { $0 + (heightsDictionary[$1] ?? 0) })
+        
+        return heights + cellSpacing + (2 * cellInset) + cellConstant
     }
     
     var sectionHeaderSpacing: CGFloat {

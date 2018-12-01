@@ -16,6 +16,7 @@ protocol Arrangeable: NSObjectProtocol, TableViewContaining {
     var applicableSortCriteria: Set<SortCriteria> { get }
     var arrangeButton: MELButton! { get set }
     var location: SortLocation { get }
+    var applySort: Bool { get set }
     
     func sortItems()
 }

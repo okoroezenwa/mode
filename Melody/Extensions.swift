@@ -117,7 +117,7 @@ extension MPMediaPredicate {
             
             case .genre: return MPMediaItemPropertyGenre
             
-        case .playlist: return MPMediaPlaylistPropertyName
+            case .playlist: return MPMediaPlaylistPropertyName
             
             case .albumArtist: return MPMediaItemPropertyAlbumArtist
         }
@@ -896,6 +896,67 @@ extension MPMediaQuery {
     }
 }
 
+// MARK: - MPMediaEntity
+extension MPMediaEntity {
+    
+    func title(for entityType: Entity, basedOn mainEntityType: Entity) -> String? {
+        
+        switch mainEntityType {
+            
+            case .song:
+            
+                guard let song = self as? MPMediaItem else { return nil }
+            
+                switch entityType {
+                    
+                    case .song: return song.validTitle
+                    
+                    case .album: return song.validAlbum
+                    
+                    case .albumArtist: return song.validAlbumArtist
+                    
+                    case .artist: return song.validArtist
+                    
+                    case .composer: return song.validComposer
+                    
+                    case .genre: return song.validGenre
+                    
+                    case .playlist: return nil
+                }
+            
+            case .playlist:
+            
+                guard let playlist = self as? MPMediaPlaylist else { return nil }
+            
+                switch entityType {
+                    
+                    case .playlist: return playlist.validName
+                    
+                    default: return nil
+                }
+            
+            default:
+            
+                guard let collection = self as? MPMediaItemCollection else { return nil }
+            
+                switch entityType {
+                    
+                    case .album: return collection.representativeItem?.validAlbum
+                    
+                    case .albumArtist: return collection.representativeItem?.validAlbumArtist
+                    
+                    case .artist: return collection.representativeItem?.validArtist
+                    
+                    case .composer: return collection.representativeItem?.validComposer
+                    
+                    case .genre: return collection.representativeItem?.validGenre
+                    
+                    case .playlist, .song: return nil
+                }
+        }
+    }
+}
+
 // MARK: - CGFloat
 extension CGFloat {
     
@@ -1170,6 +1231,7 @@ extension UIViewControllerPreviewingDelegate where Self: UIViewController {
             container.visualEffectNavigationBar.titleLabel.text = vc.title
             container.visualEffectNavigationBar.updateTopConstraint(for: .end(completed: true), with: nil, and: vc)
             container.visualEffectNavigationBar.prepareRightView(for: vc.rightViewMode, initialPreparation: true)
+            container.visualEffectNavigationBar.rightView.alpha = 1
         }
     }
 }

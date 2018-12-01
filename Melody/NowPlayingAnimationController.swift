@@ -33,6 +33,16 @@ class NowPlayingAnimationController: NSObject, UIViewControllerAnimatedTransitio
         
         modalIndex = 0
         
+        let bottomInset: CGFloat = {
+            
+            if isiPhoneX, #available(iOS 11, *), let inset = UIApplication.shared.keyWindow?.safeAreaInsets.bottom {
+                
+                return inset
+            }
+            
+            return 0
+        }()
+        
         switch direction {
             
             case .forward:
@@ -63,12 +73,12 @@ class NowPlayingAnimationController: NSObject, UIViewControllerAnimatedTransitio
                         
                         let inset = (fromVC.activeViewController?.topViewController as? Navigatable)?.inset ?? (10 + 34 + 10)
                         fromVC.visualEffectNavigationBar.transform = .init(translationX: 0, y: -(inset + (UIApplication.shared.statusBarFrame.height == 40 ? 0 : UIApplication.shared.statusBarFrame.height)))
-                        fromVC.bottomEffectView.transform = .init(translationX: 0, y: fromVC.inset)
+                        fromVC.bottomEffectView.transform = .init(translationX: 0, y: fromVC.inset + bottomInset)
                     })
                     
                     UIView.addKeyframe(withRelativeStartTime: 2.4/5, relativeDuration: 2.6/5, animations: {
                         
-                        toVC.view.frame = .init(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height - UIApplication.shared.statusBarFrame.height + 20)
+                        toVC.view.frame = .init(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height - (isiPhoneX ? 0 : UIApplication.shared.statusBarFrame.height - 20))
                         toVC.view.alpha = 1
                     })
                     
@@ -97,7 +107,7 @@ class NowPlayingAnimationController: NSObject, UIViewControllerAnimatedTransitio
             
                 let containerView = transitionContext.containerView
                 
-                toVC.view.frame = .init(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height - UIApplication.shared.statusBarFrame.height + 20)
+                toVC.view.frame = .init(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height - (isiPhoneX ? 0 : UIApplication.shared.statusBarFrame.height - 20))
                 
                 if useAlternateAnimation {
                     
@@ -112,7 +122,7 @@ class NowPlayingAnimationController: NSObject, UIViewControllerAnimatedTransitio
                     
                     toVC.containerView.alpha = 0
                     toVC.containerView.transform = .init(translationX: -50, y: 0)
-                    toVC.bottomEffectView.transform = .init(translationX: 0, y: toVC.inset)
+                    toVC.bottomEffectView.transform = .init(translationX: 0, y: toVC.inset + bottomInset)
                     
                     toVC.altImageView.image = toVC.imageView.image
                     toVC.altImageView.alpha = 1
@@ -203,7 +213,7 @@ class NowPlayingAnimationController: NSObject, UIViewControllerAnimatedTransitio
                         UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 2.6/5, animations: {
                             
                             fromVC.view.alpha = 0
-                            fromVC.view.frame = .init(x: 50, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height - UIApplication.shared.statusBarFrame.height + 20)
+                            fromVC.view.frame = .init(x: 50, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height - (isiPhoneX ? 0 : UIApplication.shared.statusBarFrame.height - 20))
                         })
                         
                         UIView.addKeyframe(withRelativeStartTime: 2.4/5, relativeDuration: 2.6/5, animations: {

@@ -53,8 +53,8 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
     
     enum EntityState { case single, combined(previousIndex: Int) }
     
-    lazy var applicableSections = InfoSection.applicableSections(for: self.context.entity)
-    lazy var sections = self.prepareSections()
+//    lazy var applicableSections = InfoSection.applicableSections(for: self.context.entity)
+//    lazy var sections = self.prepareSections()
     
     var headerView: InfoCollectionReusableView! {
         
@@ -311,10 +311,10 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
         albumArtistButton.superview?.addGestureRecognizer(tapAlbumArtist)
     }
     
-    func prepareSections() -> [(InfoSection, String)] {
-        
-        return visibleInfoItems.filter({ applicableSections.contains($0) }).map({ ($0, "-") })
-    }
+//    func prepareSections() -> [(InfoSection, String)] {
+//
+//        return visibleInfoItems.filter({ applicableSections.contains($0) }).map({ ($0, "-") })
+//    }
     
     @objc func getInfo(_ sender: UILongPressGestureRecognizer) {
         

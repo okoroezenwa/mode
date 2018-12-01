@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.13.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.9"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -379,7 +379,7 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="256" height="54"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Folders" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eVQ-0E-aLa" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                <rect key="frame" x="38" y="0.0" width="51.5" height="54"/>
+                                                                <rect key="frame" x="38" y="0.0" width="57" height="54"/>
                                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                                 <nil key="textColor"/>
                                                                 <nil key="highlightedColor"/>
@@ -428,7 +428,7 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="256" height="54"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Bold Text" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0bz-HI-DRh" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                <rect key="frame" x="38" y="0.0" width="65" height="54"/>
+                                                                <rect key="frame" x="38" y="0.0" width="71.5" height="54"/>
                                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                                 <nil key="textColor"/>
                                                                 <nil key="highlightedColor"/>
@@ -489,7 +489,7 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="256" height="54"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Empty Playlists" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="huI-x5-W7N" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                <rect key="frame" x="38" y="0.0" width="106" height="54"/>
+                                                                <rect key="frame" x="38" y="0.0" width="116" height="54"/>
                                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                                 <nil key="textColor"/>
                                                                 <nil key="highlightedColor"/>
@@ -550,7 +550,7 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="256" height="54"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Prevent Duplicates" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8nn-XC-lcQ" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                <rect key="frame" x="38" y="0.0" width="133" height="54"/>
+                                                                <rect key="frame" x="38" y="0.0" width="143" height="54"/>
                                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                                 <nil key="textColor"/>
                                                                 <nil key="highlightedColor"/>
@@ -611,7 +611,7 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="256" height="54"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Mix Status Bar" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="emV-Ry-1hK" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                <rect key="frame" x="38" y="0.0" width="100" height="54"/>
+                                                                <rect key="frame" x="38" y="0.0" width="112.5" height="54"/>
                                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                                 <nil key="textColor"/>
                                                                 <nil key="highlightedColor"/>
@@ -691,7 +691,7 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="256" height="54"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Show Unadded Songs" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0ey-L3-Uk8" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                <rect key="frame" x="38" y="0.0" width="156.5" height="54"/>
+                                                                <rect key="frame" x="38" y="0.0" width="171.5" height="54"/>
                                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                                 <nil key="textColor"/>
                                                                 <nil key="highlightedColor"/>
@@ -786,7 +786,7 @@
                                                                         </userDefinedRuntimeAttributes>
                                                                     </view>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Playlists" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HoM-UR-gLw" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                        <rect key="frame" x="0.0" y="33" width="80" height="12"/>
+                                                                        <rect key="frame" x="0.0" y="32" width="80" height="14"/>
                                                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="12"/>
                                                                         <nil key="textColor"/>
                                                                         <nil key="highlightedColor"/>
@@ -846,7 +846,7 @@
                                                                         </userDefinedRuntimeAttributes>
                                                                     </view>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Songs" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="isp-9x-giC" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                        <rect key="frame" x="0.0" y="33" width="80" height="12"/>
+                                                                        <rect key="frame" x="0.0" y="32" width="80" height="14"/>
                                                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="12"/>
                                                                         <nil key="textColor"/>
                                                                         <nil key="highlightedColor"/>
@@ -906,7 +906,7 @@
                                                                         </userDefinedRuntimeAttributes>
                                                                     </view>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Artists" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fhz-eP-BUJ" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                        <rect key="frame" x="0.0" y="33" width="80" height="12"/>
+                                                                        <rect key="frame" x="0.0" y="32" width="80" height="14"/>
                                                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="12"/>
                                                                         <nil key="textColor"/>
                                                                         <nil key="highlightedColor"/>
@@ -966,7 +966,7 @@
                                                                         </userDefinedRuntimeAttributes>
                                                                     </view>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Albums" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fRu-g2-9oy" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                        <rect key="frame" x="0.0" y="33" width="80" height="12"/>
+                                                                        <rect key="frame" x="0.0" y="32" width="80" height="14"/>
                                                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="12"/>
                                                                         <nil key="textColor"/>
                                                                         <nil key="highlightedColor"/>
@@ -1047,7 +1047,7 @@
                                                                                 </userDefinedRuntimeAttributes>
                                                                             </view>
                                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Genres" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ogD-3o-Tdf" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                                <rect key="frame" x="0.0" y="33" width="80" height="12"/>
+                                                                                <rect key="frame" x="0.0" y="32" width="80" height="14"/>
                                                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="12"/>
                                                                                 <nil key="textColor"/>
                                                                                 <nil key="highlightedColor"/>
@@ -1107,7 +1107,7 @@
                                                                                 </userDefinedRuntimeAttributes>
                                                                             </view>
                                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Compilations" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="A2j-ke-x7Y" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                                <rect key="frame" x="0.0" y="33" width="80" height="12"/>
+                                                                                <rect key="frame" x="0.0" y="32" width="80" height="14"/>
                                                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="12"/>
                                                                                 <nil key="textColor"/>
                                                                                 <nil key="highlightedColor"/>
@@ -1167,7 +1167,7 @@
                                                                                 </userDefinedRuntimeAttributes>
                                                                             </view>
                                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Composers" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Drb-XU-efZ" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                                <rect key="frame" x="0.0" y="33" width="80" height="12"/>
+                                                                                <rect key="frame" x="0.0" y="32" width="80" height="14"/>
                                                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="12"/>
                                                                                 <nil key="textColor"/>
                                                                                 <nil key="highlightedColor"/>
@@ -1610,9 +1610,9 @@
                                         </constraints>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="eSq-bL-fEA">
-                                        <rect key="frame" x="0.0" y="108" width="375" height="63"/>
+                                        <rect key="frame" x="0.0" y="108" width="375" height="57"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="63" id="voy-dq-dop"/>
+                                            <constraint firstAttribute="height" constant="57" id="voy-dq-dop"/>
                                         </constraints>
                                     </stackView>
                                 </subviews>
@@ -1818,11 +1818,11 @@
                         <viewControllerLayoutGuide type="bottom" id="pzO-e9-FDd"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="6yy-pP-XdM">
-                        <rect key="frame" x="0.0" y="0.0" width="1200" height="169"/>
+                        <rect key="frame" x="0.0" y="0.0" width="1200" height="113"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="q3B-Sr-lHr" customClass="GradientView" customModule="Mode" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="56" width="1200" height="54"/>
+                                <rect key="frame" x="0.0" y="0.0" width="1200" height="54"/>
                                 <subviews>
                                     <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KZl-cc-bcO">
                                         <rect key="frame" x="0.0" y="0.0" width="1200" height="54"/>
@@ -2067,16 +2067,8 @@
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                             </view>
-                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" alpha="0.69999999999999996" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Sort By" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="czk-iq-jea" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                <rect key="frame" x="62" y="21.5" width="50.5" height="17"/>
-                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                <nil key="highlightedColor"/>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="boolean" keyPath="greyOverride" value="YES"/>
-                                </userDefinedRuntimeAttributes>
-                            </label>
                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="IaM-LZ-3WL">
-                                <rect key="frame" x="0.0" y="110" width="1200" height="59"/>
+                                <rect key="frame" x="0.0" y="54" width="1200" height="59"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yda-yq-Zb8">
                                         <rect key="frame" x="0.0" y="0.0" width="600" height="59"/>
@@ -2163,156 +2155,30 @@
                                     <constraint firstAttribute="height" constant="59" id="6pk-V5-HDh"/>
                                 </constraints>
                             </stackView>
-                            <view contentMode="scaleToFill" horizontalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="uv5-Jz-brv">
-                                <rect key="frame" x="1045" y="0.0" width="155" height="56"/>
-                                <subviews>
-                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="nzo-7e-01y">
-                                        <rect key="frame" x="0.0" y="0.0" width="155" height="56"/>
-                                        <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="i2Q-ip-Lgb" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="0.0" width="77.5" height="56"/>
-                                                <inset key="contentEdgeInsets" minX="0.0" minY="4" maxX="0.0" maxY="0.0"/>
-                                                <inset key="imageEdgeInsets" minX="22" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                                <state key="normal" image="AscendingLines"/>
-                                                <connections>
-                                                    <action selector="setAscending" destination="Tgw-Sd-aLB" eventType="touchUpInside" id="vEJ-jh-qMV"/>
-                                                </connections>
-                                            </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="t7m-8T-Unh" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="77.5" y="0.0" width="77.5" height="56"/>
-                                                <inset key="contentEdgeInsets" minX="0.0" minY="3" maxX="0.0" maxY="0.0"/>
-                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="16" maxY="0.0"/>
-                                                <state key="normal" image="DescendingLines"/>
-                                                <connections>
-                                                    <action selector="setDescending" destination="Tgw-Sd-aLB" eventType="touchUpInside" id="EKX-4S-sB2"/>
-                                                </connections>
-                                            </button>
-                                        </subviews>
-                                    </stackView>
-                                    <view userInteractionEnabled="NO" tag="1" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="kkG-9H-lRt" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                        <rect key="frame" x="16" y="11" width="123" height="38"/>
-                                        <subviews>
-                                            <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2fk-Dl-avH" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="58.5" y="3" width="61.5" height="32"/>
-                                                <color key="backgroundColor" white="0.0" alpha="0.050000000000000003" colorSpace="calibratedWhite"/>
-                                                <userDefinedRuntimeAttributes>
-                                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                                        <integer key="value" value="16"/>
-                                                    </userDefinedRuntimeAttribute>
-                                                </userDefinedRuntimeAttributes>
-                                            </view>
-                                        </subviews>
-                                        <color key="backgroundColor" white="0.0" alpha="0.050000000000000003" colorSpace="calibratedWhite"/>
-                                        <constraints>
-                                            <constraint firstAttribute="bottom" secondItem="2fk-Dl-avH" secondAttribute="bottom" priority="900" constant="3" id="0IC-1l-DWx"/>
-                                            <constraint firstItem="2fk-Dl-avH" firstAttribute="width" secondItem="kkG-9H-lRt" secondAttribute="width" multiplier="0.5" id="0Yf-t9-cwl"/>
-                                            <constraint firstAttribute="trailing" secondItem="2fk-Dl-avH" secondAttribute="trailing" priority="900" constant="3" id="1qW-wS-8d8"/>
-                                            <constraint firstItem="2fk-Dl-avH" firstAttribute="leading" secondItem="kkG-9H-lRt" secondAttribute="leading" priority="899" constant="3" id="DWY-5K-fWi"/>
-                                            <constraint firstItem="2fk-Dl-avH" firstAttribute="top" secondItem="kkG-9H-lRt" secondAttribute="top" priority="900" constant="3" id="agh-Ct-Rwc"/>
-                                        </constraints>
-                                        <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                                <integer key="value" value="19"/>
-                                            </userDefinedRuntimeAttribute>
-                                        </userDefinedRuntimeAttributes>
-                                    </view>
-                                </subviews>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                <constraints>
-                                    <constraint firstAttribute="bottom" secondItem="nzo-7e-01y" secondAttribute="bottom" id="4uX-la-dcb"/>
-                                    <constraint firstAttribute="width" priority="900" constant="155" id="AI1-ze-bva"/>
-                                    <constraint firstAttribute="trailing" secondItem="kkG-9H-lRt" secondAttribute="trailing" priority="900" constant="16" id="Iql-Tb-CZ2"/>
-                                    <constraint firstAttribute="trailing" secondItem="nzo-7e-01y" secondAttribute="trailing" id="Ynn-Jc-4jz"/>
-                                    <constraint firstItem="nzo-7e-01y" firstAttribute="top" secondItem="uv5-Jz-brv" secondAttribute="top" id="ZBj-rM-NWZ"/>
-                                    <constraint firstItem="nzo-7e-01y" firstAttribute="leading" secondItem="uv5-Jz-brv" secondAttribute="leading" id="ZXI-da-uDH"/>
-                                    <constraint firstAttribute="bottom" secondItem="kkG-9H-lRt" secondAttribute="bottom" priority="900" constant="7" id="dzb-oi-EKv"/>
-                                    <constraint firstItem="kkG-9H-lRt" firstAttribute="top" secondItem="uv5-Jz-brv" secondAttribute="top" priority="900" constant="11" id="ep1-E8-hsP"/>
-                                    <constraint firstItem="kkG-9H-lRt" firstAttribute="leading" secondItem="uv5-Jz-brv" secondAttribute="leading" priority="900" constant="16" id="tAS-Ep-vie"/>
-                                </constraints>
-                            </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zUj-du-qXz" userLabel="Lock View">
-                                <rect key="frame" x="0.0" y="0.0" width="62" height="56"/>
-                                <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RD6-Fn-G2k" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="62" height="56"/>
-                                        <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                        <inset key="contentEdgeInsets" minX="0.0" minY="4" maxX="0.0" maxY="0.0"/>
-                                        <state key="normal" image="Locked13"/>
-                                        <connections>
-                                            <action selector="persist:" destination="Tgw-Sd-aLB" eventType="touchUpInside" id="SnU-nZ-okM"/>
-                                        </connections>
-                                    </button>
-                                    <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="CKC-UE-Fbe" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                        <rect key="frame" x="16" y="15" width="30" height="30"/>
-                                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.050000000000000003" colorSpace="calibratedRGB"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="30" id="EXM-2L-XkE"/>
-                                            <constraint firstAttribute="width" secondItem="CKC-UE-Fbe" secondAttribute="height" multiplier="1:1" id="fuU-oM-ZHY"/>
-                                        </constraints>
-                                        <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                                <integer key="value" value="15"/>
-                                            </userDefinedRuntimeAttribute>
-                                            <userDefinedRuntimeAttribute type="boolean" keyPath="bordered" value="YES"/>
-                                            <userDefinedRuntimeAttribute type="boolean" keyPath="clear" value="YES"/>
-                                            <userDefinedRuntimeAttribute type="number" keyPath="alphaOverride">
-                                                <real key="value" value="0.02"/>
-                                            </userDefinedRuntimeAttribute>
-                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
-                                                <real key="value" value="1.2"/>
-                                            </userDefinedRuntimeAttribute>
-                                        </userDefinedRuntimeAttributes>
-                                    </view>
-                                </subviews>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="62" id="QXD-cx-z04"/>
-                                    <constraint firstAttribute="trailing" secondItem="RD6-Fn-G2k" secondAttribute="trailing" id="bRl-wp-IN5"/>
-                                    <constraint firstAttribute="bottom" secondItem="RD6-Fn-G2k" secondAttribute="bottom" id="i91-4i-Ngj"/>
-                                    <constraint firstItem="RD6-Fn-G2k" firstAttribute="top" secondItem="zUj-du-qXz" secondAttribute="top" id="in1-Bj-lHn"/>
-                                    <constraint firstItem="CKC-UE-Fbe" firstAttribute="centerX" secondItem="RD6-Fn-G2k" secondAttribute="centerX" id="mB2-Z0-FAh"/>
-                                    <constraint firstItem="RD6-Fn-G2k" firstAttribute="leading" secondItem="zUj-du-qXz" secondAttribute="leading" id="r6Y-2a-hi5"/>
-                                    <constraint firstItem="CKC-UE-Fbe" firstAttribute="centerY" secondItem="RD6-Fn-G2k" secondAttribute="centerY" constant="2" id="yHQ-hB-04i"/>
-                                </constraints>
-                            </view>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="IaM-LZ-3WL" firstAttribute="top" secondItem="q3B-Sr-lHr" secondAttribute="bottom" id="Dmo-8r-qBi"/>
                             <constraint firstAttribute="bottomMargin" secondItem="IaM-LZ-3WL" secondAttribute="bottom" id="Fl9-PF-KSO"/>
-                            <constraint firstItem="q3B-Sr-lHr" firstAttribute="top" secondItem="uv5-Jz-brv" secondAttribute="bottom" id="G7o-K2-DFi"/>
                             <constraint firstItem="q3B-Sr-lHr" firstAttribute="leading" secondItem="6yy-pP-XdM" secondAttribute="leading" id="Jed-6v-LMC"/>
                             <constraint firstItem="IaM-LZ-3WL" firstAttribute="leading" secondItem="6yy-pP-XdM" secondAttribute="leading" id="Lvk-h3-K4a"/>
-                            <constraint firstItem="czk-iq-jea" firstAttribute="centerY" secondItem="CKC-UE-Fbe" secondAttribute="centerY" id="MmZ-Va-qW8"/>
-                            <constraint firstAttribute="trailing" secondItem="uv5-Jz-brv" secondAttribute="trailing" id="Ucx-yF-ggF"/>
-                            <constraint firstItem="uv5-Jz-brv" firstAttribute="top" secondItem="3Da-cO-6wt" secondAttribute="bottom" id="XnB-tk-ttp"/>
-                            <constraint firstItem="zUj-du-qXz" firstAttribute="top" secondItem="3Da-cO-6wt" secondAttribute="bottom" id="hYF-jZ-OK8"/>
-                            <constraint firstItem="czk-iq-jea" firstAttribute="leading" secondItem="zUj-du-qXz" secondAttribute="trailing" id="mRJ-kZ-71G"/>
+                            <constraint firstItem="q3B-Sr-lHr" firstAttribute="top" secondItem="3Da-cO-6wt" secondAttribute="bottom" id="QZp-Sd-mcX"/>
                             <constraint firstAttribute="trailing" secondItem="IaM-LZ-3WL" secondAttribute="trailing" id="nCz-TC-v0h"/>
-                            <constraint firstItem="uv5-Jz-brv" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="czk-iq-jea" secondAttribute="trailing" constant="8" id="sVM-0B-P1R"/>
-                            <constraint firstItem="zUj-du-qXz" firstAttribute="leading" secondItem="6yy-pP-XdM" secondAttribute="leading" id="srR-Oh-KP6"/>
                             <constraint firstAttribute="trailing" secondItem="q3B-Sr-lHr" secondAttribute="trailing" id="trh-uh-FO2"/>
-                            <constraint firstItem="q3B-Sr-lHr" firstAttribute="top" secondItem="zUj-du-qXz" secondAttribute="bottom" id="yF1-Nt-IcC"/>
                         </constraints>
                     </view>
                     <nil key="simulatedStatusBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <size key="freeformSize" width="1200" height="169"/>
+                    <size key="freeformSize" width="1200" height="113"/>
                     <connections>
                         <outlet property="albumButton" destination="CSe-3j-K1f" id="mXq-Em-SU0"/>
                         <outlet property="albumCountButton" destination="YYw-4m-GRV" id="Ovi-4u-2Kj"/>
                         <outlet property="artistButton" destination="ZKI-wl-3Tu" id="gXP-Bz-UMa"/>
-                        <outlet property="ascendingButton" destination="i2Q-ip-Lgb" id="rcb-uh-mhi"/>
                         <outlet property="dateAddedButton" destination="thc-cg-qU3" id="g2h-8Z-EsD"/>
-                        <outlet property="descendingButton" destination="t7m-8T-Unh" id="0IH-Sh-KZ5"/>
                         <outlet property="durationButton" destination="gN3-e9-ytL" id="WJF-Nh-9tP"/>
                         <outlet property="fileSizeButton" destination="n0B-u7-9Je" id="4jz-Wx-BJj"/>
                         <outlet property="genreButton" destination="HIE-ys-bv0" id="61U-GG-EXw"/>
                         <outlet property="lastPlayedButton" destination="Fiq-yN-B4M" id="yea-dw-huB"/>
-                        <outlet property="lockButton" destination="RD6-Fn-G2k" id="3Jm-a3-ktY"/>
-                        <outlet property="lockButtonBorder" destination="CKC-UE-Fbe" id="EzN-cz-YZ0"/>
-                        <outlet property="orderBorderView" destination="2fk-Dl-avH" id="OWl-F7-AeW"/>
-                        <outlet property="orderBorderViewLeadingConstraint" destination="DWY-5K-fWi" id="dRL-S1-C7e"/>
                         <outlet property="playsButton" destination="8ET-dc-jv2" id="1rT-2c-LaT"/>
                         <outlet property="randomButton" destination="96g-P1-IeU" id="Do5-Zd-noJ"/>
                         <outlet property="ratingButton" destination="2t4-uL-Iqg" id="ZfK-LB-Z4t"/>
@@ -2327,6 +2193,32 @@
             </objects>
             <point key="canvasLocation" x="474" y="742"/>
         </scene>
+        <!--Alert Table View Controller-->
+        <scene sceneID="raL-fz-YbB">
+            <objects>
+                <tableViewController storyboardIdentifier="AlertTableViewController" id="RGh-rc-Syi" customClass="AlertTableViewController" customModule="Mode" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="drz-I0-J9c" customClass="MELTableView" customModule="Mode" customModuleProvider="target">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <inset key="separatorInset" minX="54" minY="0.0" maxX="0.0" maxY="0.0"/>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="boolean" keyPath="settings" value="YES"/>
+                        </userDefinedRuntimeAttributes>
+                        <connections>
+                            <outlet property="dataSource" destination="RGh-rc-Syi" id="CvB-JC-SMi"/>
+                            <outlet property="delegate" destination="RGh-rc-Syi" id="hQw-vd-NCn"/>
+                        </connections>
+                    </tableView>
+                    <connections>
+                        <segue destination="gNh-Cr-iIn" kind="unwind" identifier="preview" unwindAction="previewUnwind:" id="GWG-3E-26V"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Sml-rZ-8pr" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="gNh-Cr-iIn" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="-22" y="1271"/>
+        </scene>
         <!--Vertical Presentation Container View Controller-->
         <scene sceneID="tTH-LD-PsF">
             <objects>
@@ -2339,152 +2231,390 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="xHP-Xy-DSc" customClass="ShadowImageView" customModule="Mode" customModuleProvider="target">
-                                <rect key="frame" x="-30" y="390" width="435" height="322"/>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="radius">
-                                        <integer key="value" value="15"/>
-                                    </userDefinedRuntimeAttribute>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="length">
-                                        <integer key="value" value="30"/>
-                                    </userDefinedRuntimeAttribute>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="blur">
-                                        <integer key="value" value="30"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
-                            </imageView>
-                            <visualEffectView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4xb-dq-EE6" customClass="MELVisualEffectView" customModule="Mode" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="420" width="375" height="262"/>
-                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="CJP-fx-T3a">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="262"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                    <subviews>
-                                        <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hke-JB-hi4" userLabel="Lock View">
-                                            <rect key="frame" x="313" y="0.0" width="62" height="51"/>
-                                            <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aTR-T0-gaI" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="0.0" y="0.0" width="62" height="51"/>
-                                                    <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                    <inset key="contentEdgeInsets" minX="0.0" minY="4" maxX="0.0" maxY="0.0"/>
-                                                    <state key="normal" image="Locked13"/>
-                                                </button>
-                                                <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HOZ-NA-3xU" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="16" y="12.5" width="30" height="30"/>
-                                                    <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.050000000000000003" colorSpace="calibratedRGB"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wDY-in-aSW">
+                                <rect key="frame" x="-24" y="226" width="423" height="465"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="xHP-Xy-DSc" customClass="ShadowImageView" customModule="Mode" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="0.0" width="423" height="339"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="radius">
+                                                <integer key="value" value="15"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="length">
+                                                <integer key="value" value="30"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="blur">
+                                                <integer key="value" value="30"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                    </imageView>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="1UQ-1n-K2n" customClass="ShadowImageView" customModule="Mode" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="348" width="423" height="117"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="radius">
+                                                <integer key="value" value="15"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="length">
+                                                <integer key="value" value="30"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="blur">
+                                                <integer key="value" value="30"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                    </imageView>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="A5y-Il-DGQ" customClass="ShadowImageView" customModule="Mode" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="285" width="423" height="117"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="radius">
+                                                <integer key="value" value="15"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="length">
+                                                <integer key="value" value="30"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="blur">
+                                                <integer key="value" value="30"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                    </imageView>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstItem="A5y-Il-DGQ" firstAttribute="trailing" secondItem="1UQ-1n-K2n" secondAttribute="trailing" id="DyM-Br-9UF"/>
+                                    <constraint firstAttribute="trailing" secondItem="xHP-Xy-DSc" secondAttribute="trailing" id="Eql-MB-Rnq"/>
+                                    <constraint firstAttribute="bottom" secondItem="1UQ-1n-K2n" secondAttribute="bottom" id="FCk-zl-xb4"/>
+                                    <constraint firstItem="1UQ-1n-K2n" firstAttribute="leading" secondItem="xHP-Xy-DSc" secondAttribute="leading" id="Tpe-mG-IWL"/>
+                                    <constraint firstItem="xHP-Xy-DSc" firstAttribute="leading" secondItem="wDY-in-aSW" secondAttribute="leading" id="U7T-kN-zNZ"/>
+                                    <constraint firstItem="xHP-Xy-DSc" firstAttribute="top" secondItem="wDY-in-aSW" secondAttribute="top" id="UOm-K1-PV3"/>
+                                    <constraint firstItem="A5y-Il-DGQ" firstAttribute="leading" secondItem="1UQ-1n-K2n" secondAttribute="leading" id="Xs0-FD-QU4"/>
+                                    <constraint firstItem="1UQ-1n-K2n" firstAttribute="trailing" secondItem="xHP-Xy-DSc" secondAttribute="trailing" id="zHn-4f-JPU"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PTO-5r-edc">
+                                <rect key="frame" x="6" y="256" width="363" height="405"/>
+                                <subviews>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="6" translatesAutoresizingMaskIntoConstraints="NO" id="3OY-Mf-FqC">
+                                        <rect key="frame" x="0.0" y="0.0" width="363" height="405"/>
+                                        <subviews>
+                                            <visualEffectView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4xb-dq-EE6" customClass="MELVisualEffectView" customModule="Mode" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="0.0" width="363" height="279"/>
+                                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="CJP-fx-T3a">
+                                                    <rect key="frame" x="0.0" y="0.0" width="363" height="279"/>
+                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                    <subviews>
+                                                        <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="NDr-fh-HMf">
+                                                            <rect key="frame" x="0.0" y="0.0" width="363" height="108"/>
+                                                            <subviews>
+                                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lCq-Em-K9b">
+                                                                    <rect key="frame" x="0.0" y="0.0" width="363" height="51"/>
+                                                                    <subviews>
+                                                                        <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pE4-oz-Zsr" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
+                                                                            <rect key="frame" x="161.5" y="26" width="40" height="6"/>
+                                                                            <color key="backgroundColor" white="0.0" alpha="0.050000000000000003" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                                            <constraints>
+                                                                                <constraint firstAttribute="width" constant="40" id="HRu-dg-WoY"/>
+                                                                                <constraint firstAttribute="height" priority="900" constant="6" id="MfV-mB-Mwx"/>
+                                                                            </constraints>
+                                                                            <userDefinedRuntimeAttributes>
+                                                                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                                                    <integer key="value" value="3"/>
+                                                                                </userDefinedRuntimeAttribute>
+                                                                                <userDefinedRuntimeAttribute type="number" keyPath="alphaOverride">
+                                                                                    <real key="value" value="0.050000000000000003"/>
+                                                                                </userDefinedRuntimeAttribute>
+                                                                            </userDefinedRuntimeAttributes>
+                                                                        </view>
+                                                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hke-JB-hi4">
+                                                                            <rect key="frame" x="0.0" y="0.0" width="62" height="51"/>
+                                                                            <subviews>
+                                                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aTR-T0-gaI" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                                                                    <rect key="frame" x="0.0" y="0.0" width="62" height="51"/>
+                                                                                    <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
+                                                                                    <inset key="contentEdgeInsets" minX="0.0" minY="4" maxX="0.0" maxY="0.0"/>
+                                                                                    <state key="normal" image="Locked13"/>
+                                                                                </button>
+                                                                                <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HOZ-NA-3xU" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
+                                                                                    <rect key="frame" x="16" y="12.5" width="30" height="30"/>
+                                                                                    <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.050000000000000003" colorSpace="calibratedRGB"/>
+                                                                                    <constraints>
+                                                                                        <constraint firstAttribute="width" priority="900" constant="30" id="LOb-7r-S0h"/>
+                                                                                        <constraint firstAttribute="width" secondItem="HOZ-NA-3xU" secondAttribute="height" multiplier="1:1" id="YKg-Gd-i64"/>
+                                                                                    </constraints>
+                                                                                    <userDefinedRuntimeAttributes>
+                                                                                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                                                            <integer key="value" value="15"/>
+                                                                                        </userDefinedRuntimeAttribute>
+                                                                                    </userDefinedRuntimeAttributes>
+                                                                                </view>
+                                                                            </subviews>
+                                                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                                            <constraints>
+                                                                                <constraint firstItem="aTR-T0-gaI" firstAttribute="top" secondItem="hke-JB-hi4" secondAttribute="top" id="CsF-5N-Whd"/>
+                                                                                <constraint firstAttribute="width" constant="62" id="GFI-rz-uYX"/>
+                                                                                <constraint firstAttribute="trailing" secondItem="aTR-T0-gaI" secondAttribute="trailing" id="brT-ZU-Zg9"/>
+                                                                                <constraint firstItem="HOZ-NA-3xU" firstAttribute="centerX" secondItem="aTR-T0-gaI" secondAttribute="centerX" id="h1p-ym-aL5"/>
+                                                                                <constraint firstItem="aTR-T0-gaI" firstAttribute="leading" secondItem="hke-JB-hi4" secondAttribute="leading" id="phV-Ag-p4t"/>
+                                                                                <constraint firstAttribute="bottom" secondItem="aTR-T0-gaI" secondAttribute="bottom" id="vNL-Ld-CKg"/>
+                                                                                <constraint firstItem="HOZ-NA-3xU" firstAttribute="centerY" secondItem="aTR-T0-gaI" secondAttribute="centerY" constant="2" id="yFb-VZ-atk"/>
+                                                                            </constraints>
+                                                                        </view>
+                                                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="KGj-DJ-75V">
+                                                                            <rect key="frame" x="301" y="0.0" width="62" height="51"/>
+                                                                            <subviews>
+                                                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="smY-jw-Zu6" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                                                                    <rect key="frame" x="0.0" y="0.0" width="62" height="51"/>
+                                                                                    <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
+                                                                                    <inset key="contentEdgeInsets" minX="0.0" minY="4" maxX="0.0" maxY="0.0"/>
+                                                                                    <state key="normal" image="Locked13"/>
+                                                                                </button>
+                                                                                <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HmW-5j-qrm" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
+                                                                                    <rect key="frame" x="16" y="12.5" width="30" height="30"/>
+                                                                                    <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.050000000000000003" colorSpace="calibratedRGB"/>
+                                                                                    <constraints>
+                                                                                        <constraint firstAttribute="width" priority="900" constant="30" id="4Mk-iC-HWT"/>
+                                                                                        <constraint firstAttribute="width" secondItem="HmW-5j-qrm" secondAttribute="height" multiplier="1:1" id="jOh-bL-LnN"/>
+                                                                                    </constraints>
+                                                                                    <userDefinedRuntimeAttributes>
+                                                                                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                                                            <integer key="value" value="15"/>
+                                                                                        </userDefinedRuntimeAttribute>
+                                                                                    </userDefinedRuntimeAttributes>
+                                                                                </view>
+                                                                            </subviews>
+                                                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                                            <constraints>
+                                                                                <constraint firstItem="HmW-5j-qrm" firstAttribute="centerY" secondItem="smY-jw-Zu6" secondAttribute="centerY" constant="2" id="HfN-Sn-ycF"/>
+                                                                                <constraint firstAttribute="bottom" secondItem="smY-jw-Zu6" secondAttribute="bottom" id="MIc-Q8-8KQ"/>
+                                                                                <constraint firstItem="smY-jw-Zu6" firstAttribute="top" secondItem="KGj-DJ-75V" secondAttribute="top" id="QFt-9s-WDa"/>
+                                                                                <constraint firstItem="HmW-5j-qrm" firstAttribute="centerX" secondItem="smY-jw-Zu6" secondAttribute="centerX" id="ZCh-X8-GCR"/>
+                                                                                <constraint firstItem="smY-jw-Zu6" firstAttribute="leading" secondItem="KGj-DJ-75V" secondAttribute="leading" id="fd2-ZS-0kB"/>
+                                                                                <constraint firstAttribute="trailing" secondItem="smY-jw-Zu6" secondAttribute="trailing" id="gBA-Qr-kab"/>
+                                                                                <constraint firstAttribute="width" constant="62" id="sXa-XV-sPt"/>
+                                                                            </constraints>
+                                                                        </view>
+                                                                    </subviews>
+                                                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                                    <constraints>
+                                                                        <constraint firstItem="hke-JB-hi4" firstAttribute="top" secondItem="lCq-Em-K9b" secondAttribute="top" id="2kd-rg-TNl"/>
+                                                                        <constraint firstItem="hke-JB-hi4" firstAttribute="leading" secondItem="lCq-Em-K9b" secondAttribute="leading" id="N7X-AF-VO4"/>
+                                                                        <constraint firstAttribute="bottom" secondItem="hke-JB-hi4" secondAttribute="bottom" id="NI5-VN-0wx"/>
+                                                                        <constraint firstItem="KGj-DJ-75V" firstAttribute="bottom" secondItem="hke-JB-hi4" secondAttribute="bottom" id="YFX-rk-P75"/>
+                                                                        <constraint firstItem="pE4-oz-Zsr" firstAttribute="centerX" secondItem="lCq-Em-K9b" secondAttribute="centerX" id="Yie-ru-YXA"/>
+                                                                        <constraint firstItem="pE4-oz-Zsr" firstAttribute="top" secondItem="lCq-Em-K9b" secondAttribute="top" priority="900" constant="26" id="bBI-tC-aVb"/>
+                                                                        <constraint firstAttribute="bottom" secondItem="pE4-oz-Zsr" secondAttribute="bottom" priority="900" constant="19" id="dvm-Zl-2Hl"/>
+                                                                        <constraint firstItem="KGj-DJ-75V" firstAttribute="top" secondItem="hke-JB-hi4" secondAttribute="top" id="q5z-bz-Ii0"/>
+                                                                        <constraint firstAttribute="trailing" secondItem="KGj-DJ-75V" secondAttribute="trailing" id="tdN-t1-bpC"/>
+                                                                    </constraints>
+                                                                </view>
+                                                                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="te1-d1-nwb">
+                                                                    <rect key="frame" x="0.0" y="51" width="363" height="56"/>
+                                                                    <subviews>
+                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="999" text="Title" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Smp-rv-80U" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                                                            <rect key="frame" x="10" y="0.0" width="343" height="20"/>
+                                                                            <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
+                                                                            <nil key="textColor"/>
+                                                                            <nil key="highlightedColor"/>
+                                                                            <userDefinedRuntimeAttributes>
+                                                                                <userDefinedRuntimeAttribute type="boolean" keyPath="greyOverride" value="YES"/>
+                                                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                                    <integer key="value" value="2"/>
+                                                                                </userDefinedRuntimeAttribute>
+                                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="body"/>
+                                                                            </userDefinedRuntimeAttributes>
+                                                                        </label>
+                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="998" text="Subtitle" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qmd-cS-Hye" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                                                            <rect key="frame" x="10" y="28" width="343" height="20"/>
+                                                                            <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
+                                                                            <nil key="textColor"/>
+                                                                            <nil key="highlightedColor"/>
+                                                                            <userDefinedRuntimeAttributes>
+                                                                                <userDefinedRuntimeAttribute type="boolean" keyPath="greyOverride" value="YES"/>
+                                                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                                    <integer key="value" value="1"/>
+                                                                                </userDefinedRuntimeAttribute>
+                                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="secondary"/>
+                                                                            </userDefinedRuntimeAttributes>
+                                                                        </label>
+                                                                    </subviews>
+                                                                    <edgeInsets key="layoutMargins" top="0.0" left="10" bottom="8" right="10"/>
+                                                                </stackView>
+                                                                <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d7g-8E-Uhg" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
+                                                                    <rect key="frame" x="0.0" y="107" width="363" height="1"/>
+                                                                    <color key="backgroundColor" white="0.0" alpha="0.050000000000000003" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                                    <constraints>
+                                                                        <constraint firstAttribute="height" priority="900" constant="1" id="S9c-tA-2zF"/>
+                                                                    </constraints>
+                                                                    <userDefinedRuntimeAttributes>
+                                                                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                                            <integer key="value" value="3"/>
+                                                                        </userDefinedRuntimeAttribute>
+                                                                        <userDefinedRuntimeAttribute type="number" keyPath="alphaOverride">
+                                                                            <real key="value" value="0.050000000000000003"/>
+                                                                        </userDefinedRuntimeAttribute>
+                                                                    </userDefinedRuntimeAttributes>
+                                                                </view>
+                                                            </subviews>
+                                                        </stackView>
+                                                        <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lfP-04-gL9">
+                                                            <rect key="frame" x="0.0" y="108" width="363" height="171"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="height" priority="900" constant="171" id="s0I-h5-x1a"/>
+                                                            </constraints>
+                                                        </containerView>
+                                                    </subviews>
                                                     <constraints>
-                                                        <constraint firstAttribute="width" constant="30" id="LOb-7r-S0h"/>
-                                                        <constraint firstAttribute="width" secondItem="HOZ-NA-3xU" secondAttribute="height" multiplier="1:1" id="YKg-Gd-i64"/>
+                                                        <constraint firstItem="lfP-04-gL9" firstAttribute="leading" secondItem="CJP-fx-T3a" secondAttribute="leading" id="CWB-zH-ARG"/>
+                                                        <constraint firstAttribute="bottom" secondItem="lfP-04-gL9" secondAttribute="bottom" id="R8r-4Q-93q"/>
+                                                        <constraint firstItem="lfP-04-gL9" firstAttribute="top" secondItem="NDr-fh-HMf" secondAttribute="bottom" id="SGJ-PO-6LV"/>
+                                                        <constraint firstAttribute="trailing" secondItem="lfP-04-gL9" secondAttribute="trailing" id="Ylg-M3-ugQ"/>
+                                                        <constraint firstItem="NDr-fh-HMf" firstAttribute="leading" secondItem="CJP-fx-T3a" secondAttribute="leading" id="uIP-JU-7Rs"/>
+                                                        <constraint firstItem="NDr-fh-HMf" firstAttribute="top" secondItem="CJP-fx-T3a" secondAttribute="top" id="vxD-eN-WUv"/>
+                                                        <constraint firstAttribute="trailing" secondItem="NDr-fh-HMf" secondAttribute="trailing" id="xXi-fC-66M"/>
                                                     </constraints>
-                                                    <userDefinedRuntimeAttributes>
-                                                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                                            <integer key="value" value="15"/>
-                                                        </userDefinedRuntimeAttribute>
-                                                        <userDefinedRuntimeAttribute type="boolean" keyPath="bordered" value="YES"/>
-                                                        <userDefinedRuntimeAttribute type="boolean" keyPath="clear" value="YES"/>
-                                                        <userDefinedRuntimeAttribute type="number" keyPath="alphaOverride">
-                                                            <real key="value" value="0.02"/>
-                                                        </userDefinedRuntimeAttribute>
-                                                        <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
-                                                            <real key="value" value="1.2"/>
-                                                        </userDefinedRuntimeAttribute>
-                                                    </userDefinedRuntimeAttributes>
                                                 </view>
-                                            </subviews>
-                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                            <constraints>
-                                                <constraint firstItem="aTR-T0-gaI" firstAttribute="top" secondItem="hke-JB-hi4" secondAttribute="top" id="CsF-5N-Whd"/>
-                                                <constraint firstAttribute="width" constant="62" id="GFI-rz-uYX"/>
-                                                <constraint firstAttribute="trailing" secondItem="aTR-T0-gaI" secondAttribute="trailing" id="brT-ZU-Zg9"/>
-                                                <constraint firstItem="HOZ-NA-3xU" firstAttribute="centerX" secondItem="aTR-T0-gaI" secondAttribute="centerX" id="h1p-ym-aL5"/>
-                                                <constraint firstItem="aTR-T0-gaI" firstAttribute="leading" secondItem="hke-JB-hi4" secondAttribute="leading" id="phV-Ag-p4t"/>
-                                                <constraint firstAttribute="bottom" secondItem="aTR-T0-gaI" secondAttribute="bottom" id="vNL-Ld-CKg"/>
-                                                <constraint firstItem="HOZ-NA-3xU" firstAttribute="centerY" secondItem="aTR-T0-gaI" secondAttribute="centerY" constant="2" id="yFb-VZ-atk"/>
-                                            </constraints>
-                                        </view>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Smp-rv-80U" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                            <rect key="frame" x="10" y="51" width="355" height="17"/>
-                                            <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                            <nil key="textColor"/>
-                                            <nil key="highlightedColor"/>
-                                            <userDefinedRuntimeAttributes>
-                                                <userDefinedRuntimeAttribute type="boolean" keyPath="greyOverride" value="YES"/>
-                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
-                                                    <integer key="value" value="1"/>
-                                                </userDefinedRuntimeAttribute>
-                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="body"/>
-                                            </userDefinedRuntimeAttributes>
-                                        </label>
-                                        <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lfP-04-gL9">
-                                            <rect key="frame" x="0.0" y="76" width="375" height="171"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="171" id="s0I-h5-x1a"/>
-                                            </constraints>
-                                        </containerView>
-                                        <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pE4-oz-Zsr" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                            <rect key="frame" x="167.5" y="26" width="40" height="6"/>
-                                            <color key="backgroundColor" white="0.0" alpha="0.050000000000000003" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                            <constraints>
-                                                <constraint firstAttribute="width" constant="40" id="HRu-dg-WoY"/>
-                                                <constraint firstAttribute="height" constant="6" id="MfV-mB-Mwx"/>
-                                            </constraints>
-                                            <userDefinedRuntimeAttributes>
-                                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                                    <integer key="value" value="3"/>
-                                                </userDefinedRuntimeAttribute>
-                                                <userDefinedRuntimeAttribute type="number" keyPath="alphaOverride">
-                                                    <real key="value" value="0.050000000000000003"/>
-                                                </userDefinedRuntimeAttribute>
-                                            </userDefinedRuntimeAttributes>
-                                        </view>
-                                    </subviews>
-                                    <constraints>
-                                        <constraint firstItem="Smp-rv-80U" firstAttribute="top" secondItem="hke-JB-hi4" secondAttribute="bottom" id="2Sa-cs-p5z"/>
-                                        <constraint firstAttribute="trailing" secondItem="Smp-rv-80U" secondAttribute="trailing" constant="10" id="54X-eQ-Kh2"/>
-                                        <constraint firstItem="Smp-rv-80U" firstAttribute="top" secondItem="pE4-oz-Zsr" secondAttribute="bottom" constant="19" id="8Us-N5-45t"/>
-                                        <constraint firstItem="lfP-04-gL9" firstAttribute="leading" secondItem="CJP-fx-T3a" secondAttribute="leading" id="CWB-zH-ARG"/>
-                                        <constraint firstItem="Smp-rv-80U" firstAttribute="leading" secondItem="CJP-fx-T3a" secondAttribute="leading" constant="10" id="Gec-3Q-Icw"/>
-                                        <constraint firstItem="hke-JB-hi4" firstAttribute="top" secondItem="CJP-fx-T3a" secondAttribute="top" id="HHS-4q-gZ9"/>
-                                        <constraint firstItem="pE4-oz-Zsr" firstAttribute="centerX" secondItem="CJP-fx-T3a" secondAttribute="centerX" id="Jrc-Dj-rCe"/>
-                                        <constraint firstAttribute="trailing" secondItem="lfP-04-gL9" secondAttribute="trailing" id="Ylg-M3-ugQ"/>
-                                        <constraint firstItem="Smp-rv-80U" firstAttribute="top" secondItem="CJP-fx-T3a" secondAttribute="top" constant="51" id="iZk-Hl-Bno"/>
-                                        <constraint firstAttribute="trailing" secondItem="hke-JB-hi4" secondAttribute="trailing" id="joT-8D-fPq"/>
-                                        <constraint firstItem="lfP-04-gL9" firstAttribute="top" secondItem="Smp-rv-80U" secondAttribute="bottom" constant="8" id="zAp-0h-6na"/>
-                                    </constraints>
-                                </view>
-                                <blurEffect style="light"/>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                        <integer key="value" value="15"/>
-                                    </userDefinedRuntimeAttribute>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="darkAlphaOverride">
-                                        <integer key="value" value="0"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
-                            </visualEffectView>
+                                                <blurEffect style="light"/>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                        <integer key="value" value="15"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="darkAlphaOverride">
+                                                        <integer key="value" value="0"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                </userDefinedRuntimeAttributes>
+                                            </visualEffectView>
+                                            <visualEffectView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eU3-iM-fV6" customClass="MELVisualEffectView" customModule="Mode" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="285" width="363" height="57"/>
+                                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="U3a-tM-C0H">
+                                                    <rect key="frame" x="0.0" y="0.0" width="363" height="57"/>
+                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                    <subviews>
+                                                        <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="PPG-F5-Jm4">
+                                                            <rect key="frame" x="0.0" y="0.0" width="363" height="57"/>
+                                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                            <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="0.0" minimumInteritemSpacing="0.0" id="qyM-GJ-74y">
+                                                                <size key="itemSize" width="50" height="50"/>
+                                                                <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                                                <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                                                <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                                            </collectionViewFlowLayout>
+                                                            <cells/>
+                                                        </collectionView>
+                                                    </subviews>
+                                                    <constraints>
+                                                        <constraint firstAttribute="bottom" secondItem="PPG-F5-Jm4" secondAttribute="bottom" id="L0V-9U-nUC"/>
+                                                        <constraint firstAttribute="trailing" secondItem="PPG-F5-Jm4" secondAttribute="trailing" id="Z0G-p7-nfI"/>
+                                                        <constraint firstItem="PPG-F5-Jm4" firstAttribute="top" secondItem="U3a-tM-C0H" secondAttribute="top" id="fbE-Mm-EJq"/>
+                                                        <constraint firstItem="PPG-F5-Jm4" firstAttribute="leading" secondItem="U3a-tM-C0H" secondAttribute="leading" id="l8d-kK-PVy"/>
+                                                    </constraints>
+                                                </view>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" priority="900" constant="57" id="jOI-Qe-eY3"/>
+                                                </constraints>
+                                                <blurEffect style="light"/>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                        <integer key="value" value="15"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="darkAlphaOverride">
+                                                        <integer key="value" value="0"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                </userDefinedRuntimeAttributes>
+                                            </visualEffectView>
+                                            <visualEffectView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wcB-l2-L9N" customClass="MELVisualEffectView" customModule="Mode" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="348" width="363" height="57"/>
+                                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="2nt-oM-MnI">
+                                                    <rect key="frame" x="0.0" y="0.0" width="363" height="57"/>
+                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                    <subviews>
+                                                        <tableView clipsSubviews="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="8gm-Ww-b2x" customClass="MELTableView" customModule="Mode" customModuleProvider="target">
+                                                            <rect key="frame" x="0.0" y="0.0" width="363" height="57"/>
+                                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                            <userDefinedRuntimeAttributes>
+                                                                <userDefinedRuntimeAttribute type="boolean" keyPath="settings" value="YES"/>
+                                                            </userDefinedRuntimeAttributes>
+                                                            <connections>
+                                                                <outlet property="dataSource" destination="Cqf-LW-M1y" id="q5T-NA-CPf"/>
+                                                                <outlet property="delegate" destination="Cqf-LW-M1y" id="XCU-BH-sh2"/>
+                                                            </connections>
+                                                        </tableView>
+                                                    </subviews>
+                                                    <constraints>
+                                                        <constraint firstItem="8gm-Ww-b2x" firstAttribute="top" secondItem="2nt-oM-MnI" secondAttribute="top" id="1Lv-fP-pT2"/>
+                                                        <constraint firstItem="8gm-Ww-b2x" firstAttribute="leading" secondItem="2nt-oM-MnI" secondAttribute="leading" id="A7H-E3-5j8"/>
+                                                        <constraint firstAttribute="bottom" secondItem="8gm-Ww-b2x" secondAttribute="bottom" id="Qwy-az-7uA"/>
+                                                        <constraint firstAttribute="trailing" secondItem="8gm-Ww-b2x" secondAttribute="trailing" id="wdv-QB-Tmo"/>
+                                                    </constraints>
+                                                </view>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="57" id="kCy-7G-2oo"/>
+                                                </constraints>
+                                                <blurEffect style="light"/>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                        <integer key="value" value="15"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="darkAlphaOverride">
+                                                        <integer key="value" value="0"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                </userDefinedRuntimeAttributes>
+                                            </visualEffectView>
+                                        </subviews>
+                                    </stackView>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstItem="3OY-Mf-FqC" firstAttribute="top" secondItem="PTO-5r-edc" secondAttribute="top" id="fNs-Mj-tQt"/>
+                                    <constraint firstAttribute="bottom" secondItem="3OY-Mf-FqC" secondAttribute="bottom" id="khx-Rd-H0U"/>
+                                    <constraint firstItem="3OY-Mf-FqC" firstAttribute="leading" secondItem="PTO-5r-edc" secondAttribute="leading" id="pBH-yj-V9G"/>
+                                    <constraint firstAttribute="trailing" secondItem="3OY-Mf-FqC" secondAttribute="trailing" id="u3Y-bP-nE1"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="xHP-Xy-DSc" firstAttribute="leading" secondItem="4xb-dq-EE6" secondAttribute="leading" constant="-30" id="9HM-rD-dj1"/>
-                            <constraint firstAttribute="trailing" secondItem="4xb-dq-EE6" secondAttribute="trailing" id="GAX-6t-wfL"/>
-                            <constraint firstItem="yvQ-h4-iDg" firstAttribute="top" secondItem="lfP-04-gL9" secondAttribute="bottom" id="H63-8k-t7j"/>
-                            <constraint firstItem="xHP-Xy-DSc" firstAttribute="trailing" secondItem="4xb-dq-EE6" secondAttribute="trailing" constant="30" id="Nol-Bo-Mno"/>
-                            <constraint firstItem="4xb-dq-EE6" firstAttribute="leading" secondItem="y88-ja-SWt" secondAttribute="leading" id="XGx-N9-ImF"/>
-                            <constraint firstAttribute="bottom" secondItem="4xb-dq-EE6" secondAttribute="bottom" constant="-15" id="vpB-hR-q7n"/>
-                            <constraint firstItem="xHP-Xy-DSc" firstAttribute="bottom" secondItem="4xb-dq-EE6" secondAttribute="bottom" constant="30" id="wI9-6O-jiM"/>
-                            <constraint firstItem="xHP-Xy-DSc" firstAttribute="top" secondItem="4xb-dq-EE6" secondAttribute="top" constant="-30" id="zRq-UR-wwo"/>
+                            <constraint firstItem="yvQ-h4-iDg" firstAttribute="top" secondItem="PTO-5r-edc" secondAttribute="bottom" constant="6" id="5Na-1Q-9og"/>
+                            <constraint firstItem="1UQ-1n-K2n" firstAttribute="bottom" secondItem="wcB-l2-L9N" secondAttribute="bottom" constant="30" id="8Em-Sn-Ezr"/>
+                            <constraint firstItem="A5y-Il-DGQ" firstAttribute="bottom" secondItem="eU3-iM-fV6" secondAttribute="bottom" constant="30" id="CCG-et-scR"/>
+                            <constraint firstItem="1UQ-1n-K2n" firstAttribute="top" secondItem="wcB-l2-L9N" secondAttribute="top" constant="-30" id="D7X-Zd-Jp9"/>
+                            <constraint firstItem="PTO-5r-edc" firstAttribute="leading" secondItem="y88-ja-SWt" secondAttribute="leading" constant="6" id="Kgg-CV-e1p"/>
+                            <constraint firstItem="xHP-Xy-DSc" firstAttribute="leading" secondItem="4xb-dq-EE6" secondAttribute="leading" constant="-30" id="Q16-hH-Shv"/>
+                            <constraint firstAttribute="trailing" secondItem="PTO-5r-edc" secondAttribute="trailing" constant="6" id="ZDC-pW-fVo"/>
+                            <constraint firstItem="xHP-Xy-DSc" firstAttribute="trailing" secondItem="4xb-dq-EE6" secondAttribute="trailing" constant="30" id="atE-GZ-LDK"/>
+                            <constraint firstItem="xHP-Xy-DSc" firstAttribute="top" secondItem="4xb-dq-EE6" secondAttribute="top" constant="-30" id="eHL-Lc-mf7"/>
+                            <constraint firstItem="PTO-5r-edc" firstAttribute="top" relation="greaterThanOrEqual" secondItem="b8y-7n-9FG" secondAttribute="bottom" constant="20" id="hEt-Ff-Rpc"/>
+                            <constraint firstItem="xHP-Xy-DSc" firstAttribute="bottom" secondItem="4xb-dq-EE6" secondAttribute="bottom" constant="30" id="lxV-yA-OLc"/>
+                            <constraint firstItem="A5y-Il-DGQ" firstAttribute="top" secondItem="eU3-iM-fV6" secondAttribute="top" constant="-30" id="y2o-PS-mwx"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="cancelButtonHeightConstraint" destination="kCy-7G-2oo" id="Mb4-ST-tfH"/>
+                        <outlet property="cancelEffectView" destination="wcB-l2-L9N" id="FWp-Mi-eSX"/>
+                        <outlet property="collectionView" destination="PPG-F5-Jm4" id="qzd-al-RyH"/>
                         <outlet property="containerView" destination="lfP-04-gL9" id="FwH-6T-Czv"/>
                         <outlet property="containerViewHeightConstraint" destination="s0I-h5-x1a" id="Kfy-pA-5Aq"/>
                         <outlet property="effectView" destination="4xb-dq-EE6" id="b0t-Cc-VjL"/>
-                        <outlet property="imageView" destination="xHP-Xy-DSc" id="SaN-uK-0Dw"/>
+                        <outlet property="effectViewTopConstraint" destination="hEt-Ff-Rpc" id="i9k-t7-RDa"/>
+                        <outlet property="effectViewsContainer" destination="PTO-5r-edc" id="FQJ-z3-PBu"/>
+                        <outlet property="labelsStackView" destination="te1-d1-nwb" id="ele-cs-ORd"/>
+                        <outlet property="leftButton" destination="aTR-T0-gaI" id="2KT-Vu-oG3"/>
+                        <outlet property="leftButtonBorderView" destination="HOZ-NA-3xU" id="ydt-mB-Q0G"/>
+                        <outlet property="leftView" destination="hke-JB-hi4" id="0y6-9U-ACr"/>
+                        <outlet property="rightButton" destination="smY-jw-Zu6" id="acl-cW-9aM"/>
+                        <outlet property="rightButtonBorderView" destination="HmW-5j-qrm" id="0pL-l2-0pc"/>
+                        <outlet property="rightView" destination="KGj-DJ-75V" id="m1y-NW-ws4"/>
+                        <outlet property="segmentedEffectView" destination="eU3-iM-fV6" id="udm-ZF-fDj"/>
+                        <outlet property="segmentedShadowImageView" destination="A5y-Il-DGQ" id="bh5-1V-jSv"/>
+                        <outlet property="segmentedViewHeightConstraint" destination="jOI-Qe-eY3" id="Ny5-dL-JIk"/>
+                        <outlet property="subtitleLabel" destination="qmd-cS-Hye" id="08b-qR-xUc"/>
+                        <outlet property="tableView" destination="8gm-Ww-b2x" id="vOV-37-XXP"/>
                         <outlet property="titleLabel" destination="Smp-rv-80U" id="Kq7-V8-LfF"/>
+                        <outlet property="topBorderView" destination="d7g-8E-Uhg" id="phm-jq-t9t"/>
+                        <outlet property="topStackView" destination="NDr-fh-HMf" id="GlH-7k-Czb"/>
+                        <outlet property="topView" destination="lCq-Em-K9b" id="v8G-LD-XaP"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kZu-km-QlE" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="882" y="1247"/>
+            <point key="canvasLocation" x="880.79999999999995" y="1245.4272863568217"/>
         </scene>
         <!--presentedVC-->
         <scene sceneID="BF2-qR-HJ5">
@@ -2501,14 +2631,12 @@
         <image name="AddSong" width="15" height="13"/>
         <image name="Albums" width="20" height="20"/>
         <image name="Artists" width="15" height="20"/>
-        <image name="AscendingLines" width="11" height="10"/>
         <image name="Bold" width="9" height="14"/>
         <image name="Clean" width="16" height="16"/>
         <image name="Compilations" width="17" height="19"/>
-        <image name="Composers" width="19" height="19"/>
+        <image name="Composers" width="17" height="17"/>
         <image name="CurrentlyPlaying13" width="15" height="15"/>
         <image name="DarkMode" width="15" height="16"/>
-        <image name="DescendingLines" width="11" height="10"/>
         <image name="Duplicates" width="15" height="12"/>
         <image name="DynamicBar" width="17" height="17"/>
         <image name="EmptyPlaylist" width="9" height="16"/>

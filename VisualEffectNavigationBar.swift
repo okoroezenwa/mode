@@ -286,7 +286,7 @@ class VisualEffectNavigationBar: MELVisualEffectView {
                 
                 rightButton.setImage(nil, for: .normal)
                 rightButton.alpha = 1
-
+                
                 clearButtonView.isHidden = true
                 artworkView.isHidden = false
                 artworkImageView.image = image
@@ -469,6 +469,7 @@ class VisualEffectNavigationBar: MELVisualEffectView {
                     backLabel.transform = transform
                     
                     borderSnapshot.frame = contentView.convert(backBorderView.frame, from: backBorderView.superview)
+                    borderSnapshot.alpha = initialDetails.backLabelText == nil ? 0 : 1
                     contentView.addSubview(borderSnapshot)
                     backBorderViewSnapshot = borderSnapshot
                     

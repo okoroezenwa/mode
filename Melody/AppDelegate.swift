@@ -85,6 +85,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             prefs.set(false, forKey: .showPlaylistFolders)
         }
         
+        #warning("Fix this need to reset the font")
+        if prefs.integer(forKey: .activeFont) != Font.myriadPro.rawValue {
+            
+            prefs.set(Font.myriadPro.rawValue, forKey: .activeFont)
+            notifier.post(name: .activeFontChanged, object: nil)
+        }
+        
         if #available(iOS 10.3, *), !useSystemPlayer {
 
             UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalMinimum)

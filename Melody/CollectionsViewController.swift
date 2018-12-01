@@ -263,6 +263,7 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
             }
         }
     }
+    var applySort = true
     
     @objc var ascending: Bool {
         
@@ -270,44 +271,50 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
         
         set(order) {
             
-            if let tableView = tableView, let button = arrangeButton {
+            if let _ = tableView, let button = arrangeButton {
                 
-                activityIndicator.startAnimating()
-                (button.superview as? BorderedButtonView)?.stackView.alpha = 0
-                
-                collections.reverse()
-                
-                if filtering {
-                    
-                    filteredEntities.reverse()
-                }
+//                activityIndicator.startAnimating()
+//                (button.superview as? BorderedButtonView)?.stackView.alpha = 0
+//
+//                collections.reverse()
+//
+//                if filtering {
+//
+//                    filteredEntities.reverse()
+//                }
                 
                 prefs.set(order, forKey: settingsKeys.order)
-                sections = {
-                    
-                    if collectionKind == .playlist, let playlists = collections as? [MPMediaPlaylist] {
-                        
-                        if showPlaylistFolders {
-                            
-                            let reduced = playlists.foldersConsidered.map({ $0.reduced })
-                            
-                            tableDelegate.playlistContainers = reduced.reduce([], { $0 + $1.containers })
-                            collections = reduced.reduce([], { $0 + $1.dataSource })
-                            
-                            return prepareSections(from: reduced.reduce([], { $0 + $1.arrangeable }))
-                        }
-                        
-                        return prepareSections(from: playlists)
-                    }
-                    
-                    return prepareSections(from: collections)
-                }()
+//                sections = {
+//
+//                    if collectionKind == .playlist, let playlists = collections as? [MPMediaPlaylist] {
+//
+//                        if showPlaylistFolders {
+//
+//                            let reduced = playlists.foldersConsidered.map({ $0.reduced })
+//
+//                            tableDelegate.playlistContainers = reduced.reduce([], { $0 + $1.containers })
+//                            collections = reduced.reduce([], { $0 + $1.dataSource })
+//
+//                            return prepareSections(from: reduced.reduce([], { $0 + $1.arrangeable }))
+//                        }
+//
+//                        return prepareSections(from: playlists)
+//                    }
+//
+//                    return prepareSections(from: collections)
+//                }()
+//
+//                tableView.reloadData()
+//                animateCells(direction: .vertical)
                 
-                tableView.reloadData()
-                animateCells(direction: .vertical)
+                if applySort {
+                    
+                    sortItems()
+                }
+                
                 updateImage(for: button)
-                activityIndicator.stopAnimating()
-                (button.superview as? BorderedButtonView)?.stackView.alpha = 1
+//                activityIndicator.stopAnimating()
+//                (button.superview as? BorderedButtonView)?.stackView.alpha = 1
             }
         }
     }
@@ -791,11 +798,12 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
                 
                 guard let weakSelf = self else { return }
                 
-                UniversalMethods.performInMain {
+                UniversalMethods.performOnMainThread({
                     
                     weakSelf.collectionsQuery = weakSelf.getCurrentQuery()
                     weakSelf.updateWithQuery()
-                }
+                
+                }, afterDelay: 0.5)
             })
             
             lifetimeObservers.insert(firstLaunchObserver as! NSObject)
@@ -2115,36 +2123,6 @@ extension CollectionsViewController: UIViewControllerPreviewingDelegate {
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
         
         performCommitActions(on: viewControllerToCommit)
-        
-//        (viewControllerToCommit as? BackgroundHideable)?.modifyBackgroundView(forState: .removed)
-//
-//        if let vc = viewControllerToCommit as? Arrangeable {
-//
-//            vc.updateImage(for: vc.arrangeButton)
-//        }
-//
-//        if let vc = viewControllerToCommit as? Peekable {
-//
-//            vc.peeker = nil
-//            vc.oldArtwork = nil
-//        }
-//
-//        if let vc = viewControllerToCommit as? Navigatable, let indexer = vc.activeChildViewController as? IndexContaining {
-//
-//            indexer.tableView.contentInset.top = vc.inset
-//            indexer.tableView.scrollIndicatorInsets.top = vc.inset
-//
-//            if let sortable = indexer as? FullySortable, sortable.highlightedIndex == nil {
-//
-//                indexer.tableView.contentOffset.y = -vc.inset
-//            }
-//
-//            libraryVC?.container?.imageView.image = vc.artworkType.image
-//            libraryVC?.container?.visualEffectNavigationBar.backBorderView.alpha = 1
-//            libraryVC?.container?.visualEffectNavigationBar.backView.isHidden = false
-//            libraryVC?.container?.visualEffectNavigationBar.backLabel.text = vc.backLabelText
-//            libraryVC?.container?.visualEffectNavigationBar.titleLabel.text = vc.title
-//        }
         
         show(viewControllerToCommit, sender: nil)
     }

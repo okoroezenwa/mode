@@ -16,8 +16,6 @@ enum DisplayArea { case smaller, typical }
 
 enum InsetContext { case filter(inset: CGFloat), container }
 
-enum SortCriteria: Int { case standard, title, artist, album, duration, plays, lastPlayed, rating, genre, dateAdded, year, random, songCount, albumCount, fileSize }
-
 enum SortableKind: Int { case playlist, artistSongs, album, artistAlbums }
 
 enum AnimationDirection { case forward, reverse }
@@ -212,6 +210,26 @@ enum Entity: Int {
             case .playlist: return "playlist"
             
             case .song: return "title"
+        }
+    }
+    
+    func persistentID(from song: MPMediaItem) -> MPMediaEntityPersistentID {
+        
+        switch self {
+            
+            case .song: return song.persistentID
+            
+            case .album: return song.albumPersistentID
+            
+            case .artist: return song.artistPersistentID
+            
+            case .albumArtist: return song.albumArtistPersistentID
+            
+            case .genre: return song.genrePersistentID
+            
+            case .composer: return song.composerPersistentID
+            
+            case .playlist: return 0
         }
     }
 }
@@ -877,7 +895,7 @@ enum FontWeight: Int, CaseIterable {
 
 enum TextStyle: String, CaseIterable {
     
-    case heading, subheading, modalHeading, sectionHeading, body, secondary, nowPlayingTitle, nowPlayingSubtitle, infoTitle, infoBody, prompt, tiny, accessory, veryTiny
+    case heading, subheading, modalHeading, sectionHeading, alert, body, secondary, nowPlayingTitle, nowPlayingSubtitle, infoTitle, infoBody, prompt, tiny, accessory, veryTiny
     
     func textSize() -> CGFloat {
         
@@ -890,6 +908,8 @@ enum TextStyle: String, CaseIterable {
             case .modalHeading: return 22
             
             case .sectionHeading: return 22
+            
+            case .alert: return 20
             
             case .body: return 17
             
@@ -954,5 +974,15 @@ enum InfoSection: String, CaseIterable {
         }
         
         return Set(InfoSection.allCases).subtracting(set)
+    }
+}
+
+enum SortCriteria: Int {
+    
+    case standard, title, artist, album, duration, plays, lastPlayed, rating, genre, dateAdded, year, random, songCount, albumCount, fileSize
+    
+    func title(from location: Location) -> String {
+        
+        
     }
 }

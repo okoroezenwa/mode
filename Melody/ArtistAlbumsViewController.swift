@@ -158,22 +158,18 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, I
             }
         }
     }
+    var applySort = true
     @objc var ascending = true {
         
         didSet {
             
-            if let tableView = tableView, let button = arrangeButton {
+            if let _ = tableView, let button = arrangeButton {
                 
-                albums.reverse()
-                
-                if filtering {
+                if applySort {
                     
-                    filteredEntities.reverse()
+                    sortItems()
                 }
                 
-                sections = prepareSections(from: albums)
-                tableView.reloadData()
-                animateCells(direction: .vertical)
                 updateImage(for: button)
                 
                 if let collection = entityVC?.collection {

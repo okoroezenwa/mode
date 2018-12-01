@@ -115,9 +115,7 @@ class QueueInsertViewController: UIViewController, BorderButtonContaining {
         [nextView, afterView, laterView].forEach({
             
             $0.borderViewTopConstraint.constant = 9
-            $0.borderViewBottomConstraint.constant = 16
-//            $0.button.contentEdgeInsets.top = 0
-//            $0.button.contentEdgeInsets.bottom = 4.5
+            $0.borderViewBottomConstraint.constant = 10
             queueStackView.addArrangedSubview($0)
             $0.tapAction = .init(action: #selector(addToQueue(_:)), target: self)
             
