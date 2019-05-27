@@ -55,20 +55,7 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         }
     }
     
-//    var stackView: UIStackView! {
-//
-//        didSet {
-//
-//            let view = ScrollHeaderSubview.with(title: arrangementLabelText, image: #imageLiteral(resourceName: "Order10"))
-//
-//            orderLabel = view.label
-//
-//            for view in [view] {
-//
-//                stackView.addArrangedSubview(view)
-//            }
-//        }
-//    }
+//    var stackView: UIStackView!
     
     enum FilterEntities {
         
@@ -118,7 +105,7 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
     @objc var albumArtistQuery: MPMediaQuery?
     @objc var playlistQuery: MPMediaQuery?
     
-    var emptyCondition: Bool { return filtering ? tableContainer?.filteredEntities.isEmpty != false : recentSearches.isEmpty }
+    var emptyCondition: Bool { return (tableContainer as? CollectionsViewController)?.presented == true || (filtering ? tableContainer?.filteredEntities.isEmpty != false : recentSearches.isEmpty) }
     
 //    lazy var filteredSongs = [MPMediaItem]()
 //    lazy var filteredCollections = [MPMediaItemCollection]()
@@ -142,7 +129,6 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         return button
     }()
     
-    var orderLabel: MELLabel!
     var activityIndicator = MELActivityIndicatorView.init()
     var arrangeButton: MELButton!
     var editButton: MELButton! {
@@ -168,7 +154,8 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         set {
             
             sortItems()
-            orderLabel.text = arrangementLabelText
+            headerView.sortButton.setTitle(arrangementLabelText, for: .normal)
+                UIView.animate(withDuration: 0.3, animations: { self.headerView.layoutIfNeeded() })
         }
     }
     lazy var actualSortCriteria: SortCriteria = { sorter?.sortCriteria ?? .standard }()
@@ -186,13 +173,12 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
             updateHeaderView()
             tableView.reloadData()
             animateCells(direction: .vertical)
-            updateImage(for: arrangeButton)
         }
     }
     
     lazy var actualAscending: Bool = { sorter?.ascending ?? true }()
     lazy var applicableSortCriteria: Set<SortCriteria> = { sorter?.applicableSortCriteria ?? [] }()
-    lazy var location: SortLocation = { sorter?.location ?? .songs }()
+    lazy var sortLocation: SortLocation = { sorter?.sortLocation ?? .songs }()
     
     var borderedButtons = [BorderedButtonView?]()
     var applicableActions: [SongAction] { return actionable?.applicableActions ?? [] }
@@ -233,7 +219,7 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         
         let queue = OperationQueue()
         queue.name = "Filter Operation Queue"
-        
+        queue.qualityOfService = .userInitiated
         
         return queue
     }()
@@ -278,7 +264,6 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         updateCollectedView(self)
         
 //        updateHeaderView(with: tableContainer?.filteredEntities.count ?? 0)
-//        updateImage(for: arrangeButton)
        
         notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -875,6 +860,8 @@ extension FilterViewController: UISearchBarDelegate {
             if tableView.isEditing {
                 
                 tableView.isEditing = false
+                editView.imageView.image = .inactiveEditImage
+                editView.label.text = .inactiveEditButtonTitle
             }
         }
     }

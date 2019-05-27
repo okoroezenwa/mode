@@ -171,7 +171,7 @@ class UniversalMethods: NSObject {
         }
     }
     
-    class func saveSortableItem(withPersistentID id: UInt64, order: Bool, sortCriteria: SortCriteria, kind: SortableKind) {
+    class func saveSortableItem(withPersistentID id: MPMediaEntityPersistentID, order: Bool, sortCriteria: SortCriteria, kind: SortableKind) {
         
         let managedContext = appDelegate.managedObjectContext
         

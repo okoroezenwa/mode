@@ -264,7 +264,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         
         let queue = OperationQueue()
         queue.name = "Filter Operation Queue"
-        
+        queue.qualityOfService = .userInitiated
         
         return queue
     }()
@@ -691,7 +691,13 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         }
         
         animateCells(direction: .vertical)
-        if tableView.isEditing { tableView.setEditing(false, animated: false) }
+        
+        if tableView.isEditing {
+        
+            tableView.isEditing = false
+            editView.imageView.image = .inactiveEditImage
+            editView.label.text = .inactiveEditButtonTitle
+        }
         
         if searchBar?.isFirstResponder == true {
             
@@ -856,6 +862,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
 //        filterOperation?.cancel()
         filterOperationQueue.cancelAllOperations()
         filterOperation = BlockOperation()
+        filterOperation?.qualityOfService = .userInitiated
         filterOperation?.addExecutionBlock({ [weak self, weak filterOperation] in
             
             let text = searchText
@@ -1396,6 +1403,8 @@ extension SearchViewController: UISearchBarDelegate {
             if tableView.isEditing {
                 
                 tableView.isEditing = false
+                editView.imageView.image = .inactiveEditImage
+                editView.label.text = .inactiveEditButtonTitle
             }
             
             onlineOverride = false

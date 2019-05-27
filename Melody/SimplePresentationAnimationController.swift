@@ -86,7 +86,7 @@ class SimplePresentationAnimationController: NSObject, UIViewControllerAnimatedT
                         }
                     })
                     
-                    view.backgroundColor = darkTheme ? UIColor.white.withAlphaComponent(0.05) : UIColor.black.withAlphaComponent(weakSelf.orientation == .horizontal ? 0.2 : 0.3)
+                    view.backgroundColor = /*darkTheme ? UIColor.white.withAlphaComponent(0.05) : */UIColor.black.withAlphaComponent(/*weakSelf.orientation == .horizontal ? 0.2 : */0.3)
                 
                 case .reverse:
                     

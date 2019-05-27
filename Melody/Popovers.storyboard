@@ -1818,380 +1818,134 @@
                         <viewControllerLayoutGuide type="bottom" id="pzO-e9-FDd"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="6yy-pP-XdM">
-                        <rect key="frame" x="0.0" y="0.0" width="1200" height="113"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="113"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="q3B-Sr-lHr" customClass="GradientView" customModule="Mode" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="1200" height="54"/>
-                                <subviews>
-                                    <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KZl-cc-bcO">
-                                        <rect key="frame" x="0.0" y="0.0" width="1200" height="54"/>
-                                        <subviews>
-                                            <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fAz-ta-n30">
-                                                <rect key="frame" x="0.0" y="0.0" width="1127" height="54"/>
-                                                <subviews>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rgG-Hu-xNR" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                        <rect key="frame" x="0.0" y="0.0" width="63" height="54"/>
-                                                        <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                        <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                        <inset key="contentEdgeInsets" minX="16" minY="0.0" maxX="16" maxY="0.0"/>
-                                                        <state key="normal" title="Title"/>
-                                                        <userDefinedRuntimeAttributes>
-                                                            <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
-                                                                <integer key="value" value="1"/>
-                                                            </userDefinedRuntimeAttribute>
-                                                            <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="body"/>
-                                                        </userDefinedRuntimeAttributes>
-                                                        <connections>
-                                                            <action selector="selectSort:" destination="Tgw-Sd-aLB" eventType="touchUpInside" id="FgK-RA-q6a"/>
-                                                        </connections>
-                                                    </button>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZKI-wl-3Tu" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                        <rect key="frame" x="63" y="0.0" width="71" height="54"/>
-                                                        <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                        <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                        <inset key="contentEdgeInsets" minX="16" minY="0.0" maxX="16" maxY="0.0"/>
-                                                        <state key="normal" title="Artist"/>
-                                                        <userDefinedRuntimeAttributes>
-                                                            <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
-                                                                <integer key="value" value="1"/>
-                                                            </userDefinedRuntimeAttribute>
-                                                            <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="body"/>
-                                                        </userDefinedRuntimeAttributes>
-                                                        <connections>
-                                                            <action selector="selectSort:" destination="Tgw-Sd-aLB" eventType="touchUpInside" id="VFg-XG-2tE"/>
-                                                        </connections>
-                                                    </button>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CSe-3j-K1f" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                        <rect key="frame" x="134" y="0.0" width="80" height="54"/>
-                                                        <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                        <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                        <inset key="contentEdgeInsets" minX="16" minY="0.0" maxX="16" maxY="0.0"/>
-                                                        <state key="normal" title="Album"/>
-                                                        <userDefinedRuntimeAttributes>
-                                                            <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
-                                                                <integer key="value" value="1"/>
-                                                            </userDefinedRuntimeAttribute>
-                                                            <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="body"/>
-                                                        </userDefinedRuntimeAttributes>
-                                                        <connections>
-                                                            <action selector="selectSort:" destination="Tgw-Sd-aLB" eventType="touchUpInside" id="1cH-Bt-2Kt"/>
-                                                        </connections>
-                                                    </button>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="thc-cg-qU3" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                        <rect key="frame" x="214" y="0.0" width="117" height="54"/>
-                                                        <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                        <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                        <inset key="contentEdgeInsets" minX="16" minY="0.0" maxX="16" maxY="0.0"/>
-                                                        <state key="normal" title="Date Added"/>
-                                                        <userDefinedRuntimeAttributes>
-                                                            <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
-                                                                <integer key="value" value="1"/>
-                                                            </userDefinedRuntimeAttribute>
-                                                            <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="body"/>
-                                                        </userDefinedRuntimeAttributes>
-                                                        <connections>
-                                                            <action selector="selectSort:" destination="Tgw-Sd-aLB" eventType="touchUpInside" id="fHN-Ai-Xwe"/>
-                                                        </connections>
-                                                    </button>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8ET-dc-jv2" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                        <rect key="frame" x="331" y="0.0" width="68" height="54"/>
-                                                        <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                        <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                        <inset key="contentEdgeInsets" minX="16" minY="0.0" maxX="16" maxY="0.0"/>
-                                                        <state key="normal" title="Plays"/>
-                                                        <userDefinedRuntimeAttributes>
-                                                            <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
-                                                                <integer key="value" value="1"/>
-                                                            </userDefinedRuntimeAttribute>
-                                                            <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="body"/>
-                                                        </userDefinedRuntimeAttributes>
-                                                        <connections>
-                                                            <action selector="selectSort:" destination="Tgw-Sd-aLB" eventType="touchUpInside" id="tt3-W5-6d8"/>
-                                                        </connections>
-                                                    </button>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gN3-e9-ytL" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                        <rect key="frame" x="399" y="0.0" width="95" height="54"/>
-                                                        <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                        <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                        <inset key="contentEdgeInsets" minX="16" minY="0.0" maxX="16" maxY="0.0"/>
-                                                        <state key="normal" title="Duration"/>
-                                                        <userDefinedRuntimeAttributes>
-                                                            <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
-                                                                <integer key="value" value="1"/>
-                                                            </userDefinedRuntimeAttribute>
-                                                            <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="body"/>
-                                                        </userDefinedRuntimeAttributes>
-                                                        <connections>
-                                                            <action selector="selectSort:" destination="Tgw-Sd-aLB" eventType="touchUpInside" id="6yW-cl-eEi"/>
-                                                        </connections>
-                                                    </button>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oLi-rl-t85" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                        <rect key="frame" x="494" y="0.0" width="63" height="54"/>
-                                                        <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                        <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                        <inset key="contentEdgeInsets" minX="16" minY="0.0" maxX="16" maxY="0.0"/>
-                                                        <state key="normal" title="Year"/>
-                                                        <userDefinedRuntimeAttributes>
-                                                            <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
-                                                                <integer key="value" value="1"/>
-                                                            </userDefinedRuntimeAttribute>
-                                                            <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="body"/>
-                                                        </userDefinedRuntimeAttributes>
-                                                        <connections>
-                                                            <action selector="selectSort:" destination="Tgw-Sd-aLB" eventType="touchUpInside" id="bmr-hi-B09"/>
-                                                        </connections>
-                                                    </button>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2t4-uL-Iqg" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                        <rect key="frame" x="557" y="0.0" width="79" height="54"/>
-                                                        <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                        <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                        <inset key="contentEdgeInsets" minX="16" minY="0.0" maxX="16" maxY="0.0"/>
-                                                        <state key="normal" title="Rating"/>
-                                                        <userDefinedRuntimeAttributes>
-                                                            <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
-                                                                <integer key="value" value="1"/>
-                                                            </userDefinedRuntimeAttribute>
-                                                            <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="body"/>
-                                                        </userDefinedRuntimeAttributes>
-                                                        <connections>
-                                                            <action selector="selectSort:" destination="Tgw-Sd-aLB" eventType="touchUpInside" id="rH9-Ae-Yt7"/>
-                                                        </connections>
-                                                    </button>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HIE-ys-bv0" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                        <rect key="frame" x="636" y="0.0" width="75" height="54"/>
-                                                        <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                        <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                        <inset key="contentEdgeInsets" minX="16" minY="0.0" maxX="16" maxY="0.0"/>
-                                                        <state key="normal" title="Genre"/>
-                                                        <userDefinedRuntimeAttributes>
-                                                            <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
-                                                                <integer key="value" value="1"/>
-                                                            </userDefinedRuntimeAttribute>
-                                                            <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="body"/>
-                                                        </userDefinedRuntimeAttributes>
-                                                        <connections>
-                                                            <action selector="selectSort:" destination="Tgw-Sd-aLB" eventType="touchUpInside" id="EmT-9V-xc1"/>
-                                                        </connections>
-                                                    </button>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Fiq-yN-B4M" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                        <rect key="frame" x="711" y="0.0" width="112" height="54"/>
-                                                        <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                        <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                        <inset key="contentEdgeInsets" minX="16" minY="0.0" maxX="16" maxY="0.0"/>
-                                                        <state key="normal" title="Last Played"/>
-                                                        <userDefinedRuntimeAttributes>
-                                                            <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
-                                                                <integer key="value" value="1"/>
-                                                            </userDefinedRuntimeAttribute>
-                                                            <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="body"/>
-                                                        </userDefinedRuntimeAttributes>
-                                                        <connections>
-                                                            <action selector="selectSort:" destination="Tgw-Sd-aLB" eventType="touchUpInside" id="2gQ-tf-R6r"/>
-                                                        </connections>
-                                                    </button>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="n0B-u7-9Je" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                        <rect key="frame" x="823" y="0.0" width="61" height="54"/>
-                                                        <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                        <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                        <inset key="contentEdgeInsets" minX="16" minY="0.0" maxX="16" maxY="0.0"/>
-                                                        <state key="normal" title="Size"/>
-                                                        <userDefinedRuntimeAttributes>
-                                                            <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
-                                                                <integer key="value" value="1"/>
-                                                            </userDefinedRuntimeAttribute>
-                                                            <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="body"/>
-                                                        </userDefinedRuntimeAttributes>
-                                                        <connections>
-                                                            <action selector="selectSort:" destination="Tgw-Sd-aLB" eventType="touchUpInside" id="MRq-6M-bjh"/>
-                                                        </connections>
-                                                    </button>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BJF-sS-aGB" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                        <rect key="frame" x="884" y="0.0" width="116" height="54"/>
-                                                        <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                        <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                        <inset key="contentEdgeInsets" minX="16" minY="0.0" maxX="16" maxY="0.0"/>
-                                                        <state key="normal" title="Song Count"/>
-                                                        <userDefinedRuntimeAttributes>
-                                                            <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
-                                                                <integer key="value" value="1"/>
-                                                            </userDefinedRuntimeAttribute>
-                                                            <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="body"/>
-                                                        </userDefinedRuntimeAttributes>
-                                                        <connections>
-                                                            <action selector="selectSort:" destination="Tgw-Sd-aLB" eventType="touchUpInside" id="2ED-01-CSH"/>
-                                                        </connections>
-                                                    </button>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YYw-4m-GRV" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                        <rect key="frame" x="1000" y="0.0" width="127" height="54"/>
-                                                        <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                        <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                        <inset key="contentEdgeInsets" minX="16" minY="0.0" maxX="16" maxY="0.0"/>
-                                                        <state key="normal" title="Album Count"/>
-                                                        <userDefinedRuntimeAttributes>
-                                                            <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
-                                                                <integer key="value" value="1"/>
-                                                            </userDefinedRuntimeAttribute>
-                                                            <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="body"/>
-                                                        </userDefinedRuntimeAttributes>
-                                                        <connections>
-                                                            <action selector="selectSort:" destination="Tgw-Sd-aLB" eventType="touchUpInside" id="3rx-ef-sLS"/>
-                                                        </connections>
-                                                    </button>
-                                                </subviews>
-                                            </stackView>
-                                        </subviews>
-                                        <constraints>
-                                            <constraint firstItem="fAz-ta-n30" firstAttribute="top" secondItem="KZl-cc-bcO" secondAttribute="top" id="9be-Dd-fjr"/>
-                                            <constraint firstItem="fAz-ta-n30" firstAttribute="height" secondItem="KZl-cc-bcO" secondAttribute="height" id="LTq-Da-LhK"/>
-                                            <constraint firstAttribute="bottom" secondItem="fAz-ta-n30" secondAttribute="bottom" id="Oaw-Yl-Ndr"/>
-                                            <constraint firstItem="fAz-ta-n30" firstAttribute="leading" secondItem="KZl-cc-bcO" secondAttribute="leading" id="VZ2-Nb-EvR"/>
-                                            <constraint firstAttribute="trailing" secondItem="fAz-ta-n30" secondAttribute="trailing" id="nGJ-ho-qaK"/>
-                                        </constraints>
-                                    </scrollView>
-                                </subviews>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FLO-Z7-Khq" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="60" width="375" height="1"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.050000000000000003" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="KZl-cc-bcO" secondAttribute="trailing" id="BZq-xI-OhW"/>
-                                    <constraint firstItem="KZl-cc-bcO" firstAttribute="leading" secondItem="q3B-Sr-lHr" secondAttribute="leading" id="PTf-fd-BxY"/>
-                                    <constraint firstAttribute="height" constant="54" id="Psp-b6-PZr"/>
-                                    <constraint firstAttribute="bottom" secondItem="KZl-cc-bcO" secondAttribute="bottom" id="ey8-6D-hBr"/>
-                                    <constraint firstItem="KZl-cc-bcO" firstAttribute="top" secondItem="q3B-Sr-lHr" secondAttribute="top" id="lT7-6i-Xzx"/>
+                                    <constraint firstAttribute="height" constant="1" id="iM5-wB-eUI"/>
                                 </constraints>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="midStart">
-                                        <real key="value" value="0.040000000000000001"/>
-                                    </userDefinedRuntimeAttribute>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="midEnd">
-                                        <real key="value" value="0.95999999999999996"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
                             </view>
-                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="IaM-LZ-3WL">
-                                <rect key="frame" x="0.0" y="54" width="1200" height="59"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="IaM-LZ-3WL">
+                                <rect key="frame" x="0.0" y="60" width="375" height="53"/>
                                 <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yda-yq-Zb8">
-                                        <rect key="frame" x="0.0" y="0.0" width="600" height="59"/>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Gfz-KV-0gM">
+                                        <rect key="frame" x="0.0" y="0.0" width="187" height="53"/>
                                         <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="B9Z-tZ-Yvn" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="0.0" width="600" height="59"/>
+                                            <view hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZIU-oD-Kge" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="0.0" width="187" height="53"/>
+                                                <color key="backgroundColor" white="0.0" alpha="0.050000000000000003" colorSpace="calibratedWhite"/>
+                                            </view>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OBS-tr-6t3" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="0.0" width="187" height="53"/>
                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                <inset key="contentEdgeInsets" minX="8" minY="0.0" maxX="0.0" maxY="8"/>
                                                 <state key="normal" title="Default"/>
-                                                <userDefinedRuntimeAttributes>
-                                                    <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
-                                                        <integer key="value" value="1"/>
-                                                    </userDefinedRuntimeAttribute>
-                                                    <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="body"/>
-                                                </userDefinedRuntimeAttributes>
                                                 <connections>
-                                                    <action selector="selectSort:" destination="Tgw-Sd-aLB" eventType="touchUpInside" id="Hf3-fq-cjK"/>
+                                                    <action selector="selectSort:" destination="Tgw-Sd-aLB" eventType="touchUpInside" id="RYB-DV-llQ"/>
                                                 </connections>
                                             </button>
-                                            <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="29l-R4-ntD" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="16" y="5" width="576" height="38"/>
-                                                <color key="backgroundColor" white="0.0" alpha="0.050000000000000003" colorSpace="calibratedWhite"/>
-                                                <userDefinedRuntimeAttributes>
-                                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                                        <integer key="value" value="19"/>
-                                                    </userDefinedRuntimeAttribute>
-                                                </userDefinedRuntimeAttributes>
-                                            </view>
                                         </subviews>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
-                                            <constraint firstAttribute="bottom" secondItem="B9Z-tZ-Yvn" secondAttribute="bottom" id="5w2-ol-msd"/>
-                                            <constraint firstAttribute="trailing" secondItem="B9Z-tZ-Yvn" secondAttribute="trailing" id="7rC-Vk-hfT"/>
-                                            <constraint firstItem="29l-R4-ntD" firstAttribute="leading" secondItem="yda-yq-Zb8" secondAttribute="leading" priority="900" constant="16" id="7yK-ik-aCi"/>
-                                            <constraint firstItem="B9Z-tZ-Yvn" firstAttribute="top" secondItem="yda-yq-Zb8" secondAttribute="top" id="87Y-sw-ni5"/>
-                                            <constraint firstItem="29l-R4-ntD" firstAttribute="top" secondItem="yda-yq-Zb8" secondAttribute="top" constant="5" id="HB7-KL-cmW"/>
-                                            <constraint firstAttribute="trailing" secondItem="29l-R4-ntD" secondAttribute="trailing" priority="900" constant="8" id="Ie3-Qe-QQA"/>
-                                            <constraint firstAttribute="bottom" secondItem="29l-R4-ntD" secondAttribute="bottom" constant="16" id="fZv-g0-o8Y"/>
-                                            <constraint firstItem="B9Z-tZ-Yvn" firstAttribute="leading" secondItem="yda-yq-Zb8" secondAttribute="leading" id="fim-Fp-Rzw"/>
+                                            <constraint firstAttribute="bottom" secondItem="ZIU-oD-Kge" secondAttribute="bottom" id="7bH-h1-8j6"/>
+                                            <constraint firstItem="OBS-tr-6t3" firstAttribute="top" secondItem="Gfz-KV-0gM" secondAttribute="top" id="9gn-9B-tbf"/>
+                                            <constraint firstItem="ZIU-oD-Kge" firstAttribute="top" secondItem="Gfz-KV-0gM" secondAttribute="top" id="FjK-jf-aJn"/>
+                                            <constraint firstItem="OBS-tr-6t3" firstAttribute="leading" secondItem="Gfz-KV-0gM" secondAttribute="leading" id="Ogz-Mn-aNY"/>
+                                            <constraint firstItem="ZIU-oD-Kge" firstAttribute="leading" secondItem="Gfz-KV-0gM" secondAttribute="leading" id="U30-gh-YN4"/>
+                                            <constraint firstAttribute="trailing" secondItem="ZIU-oD-Kge" secondAttribute="trailing" id="dcN-oF-kQV"/>
+                                            <constraint firstAttribute="trailing" secondItem="OBS-tr-6t3" secondAttribute="trailing" id="ulD-5d-MY2"/>
+                                            <constraint firstAttribute="bottom" secondItem="OBS-tr-6t3" secondAttribute="bottom" id="v9t-ck-B0e"/>
                                         </constraints>
                                     </view>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RbP-uw-MXP">
-                                        <rect key="frame" x="600" y="0.0" width="600" height="59"/>
+                                    <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="n90-he-AQA" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
+                                        <rect key="frame" x="187" y="0.0" width="1" height="53"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.050000000000000003" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="1" id="Quz-aL-FE3"/>
+                                        </constraints>
+                                    </view>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aTT-2j-E6d">
+                                        <rect key="frame" x="188" y="0.0" width="187" height="53"/>
                                         <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="96g-P1-IeU" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="0.0" width="600" height="59"/>
+                                            <view hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xLY-3H-INq" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="0.0" width="187" height="53"/>
+                                                <color key="backgroundColor" white="0.0" alpha="0.050000000000000003" colorSpace="calibratedWhite"/>
+                                            </view>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Wd3-Pg-xxH" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="0.0" width="187" height="53"/>
                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="8" maxY="8"/>
                                                 <state key="normal" title="Random"/>
-                                                <userDefinedRuntimeAttributes>
-                                                    <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
-                                                        <integer key="value" value="1"/>
-                                                    </userDefinedRuntimeAttribute>
-                                                    <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="body"/>
-                                                </userDefinedRuntimeAttributes>
                                                 <connections>
-                                                    <action selector="selectSort:" destination="Tgw-Sd-aLB" eventType="touchUpInside" id="Ehm-r1-H5o"/>
+                                                    <action selector="selectSort:" destination="Tgw-Sd-aLB" eventType="touchUpInside" id="qOp-Ut-dhZ"/>
                                                 </connections>
                                             </button>
-                                            <view userInteractionEnabled="NO" alpha="0.059999998658895493" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pig-lK-RxA" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="8" y="5" width="576" height="38"/>
-                                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                <userDefinedRuntimeAttributes>
-                                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                                        <integer key="value" value="19"/>
-                                                    </userDefinedRuntimeAttribute>
-                                                </userDefinedRuntimeAttributes>
-                                            </view>
                                         </subviews>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
-                                            <constraint firstAttribute="bottom" secondItem="96g-P1-IeU" secondAttribute="bottom" id="0PP-oQ-Mho"/>
-                                            <constraint firstItem="96g-P1-IeU" firstAttribute="leading" secondItem="RbP-uw-MXP" secondAttribute="leading" id="8sJ-7D-G4J"/>
-                                            <constraint firstItem="96g-P1-IeU" firstAttribute="top" secondItem="RbP-uw-MXP" secondAttribute="top" id="IB5-kH-x7p"/>
-                                            <constraint firstAttribute="bottom" secondItem="pig-lK-RxA" secondAttribute="bottom" constant="16" id="SLt-7i-TGR"/>
-                                            <constraint firstItem="pig-lK-RxA" firstAttribute="top" secondItem="RbP-uw-MXP" secondAttribute="top" constant="5" id="krR-Na-BvY"/>
-                                            <constraint firstItem="pig-lK-RxA" firstAttribute="leading" secondItem="RbP-uw-MXP" secondAttribute="leading" priority="900" constant="8" id="nGf-IS-RtS"/>
-                                            <constraint firstAttribute="trailing" secondItem="96g-P1-IeU" secondAttribute="trailing" id="pjr-8F-8zA"/>
-                                            <constraint firstAttribute="trailing" secondItem="pig-lK-RxA" secondAttribute="trailing" priority="900" constant="16" id="xtr-Pp-vaP"/>
+                                            <constraint firstItem="Wd3-Pg-xxH" firstAttribute="top" secondItem="aTT-2j-E6d" secondAttribute="top" id="0r7-Ww-16V"/>
+                                            <constraint firstItem="Wd3-Pg-xxH" firstAttribute="leading" secondItem="aTT-2j-E6d" secondAttribute="leading" id="9xg-NK-2cb"/>
+                                            <constraint firstAttribute="trailing" secondItem="Wd3-Pg-xxH" secondAttribute="trailing" id="BaC-zg-gkU"/>
+                                            <constraint firstItem="xLY-3H-INq" firstAttribute="leading" secondItem="aTT-2j-E6d" secondAttribute="leading" id="THU-eA-PxD"/>
+                                            <constraint firstAttribute="trailing" secondItem="xLY-3H-INq" secondAttribute="trailing" id="TWx-vu-401"/>
+                                            <constraint firstAttribute="bottom" secondItem="xLY-3H-INq" secondAttribute="bottom" id="a1n-Yw-Q4c"/>
+                                            <constraint firstAttribute="bottom" secondItem="Wd3-Pg-xxH" secondAttribute="bottom" id="dvp-9L-7AR"/>
+                                            <constraint firstItem="xLY-3H-INq" firstAttribute="top" secondItem="aTT-2j-E6d" secondAttribute="top" id="pFW-rV-rjS"/>
                                         </constraints>
                                     </view>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="59" id="6pk-V5-HDh"/>
+                                    <constraint firstAttribute="height" constant="53" id="6pk-V5-HDh"/>
+                                    <constraint firstItem="aTT-2j-E6d" firstAttribute="width" secondItem="Gfz-KV-0gM" secondAttribute="width" id="TQY-Db-AuP"/>
                                 </constraints>
                             </stackView>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="T2Q-d2-4u8">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="60"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="0.0" minimumInteritemSpacing="0.0" id="2lP-Lq-Jlb">
+                                    <size key="itemSize" width="50" height="50"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells/>
+                                <connections>
+                                    <outlet property="dataSource" destination="Tgw-Sd-aLB" id="HhZ-wO-4Me"/>
+                                    <outlet property="delegate" destination="Tgw-Sd-aLB" id="3Qq-kc-mUD"/>
+                                </connections>
+                            </collectionView>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="IaM-LZ-3WL" firstAttribute="top" secondItem="q3B-Sr-lHr" secondAttribute="bottom" id="Dmo-8r-qBi"/>
+                            <constraint firstItem="FLO-Z7-Khq" firstAttribute="leading" secondItem="IaM-LZ-3WL" secondAttribute="leading" id="4Rc-aK-FyS"/>
+                            <constraint firstItem="T2Q-d2-4u8" firstAttribute="leading" secondItem="6yy-pP-XdM" secondAttribute="leading" id="5Z1-O9-fvm"/>
+                            <constraint firstItem="T2Q-d2-4u8" firstAttribute="top" secondItem="3Da-cO-6wt" secondAttribute="bottom" id="AxD-1m-tIV"/>
+                            <constraint firstItem="FLO-Z7-Khq" firstAttribute="trailing" secondItem="IaM-LZ-3WL" secondAttribute="trailing" id="CzB-65-aey"/>
                             <constraint firstAttribute="bottomMargin" secondItem="IaM-LZ-3WL" secondAttribute="bottom" id="Fl9-PF-KSO"/>
-                            <constraint firstItem="q3B-Sr-lHr" firstAttribute="leading" secondItem="6yy-pP-XdM" secondAttribute="leading" id="Jed-6v-LMC"/>
                             <constraint firstItem="IaM-LZ-3WL" firstAttribute="leading" secondItem="6yy-pP-XdM" secondAttribute="leading" id="Lvk-h3-K4a"/>
-                            <constraint firstItem="q3B-Sr-lHr" firstAttribute="top" secondItem="3Da-cO-6wt" secondAttribute="bottom" id="QZp-Sd-mcX"/>
+                            <constraint firstItem="FLO-Z7-Khq" firstAttribute="top" secondItem="IaM-LZ-3WL" secondAttribute="top" id="Qo4-NX-zGc"/>
+                            <constraint firstItem="IaM-LZ-3WL" firstAttribute="top" secondItem="T2Q-d2-4u8" secondAttribute="bottom" id="jni-KQ-oCj"/>
                             <constraint firstAttribute="trailing" secondItem="IaM-LZ-3WL" secondAttribute="trailing" id="nCz-TC-v0h"/>
-                            <constraint firstAttribute="trailing" secondItem="q3B-Sr-lHr" secondAttribute="trailing" id="trh-uh-FO2"/>
+                            <constraint firstAttribute="trailing" secondItem="T2Q-d2-4u8" secondAttribute="trailing" id="zdw-yV-1QO"/>
                         </constraints>
                     </view>
                     <nil key="simulatedStatusBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <size key="freeformSize" width="1200" height="113"/>
+                    <size key="freeformSize" width="375" height="113"/>
                     <connections>
-                        <outlet property="albumButton" destination="CSe-3j-K1f" id="mXq-Em-SU0"/>
-                        <outlet property="albumCountButton" destination="YYw-4m-GRV" id="Ovi-4u-2Kj"/>
-                        <outlet property="artistButton" destination="ZKI-wl-3Tu" id="gXP-Bz-UMa"/>
-                        <outlet property="dateAddedButton" destination="thc-cg-qU3" id="g2h-8Z-EsD"/>
-                        <outlet property="durationButton" destination="gN3-e9-ytL" id="WJF-Nh-9tP"/>
-                        <outlet property="fileSizeButton" destination="n0B-u7-9Je" id="4jz-Wx-BJj"/>
-                        <outlet property="genreButton" destination="HIE-ys-bv0" id="61U-GG-EXw"/>
-                        <outlet property="lastPlayedButton" destination="Fiq-yN-B4M" id="yea-dw-huB"/>
-                        <outlet property="playsButton" destination="8ET-dc-jv2" id="1rT-2c-LaT"/>
-                        <outlet property="randomButton" destination="96g-P1-IeU" id="Do5-Zd-noJ"/>
-                        <outlet property="ratingButton" destination="2t4-uL-Iqg" id="ZfK-LB-Z4t"/>
-                        <outlet property="resetButton" destination="B9Z-tZ-Yvn" id="cVY-6W-606"/>
-                        <outlet property="scrollView" destination="KZl-cc-bcO" id="gjK-4k-gAh"/>
-                        <outlet property="songCountButton" destination="BJF-sS-aGB" id="J7t-pp-wfr"/>
-                        <outlet property="titleButton" destination="rgG-Hu-xNR" id="fJh-kH-iCD"/>
-                        <outlet property="yearButton" destination="oLi-rl-t85" id="feF-47-XsT"/>
+                        <outlet property="collectionView" destination="T2Q-d2-4u8" id="r6t-Ko-hOA"/>
+                        <outlet property="defaultBorderView" destination="ZIU-oD-Kge" id="79S-eh-6lD"/>
+                        <outlet property="defaultButton" destination="OBS-tr-6t3" id="skK-o2-3lT"/>
+                        <outlet property="defaultView" destination="Gfz-KV-0gM" id="Bb2-Vs-aLw"/>
+                        <outlet property="randomBorderView" destination="xLY-3H-INq" id="z5G-Qy-brc"/>
+                        <outlet property="randomButton" destination="Wd3-Pg-xxH" id="QxL-Zt-luB"/>
+                        <outlet property="randomView" destination="aTT-2j-E6d" id="Esv-Dw-zHL"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="UWX-jT-ssc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="474" y="742"/>
+            <point key="canvasLocation" x="472.80000000000001" y="741.67916041979015"/>
         </scene>
         <!--Alert Table View Controller-->
         <scene sceneID="raL-fz-YbB">
@@ -2212,6 +1966,7 @@
                     </tableView>
                     <connections>
                         <segue destination="gNh-Cr-iIn" kind="unwind" identifier="preview" unwindAction="previewUnwind:" id="GWG-3E-26V"/>
+                        <segue destination="gNh-Cr-iIn" kind="unwind" identifier="unwind" unwindAction="unwind:" id="46X-CU-rcc"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Sml-rZ-8pr" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -2232,10 +1987,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wDY-in-aSW">
-                                <rect key="frame" x="-24" y="226" width="423" height="465"/>
+                                <rect key="frame" x="-24" y="224" width="423" height="467"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="xHP-Xy-DSc" customClass="ShadowImageView" customModule="Mode" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="423" height="339"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="423" height="341"/>
                                         <userDefinedRuntimeAttributes>
                                             <userDefinedRuntimeAttribute type="number" keyPath="radius">
                                                 <integer key="value" value="15"/>
@@ -2249,7 +2004,7 @@
                                         </userDefinedRuntimeAttributes>
                                     </imageView>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="1UQ-1n-K2n" customClass="ShadowImageView" customModule="Mode" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="348" width="423" height="117"/>
+                                        <rect key="frame" x="0.0" y="350" width="423" height="117"/>
                                         <userDefinedRuntimeAttributes>
                                             <userDefinedRuntimeAttribute type="number" keyPath="radius">
                                                 <integer key="value" value="15"/>
@@ -2263,7 +2018,7 @@
                                         </userDefinedRuntimeAttributes>
                                     </imageView>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="A5y-Il-DGQ" customClass="ShadowImageView" customModule="Mode" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="285" width="423" height="117"/>
+                                        <rect key="frame" x="0.0" y="287" width="423" height="117"/>
                                         <userDefinedRuntimeAttributes>
                                             <userDefinedRuntimeAttribute type="number" keyPath="radius">
                                                 <integer key="value" value="15"/>
@@ -2289,23 +2044,23 @@
                                     <constraint firstItem="1UQ-1n-K2n" firstAttribute="trailing" secondItem="xHP-Xy-DSc" secondAttribute="trailing" id="zHn-4f-JPU"/>
                                 </constraints>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PTO-5r-edc">
-                                <rect key="frame" x="6" y="256" width="363" height="405"/>
+                            <view contentMode="scaleToFill" verticalCompressionResistancePriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="PTO-5r-edc">
+                                <rect key="frame" x="6" y="254" width="363" height="407"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="6" translatesAutoresizingMaskIntoConstraints="NO" id="3OY-Mf-FqC">
-                                        <rect key="frame" x="0.0" y="0.0" width="363" height="405"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="363" height="407"/>
                                         <subviews>
                                             <visualEffectView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4xb-dq-EE6" customClass="MELVisualEffectView" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="0.0" width="363" height="279"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="363" height="281"/>
                                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="CJP-fx-T3a">
-                                                    <rect key="frame" x="0.0" y="0.0" width="363" height="279"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="363" height="281"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="NDr-fh-HMf">
-                                                            <rect key="frame" x="0.0" y="0.0" width="363" height="108"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="363" height="110"/>
                                                             <subviews>
                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lCq-Em-K9b">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="363" height="51"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="363" height="53"/>
                                                                     <subviews>
                                                                         <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pE4-oz-Zsr" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
                                                                             <rect key="frame" x="161.5" y="26" width="40" height="6"/>
@@ -2324,16 +2079,18 @@
                                                                             </userDefinedRuntimeAttributes>
                                                                         </view>
                                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hke-JB-hi4">
-                                                                            <rect key="frame" x="0.0" y="0.0" width="62" height="51"/>
+                                                                            <rect key="frame" x="0.0" y="0.0" width="52" height="53"/>
                                                                             <subviews>
                                                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aTR-T0-gaI" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                                                    <rect key="frame" x="0.0" y="0.0" width="62" height="51"/>
+                                                                                    <rect key="frame" x="0.0" y="0.0" width="52" height="53"/>
                                                                                     <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                                                    <inset key="contentEdgeInsets" minX="0.0" minY="4" maxX="0.0" maxY="0.0"/>
                                                                                     <state key="normal" image="Locked13"/>
+                                                                                    <connections>
+                                                                                        <action selector="leftButtonTapped:" destination="Cqf-LW-M1y" eventType="touchUpInside" id="xZj-AR-QCS"/>
+                                                                                    </connections>
                                                                                 </button>
                                                                                 <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HOZ-NA-3xU" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                                                                    <rect key="frame" x="16" y="12.5" width="30" height="30"/>
+                                                                                    <rect key="frame" x="11" y="11.5" width="30" height="30"/>
                                                                                     <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.050000000000000003" colorSpace="calibratedRGB"/>
                                                                                     <constraints>
                                                                                         <constraint firstAttribute="width" priority="900" constant="30" id="LOb-7r-S0h"/>
@@ -2349,25 +2106,27 @@
                                                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                                             <constraints>
                                                                                 <constraint firstItem="aTR-T0-gaI" firstAttribute="top" secondItem="hke-JB-hi4" secondAttribute="top" id="CsF-5N-Whd"/>
-                                                                                <constraint firstAttribute="width" constant="62" id="GFI-rz-uYX"/>
+                                                                                <constraint firstAttribute="width" constant="52" id="GFI-rz-uYX"/>
                                                                                 <constraint firstAttribute="trailing" secondItem="aTR-T0-gaI" secondAttribute="trailing" id="brT-ZU-Zg9"/>
                                                                                 <constraint firstItem="HOZ-NA-3xU" firstAttribute="centerX" secondItem="aTR-T0-gaI" secondAttribute="centerX" id="h1p-ym-aL5"/>
                                                                                 <constraint firstItem="aTR-T0-gaI" firstAttribute="leading" secondItem="hke-JB-hi4" secondAttribute="leading" id="phV-Ag-p4t"/>
                                                                                 <constraint firstAttribute="bottom" secondItem="aTR-T0-gaI" secondAttribute="bottom" id="vNL-Ld-CKg"/>
-                                                                                <constraint firstItem="HOZ-NA-3xU" firstAttribute="centerY" secondItem="aTR-T0-gaI" secondAttribute="centerY" constant="2" id="yFb-VZ-atk"/>
+                                                                                <constraint firstItem="HOZ-NA-3xU" firstAttribute="centerY" secondItem="aTR-T0-gaI" secondAttribute="centerY" id="yFb-VZ-atk"/>
                                                                             </constraints>
                                                                         </view>
                                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="KGj-DJ-75V">
-                                                                            <rect key="frame" x="301" y="0.0" width="62" height="51"/>
+                                                                            <rect key="frame" x="311" y="0.0" width="52" height="53"/>
                                                                             <subviews>
                                                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="smY-jw-Zu6" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                                                    <rect key="frame" x="0.0" y="0.0" width="62" height="51"/>
+                                                                                    <rect key="frame" x="0.0" y="0.0" width="52" height="53"/>
                                                                                     <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                                                    <inset key="contentEdgeInsets" minX="0.0" minY="4" maxX="0.0" maxY="0.0"/>
                                                                                     <state key="normal" image="Locked13"/>
+                                                                                    <connections>
+                                                                                        <action selector="rightButtonTapped:" destination="Cqf-LW-M1y" eventType="touchUpInside" id="ekf-6y-6X4"/>
+                                                                                    </connections>
                                                                                 </button>
                                                                                 <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HmW-5j-qrm" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                                                                    <rect key="frame" x="16" y="12.5" width="30" height="30"/>
+                                                                                    <rect key="frame" x="11" y="11.5" width="30" height="30"/>
                                                                                     <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.050000000000000003" colorSpace="calibratedRGB"/>
                                                                                     <constraints>
                                                                                         <constraint firstAttribute="width" priority="900" constant="30" id="4Mk-iC-HWT"/>
@@ -2382,13 +2141,13 @@
                                                                             </subviews>
                                                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                                             <constraints>
-                                                                                <constraint firstItem="HmW-5j-qrm" firstAttribute="centerY" secondItem="smY-jw-Zu6" secondAttribute="centerY" constant="2" id="HfN-Sn-ycF"/>
+                                                                                <constraint firstItem="HmW-5j-qrm" firstAttribute="centerY" secondItem="smY-jw-Zu6" secondAttribute="centerY" id="HfN-Sn-ycF"/>
                                                                                 <constraint firstAttribute="bottom" secondItem="smY-jw-Zu6" secondAttribute="bottom" id="MIc-Q8-8KQ"/>
                                                                                 <constraint firstItem="smY-jw-Zu6" firstAttribute="top" secondItem="KGj-DJ-75V" secondAttribute="top" id="QFt-9s-WDa"/>
                                                                                 <constraint firstItem="HmW-5j-qrm" firstAttribute="centerX" secondItem="smY-jw-Zu6" secondAttribute="centerX" id="ZCh-X8-GCR"/>
                                                                                 <constraint firstItem="smY-jw-Zu6" firstAttribute="leading" secondItem="KGj-DJ-75V" secondAttribute="leading" id="fd2-ZS-0kB"/>
                                                                                 <constraint firstAttribute="trailing" secondItem="smY-jw-Zu6" secondAttribute="trailing" id="gBA-Qr-kab"/>
-                                                                                <constraint firstAttribute="width" constant="62" id="sXa-XV-sPt"/>
+                                                                                <constraint firstAttribute="width" constant="52" id="sXa-XV-sPt"/>
                                                                             </constraints>
                                                                         </view>
                                                                     </subviews>
@@ -2400,16 +2159,16 @@
                                                                         <constraint firstItem="KGj-DJ-75V" firstAttribute="bottom" secondItem="hke-JB-hi4" secondAttribute="bottom" id="YFX-rk-P75"/>
                                                                         <constraint firstItem="pE4-oz-Zsr" firstAttribute="centerX" secondItem="lCq-Em-K9b" secondAttribute="centerX" id="Yie-ru-YXA"/>
                                                                         <constraint firstItem="pE4-oz-Zsr" firstAttribute="top" secondItem="lCq-Em-K9b" secondAttribute="top" priority="900" constant="26" id="bBI-tC-aVb"/>
-                                                                        <constraint firstAttribute="bottom" secondItem="pE4-oz-Zsr" secondAttribute="bottom" priority="900" constant="19" id="dvm-Zl-2Hl"/>
+                                                                        <constraint firstAttribute="bottom" secondItem="pE4-oz-Zsr" secondAttribute="bottom" priority="900" constant="21" id="dvm-Zl-2Hl"/>
                                                                         <constraint firstItem="KGj-DJ-75V" firstAttribute="top" secondItem="hke-JB-hi4" secondAttribute="top" id="q5z-bz-Ii0"/>
                                                                         <constraint firstAttribute="trailing" secondItem="KGj-DJ-75V" secondAttribute="trailing" id="tdN-t1-bpC"/>
                                                                     </constraints>
                                                                 </view>
                                                                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="te1-d1-nwb">
-                                                                    <rect key="frame" x="0.0" y="51" width="363" height="56"/>
+                                                                    <rect key="frame" x="0.0" y="53" width="363" height="56.5"/>
                                                                     <subviews>
-                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="999" text="Title" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Smp-rv-80U" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="0.0" width="343" height="20"/>
+                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="999" text="Title" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Smp-rv-80U" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                                                            <rect key="frame" x="10" y="0.0" width="343" height="23.5"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
@@ -2421,8 +2180,8 @@
                                                                                 <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="body"/>
                                                                             </userDefinedRuntimeAttributes>
                                                                         </label>
-                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="998" text="Subtitle" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qmd-cS-Hye" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="28" width="343" height="20"/>
+                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="998" text="Subtitle" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qmd-cS-Hye" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                                                            <rect key="frame" x="10" y="31.5" width="343" height="17"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
@@ -2431,17 +2190,17 @@
                                                                                 <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
                                                                                     <integer key="value" value="1"/>
                                                                                 </userDefinedRuntimeAttribute>
-                                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="secondary"/>
+                                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="prompt"/>
                                                                             </userDefinedRuntimeAttributes>
                                                                         </label>
                                                                     </subviews>
                                                                     <edgeInsets key="layoutMargins" top="0.0" left="10" bottom="8" right="10"/>
                                                                 </stackView>
                                                                 <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d7g-8E-Uhg" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="107" width="363" height="1"/>
+                                                                    <rect key="frame" x="0.0" y="109.5" width="363" height="0.5"/>
                                                                     <color key="backgroundColor" white="0.0" alpha="0.050000000000000003" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                     <constraints>
-                                                                        <constraint firstAttribute="height" priority="900" constant="1" id="S9c-tA-2zF"/>
+                                                                        <constraint firstAttribute="height" priority="900" constant="0.5" id="S9c-tA-2zF"/>
                                                                     </constraints>
                                                                     <userDefinedRuntimeAttributes>
                                                                         <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
@@ -2455,9 +2214,9 @@
                                                             </subviews>
                                                         </stackView>
                                                         <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lfP-04-gL9">
-                                                            <rect key="frame" x="0.0" y="108" width="363" height="171"/>
+                                                            <rect key="frame" x="0.0" y="110" width="363" height="171"/>
                                                             <constraints>
-                                                                <constraint firstAttribute="height" priority="900" constant="171" id="s0I-h5-x1a"/>
+                                                                <constraint firstAttribute="height" constant="171" identifier="containerHeightConstraint" id="s0I-h5-x1a"/>
                                                             </constraints>
                                                         </containerView>
                                                     </subviews>
@@ -2482,7 +2241,7 @@
                                                 </userDefinedRuntimeAttributes>
                                             </visualEffectView>
                                             <visualEffectView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eU3-iM-fV6" customClass="MELVisualEffectView" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="285" width="363" height="57"/>
+                                                <rect key="frame" x="0.0" y="287" width="363" height="57"/>
                                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="U3a-tM-C0H">
                                                     <rect key="frame" x="0.0" y="0.0" width="363" height="57"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -2517,10 +2276,13 @@
                                                     <userDefinedRuntimeAttribute type="number" keyPath="darkAlphaOverride">
                                                         <integer key="value" value="0"/>
                                                     </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="alphaOverride">
+                                                        <real key="value" value="-0.050000000000000003"/>
+                                                    </userDefinedRuntimeAttribute>
                                                 </userDefinedRuntimeAttributes>
                                             </visualEffectView>
                                             <visualEffectView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wcB-l2-L9N" customClass="MELVisualEffectView" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="348" width="363" height="57"/>
+                                                <rect key="frame" x="0.0" y="350" width="363" height="57"/>
                                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="2nt-oM-MnI">
                                                     <rect key="frame" x="0.0" y="0.0" width="363" height="57"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -2555,6 +2317,9 @@
                                                     <userDefinedRuntimeAttribute type="number" keyPath="darkAlphaOverride">
                                                         <integer key="value" value="0"/>
                                                     </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="alphaOverride">
+                                                        <real key="value" value="-0.25"/>
+                                                    </userDefinedRuntimeAttribute>
                                                 </userDefinedRuntimeAttributes>
                                             </visualEffectView>
                                         </subviews>
@@ -2572,17 +2337,17 @@
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="yvQ-h4-iDg" firstAttribute="top" secondItem="PTO-5r-edc" secondAttribute="bottom" constant="6" id="5Na-1Q-9og"/>
-                            <constraint firstItem="1UQ-1n-K2n" firstAttribute="bottom" secondItem="wcB-l2-L9N" secondAttribute="bottom" constant="30" id="8Em-Sn-Ezr"/>
-                            <constraint firstItem="A5y-Il-DGQ" firstAttribute="bottom" secondItem="eU3-iM-fV6" secondAttribute="bottom" constant="30" id="CCG-et-scR"/>
-                            <constraint firstItem="1UQ-1n-K2n" firstAttribute="top" secondItem="wcB-l2-L9N" secondAttribute="top" constant="-30" id="D7X-Zd-Jp9"/>
+                            <constraint firstItem="1UQ-1n-K2n" firstAttribute="bottom" secondItem="wcB-l2-L9N" secondAttribute="bottom" priority="900" constant="30" id="8Em-Sn-Ezr"/>
+                            <constraint firstItem="A5y-Il-DGQ" firstAttribute="bottom" secondItem="eU3-iM-fV6" secondAttribute="bottom" priority="900" constant="30" id="CCG-et-scR"/>
+                            <constraint firstItem="1UQ-1n-K2n" firstAttribute="top" secondItem="wcB-l2-L9N" secondAttribute="top" priority="900" constant="-30" id="D7X-Zd-Jp9"/>
                             <constraint firstItem="PTO-5r-edc" firstAttribute="leading" secondItem="y88-ja-SWt" secondAttribute="leading" constant="6" id="Kgg-CV-e1p"/>
                             <constraint firstItem="xHP-Xy-DSc" firstAttribute="leading" secondItem="4xb-dq-EE6" secondAttribute="leading" constant="-30" id="Q16-hH-Shv"/>
                             <constraint firstAttribute="trailing" secondItem="PTO-5r-edc" secondAttribute="trailing" constant="6" id="ZDC-pW-fVo"/>
                             <constraint firstItem="xHP-Xy-DSc" firstAttribute="trailing" secondItem="4xb-dq-EE6" secondAttribute="trailing" constant="30" id="atE-GZ-LDK"/>
-                            <constraint firstItem="xHP-Xy-DSc" firstAttribute="top" secondItem="4xb-dq-EE6" secondAttribute="top" constant="-30" id="eHL-Lc-mf7"/>
+                            <constraint firstItem="xHP-Xy-DSc" firstAttribute="top" secondItem="4xb-dq-EE6" secondAttribute="top" priority="900" constant="-30" id="eHL-Lc-mf7"/>
                             <constraint firstItem="PTO-5r-edc" firstAttribute="top" relation="greaterThanOrEqual" secondItem="b8y-7n-9FG" secondAttribute="bottom" constant="20" id="hEt-Ff-Rpc"/>
-                            <constraint firstItem="xHP-Xy-DSc" firstAttribute="bottom" secondItem="4xb-dq-EE6" secondAttribute="bottom" constant="30" id="lxV-yA-OLc"/>
-                            <constraint firstItem="A5y-Il-DGQ" firstAttribute="top" secondItem="eU3-iM-fV6" secondAttribute="top" constant="-30" id="y2o-PS-mwx"/>
+                            <constraint firstItem="xHP-Xy-DSc" firstAttribute="bottom" secondItem="4xb-dq-EE6" secondAttribute="bottom" priority="900" constant="30" id="lxV-yA-OLc"/>
+                            <constraint firstItem="A5y-Il-DGQ" firstAttribute="top" secondItem="eU3-iM-fV6" secondAttribute="top" priority="900" constant="-30" id="y2o-PS-mwx"/>
                         </constraints>
                     </view>
                     <connections>

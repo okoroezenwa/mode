@@ -31,7 +31,7 @@ class MELSwitch: UIView {
         centerYAnchor.constraint(equalTo: mainSwitch.centerYAnchor).isActive = true
         
         let leading = leadingAnchor.constraint(equalTo: mainSwitch.leadingAnchor)
-        leading.constant = self.leading
+        leading.constant = -self.leading
         leading.isActive = true
         
         let trailing = trailingAnchor.constraint(equalTo: mainSwitch.trailingAnchor)

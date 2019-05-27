@@ -8,6 +8,8 @@
 
 import UIKit
 
+typealias GestureRecogniserAction = (UIGestureRecognizer) -> ()
+
 class BorderedButtonView: UIView {
 
     @IBOutlet var button: MELButton!
@@ -59,6 +61,30 @@ class BorderedButtonView: UIView {
             guard let longPressAction = longPressAction else { return }
             
             let hold = UILongPressGestureRecognizer.init(target: longPressAction.target, action: longPressAction.action)
+            hold.minimumPressDuration = longPressDuration
+            addGestureRecognizer(hold)
+            LongPressManager.shared.gestureRecognisers.append(Weak.init(value: hold))
+        }
+    }
+    
+    var tapClosure: GestureRecogniserAction? {
+        
+        didSet {
+            
+            guard let tapClosure = tapClosure else { return }
+            
+            let tap = UITapGestureRecognizer.new(tapClosure)
+            addGestureRecognizer(tap)
+        }
+    }
+    
+    var longPressClosure: GestureRecogniserAction? {
+        
+        didSet {
+            
+            guard let longPressClosure = longPressClosure else { return }
+            
+            let hold = UILongPressGestureRecognizer.new(longPressClosure)
             hold.minimumPressDuration = longPressDuration
             addGestureRecognizer(hold)
             LongPressManager.shared.gestureRecognisers.append(Weak.init(value: hold))
@@ -172,6 +198,18 @@ class BorderedButtonView: UIView {
         view.label.text = title
         view.tapAction = tapAction
         view.longPressAction = longPressAction
+        
+        return view
+    }
+    
+    class func with(title: String, image: UIImage, tapClosure: GestureRecogniserAction?, longPressClosure: GestureRecogniserAction? = nil) -> BorderedButtonView {
+        
+        let view = Bundle.main.loadNibNamed("BorderedButtonView", owner: nil, options: nil)?.first as! BorderedButtonView
+        
+        view.imageView.image = image
+        view.label.text = title
+        view.tapClosure = tapClosure
+        view.longPressClosure = longPressClosure
         
         return view
     }

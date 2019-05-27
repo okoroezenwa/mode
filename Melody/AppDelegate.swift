@@ -269,7 +269,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 } else {
                     
                     container.changeActiveVC = false
-                    container.switchViewController(sender: container.searchButton)
+                    container.switchViewController(container.searchButton)
                     container.changeActiveViewControllerFrom(container.libraryNavigationController, animated: true, completion: {
                     
                         if let searchVC = container.activeViewController?.topViewController as? SearchViewController {

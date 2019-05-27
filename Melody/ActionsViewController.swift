@@ -645,12 +645,6 @@ class ActionsViewController: UIViewController {
                 
                 guard let weakSelf = self, finished else { return }
                 
-//                let oldSection = prefs.integer(forKey: .lastUsedLibrarySection)
-//                let section = weakSelf.section(for: sender).rawValue
-//
-//                prefs.set(section, forKey: .lastUsedLibrarySection)
-//                notifier.post(name: .changeLibrarySection, object: nil, userInfo: ["section": section, "oldSection": oldSection])
-                
                 if let container = appDelegate.window?.rootViewController as? ContainerViewController {
                     
                     if container.activeViewController == container.libraryNavigationController, let sections = container.filterViewContainer.filterView.properties as? [LibrarySection], let index = sections.index(of: weakSelf.section(for: sender)) {
@@ -666,7 +660,7 @@ class ActionsViewController: UIViewController {
                         prefs.set(section, forKey: .lastUsedLibrarySection)
                         notifier.post(name: .changeLibrarySection, object: nil, userInfo: ["section": section, "oldSection": oldSection])
                         
-                        container.switchViewController(sender: container.libraryButton)
+                        container.switchViewController(container.libraryButton)
                     }
                 }
                 

@@ -191,6 +191,7 @@
 		BEB76FC020505067001FCA00 /* RecentsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB76FBF20505066001FCA00 /* RecentsTableViewController.swift */; };
 		BEBC4E321FB2DAE200F18E06 /* InputView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BEBC4E311FB2DAE200F18E06 /* InputView.xib */; };
 		BEBC4E341FB37D1200F18E06 /* InputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEBC4E331FB37D1200F18E06 /* InputView.swift */; };
+		BEBDE8342264838D003530CE /* UIButton + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEBDE8332264838D003530CE /* UIButton + Extensions.swift */; };
 		BEBF0E74204616BC001C29CC /* RecentSearchCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = BEBF0E73204616BC001C29CC /* RecentSearchCell.xib */; };
 		BEBF0E7620461B2F001C29CC /* RecentSearchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEBF0E7520461B2F001C29CC /* RecentSearchTableViewCell.swift */; };
 		BEC04BFD1D300FBD0095D856 /* UniversalMethods.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC04BFC1D300FBD0095D856 /* UniversalMethods.swift */; };
@@ -236,6 +237,7 @@
 		BEC978B81D6DFC2C006277C2 /* Melody.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = BEC978B61D6DFC2C006277C2 /* Melody.xcdatamodeld */; };
 		BEC978BB1D6E0B93006277C2 /* RecentSearch+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC978B91D6E0B93006277C2 /* RecentSearch+CoreDataClass.swift */; };
 		BEC978BC1D6E0B93006277C2 /* RecentSearch+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC978BA1D6E0B93006277C2 /* RecentSearch+CoreDataProperties.swift */; };
+		BECAAE7B2265D0F10078A5DB /* Array + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BECAAE7A2265D0F10078A5DB /* Array + Extensions.swift */; };
 		BECDEC001EF024BE0037892B /* RateShareView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BECDEBFF1EF024BE0037892B /* RateShareView.xib */; };
 		BED2C2BD2043401C009BB73F /* LibraryRefreshTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED2C2BC2043401C009BB73F /* LibraryRefreshTableViewController.swift */; };
 		BED2F92E1DAA50660041A054 /* Sortable+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED2F92C1DAA50660041A054 /* Sortable+CoreDataClass.swift */; };
@@ -470,7 +472,6 @@
 		BE63F56A1D5862F600D03019 /* MPMusicPlayerController+Other.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MPMusicPlayerController+Other.m"; sourceTree = "<group>"; };
 		BE6432C31E280A9100C640F2 /* ActionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActionsViewController.swift; sourceTree = "<group>"; };
 		BE64473521257481002653B3 /* TimerBased.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerBased.swift; sourceTree = "<group>"; };
-		BE64C4182173A8570049D5DF /* Playground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Playground.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		BE66DF881DC3E5D300CF59CD /* TipsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TipsViewController.swift; sourceTree = "<group>"; };
 		BE66DF921DC415A800CF59CD /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
 		BE66DF961DC416BB00CF59CD /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
@@ -522,6 +523,7 @@
 		BEB76FBF20505066001FCA00 /* RecentsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentsTableViewController.swift; sourceTree = "<group>"; };
 		BEBC4E311FB2DAE200F18E06 /* InputView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = InputView.xib; sourceTree = "<group>"; };
 		BEBC4E331FB37D1200F18E06 /* InputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputView.swift; sourceTree = "<group>"; };
+		BEBDE8332264838D003530CE /* UIButton + Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton + Extensions.swift"; sourceTree = "<group>"; };
 		BEBF0E73204616BC001C29CC /* RecentSearchCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RecentSearchCell.xib; sourceTree = "<group>"; };
 		BEBF0E7520461B2F001C29CC /* RecentSearchTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentSearchTableViewCell.swift; sourceTree = "<group>"; };
 		BEC04BFC1D300FBD0095D856 /* UniversalMethods.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UniversalMethods.swift; path = ../UniversalMethods.swift; sourceTree = "<group>"; };
@@ -563,6 +565,7 @@
 		BEC978B71D6DFC2C006277C2 /* Melody.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Melody.xcdatamodel; sourceTree = "<group>"; };
 		BEC978B91D6E0B93006277C2 /* RecentSearch+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RecentSearch+CoreDataClass.swift"; sourceTree = "<group>"; };
 		BEC978BA1D6E0B93006277C2 /* RecentSearch+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RecentSearch+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		BECAAE7A2265D0F10078A5DB /* Array + Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array + Extensions.swift"; sourceTree = "<group>"; };
 		BECDEBFF1EF024BE0037892B /* RateShareView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RateShareView.xib; sourceTree = "<group>"; };
 		BED2C2BC2043401C009BB73F /* LibraryRefreshTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryRefreshTableViewController.swift; sourceTree = "<group>"; };
 		BED2F92C1DAA50660041A054 /* Sortable+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Sortable+CoreDataClass.swift"; sourceTree = "<group>"; };
@@ -670,7 +673,6 @@
 		BE0F5C181D2D663F00C9E8A1 = {
 			isa = PBXGroup;
 			children = (
-				BE64C4182173A8570049D5DF /* Playground.playground */,
 				BEB47B541F614B6800CAD2C4 /* Mode.entitlements */,
 				BE0CE59A1ED8473E00D8DF6D /* ModeWidget */,
 				BE0F5C231D2D663F00C9E8A1 /* Melody */,
@@ -774,6 +776,8 @@
 				BE7A19BA1ECB470200825303 /* MusicPlayer + Extensions.swift */,
 				BED9566C1F9B2A6B00980DF4 /* Image + Extensions.swift */,
 				BE0136AB211E12C500D7588A /* ModeOnlyStringExtensions.swift */,
+				BEBDE8332264838D003530CE /* UIButton + Extensions.swift */,
+				BECAAE7A2265D0F10078A5DB /* Array + Extensions.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -1670,6 +1674,7 @@
 				BE63F56B1D5862F600D03019 /* MPMusicPlayerController+Other.m in Sources */,
 				BE55746D1E7D02EF00E870A5 /* InfoLoader.swift in Sources */,
 				BE061E2E1F8BF04600371062 /* FilterViewController.swift in Sources */,
+				BECAAE7B2265D0F10078A5DB /* Array + Extensions.swift in Sources */,
 				BE2861EA1E8CCF89000AADB9 /* TableDelegate.swift in Sources */,
 				BEDAA3071DABF83A006E3EDB /* PresentationAnimationController.swift in Sources */,
 				BE2923101DE8909E005BE059 /* ArtistAlbumsViewController.swift in Sources */,
@@ -1775,6 +1780,7 @@
 				BE63F5681D57C50200D03019 /* QueueViewController.swift in Sources */,
 				BE42A62B21357A850094DD0C /* MessageTone.swift in Sources */,
 				BEC933DE1F6D9B3400FB5984 /* SwipeTableViewCell.swift in Sources */,
+				BEBDE8342264838D003530CE /* UIButton + Extensions.swift in Sources */,
 				BEC933E11F6D9B3C00FB5984 /* SwipeTableViewCellDelegate.swift in Sources */,
 				BE25606A1E74189700858C02 /* MELTextField.swift in Sources */,
 				BEFA28061D330BA600DE7018 /* ContainerViewController.swift in Sources */,
@@ -1927,6 +1933,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.2;
+				sharedBuildNumber = 14823;
 			};
 			name = Debug;
 		};
@@ -1953,6 +1960,7 @@
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "ModeWidget-Bridging-Header";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.2;
+				sharedBuildNumber = 14823;
 			};
 			name = Release;
 		};
@@ -2008,7 +2016,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				sharedBuildNumber = 14781;
+				sharedBuildNumber = 14823;
 				sharedVersionNumber = 1.2;
 			};
 			name = Debug;
@@ -2060,7 +2068,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				VALIDATE_PRODUCT = YES;
-				sharedBuildNumber = 14781;
+				sharedBuildNumber = 14823;
 				sharedVersionNumber = 1.2;
 			};
 			name = Release;
@@ -2090,6 +2098,7 @@
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 1;
+				sharedBuildNumber = 14823;
 			};
 			name = Debug;
 		};
@@ -2118,6 +2127,7 @@
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 1;
+				sharedBuildNumber = 14823;
 			};
 			name = Release;
 		};

@@ -153,7 +153,7 @@ class TableDelegate: NSObject, Detailing {
             
             case .songs, .playlist: return ([.artist, .genre, .album, .composer, .albumArtist], true)
     
-            case .album: return ([albumArtistsAvailable ? .albumArtist : .artist, .genre, .composer], false)
+            case .album: return ([.artist, .genre, .composer, .albumArtist], true)
             
             case .artistSongs(withinArtist: false):
             
@@ -398,6 +398,16 @@ extension TableDelegate: UITableViewDelegate, UITableViewDataSource {
             case .collections(kind: .playlist): return .playlist(at: getIndex(from: indexPath, filtering: filtering), within: collectionViewOverride && !filtering ? (container?.tableView.tableHeaderView as? HeaderView)!.playlists : relevantEntities(filtering: filtering) as! [MPMediaPlaylist])
             
             case .collections(kind: let kind): return .collection(kind: kind.albumBasedCollectionKind, at: getIndex(from: indexPath, filtering: filtering), within: collectionViewOverride ? (container?.tableView.tableHeaderView as? HeaderView)!.collections : relevantEntities(filtering: filtering) as! [MPMediaItemCollection])
+        }
+    }
+    
+    func canDisplayInLibrary() -> Bool {
+        
+        switch location {
+            
+            case .playlist, .album, .artistSongs, .artistAlbums: return true
+            
+            case .songs, .collections: return false
         }
     }
     
@@ -887,7 +897,7 @@ extension TableDelegate {
             
             switch container!.sortCriteria {
                 
-                case .standard: return container?.location != .playlist
+                case .standard: return container?.sortLocation != .playlist
                 
                 case .random: return false
                 
@@ -1184,7 +1194,7 @@ extension TableDelegate: SwipeTableViewCellDelegate {
                 
                 let actionable = container.filterContainer as? SongActionable ?? container
                 
-                if let collectionsVC = container as? CollectionsViewController, collectionsVC.presented, collectionsVC.filterContainer == nil {
+                if let collectionsVC = container as? CollectionsViewController, collectionsVC.presented {
                     
                     return nil
                 }
@@ -1224,7 +1234,7 @@ extension TableDelegate: SwipeTableViewCellDelegate {
                 
                 if let cell = tableView.cellForRow(at: indexPath) as? SongTableViewCell {
                     
-                    let details = getActionDetails(from: SongAction.show(title: cell.nameLabel.text, context: infoContext(from: indexPath, filtering: container?.filterContainer != nil)), indexPath: indexPath, vc: container?.filterContainer ?? container as? UIViewController, useAlternateTitle: true)
+                    let details = getActionDetails(from: SongAction.show(title: cell.nameLabel.text, context: infoContext(from: indexPath, filtering: container?.filterContainer != nil), canDisplayInLibrary: canDisplayInLibrary()), indexPath: indexPath, vc: container?.filterContainer ?? container as? UIViewController, useAlternateTitle: true)
                     
                     let goTo = SwipeAction.init(style: .default, title: details?.title.lowercased(), handler: { _, _ in details?.handler() }, image: details?.action.icon)
                     
@@ -1297,7 +1307,7 @@ extension TableDelegate {
                 
                 if let cell = searchViewController.tableView.cellForRow(at: indexPath) as? SongTableViewCell {
                     
-                    let details = searchViewController.getActionDetails(from: .show(title: cell.nameLabel.text, context: searchViewController.context(from: indexPath)), indexPath: indexPath, actionable: searchViewController, vc: searchViewController, entityType: searchViewController.sectionDetails[indexPath.section].category.entity, entity: searchViewController.getEntity(at: indexPath)!, useAlternateTitle: true)
+                    let details = searchViewController.getActionDetails(from: .show(title: cell.nameLabel.text, context: searchViewController.context(from: indexPath), canDisplayInLibrary: true), indexPath: indexPath, actionable: searchViewController, vc: searchViewController, entityType: searchViewController.sectionDetails[indexPath.section].category.entity, entity: searchViewController.getEntity(at: indexPath)!, useAlternateTitle: true)
                         
                     let goTo = SwipeAction.init(style: .default, title: details?.title.lowercased(), handler: { _, indexPath in details?.handler() }, image: details?.action.icon)
                     
@@ -1351,7 +1361,7 @@ extension TableDelegate {
                 
                 if let cell = queueViewController.tableView.cellForRow(at: indexPath) as? SongTableViewCell {
                     
-                    let details = queueViewController.getActionDetails(from: .show(title: cell.nameLabel.text, context: queueViewController.context(from: indexPath)), indexPath: indexPath, actionable: queueViewController, vc: queueViewController, entityType: .song, entity: queueViewController.getSong(from: indexPath)!, useAlternateTitle: true)
+                    let details = queueViewController.getActionDetails(from: .show(title: cell.nameLabel.text, context: queueViewController.context(from: indexPath), canDisplayInLibrary: true), indexPath: indexPath, actionable: queueViewController, vc: queueViewController, entityType: .song, entity: queueViewController.getSong(from: indexPath)!, useAlternateTitle: true)
                 
                     let goTo = SwipeAction.init(style: .default, title: "show...", handler: { _, indexPath in details?.handler() }, image: details?.action.icon)
                     
@@ -1403,7 +1413,7 @@ extension TableDelegate {
                 
                 if let cell = collectorItemsViewController.tableView.cellForRow(at: indexPath) as? SongTableViewCell {
                     
-                    let details = collectorItemsViewController.getActionDetails(from: .show(title: cell.nameLabel.text, context: .song(location: .list, at: indexPath.row, within: collectorItemsViewController.manager.queue)), indexPath: indexPath, actionable: collectorItemsViewController, vc: collectorItemsViewController, entityType: .song, entity: collectorItemsViewController.manager.queue[indexPath.row], useAlternateTitle: true)
+                    let details = collectorItemsViewController.getActionDetails(from: .show(title: cell.nameLabel.text, context: .song(location: .list, at: indexPath.row, within: collectorItemsViewController.manager.queue), canDisplayInLibrary: true), indexPath: indexPath, actionable: collectorItemsViewController, vc: collectorItemsViewController, entityType: .song, entity: collectorItemsViewController.manager.queue[indexPath.row], useAlternateTitle: true)
                     
                     let goTo = SwipeAction.init(style: .default, title: details?.title.lowercased(), handler: { _, indexPath in details?.handler() }, image: details?.action.icon)
                     

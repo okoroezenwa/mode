@@ -16,7 +16,12 @@ extension MPMediaPlaylist {
     
     @objc var isAppleMusic: Bool {
         
-        guard /*appDelegate.appleMusicStatus == .appleMusic(libraryAccess: true), */let isUserPlaylist = value(forProperty: .isEditable) as? Bool, playlistAttributes != .onTheGo, responds(to: NSSelectorFromString("isCloudMix")), let isCloudMix = value(forKey: "isCloudMix") as? Bool, isCloudMix else { return false }
+        if let isSubscribed = value(forProperty: "cloudIsSubscribed") as? NSNumber {
+            
+            return isSubscribed.boolValue
+        }
+        
+        guard let isUserPlaylist = value(forProperty: .isEditable) as? Bool, playlistAttributes != .onTheGo, responds(to: NSSelectorFromString("isCloudMix")), let isCloudMix = value(forKey: "isCloudMix") as? Bool, isCloudMix else { return false }
         
         return !isUserPlaylist
     }
@@ -124,6 +129,8 @@ extension MPMediaItemCollection {
         
         return rated.reduce(0, { $0 + $1.rating }) / rated.count
     }
+    
+    var artworkItem: MPMediaItem? { return showiCloudItems ? representativeItem : items.first(where: { !$0.isCloudItem && $0.actualArtwork != nil }) }
     
     func customArtwork(for type: Entity) -> UIImage? {
         

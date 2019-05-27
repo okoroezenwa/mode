@@ -157,12 +157,16 @@ class NavigationAnimationController: NSObject, UIViewControllerAnimatedTransitio
                     notifier.post(name: .resetInsets, object: nil)
                 }
                 
+                toVC.view.alpha = 1
+                
             } else {
                 
                 if needsToUpdateBottomBar, let container = appDelegate.window?.rootViewController as? ContainerViewController, let filterView = container.filterViewContainer?.filterView {
                     
                     filterView.withinSearchTerm = !filterView.withinSearchTerm
                 }
+                
+                fromVC.view.alpha = 1
             }
         })
     }

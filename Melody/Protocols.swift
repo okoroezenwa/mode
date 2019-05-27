@@ -292,6 +292,19 @@ protocol TableViewContainer: FullySortable, InfoLoading, Filterable, SingleItemA
     func getEntity(at indexPath: IndexPath, filtering: Bool) -> MPMediaEntity
 }
 
+extension TableViewContainer {
+    
+    func setHighlightedIndex(of entity: MPMediaEntity) {
+        
+        highlightedIndex = entities.index(of: entity)
+    }
+}
+
+protocol HighlightedEntityContaining: class {
+    
+    var highlightedEntities: (song: MPMediaItem?, collection: MPMediaItemCollection?)? { get set }
+}
+
 protocol FilterContaining: class {
     
     var filterContainer: (FilterContainer & UIViewController)? { get set }
@@ -528,5 +541,70 @@ extension Detailing {
         guard let actionable = actionable, let vc = vc else { return nil }
         
         return actionable.singleItemActionDetails(for: action, entity: entityType, using: entity, from: vc, useAlternateTitle: alternateTitle)
+    }
+}
+
+protocol LocationBroadcastable { }
+
+extension LocationBroadcastable {
+    
+    var location: Location {
+        
+        if let _ = self as? PlaylistItemsViewController {
+            
+            return .playlist
+            
+        } else if let _ = self as? AlbumItemsViewController {
+            
+            return .album
+            
+        } else if let _ = self as? ArtistSongsViewController {
+            
+            return .artist(point: .songs)
+            
+        } else if let _ = self as? ArtistAlbumsViewController {
+            
+            return .artist(point: .albums)
+            
+        } else if let _ = self as? SongsViewController {
+            
+            return .songs
+            
+        } else if let vc = self as? CollectionsViewController {
+            
+            return .collections(kind: vc.collectionKind)
+            
+        } else if let _ = self as? CollectorViewController {
+            
+            return .collector
+            
+        } else if let _ = self as? NowPlayingViewController {
+            
+            return .fullPlayer
+            
+        } else if let _ = self as? ContainerViewController {
+            
+            return .miniPlayer
+            
+        } else if let _ = self as? QueueViewController {
+            
+            return .queue
+            
+        } else if let _ = self as? SearchViewController {
+            
+            return .search
+            
+        } else if let _ = self as? InfoViewController {
+            
+            return .info
+            
+        } else if let _ = self as? NewPlaylistViewController {
+            
+            return .newPlaylist
+            
+        } else {
+            
+            fatalError("No other VC should invoke this")
+        }
     }
 }

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ArtworkManager: NSObject {
+class ArtworkManager: NSObject { // Handles adaptive artwork
 
     @objc static let shared = ArtworkManager()
     

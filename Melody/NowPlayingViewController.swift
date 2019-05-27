@@ -9,7 +9,7 @@
 import UIKit
 import StoreKit
 
-class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTransitionable, PreviewTransitionable, InteractivePresenter, TimerBased, SongActionable, Boldable, EntityVerifiable, Peekable, BackgroundHideable, ArtworkModifying, ArtworkModifierContaining {
+class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTransitionable, AlbumArtistTransitionable, GenreTransitionable, ComposerTransitionable, PreviewTransitionable, InteractivePresenter, TimerBased, SingleItemActionable, Boldable, EntityVerifiable, Peekable, BackgroundHideable, ArtworkModifying, ArtworkModifierContaining {
 
     @IBOutlet var songName: MELButton!
     @IBOutlet var artistButton: MELButton!
@@ -103,11 +103,11 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
     @objc var actionableSongs: [MPMediaItem] { return [activeItem].compactMap({ $0 }) }
     var applicableActions: [SongAction] {
         
-        var actions = [SongAction.collect, .newPlaylist, .addTo]
+        var actions = [SongAction.collect, .show(title: activeItem?.validTitle, context: .song(location: .list, at: 0, within: [activeItem].compactMap({ $0 })), canDisplayInLibrary: true), .newPlaylist, .addTo]
         
         if activeItem?.existsInLibrary == false {
             
-            actions.insert(.library, at: 1)
+            actions.insert(.library, at: 2)
         }
         
         return actions
@@ -132,7 +132,10 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
     @objc var from3DTouch: Bool { return peeker != nil }
     var alternateItem: MPMediaItem?
     @objc var albumQuery: MPMediaQuery?
+    @objc var albumArtistQuery: MPMediaQuery?
     @objc var artistQuery: MPMediaQuery?
+    @objc var genreQuery: MPMediaQuery?
+    @objc var composerQuery: MPMediaQuery?
     @objc var currentItem: MPMediaItem?
     @objc var currentAlbum: MPMediaItemCollection?
     @objc var viewController: UIViewController?
@@ -279,7 +282,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
     
     @IBAction func showSongActions() {
         
-        guard activeItem != nil else { return }
+        guard let item = activeItem else { return }
         
         let info = UIAlertAction.init(title: "Get Info", style: .default, handler: { [weak self] _ in
             
@@ -288,8 +291,21 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
             weakSelf.showOptions(weakSelf)
         })
         
-        var array = alertActions(from: self)
-        array.insert(info, at: 1)
+        let block: ((SongAction) -> Bool) = {
+            
+            if case .show = $0 {
+                
+                return true
+                
+            } else {
+                
+                return false
+            }
+        }
+        
+        var array = applicableActions.map({ singleItemAlertAction(for: $0, entity: .song, using: item, from: self, useAlternateTitle: block($0)) })
+//        let x = alertActions(from: self)
+        array.insert(info, at: 2)
         
         present(UIAlertController.withTitle(nil, message: activeItem?.validTitle, style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
     }
@@ -1248,5 +1264,13 @@ extension NowPlayingViewController: UIViewControllerPreviewingDelegate {
         let third: [UIPreviewActionItem] = [stop]
     
         return first + second + third
+    }
+}
+
+extension NowPlayingViewController: Detailing {
+    
+    func goToDetails(basedOn entity: Entity) -> (entities: [Entity], albumArtOverride: Bool) {
+        
+        return ([Entity.artist, .genre, .album, .composer, .albumArtist], true)
     }
 }

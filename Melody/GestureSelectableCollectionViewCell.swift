@@ -24,6 +24,26 @@ class GestureSelectableCollectionViewCell: UICollectionViewCell {
         }
     }
     
+    override var isHighlighted: Bool {
+        
+        didSet {
+            
+            guard useBorderView else { return }
+            
+            selectedBorderView.isHidden = !self.isHighlighted
+        }
+    }
+    
+    override var isSelected: Bool {
+        
+        didSet {
+            
+            guard useBorderView else { return }
+            
+            selectedBorderView.isHidden = !self.isSelected
+        }
+    }
+    
     override func awakeFromNib() {
         
         super.awakeFromNib()

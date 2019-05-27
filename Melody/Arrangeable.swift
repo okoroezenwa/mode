@@ -15,7 +15,7 @@ protocol Arrangeable: NSObjectProtocol, TableViewContaining {
     var ascending: Bool { get set }
     var applicableSortCriteria: Set<SortCriteria> { get }
     var arrangeButton: MELButton! { get set }
-    var location: SortLocation { get }
+    var sortLocation: SortLocation { get }
     var applySort: Bool { get set }
     
     func sortItems()
@@ -31,7 +31,7 @@ protocol FullySortable: Arrangeable {
 
 extension FullySortable {
     
-    var duration: TimeInterval { return 1 }
+    var duration: TimeInterval { return 1.15 }
     
     var alphaNumericCritieria: Set<SortCriteria> {
         
@@ -39,7 +39,7 @@ extension FullySortable {
     }
     
     func scrollToHighlightedRow() {
-        
+
         if let index = highlightedIndex {
             
             let indexPath = relevantIndexPath(using: index)
@@ -56,7 +56,7 @@ extension FullySortable {
             
             case .standard:
                 
-                switch location {
+                switch sortLocation {
                     
                 case .songs:
                     
@@ -117,13 +117,13 @@ extension FullySortable {
             
             UIView.animate(withDuration: duration, delay: 0, options: .allowUserInteraction, animations: { cell.backgroundColor = .clear }, completion: { _ in self.highlightedIndex = nil })
             
-            if let vc = self as? UIViewController, let entityVC = vc.parent as? EntityItemsViewController {
+            if let vc = self as? UIViewController, let parent = vc.parent as? HighlightedEntityContaining {
                 
-                switch location {
+                switch sortLocation {
                     
-                    case .album, .songs, .playlist: entityVC.highlightedEntities?.song = nil
+                    case .album, .songs, .playlist: parent.highlightedEntities?.song = nil
                         
-                    case .collections: entityVC.highlightedEntities?.album = nil
+                    case .collections: parent.highlightedEntities?.collection = nil
                         
                     default: break
                 }
@@ -156,7 +156,7 @@ extension Arrangeable {
             
             case .duration: return "Duration"
             
-            case .title: return location == .playlistList ? "Name" : "Title"
+            case .title: return sortLocation == .playlistList ? "Name" : "Title"
                 
             case .plays: return "Plays"
                 
@@ -168,7 +168,7 @@ extension Arrangeable {
                 
             case .standard:
                 
-                switch location {
+                switch sortLocation {
                     
                     case .album: return "Track Number"
                     
@@ -181,7 +181,7 @@ extension Arrangeable {
                 
             case .dateAdded:
                 
-                switch location {
+                switch sortLocation {
                     
                     case .collections: return "Recently Added"
                     
@@ -204,11 +204,6 @@ extension Arrangeable {
         }
     }
     
-    func updateImage(for button: UIButton) {
-        
-        (button.superview as? BorderedButtonView)?.imageView.image = ascending ? #imageLiteral(resourceName: "AscendingLines") : #imageLiteral(resourceName: "DescendingLines")
-    }
-    
     func descriptor(for criteria: SortCriteria, secondary: Bool = false) -> NSSortDescriptor {
         
         let localAscending = secondary ? true : self.ascending
@@ -217,7 +212,7 @@ extension Arrangeable {
                 
             case .title:
                 
-                switch location {
+                switch sortLocation {
                     
                     case .album, .playlist, .songs: return .init(key: numbersBelowLetters ? #keyPath(MPMediaItem.sortTitle) : #keyPath(MPMediaItem.validTitle), ascending: localAscending, selector: #selector(NSString.localizedStandardCompare(_:)))
                     
@@ -228,7 +223,7 @@ extension Arrangeable {
                 
             case .album:
                 
-                switch location {
+                switch sortLocation {
                     
                     case .album, .songs, .playlist: return .init(key: numbersBelowLetters ? #keyPath(MPMediaItem.sortAlbum) : #keyPath(MPMediaItem.validAlbum), ascending: localAscending, selector: #selector(NSString.localizedStandardCompare(_:)))
                     
@@ -239,7 +234,7 @@ extension Arrangeable {
                 
             case .artist:
                 
-                switch location {
+                switch sortLocation {
                     
                     case .collections: return .init(key: numbersBelowLetters ? #keyPath(MPMediaItemCollection.sortArtistName) : #keyPath(MPMediaItemCollection.artistName), ascending: localAscending, selector: #selector(NSString.localizedStandardCompare(_:)))
                     
@@ -250,7 +245,7 @@ extension Arrangeable {
                 
             case .dateAdded:
                 
-                switch location {
+                switch sortLocation {
                     
                     case .collections: return .init(key: #keyPath(MPMediaItemCollection.recentlyAdded), ascending: localAscending)
                     
@@ -261,7 +256,7 @@ extension Arrangeable {
                 
             case .duration:
                 
-                switch location {
+                switch sortLocation {
                     
                     case .album, .songs, .playlist: return .init(key: #keyPath(MPMediaItem.playbackDuration), ascending: localAscending)
                         
@@ -270,7 +265,7 @@ extension Arrangeable {
                 
             case .genre:
                 
-                switch location {
+                switch sortLocation {
                     
                     case .collections: return .init(key: numbersBelowLetters ? #keyPath(MPMediaItemCollection.sortGenre) : #keyPath(MPMediaItemCollection.genre), ascending: localAscending, selector: #selector(NSString.localizedStandardCompare(_:)))
                     
@@ -283,7 +278,7 @@ extension Arrangeable {
                 
             case .plays:
                 
-                switch location {
+                switch sortLocation {
                     
                     case .collections, .playlistList: return .init(key: #keyPath(MPMediaItemCollection.totalPlays), ascending: localAscending)
                     
@@ -294,7 +289,7 @@ extension Arrangeable {
                 
             case .year:
                 
-                switch location {
+                switch sortLocation {
                     
                     case .collections: return .init(key: #keyPath(MPMediaItemCollection.year), ascending: localAscending)
                     
@@ -303,7 +298,7 @@ extension Arrangeable {
             
             case .standard:
             
-                switch location {
+                switch sortLocation {
                     
                     case .album: return .init(key: #keyPath(MPMediaItem.discCount), ascending: localAscending)
                     
@@ -316,7 +311,7 @@ extension Arrangeable {
             
             case .fileSize:
                 
-                switch location {
+                switch sortLocation {
                     
                     case .playlistList, .collections: return .init(key: #keyPath(MPMediaItemCollection.totalSize), ascending: localAscending)
                     
@@ -351,7 +346,7 @@ extension Arrangeable {
                 
                 case .title:
                     
-                    switch location {
+                    switch sortLocation {
                         
                         case .collections: return []
                         
@@ -362,7 +357,7 @@ extension Arrangeable {
                     
                 case .artist:
                     
-                    switch location {
+                    switch sortLocation {
                         
                         case .collections: return descriptors(for: .artist, .album)
                         
@@ -373,7 +368,7 @@ extension Arrangeable {
                     
                 case .album:
                     
-                    switch location {
+                    switch sortLocation {
                         
                         case .collections: return descriptors(for: .album, .artist)
                         
@@ -384,7 +379,7 @@ extension Arrangeable {
                     
                 case .standard:
                     
-                    switch location {
+                    switch sortLocation {
                         
                         case .album: return [descriptor(for: sortCriteria)] + [NSSortDescriptor.init(key: #keyPath(MPMediaItem.albumTrackNumber), ascending: true)] + descriptors(for: .title, .duration, treatFirstAsSecondary: true) // changed from Song to MPMediaItem for some reason; may need to change back + changed from self.ascending to true for second array
                         
@@ -399,7 +394,7 @@ extension Arrangeable {
                     
                     let array: [NSSortDescriptor] = {
                         
-                        switch location {
+                        switch sortLocation {
                             
                             case .album, .playlist, .songs: return descriptors(for: .artist, .album, .title, treatFirstAsSecondary: true)
                                 
@@ -849,7 +844,7 @@ extension Arrangeable {
             
             case .standard:
             
-                switch location {
+                switch sortLocation {
                     
                     case .album:
                     

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.13.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="OFs-Yz-tlH">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="OFs-Yz-tlH">
     <device id="retina4_0" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.9"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -305,7 +305,7 @@
                                                                             <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                             <state key="normal" image="Offline22"/>
                                                                             <connections>
-                                                                                <action selector="switchViewControllerWithSender:" destination="OFs-Yz-tlH" eventType="touchUpInside" id="KY8-Mp-nqC"/>
+                                                                                <action selector="switchViewController:" destination="OFs-Yz-tlH" eventType="touchUpInside" id="qBh-n6-Lmb"/>
                                                                             </connections>
                                                                         </button>
                                                                         <view hidden="YES" tag="1" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ASx-Tv-aPE" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
@@ -344,7 +344,7 @@
                                                                             <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                             <state key="normal" image="Search19"/>
                                                                             <connections>
-                                                                                <action selector="switchViewControllerWithSender:" destination="OFs-Yz-tlH" eventType="touchUpInside" id="t3R-QI-I0L"/>
+                                                                                <action selector="switchViewController:" destination="OFs-Yz-tlH" eventType="touchUpInside" id="n2o-in-tXh"/>
                                                                             </connections>
                                                                         </button>
                                                                         <view hidden="YES" tag="1" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0b0-ne-9JX" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">

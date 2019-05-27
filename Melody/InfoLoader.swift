@@ -39,14 +39,7 @@ extension InfoLoading {
                     
                 } else if let collection = entity as? MPMediaItemCollection {
                     
-                    if showiCloudItems {
-                        
-                        return collection.representativeItem
-                        
-                    } else {
-                        
-                        return collection.items.first(where: { !$0.isCloudItem && $0.artwork?.bounds.width != 0 })
-                    }
+                    return collection.artworkItem
                 }
                 
                 return nil
@@ -118,7 +111,7 @@ extension InfoLoading {
             let operation = BlockOperation()
             operation.addExecutionBlock({ [weak song, weak operation, weak imageCache] in
                 
-                if let artwork = song?.artwork, artwork.bounds.width != 0, let image = artwork.image(at: size) {
+                if let artwork = song?.actualArtwork, let image = artwork.image(at: size) {
                     
                     guard operation?.isCancelled == false, let song = song else { return }
                     
@@ -175,7 +168,7 @@ extension InfoLoading {
                     
                 } else {
                     
-                    return collection.items.first(where: { !$0.isCloudItem && $0.artwork?.bounds.width != 0 })?.persistentID
+                    return collection.items.first(where: { !$0.isCloudItem && $0.actualArtwork != nil })?.persistentID
                 }
             }
         
@@ -189,7 +182,7 @@ extension InfoLoading {
 
             } else {
 
-                return collection.items.first(where: { !$0.isCloudItem && $0.artwork?.bounds.width != 0 })
+                return collection.items.first(where: { !$0.isCloudItem && $0.actualArtwork != nil })
             }
         }()
         

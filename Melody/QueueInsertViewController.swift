@@ -109,8 +109,8 @@ class QueueInsertViewController: UIViewController, BorderButtonContaining {
         
         verticalPresentedVC?.setTitle(labelTitle)
         
-        afterView.isHidden = !allowPlayAfter
-        laterView.isHidden = !allowPlayLast
+//        afterView.isHidden = !allowPlayAfter
+//        laterView.isHidden = !allowPlayLast
         
         [nextView, afterView, laterView].forEach({
             
@@ -244,6 +244,16 @@ class QueueInsertViewController: UIViewController, BorderButtonContaining {
         } else {
             
             return (query?.items ?? songs)
+        }
+    }
+    
+    deinit {
+        
+        if isInDebugMode, deinitBannersEnabled {
+            
+            let banner = UniversalMethods.banner(withTitle: "QIVC going away...")
+            banner.titleLabel.font = .myriadPro(ofWeight: .light, size: 22)
+            banner.show(for: 0.3)
         }
     }
 }

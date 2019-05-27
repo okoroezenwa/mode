@@ -22,19 +22,20 @@ class HeaderView: UIView, InfoLoading {
     @IBOutlet var insertView: UIView!
     @IBOutlet var infoView: UIView!
     @IBOutlet var groupingView: UIView!
-    @IBOutlet var chevron: MELImageView!
-    @IBOutlet var chevronBorder: UIView!
+    @IBOutlet var sortView: UIView!
     @IBOutlet var likedStateButton: MELButton!
     @IBOutlet var tableHeaderContainer: UIView!
     @IBOutlet var collectionView: UICollectionView!
     @IBOutlet var loadingEffectView: MELVisualEffectView!
     @IBOutlet var activityIndicatorView: MELActivityIndicatorView!
+    @IBOutlet var sortActivityIndicatorView: MELActivityIndicatorView!
+    @IBOutlet var sortBorderView: MELBorderView!
     @IBOutlet var buttonsStackView: UIStackView!
     @IBOutlet var addButton: MELButton!
     @IBOutlet var infoButton: MELButton!
     @IBOutlet var groupingButton: MELButton!
+    @IBOutlet var sortButton: MELButton!
     @IBOutlet var scrollStackViewHeightConstraint: NSLayoutConstraint!
-    @IBOutlet var chevronContainerCenterYConstraint: NSLayoutConstraint!
     
     enum Context {
         
@@ -124,11 +125,21 @@ class HeaderView: UIView, InfoLoading {
             updateScrollStackView()
         }
     }
+    
     @objc var showGrouping = false {
         
         didSet {
             
             groupingView.isHidden = !showGrouping
+            updateScrollStackView()
+        }
+    }
+    
+    @objc var showSort = true {
+        
+        didSet {
+            
+            sortView.isHidden = !showSort
             updateScrollStackView()
         }
     }
@@ -266,21 +277,11 @@ class HeaderView: UIView, InfoLoading {
     
     func updateScrollStackView() {
         
-        scrollStackView.layoutMargins.left = showArtistView.inverted && showLoved.inverted && showInfo.inverted && showInsert.inverted && showGrouping.inverted ? 16 : 0
-        buttonsStackView.layoutMargins.left = showArtistView ? 0 : (showLoved || showInfo || showInsert || showGrouping) ? 16 : 0
+        scrollStackView.layoutMargins.left = showArtistView.inverted && showLoved.inverted && showInfo.inverted && showInsert.inverted && showGrouping.inverted && showSort.inverted ? 12 : 0
+        buttonsStackView.layoutMargins.left = showGrouping ? 0 : (showLoved || showInfo || showInsert || showArtistView || showSort) ? 12 : 0
     }
     
     @objc func updateSpacing(_ sender: Any) {
-        
-        chevronContainerCenterYConstraint.constant = {
-            
-            switch activeFont {
-                
-                case .system, .avenirNext: return 6
-                
-                case .myriadPro: return 4
-            }
-        }()
         
         collectionViewHeightConstraint.constant = showRecents ? width + FontManager.shared.collectionViewCellConstant : 0
         collectionViewHeaderHeightConstraint.constant = showRecents ? .textHeaderHeight : 0
@@ -288,6 +289,19 @@ class HeaderView: UIView, InfoLoading {
         if sender is Notification, showRecents {
             
             notifier.post(name: .headerHeightCalculated, object: nil)
+        }
+    }
+    
+    func updateSortActivityIndicator(to state: VisibilityState) {
+        
+        sortBorderView.isHidden = state == .visible
+        sortButton.imageView?.alpha = state == .visible ? 0 : 1
+        
+        switch state {
+            
+            case .hidden: sortActivityIndicatorView.stopAnimating()
+            
+            case .visible: sortActivityIndicatorView.startAnimating()
         }
     }
 }
@@ -467,8 +481,7 @@ extension HeaderView: UICollectionViewDelegate, UICollectionViewDataSource {
                     if collectionsVC.selectedPlaylists.firstIndex(of: playlist) == nil, let presentedVC = collectionsVC.libraryVC?.parent as? PresentedContainerViewController {
                         
                         collectionsVC.selectedPlaylists.append(playlist)
-                        presentedVC.prompt = collectionsVC.selectedPlaylists.count.formatted + " selected " + collectionsVC.selectedPlaylists.count.countText(for: .playlist)
-                        presentedVC.updatePrompt(animated: false)
+                        collectionsVC.addButton.setTitle("Add (\(collectionsVC.selectedPlaylists.count.formatted))", for: .normal)
                         
                         if let selectedIndexPath = collectionsVC.tableView.indexPathsForVisibleRows?.first(where: { collectionsVC.getCollection(from: $0) == playlist }), let cell = collectionsVC.tableView.cellForRow(at: selectedIndexPath), cell.isSelected.inverted {
 
@@ -500,8 +513,7 @@ extension HeaderView: UICollectionViewDelegate, UICollectionViewDataSource {
         if let collectionsVC = viewController as? CollectionsViewController, collectionsVC.presented, let playlist = playlists.value(at: indexPath.row), let index = collectionsVC.selectedPlaylists.firstIndex(of: playlist), let presentedVC = collectionsVC.libraryVC?.parent as? PresentedContainerViewController {
             
             collectionsVC.selectedPlaylists.remove(at: index)
-            presentedVC.prompt = collectionsVC.selectedPlaylists.count.formatted + " selected " + collectionsVC.selectedPlaylists.count.countText(for: .playlist)
-            presentedVC.updatePrompt(animated: false)
+            collectionsVC.addButton.setTitle("Add (\(collectionsVC.selectedPlaylists.count.formatted))", for: .normal)
             
             if let selectedIndexPath = collectionsVC.tableView.indexPathsForVisibleRows?.first(where: { collectionsVC.getCollection(from: $0) == playlist }), let indexPaths = collectionsVC.tableView.indexPathsForSelectedRows, Set(indexPaths).contains(selectedIndexPath) {
                 
@@ -640,7 +652,7 @@ extension HeaderView: PlaylistCollectionCellDelegate {
         
         var actions = [SongAction.collect, .info(context: context.infoContext(at: indexPath)), .queue(name: cell.nameLabel.text, query: .init(filterPredicates: [.for(entityType, using: item)])), .newPlaylist, .addTo].map({ vc.singleItemAlertAction(for: $0, entity: entityType, using: item, from: vc) })
         
-        actions.insert(vc.singleItemAlertAction(for: .show(title: cell.nameLabel.text, context: context.infoContext(at: indexPath)), entity: entityType, using: item, from: vc, useAlternateTitle: true), at: 1)
+        actions.insert(vc.singleItemAlertAction(for: .show(title: cell.nameLabel.text, context: context.infoContext(at: indexPath), canDisplayInLibrary: true), entity: entityType, using: item, from: vc, useAlternateTitle: true), at: 1)
         
         if let item = item as? MPMediaItem, item.existsInLibrary.inverted {
             

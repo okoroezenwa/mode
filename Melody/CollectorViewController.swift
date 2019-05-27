@@ -480,7 +480,7 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
         
         if isInDebugMode, deinitBannersEnabled {
             
-            UniversalMethods.banner(withTitle: "QIVC going away...").show(for: 0.3)
+            UniversalMethods.banner(withTitle: "CoVC going away...").show(for: 0.3)
         }
         
         if let _ = peeker, let container = appDelegate.window?.rootViewController as? ContainerViewController {

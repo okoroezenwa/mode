@@ -13,6 +13,8 @@ class InfoItemCollectionViewCell: UICollectionViewCell {
     @IBOutlet var headerLabel: MELLabel!
     @IBOutlet var titleLabel: MELLabel!
     @IBOutlet var scrollView: MELScrollView!
+    @IBOutlet var leadingConstraints: [NSLayoutConstraint]!
+    @IBOutlet var trailingConstraints: [NSLayoutConstraint]!
     
     override func awakeFromNib() {
         

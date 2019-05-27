@@ -307,7 +307,11 @@ class Settings {
     
     static var forceOldStyleQueue: Bool {
         
-        if #available(iOS 11.3, *), !useSystemPlayer {
+        if #available(iOS 12.2, *), !useSystemPlayer {
+            
+            return useOldStyleQueue
+        
+        } else if #available(iOS 11.3, *), !useSystemPlayer {
             
             return true
             

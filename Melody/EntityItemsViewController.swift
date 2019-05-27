@@ -8,9 +8,12 @@
 
 import UIKit
 
-class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkModifying, Contained, OptionsContaining, Peekable, ArtistTransitionable, AlbumArtistTransitionable, Navigatable, ChildContaining {
+class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkModifying, Contained, OptionsContaining, Peekable, ArtistTransitionable, AlbumArtistTransitionable, Navigatable, ChildContaining, HighlightedEntityContaining {
 
     @IBOutlet var containerView: UIView!
+    @IBOutlet var titleEffectView: MELVisualEffectView!
+    @IBOutlet var titleLabel: MELLabel!
+    @IBOutlet var titleEffectViewHeightConstraint: NSLayoutConstraint!
     
     enum EntityContainerType {
         
@@ -70,7 +73,7 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
             }
         }
     }
-    var highlightedEntities: (song: MPMediaItem?, album: MPMediaItemCollection?)?
+    var highlightedEntities: (song: MPMediaItem?, collection: MPMediaItemCollection?)?
     @objc var backLabelText: String?
     @objc var ascending = true
     var sortCriteria = SortCriteria.standard
@@ -85,12 +88,13 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
     @objc var firstLaunch = true
     @objc var lifetimeObservers = Set<NSObject>()
     @objc var transientObservers = Set<NSObject>()
+    var changeActiveVC = true
     
     @objc var activeChildViewController: UIViewController? {
         
         didSet {
             
-            guard !firstLaunch, oldValue != activeChildViewController else { return }
+            guard changeActiveVC, !firstLaunch, oldValue != activeChildViewController else { return }
             
             changeActiveViewControllerFrom(oldValue)
         }
@@ -164,9 +168,11 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
 
         updateCornersAndShadows()
         
-        let size = (appDelegate.window?.rootViewController as? ContainerViewController)?.visualEffectNavigationBar.artworkImageView.frame.size ?? .zero
+        let item: MPMediaItem? = showiCloudItems ? collection?.representativeItem : collection?.items.first(where: { !$0.isCloudItem && $0.actualArtwork != nil })
+        
+        let size = CGSize.init(width: 100, height: 100)
         let collectionImage = collection?.customArtwork(for: entityForContainerType())?.scaled(to: size, by: 2)
-        let image = query?.items?.first(where: { $0.actualArtwork != nil })?.actualArtwork?.image(at: size)
+        let image = item?.actualArtwork?.image(at: size)
         
         var noImage: UIImage {
             
@@ -217,7 +223,8 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         
         if let _ = peeker, let container = appDelegate.window?.rootViewController as? ContainerViewController {
             
-//            oldArtwork = container.imageView.image
+            updateEffectView(to: .visible)
+            
             ArtworkManager.shared.currentlyPeeking = self
             
             UIView.transition(with: container.imageView, duration: 0.5, options: .transitionCrossDissolve, animations: { container.imageView.image = self.artworkType.image }, completion: nil)
@@ -288,6 +295,13 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
                 
             default: break
         }
+    }
+    
+    func updateEffectView(to state: VisibilityState) {
+        
+        titleEffectView.isHidden = state == .hidden
+        titleEffectViewHeightConstraint.priority = state == .hidden ? .init(rawValue: 999) : .defaultLow
+        titleLabel.text = title
     }
     
     @objc func updateCornersAndShadows() {

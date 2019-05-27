@@ -69,6 +69,8 @@ enum PlaylistType: Int { case folder, smart, genius, manual, appleMusic }
 
 enum TabBarTapBehaviour: Int { case nothing, scrollToTop, returnToStart, returnThenScroll }
 
+enum Location { case playlist, album, artist(point: EntityItemsViewController.StartPoint), songs, collections(kind: CollectionsKind), fullPlayer, miniPlayer, collector, queue, search, info, newPlaylist, filter, unknown }
+
 // MARK: - Well-Defined
 
 enum GestureDuration: Int {
@@ -230,6 +232,69 @@ enum Entity: Int {
             case .composer: return song.composerPersistentID
             
             case .playlist: return 0
+        }
+    }
+    
+    func librarySection(from entity: MPMediaEntity) -> LibrarySection {
+        
+        switch self {
+            
+            case .song: return .songs
+            
+            case .album:
+                
+                if let item = entity as? MPMediaItem {
+                    
+                    return item.isCompilation ? .compilations : .albums
+                    
+                } else if let collection = entity as? MPMediaItemCollection, let item = collection.representativeItem {
+                    
+                    return item.isCompilation ? .compilations : .albums
+                }
+                
+                return .albums
+            
+            case .artist: return .artists
+            
+            case .albumArtist: return .artists
+            
+            case .genre: return .genres
+            
+            case .composer: return .composers
+            
+            case .playlist: return .playlists
+        }
+    }
+    
+    func collection(from entity: MPMediaEntity) -> MPMediaItemCollection? {
+        
+        switch self {
+            
+            case .playlist: return MPMediaQuery.init(filterPredicates: [.for(.playlist, using: entity.persistentID)]).cloud.grouped(by: .playlist).collections?.first
+            
+            default:
+            
+                guard let item = entity as? MPMediaItem else { return nil }
+            
+                return MPMediaQuery.init(filterPredicates: [.for(self, using: self.persistentID(from: item))]).cloud.grouped(by: self.grouping).collections?.first
+        }
+    }
+    
+    func singleCollectionInfoContext(for collection: MPMediaItemCollection) -> InfoViewController.Context? {
+        
+        switch self {
+            
+            case .song: return nil
+            
+            case .album: return .album(at: 0, within: [collection])
+            
+            case .artist, .albumArtist, .genre, .composer: return .collection(kind: self.albumBasedCollectionKind, at: 0, within: [collection])
+            
+            case .playlist:
+            
+                guard let playlist = collection as? MPMediaPlaylist else { return nil }
+            
+                return .playlist(at: 0, within: [playlist])
         }
     }
 }
@@ -462,71 +527,6 @@ enum CornerRadius: Int {
     }
 }
 
-enum Location {
-    
-    case playlist, album, artist(point: EntityItemsViewController.StartPoint), songs, collections(kind: CollectionsKind), fullPlayer, miniPlayer, collector, queue, search, info, newPlaylist
-    
-    func location(from vc: UIViewController?) -> Location {
-        
-        if let _ = vc as? PlaylistItemsViewController {
-            
-            return .playlist
-            
-        } else if let _ = vc as? AlbumItemsViewController {
-            
-            return .album
-            
-        } else if let _ = vc as? ArtistSongsViewController {
-            
-            return .artist(point: .songs)
-            
-        } else if let _ = vc as? ArtistAlbumsViewController {
-            
-            return .artist(point: .albums)
-            
-        } else if let _ = vc as? SongsViewController {
-            
-            return .songs
-            
-        } else if let vc = vc as? CollectionsViewController {
-            
-            return .collections(kind: vc.collectionKind)
-        
-        } else if let _ = vc as? CollectorViewController {
-            
-            return .collector
-            
-        } else if let _ = vc as? NowPlayingViewController {
-            
-            return .fullPlayer
-            
-        } else if let _ = vc as? ContainerViewController {
-            
-            return .miniPlayer
-            
-        } else if let _ = vc as? QueueViewController {
-            
-            return .queue
-            
-        } else if let _ = vc as? SearchViewController {
-            
-            return .search
-            
-        } else if let _ = vc as? InfoViewController {
-            
-            return .info
-            
-        } else if let _ = vc as? NewPlaylistViewController {
-            
-            return .newPlaylist
-            
-        } else {
-            
-            fatalError("No other VC should invoke this")
-        }
-    }
-}
-
 enum Property: Int, PropertyStripPresented, CaseIterable {
     
     case title, artist, album, dateAdded, lastPlayed, genre, composer, plays, duration, year, rating, status, size, trackCount, albumCount, isCloud, artwork, isExplicit, isCompilation
@@ -735,7 +735,7 @@ enum LibraryRefreshInterval: Int {
 
 enum SongAction {
     
-    case collect, addTo, newPlaylist, remove, library, queue(name: String?, query: MPMediaQuery?), likedState, rate, insert(items: [MPMediaItem], completions: Completions?), show(title: String?, context: InfoViewController.Context), info(context: InfoViewController.Context), reveal(indexPath: IndexPath), play(title: String?, completion: (() -> ())?), shuffle(mode: String.ShuffleSuffix, title: String?, completion: (() -> ())?)
+    case collect, addTo, newPlaylist, remove, library, queue(name: String?, query: MPMediaQuery?), likedState, rate, insert(items: [MPMediaItem], completions: Completions?), show(title: String?, context: InfoViewController.Context, canDisplayInLibrary: Bool), info(context: InfoViewController.Context), reveal(indexPath: IndexPath), play(title: String?, completion: (() -> ())?), shuffle(mode: String.ShuffleSuffix, title: String?, completion: (() -> ())?)
     
     var icon: UIImage {
         
@@ -977,12 +977,52 @@ enum InfoSection: String, CaseIterable {
     }
 }
 
-enum SortCriteria: Int {
+enum SortCriteria: Int, CaseIterable {
     
     case standard, title, artist, album, duration, plays, lastPlayed, rating, genre, dateAdded, year, random, songCount, albumCount, fileSize
     
     func title(from location: Location) -> String {
         
-        
+        switch self {
+            
+            case .title:
+            
+                switch location {
+                    
+                case .album, .artist(point: .songs), .songs, .playlist, .collections(kind: .artist), .collections(kind: .genre), .collections(kind: .composer), .collections(kind: .playlist): return "Name"
+                    
+                    case .collections(kind: .album), .collections(kind: .compilation), .artist(point: .albums): return "Title"
+                    
+                    default: return ""
+                }
+            
+            case .album: return "Album"
+            
+            case .artist: return "Artist"
+            
+            case .genre: return "Genre"
+            
+            case .albumCount: return "Albums"
+            
+            case .songCount: return "Songs"
+            
+            case .dateAdded: return "Added"
+            
+            case .duration: return "Duration"
+            
+            case .fileSize: return "Size"
+            
+            case .lastPlayed: return "Played"
+            
+            case .plays: return "Plays"
+            
+            case .random: return "Random"
+            
+            case .rating: return "Rating"
+            
+            case .standard: return "Default"
+            
+            case .year: return "Year"
+        }
     }
 }

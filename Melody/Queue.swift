@@ -71,7 +71,6 @@ class Queue {
         if useDescriptor {
             
             let descriptor = MPMusicPlayerMediaItemQueueDescriptor.init(itemCollection: .init(items: queue))
-            descriptor.startItem = queue[index < queue.count ? index : 0]
             
             musicPlayer.setQueue(with: descriptor)
         
@@ -88,10 +87,7 @@ class Queue {
         UniversalMethods.performOnMainThread({
             
             musicPlayer.currentPlaybackTime = time
-//            NowPlaying.shared.container?.playPauseButton.gestureRecognizers = nil
-//            NowPlaying.shared.container?.altPlayPauseButton??.gestureRecognizers = nil
-//            NowPlaying.shared.container = appDelegate.window?.rootViewController as? ContainerViewController
-            NowPlaying.shared.container?.updateTimes(setValue: true, seeking: false )
+            NowPlaying.shared.container?.updateTimes(setValue: true, seeking: false)
             
         }, afterDelay: 1)
     

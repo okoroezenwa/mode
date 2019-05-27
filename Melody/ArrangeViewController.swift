@@ -10,65 +10,92 @@ import UIKit
 
 class ArrangeViewController: UIViewController {
     
-    @IBOutlet var resetButton: MELButton!
+    @IBOutlet var collectionView: UICollectionView!
+    @IBOutlet var defaultButton: MELButton!
     @IBOutlet var randomButton: MELButton!
-    @IBOutlet var scrollView: UIScrollView!
-    @IBOutlet var titleButton: MELButton!
-    @IBOutlet var artistButton: MELButton!
-    @IBOutlet var albumButton: MELButton!
-    @IBOutlet var dateAddedButton: MELButton!
-    @IBOutlet var playsButton: MELButton!
-    @IBOutlet var durationButton: MELButton!
-    @IBOutlet var ratingButton: MELButton!
-    @IBOutlet var genreButton: MELButton!
-    @IBOutlet var lastPlayedButton: MELButton!
-    @IBOutlet var yearButton: MELButton!
-    @IBOutlet var fileSizeButton: MELButton!
-    @IBOutlet var songCountButton: MELButton!
-    @IBOutlet var albumCountButton: MELButton!
+    @IBOutlet var defaultView: UIView!
+    @IBOutlet var randomView: UIView!
+    @IBOutlet var defaultBorderView: MELBorderView!
+    @IBOutlet var randomBorderView: MELBorderView!
     lazy var lockButtonBorder: MELBorderView? = self.verticalPresentedVC?.leftButtonBorderView
     lazy var lockButton: MELButton? = self.verticalPresentedVC?.leftButton
     
+    enum InactiveView: CaseIterable { case collectionView, randomView, defaultView }
+    
     weak var sorter: Arrangeable!
     @objc var firstLaunch = true
-    var buttons: [MELButton?] { return [resetButton, randomButton, titleButton, artistButton, albumButton, dateAddedButton, playsButton, durationButton, ratingButton, genreButton, lastPlayedButton, yearButton, fileSizeButton, songCountButton, albumCountButton] }
     @objc var persistPopovers = false
     var verticalPresentedVC: VerticalPresentationContainerViewController? { return parent as? VerticalPresentationContainerViewController }
+    lazy var applicableCriteria = sorter.applicableSortCriteria.sorted(by: { $0.title(from: (sorter as? UIViewController)?.location ?? .unknown) < $1.title(from: (sorter as? UIViewController)?.location ?? .unknown) })
+    let cellHeight: CGFloat = 57
+    
+    var highlightedIndexPath: IndexPath? {
+        
+        didSet {
+            
+            guard highlightedIndexPath != oldValue else { return }
+            
+            if let indexPath = selectedIndexPath, let cell = collectionView.cellForItem(at: indexPath) as? GestureSelectableCollectionViewCell, cell.selectedBorderView.isHidden.inverted {
+                
+                collectionView.deselectItem(at: indexPath, animated: false)//cell.selectedBorderView.isHidden = true
+            }
+            
+            if let indexPath = oldValue {
+            
+                collectionView.deselectItem(at: indexPath, animated: false)//cell.selectedBorderView.isHidden = true
+            }
+        }
+    }
+    
+    var selectedIndexPath: IndexPath? {
+        
+        didSet {
+            
+            guard selectedIndexPath != oldValue, let indexPath = selectedIndexPath else { return }
+            
+            collectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])//cell.selectedBorderView.isHidden = false
+        }
+    }
 
     override func viewDidLoad() {
         
         super.viewDidLoad()
-
-        prepare()
-    }
-    
-    @objc func prepare() {
         
-        for button in buttons where button != resetButton && button != randomButton {
+        let constant = (18 * 2) + (FontManager.shared.heightsDictionary[.body] ?? 0)
+        verticalPresentedVC?.containerViewHeightConstraint.constant = (cellHeight * ceil(CGFloat(applicableCriteria.count) / 3)) + constant
+        verticalPresentedVC?.setTitle("Sort By...")
+        verticalPresentedVC?.view.layoutIfNeeded()
+        
+        collectionView.register(UINib.init(nibName: "GestureSelectableCell", bundle: nil), forCellWithReuseIdentifier: "cell")
+        collectionView.scrollIndicatorInsets.bottom = 15
+        
+        notifier.addObserver(self, selector: #selector(updateScrollView), name: UIApplication.didChangeStatusBarFrameNotification, object: UIApplication.shared)
+        
+        updateScrollView(self)
+        
+        switch sorter.sortCriteria {
             
-            if let button = button {
+            case .random: randomBorderView.isHidden = false
+            
+            case .standard: defaultBorderView.isHidden = false
+            
+            default:
                 
-                button.isHidden = !sorter.applicableSortCriteria.contains(criteria(for: button))
-            }
+                var index = 0
+            
+                applicableCriteria.enumerated().forEach {
+                    
+                    if $0.element == sorter.sortCriteria {
+                        
+                        index = $0.offset
+                    }
+                }
+            
+                selectedIndexPath = .init(item: index, section: 0)
         }
-        
+
         verticalPresentedVC?.selectedIndexPath = IndexPath.init(item: sorter.ascending ? 0 : 1, section: 0)
         persist(self)
-        
-        [randomButton, resetButton].forEach({
-            
-            $0?.titleEdgeInsets.bottom = {
-            
-                switch activeFont {
-                    
-                    case .avenirNext, .system: return 3
-                    
-                    case .myriadPro: return 0
-                }
-            }()
-        })
-        
-        selectedButton().update(for: .selected)
         
         let hold = UILongPressGestureRecognizer.init(target: self, action: #selector(persist(_:)))
         hold.minimumPressDuration = longPressDuration
@@ -76,9 +103,22 @@ class ArrangeViewController: UIViewController {
         lockButton?.addGestureRecognizer(hold)
         LongPressManager.shared.gestureRecognisers.append(Weak.init(value: hold))
         
-        verticalPresentedVC?.containerViewHeightConstraint.constant = 113
-        verticalPresentedVC?.setTitle("Sort By...")
-        lockButton?.addTarget(self, action: #selector(persist(_:)), for: .touchUpInside)
+        verticalPresentedVC?.leftButtonAction = { [weak self] button, _ in
+            
+            guard let weakSelf = self else { return }
+            
+            weakSelf.persist(button)
+        }
+    }
+    
+    @objc func updateScrollView(_ sender: Any) {
+        
+        guard let parent = verticalPresentedVC else { return }
+        
+        let constant: CGFloat = sender is Notification ? 20 : 0
+        let isScrollEnabled = !((parent.effectViewsContainer.frame.height + 6 + constant + UIApplication.shared.statusBarFrame.height) < screenHeight)
+        
+        collectionView.isScrollEnabled = isScrollEnabled
     }
 
     override func didReceiveMemoryWarning() {
@@ -90,73 +130,50 @@ class ArrangeViewController: UIViewController {
         
         super.viewDidAppear(animated)
         
-        scrollView.flashScrollIndicators()
+        collectionView.flashScrollIndicators()
     }
     
-    @objc func selectedButton() -> UIButton {
+    @IBAction func selectSort(_ sender: Any) {
         
-        switch sorter.sortCriteria {
+        if let button = sender as? UIButton {
             
-            case .album: return albumButton
+            if button == defaultButton, !sorter.ascending {
                 
-            case .artist: return artistButton
-                
-            case .dateAdded: return dateAddedButton
-                
-            case .duration: return durationButton
-                
-            case .genre: return genreButton
-                
-            case .lastPlayed: return lastPlayedButton
-                
-            case .plays: return playsButton
-                
-            case .rating: return ratingButton
-                
-            case .title: return titleButton
-                
-            case .year: return yearButton
+                sorter.applySort = false
+                sorter.ascending = true
+            }
             
-            case .fileSize: return fileSizeButton
+            sorter.sortCriteria = criteria(for: button)
+            sorter.applySort = true
             
-            case .songCount: return songCountButton
-            
-            case .albumCount: return albumCountButton
+            if button == defaultButton {
                 
-            case .random: return randomButton
+                defaultBorderView.isHidden = false
+                
+            } else {
+                
+                randomBorderView.isHidden = false
+            }
             
-            case .standard: return resetButton
+            [InactiveView.collectionView, (button == defaultButton ? .randomView : .defaultView)].forEach({ noSelection(of: $0, allowCollectionViewSelection: false) })
+            
+            if let indexPath = selectedIndexPath {
+                
+                collectionView.deselectItem(at: indexPath, animated: false)
+                selectedIndexPath = nil
+            }
+            
+        } else if let indexPath = sender as? IndexPath {
+            
+            sorter.sortCriteria = applicableCriteria[indexPath.item]
+            [InactiveView.randomView, .defaultView].forEach({ noSelection(of: $0) })
         }
-    }
-    
-    @IBAction func selectSort(_ sender: UIButton) {
-        
-        if sender == resetButton, !sorter.ascending {
-            
-            sorter.applySort = false
-            sorter.ascending = true
-        }
-        
-        sorter.sortCriteria = criteria(for: sender)
-        sorter.applySort = true
         
         guard persistPopovers || persistArrangeView else {
         
             dismiss(animated: true, completion: nil)
             
             return
-        }
-        
-        for button in buttons {
-            
-            if button == sender {
-                
-                button?.update(for: .selected)
-                
-            } else {
-                
-                button?.update(for: .unselected)
-            }
         }
         
         verticalPresentedVC?.selectedIndexPath = .init(item: sorter.ascending == true ? 0 : 1, section: 0)
@@ -200,32 +217,6 @@ class ArrangeViewController: UIViewController {
         
         switch button {
             
-            case titleButton: return .title
-            
-            case artistButton: return .artist
-            
-            case albumButton: return .album
-            
-            case dateAddedButton: return .dateAdded
-            
-            case playsButton: return .plays
-            
-            case durationButton: return .duration
-            
-            case yearButton: return .year
-            
-            case ratingButton: return .rating
-            
-            case genreButton: return .genre
-            
-            case lastPlayedButton: return .lastPlayed
-            
-            case fileSizeButton: return .fileSize
-            
-            case songCountButton: return .songCount
-            
-            case albumCountButton: return .albumCount
-            
             case randomButton: return .random
             
             default: return .standard
@@ -238,9 +229,35 @@ class ArrangeViewController: UIViewController {
         
         if firstLaunch, !Set([SortCriteria.standard, .random]).contains(sorter.sortCriteria) {
             
-            scrollView.layoutIfNeeded()
-            scrollView.scrollRectToVisible(selectedButton().frame, animated: false)
             firstLaunch = false
+        }
+    }
+    
+    func noSelection(of view: InactiveView, allowCollectionViewSelection: Bool = true) {
+        
+        switch view {
+            
+            case .randomView: randomBorderView.isHidden = true
+            
+            case .defaultView: defaultBorderView.isHidden = true
+            
+            case .collectionView:
+                
+                if let _ = highlightedIndexPath {
+                    
+                    highlightedIndexPath = nil
+                }
+                
+                guard let indexPath = selectedIndexPath else { return }
+                
+                if allowCollectionViewSelection {
+                    
+                    collectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                    
+                } else {
+                    
+                    collectionView.deselectItem(at: indexPath, animated: false)
+                }
         }
     }
     
@@ -253,11 +270,126 @@ class ArrangeViewController: UIViewController {
     }
 }
 
+extension ArrangeViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        
+        return applicableCriteria.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! GestureSelectableCollectionViewCell
+        
+        let criteria = applicableCriteria[indexPath.item]
+        cell.prepare(with: criteria.title(from: (sorter as! UIViewController).location), image: nil, style: .body)
+        cell.selectedBorderView.isHidden = criteria != sorter.sortCriteria
+        
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        [InactiveView.randomView, .defaultView].forEach({ noSelection(of: $0) })
+        
+        if let old = selectedIndexPath {
+
+            collectionView.deselectItem(at: old, animated: false)
+        }
+        
+        selectedIndexPath = indexPath
+        selectSort(indexPath)
+    }
+}
+
+extension ArrangeViewController: UICollectionViewDelegateFlowLayout {
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
+        return CGSize.init(width: (screenWidth - 12) / 3, height: cellHeight)
+    }
+}
+
 extension ArrangeViewController: UIGestureRecognizerDelegate {
     
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         
         return !persistArrangeView
+    }
+}
+
+extension ArrangeViewController: GestureSelectable {
+    
+    func selectCell(_ sender: UIPanGestureRecognizer) {
+        
+        switch sender.state {
+            
+            case .began, .changed:
+                
+                if defaultView.bounds.contains(sender.location(in: defaultView)) {
+                    
+                    [InactiveView.randomView, .collectionView].forEach({ noSelection(of: $0, allowCollectionViewSelection: false) })
+                    
+                    defaultBorderView.isHidden = false
+                    
+                } else if randomView.bounds.contains(sender.location(in: randomView)) {
+                    
+                    [InactiveView.collectionView, .defaultView].forEach({ noSelection(of: $0, allowCollectionViewSelection: false) })
+                    
+                    randomBorderView.isHidden = false
+                    
+                } else if let indexPath = collectionView.indexPathForItem(at: sender.location(in: collectionView)) {
+                    
+                    guard indexPath != highlightedIndexPath else {
+                        
+                        [InactiveView.randomView, .defaultView].forEach({ noSelection(of: $0) })
+                        
+                        return
+                    }
+                    
+                    highlightedIndexPath = indexPath
+                    collectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                
+                } else {
+                    
+                    noSelection()
+                }
+            
+            case .ended:
+                
+                if defaultView.bounds.contains(sender.location(in: defaultView)) {
+                    
+                    selectSort(defaultButton)
+                    
+                } else if randomView.bounds.contains(sender.location(in: randomView)) {
+                    
+                    selectSort(randomButton)
+                    
+                } else if let indexPath = collectionView.indexPathForItem(at: sender.location(in: collectionView)) {
+                    
+                    self.collectionView(collectionView, didSelectItemAt: indexPath)
+                }
+        
+            default: InactiveView.allCases.forEach({ noSelection(of: $0, allowCollectionViewSelection: false) })
+        }
+    }
+    
+    func noSelection() {
+        
+        switch sorter.sortCriteria {
+            
+            case .random:
+            
+                randomBorderView.isHidden = false
+                [InactiveView.collectionView, .defaultView].forEach({ noSelection(of: $0, allowCollectionViewSelection: false) })
+            
+            case .standard:
+            
+                defaultBorderView.isHidden = false
+                [InactiveView.collectionView, .randomView].forEach({ noSelection(of: $0, allowCollectionViewSelection: false) })
+            
+            default: [InactiveView.collectionView, .randomView, .defaultView].forEach({ noSelection(of: $0) })
+        }
     }
 }
 

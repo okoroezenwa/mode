@@ -17,6 +17,8 @@ class SettingsTableViewCell: UITableViewCell {
     @IBOutlet var check: MELImageView!
     @IBOutlet var itemSwitch: MELSwitch!
     @IBOutlet var borderViews: [MELBorderView]!
+    @IBOutlet var accessoryButton: MELButton!
+    @IBOutlet var buttonBorderView: MELBorderView!
     @IBOutlet var stackView: UIStackView!
     @IBOutlet var leadingImageView: MELImageView!
     @IBOutlet var leadingImageViewWidthConstraint: NSLayoutConstraint!
@@ -24,6 +26,8 @@ class SettingsTableViewCell: UITableViewCell {
     @IBOutlet var leadingImageViewLeadingConstraint: NSLayoutConstraint!
     
     enum Context { case setting, alert(cancel: Bool) }
+    
+    weak var delegate: SettingsCellDelegate?
     
     override func awakeFromNib() {
         
@@ -51,6 +55,7 @@ class SettingsTableViewCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
         
         borderViews.forEach({ $0.alphaOverride = selected ? 0.05 : 0 })
+        buttonBorderView.alphaOverride = selected ? 0.05 : 0
     }
     
     override func setHighlighted(_ highlighted: Bool, animated: Bool) {
@@ -58,6 +63,7 @@ class SettingsTableViewCell: UITableViewCell {
         super.setHighlighted(highlighted, animated: animated)
         
         borderViews.forEach({ $0.alphaOverride = highlighted ? 0.05 : 0 })
+        buttonBorderView.alphaOverride = highlighted ? 0.05 : 0
     }
     
     override func addSubview(_ view: UIView) {
@@ -73,7 +79,12 @@ class SettingsTableViewCell: UITableViewCell {
         
         super.addSubview(view)
     }
-
+    
+    @IBAction func accessoryButtonTapped(_ sender: UIButton) {
+        
+        delegate?.accessoryButtonTapped(in: self)
+    }
+    
     func prepare(with setting: Setting, animated: Bool = false, context: Context = .setting, alignment: NSTextAlignment = .left) {
         
         titleLabel.text = setting.title
@@ -81,7 +92,7 @@ class SettingsTableViewCell: UITableViewCell {
         subtitleLabel.text = setting.subtitle
         subtitleLabel.isHidden = setting.subtitle == nil
         tertiaryLabel.text = setting.tertiaryDetail
-        tertiaryLabel.isHidden = setting.tertiaryDetail == nil
+        tertiaryLabel.superview?.isHidden = setting.tertiaryDetail == nil
         leadingImageView.image = setting.image
         leadingImageView.superview?.isHidden = setting.image == nil
         chevron.superview?.isHidden = {
@@ -108,6 +119,38 @@ class SettingsTableViewCell: UITableViewCell {
             }
         }()
 //        borderViews.forEach({ $0.isHidden = setting.accessoryType != .none })
+        
+        accessoryButton.superview?.isHidden = {
+            
+            if case .button = setting.accessoryType {
+                
+                return false
+            }
+            
+            return true
+        }()
+        
+        switch setting.accessoryType {
+            
+            case .button(let type, let bordered):
+            
+                switch type {
+                    
+                    case .image(let image):
+                        
+                        accessoryButton.setImage(image, for: .normal)
+                        accessoryButton.setTitle(nil, for: .normal)
+                    
+                    case .text(let text):
+                    
+                        accessoryButton.setImage(nil, for: .normal)
+                        accessoryButton.setTitle(text, for: .normal)
+                }
+            
+                buttonBorderView.isHidden = bordered.inverted
+            
+            default: break
+        }
         
         switch context {
             
@@ -145,6 +188,11 @@ class SettingsTableViewCell: UITableViewCell {
     }
 }
 
+protocol SettingsCellDelegate: class {
+    
+    func accessoryButtonTapped(in cell: SettingsTableViewCell)
+}
+
 struct Setting {
     
     let title: String
@@ -156,7 +204,9 @@ struct Setting {
     
     enum AccessoryType: Equatable {
         
-        case none, chevron(tap: (() -> ())?, preview: ((UIViewController) -> UIViewController?)?), check(() -> (Bool)), onOff(isOn: () -> (Bool), action: (() -> ()))
+        enum ButtonType { case image(UIImage), text(String) }
+        
+        case none, chevron, button(type: ButtonType, bordered: Bool), check(() -> (Bool)), onOff(isOn: () -> (Bool), action: (() -> ()))
         
         static func ==(lhs: AccessoryType, rhs: AccessoryType) -> Bool {
             
@@ -165,6 +215,26 @@ struct Setting {
             case .none: if case .none = rhs { return true } else { return false }
                 
                 case .chevron: if case .chevron = rhs { return true } else { return false }
+                
+                case .button(type: let type, bordered: let bordered):
+                    
+                    if case .button(let otherType, let isAlsoBordered) = rhs {
+                        
+                        var bool: Bool {
+                            
+                            switch (type, otherType) {
+                                
+                                case (.image(let image), .image(let otherImage)): return image == otherImage
+                                
+                                case (.text(let text), .text(let otherText)): return text == otherText
+                                
+                                default: return false
+                            }
+                        }
+                        
+                        return bool && bordered == isAlsoBordered
+                        
+                    } else { return false }
                 
                 case .check(let bool): if case .check(let otherBool) = rhs { return bool() == otherBool() } else { return false }
                 

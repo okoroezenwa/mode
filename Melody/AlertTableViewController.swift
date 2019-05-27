@@ -8,6 +8,10 @@
 
 import UIKit
 
+typealias TapActionsDictionary = [Int: () -> ()]
+typealias PreviewActionsDictionary = [Int: (UIViewController) -> UIViewController?]
+typealias AccessoryActionsDictionary = [Int: AccessoryButtonAction]
+
 class AlertTableViewController: UITableViewController, PreviewTransitionable {
     
     enum Context { case show }
@@ -27,18 +31,23 @@ class AlertTableViewController: UITableViewController, PreviewTransitionable {
             tableView.deselectRow(at: indexPath, animated: false)
         }
     }
+    
+    var segmentAction: ((UIViewController?) -> ())?
+    
+    var tapActions = TapActionsDictionary()
+    var previewActions = PreviewActionsDictionary()
+    var accessoryActions = AccessoryActionsDictionary()
 
     override func viewDidLoad() {
         
         super.viewDidLoad()
         
         verticalPresentedVC?.containerViewHeightConstraint.constant = (FontManager.shared.alertCellHeight + 2) * CGFloat(array.count)
-        verticalPresentedVC?.setTitle("Show...")
         
         verticalPresentedVC?.view.layoutIfNeeded()
         tableView.scrollIndicatorInsets.bottom = 15
         
-        notifier.addObserver(self, selector: #selector(AlertTableViewController.updateScrollView), name: UIApplication.didChangeStatusBarFrameNotification, object: UIApplication.shared)
+        notifier.addObserver(self, selector: #selector(updateScrollView), name: UIApplication.didChangeStatusBarFrameNotification, object: UIApplication.shared)
         
         updateScrollView(self)
         
@@ -53,6 +62,16 @@ class AlertTableViewController: UITableViewController, PreviewTransitionable {
         let isScrollEnabled = !((parent.effectViewsContainer.frame.height + 6 + constant + UIApplication.shared.statusBarFrame.height) < screenHeight)
         
         tableView.isScrollEnabled = isScrollEnabled
+    }
+    
+    deinit {
+        
+        if isInDebugMode, deinitBannersEnabled {
+            
+            let banner = UniversalMethods.banner(withTitle: "ATVC going away...")
+            banner.titleLabel.font = .myriadPro(ofWeight: .light, size: 22)
+            banner.show(for: 0.3)
+        }
     }
 }
 
@@ -74,6 +93,11 @@ extension AlertTableViewController {
         
         cell.prepare(with: array[indexPath.row], context: .alert(cancel: false))
         
+        if context == .show {
+            
+            cell.delegate = self
+        }
+        
         return cell
     }
     
@@ -81,29 +105,9 @@ extension AlertTableViewController {
         
         tableView.deselectRow(at: indexPath, animated: true)
         
-        switch context {
-            
-            case .show where indexPath.row == 0:
-            
-                dismiss(animated: true, completion: { [weak self] in
-                    
-                    guard let weakSelf = self else { return }
-                    
-                    if case .chevron(let tapAction, _) = weakSelf.array[indexPath.row].accessoryType {
-                        
-                        tapAction?()
-                    }
-                })
-            
-            default:
-            
-                if case .chevron(let tapAction, _) = array[indexPath.row].accessoryType {
-                    
-                    tapAction?()
-                }
-            
-                dismiss(animated: true, completion: nil)
-        }
+        tapActions[indexPath.row]?()
+        
+        dismiss(animated: true, completion: nil)
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -120,11 +124,11 @@ extension AlertTableViewController: UIViewControllerPreviewingDelegate {
             
             case .show:
             
-                guard let indexPath = tableView.indexPathForRow(at: location), indexPath.row != 0, case .chevron(_, let action) = array[indexPath.row].accessoryType, let cell = tableView.cellForRow(at: indexPath) else { return nil }
+                guard let indexPath = tableView.indexPathForRow(at: location), let action = previewActions[indexPath.row], let cell = tableView.cellForRow(at: indexPath) else { return nil }
                 
                 previewingContext.sourceRect = cell.frame
             
-                return action?(self)
+                return action(self)
         }
     }
     
@@ -138,15 +142,34 @@ extension AlertTableViewController: UIViewControllerPreviewingDelegate {
     }
 }
 
+extension AlertTableViewController: SettingsCellDelegate {
+    
+    func accessoryButtonTapped(in cell: SettingsTableViewCell) {
+        
+        guard let indexPath = tableView.indexPath(for: cell), let action = accessoryActions[indexPath.row] else { return }
+        
+        action(cell.accessoryButton, self)
+    }
+}
+
+extension AlertTableViewController: SegmentedResponder {
+    
+    func selectedSegment(at index: Int) {
+        
+        segmentAction?(self)
+        dismiss(animated: true, completion: nil)
+    }
+}
+
 extension AlertTableViewController: GestureSelectable {
     
-    @objc func selectCell(_ gr: UIPanGestureRecognizer) {
+    @objc func selectCell(_ sender: UIPanGestureRecognizer) {
         
-        switch gr.state {
+        switch sender.state {
             
             case .began, .changed:
                 
-                guard let indexPath = tableView.indexPathForRow(at: gr.location(in: tableView)) else {
+                guard let indexPath = tableView.indexPathForRow(at: sender.location(in: tableView)) else {
                     
                     noSelection()
                     

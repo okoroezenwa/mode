@@ -8,6 +8,8 @@
 
 import UIKit
 
+typealias AccessoryButtonAction = ((MELButton, UIViewController) -> ())
+
 class VerticalPresentationContainerViewController: UIViewController {
 
     @IBOutlet var effectView: MELVisualEffectView! {
@@ -48,10 +50,13 @@ class VerticalPresentationContainerViewController: UIViewController {
     var context = Context.actions
     let transitioner = SimplePresentationAnimationController.init(orientation: .vertical)
     var subtitle: String?
-    lazy var requiresTopView = [Context.actions, .sort/*, .show*/].contains(self.context)
+    lazy var requiresTopView = [Context.actions, .sort, .show].contains(self.context)
     lazy var requiresSegmentedControl = self.context == .sort
     lazy var segments = [(text: String?, image: UIImage?)]()
     lazy var setting = Setting.init(title: "Cancel", accessoryType: .none)
+    
+    var leftButtonAction: AccessoryButtonAction?
+    var rightButtonAction: AccessoryButtonAction?
     
     var highlightedIndexPath: IndexPath? {
         
@@ -143,14 +148,22 @@ class VerticalPresentationContainerViewController: UIViewController {
         [cancelButtonHeightConstraint, segmentedViewHeightConstraint].forEach({ $0.constant = FontManager.shared.settingCellHeight + 2 })
         tableView.rowHeight = FontManager.shared.settingCellHeight + 2
         
+        titleLabel.text = title
+        subtitleLabel.text = subtitle
         subtitleLabel.isHidden = subtitle == nil
         labelsStackView.layoutMargins.top = requiresTopView ? 0 : 8
         topView.isHidden = requiresTopView.inverted
-        topBorderView.isHidden = true //context != .show
+        topBorderView.isHidden = context != .show
+        
+        if requiresSegmentedControl.inverted {
+            
+            segmentedViewHeightConstraint.constant = 0
+        }
+        
         [segmentedEffectView, segmentedShadowImageView].forEach({ $0.isHidden = requiresSegmentedControl.inverted })
         
         leftView.isHidden = [Context.insert, .show].contains(context)
-        rightView.isHidden = [Context.insert, .sort, .show].contains(context)
+        rightView.isHidden = [Context.insert, .sort].contains(context)
         
         let images: (left: UIImage?, right: UIImage?) = {
             
@@ -198,6 +211,16 @@ class VerticalPresentationContainerViewController: UIViewController {
                 case .show: return alertVC
             }
         }()
+    }
+    
+    @IBAction func leftButtonTapped(_ sender: MELButton) {
+        
+        leftButtonAction?(sender, self)
+    }
+    
+    @IBAction func rightButtonTapped(_ sender: MELButton) {
+        
+        rightButtonAction?(sender, self)
     }
     
     @objc func panActivated(_ sender: UIPanGestureRecognizer) {
@@ -295,7 +318,7 @@ class VerticalPresentationContainerViewController: UIViewController {
             
                 guard let indexPath = selectedIndexPath else { return }
                 
-                collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
+                collectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
         }
     }
     

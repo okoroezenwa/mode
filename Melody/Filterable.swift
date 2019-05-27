@@ -809,5 +809,5 @@ extension Filterable {
 
 protocol FilterContextDiscoverable: Filterable {
     
-    func showFilteredContext(_ sender: Any)
+    func revealEntity(_ sender: Any)
 }

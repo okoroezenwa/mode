@@ -566,12 +566,24 @@ extension SingleItemActionable {
                         container.saveRecentSearch(withTitle: container.searchBar.text, resignFirstResponder: false)
                     }
                     
-                    if let parent = vc.parent as? PresentedContainerViewController, parent.context != .filter {
+                    if vc.parent is PresentedContainerViewController || vc is NowPlayingViewController {
+                        
+                        if let parent = vc.parent as? PresentedContainerViewController, parent.context == .filter {
+                            
+                            return
+                        }
                         
                         useAlternateAnimation = true
                         shouldReturnToContainer = true
-                        parent.performSegue(withIdentifier: "unwind", sender: nil)
+                        (vc.parent ?? vc).performSegue(withIdentifier: "unwind", sender: nil)
                     }
+                    
+//                    if let parent = vc.parent as? PresentedContainerViewController, parent.context != .filter {
+//
+//                        useAlternateAnimation = true
+//                        shouldReturnToContainer = true
+//                        parent.performSegue(withIdentifier: "unwind", sender: nil)
+//                    }
                 })
             
             case .addTo:
@@ -774,9 +786,9 @@ extension SingleItemActionable {
                     }
                 })
             
-            case .show(title: let title, context: let context):
+            case .show(title: let title, context: let context, canDisplayInLibrary: let canDisplay):
             
-                return (action: action, title: "Show...", style: .default, {
+                return (action: action, title: "Go To...", style: .default, {
                     
                     guard let details: (entities: [Entity], albumArtOverride: Bool) = {
                         
@@ -798,14 +810,13 @@ extension SingleItemActionable {
                     }(), let song: MPMediaItem = (item as? MPMediaItemCollection)?.items.first ?? item as? MPMediaItem, let verifiable = vc as? EntityVerifiable else { return }
                     
                     var settings = [Setting]()
+                    var tapActions = TapActionsDictionary()
+                    var previewActions = PreviewActionsDictionary()
+                    var accessoryActions = AccessoryActionsDictionary()
                     
-                    let actionDetails = self.singleItemActionDetails(for: .info(context: context), entity: entity, using: item, from: vc, useAlternateTitle: alternateTitle)
-                    
-                    settings.append(Setting.init(title: actionDetails.title, subtitle: item.title(for: entity, basedOn: entity), image: #imageLiteral(resourceName: "InfoNoBorder22"), accessoryType: .chevron(tap: actionDetails.handler, preview: nil)))
-                    
-                    details.entities.filter({ verifiable.verifyLibraryStatus(of: song, itemProperty: $0, animated: false, updateButton: false) == .present }).forEach({ verifiedEntity in
+                    details.entities.filter({ verifiable.verifyLibraryStatus(of: song, itemProperty: $0, animated: false, updateButton: false) == .present }).enumerated().forEach({ index, verifiedEntity in
                         
-                        settings.append(Setting.init(title: "\(entity == verifiedEntity ? "This " : "")" + verifiedEntity.title(albumArtistOverride: details.albumArtOverride).capitalized, subtitle: item.title(for: verifiedEntity, basedOn: entity), image: verifiedEntity.images.size22, accessoryType: .chevron(tap: {
+                        tapActions[index] = { [weak vc, weak item] in
                             
                             if entity == .playlist {
                                 
@@ -832,9 +843,11 @@ extension SingleItemActionable {
                                 }
                             })
                             
-                        }, preview: { source in
+                        }
+                        
+                        previewActions[index] = { [weak item] source in
                             
-                            guard let vc = entityStoryboard.instantiateViewController(withIdentifier: "entityItems") as? EntityItemsViewController else { return nil }
+                            guard let vc = entityStoryboard.instantiateViewController(withIdentifier: "entityItems") as? EntityItemsViewController, let item = item else { return nil }
                             
                             var highlightedAlbum: MPMediaItemCollection? {
                                 
@@ -848,12 +861,49 @@ extension SingleItemActionable {
                                 }
                             }
                             
-                            return Transitioner.shared.transition(to: verifiedEntity, vc: vc, from: source, sender: MPMediaQuery.init(filterPredicates: [.for(entity == verifiedEntity ? entity : verifiedEntity, using: entity == verifiedEntity ? item.persistentID : verifiedEntity.persistentID(from: song))]).grouped(by: verifiedEntity.grouping).collections?.first, highlightedItem: entity == .song ? song : nil, highlightedAlbum: highlightedAlbum, preview: true, titleOverride: ((appDelegate.window?.rootViewController as? ContainerViewController)?.activeViewController?.topViewController as? Navigatable)?.preferredTitle)
+                            return Transitioner.shared.transition(to: verifiedEntity,
+                                                                  vc: vc,
+                                                                  from: source,
+                                                                  sender: MPMediaQuery.init(filterPredicates: [.for(entity == verifiedEntity ? entity : verifiedEntity, using: entity == verifiedEntity ? item.persistentID : verifiedEntity.persistentID(from: song))]).grouped(by: verifiedEntity.grouping).collections?.first,
+                                                                  highlightedItem: entity == .song ? song : nil,
+                                                                  highlightedAlbum: highlightedAlbum,
+                                                                  preview: true,
+                                                                  titleOverride: ((appDelegate.window?.rootViewController as? ContainerViewController)?.activeViewController?.topViewController as? Navigatable)?.preferredTitle)
                             
-                        })))
+                        }
+                        
+                        accessoryActions[index] = { [weak item, weak self] _, presenter in
+                            
+                            guard let item = item, let collection = verifiedEntity.collection(from: item), let context = verifiedEntity.singleCollectionInfoContext(for: collection) else { return }
+                            
+                            presenter.dismiss(animated: true, completion: {
+                                
+                                self?.singleItemActionDetails(for: .info(context: context), entity: entity, using: item, from: vc, useAlternateTitle: alternateTitle).handler()
+                            })
+                        }
+                        
+                        settings.append(Setting.init(title: "\(entity == verifiedEntity ? "This " : "")" + verifiedEntity.title(albumArtistOverride: details.albumArtOverride).capitalized,
+                                                     subtitle: item.title(for: verifiedEntity, basedOn: entity),
+                                                     image: verifiedEntity.images.size22,
+                                                     accessoryType: Setting.AccessoryType.button(type: .image(#imageLiteral(resourceName: "InfoNoBorder13")), bordered: true)))
                     })
                     
-                    Transitioner.shared.showAlert(from: vc, context: .show, with: settings)
+                    Transitioner.shared.showAlert(title: item.title(for: entity, basedOn: entity),
+                                                  subtitle: "Go to...",
+                                                  from: vc,
+                                                  context: .show,
+                                                  with: settings,
+                                                  tapActions: tapActions,
+                                                  previewActions: previewActions,
+                                                  segmentDetails: (canDisplay ? [("Show in \(2.countText(for: entity, compilationOverride: song.isCompilation, capitalised: true))", nil)] : [], canDisplay ? { alertVC in verifiable.showInLibrary(entity: item, type: entity, unwinder: alertVC) } : nil),
+                                                  accessoryActions: accessoryActions,
+                                                  rightAction: { [weak self] _, presenter in
+                        
+                        presenter.dismiss(animated: true, completion: {
+                            
+                            self?.singleItemActionDetails(for: .info(context: context), entity: entity, using: item, from: vc, useAlternateTitle: alternateTitle).handler()
+                        })
+                    })
                 })
             
             case .rate:
@@ -919,7 +969,7 @@ extension SingleItemActionable {
                     container.filterContainer?.saveRecentSearch(withTitle: container.filterContainer?.searchBar?.text, resignFirstResponder: false)
                     container.filterContainer?.searchBar.resignFirstResponder
                     container.filterContainer?.dismiss(animated: true, completion: nil)
-                    container.showFilteredContext(indexPath)
+                    container.revealEntity(indexPath)
                 })
             
             case .insert(items: let items, completions: let completions):

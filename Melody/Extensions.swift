@@ -11,49 +11,10 @@ import UIKit
 #if swift(>=4.2)
 import UIKit.UIGeometry
 extension UIEdgeInsets {
+    
     public static let zero = UIEdgeInsets()
 }
 #endif
-
-// MARK: - UIButton
-extension UIButton {
-    
-    enum SelectionState { case selected, unselected }
-    
-    func update(for state: SelectionState, capitalised: Bool = true) {
-        
-        switch state {
-            
-            case .selected:
-            
-                setTitle(title(for: .normal)?.uppercased(), for: .normal)
-                
-                if let melButton = self as? MELButton {
-                    
-                    melButton.fontWeight = FontWeight.bold.rawValue
-                    
-                } else {
-                    
-                    titleLabel?.font = UIFont.font(ofWeight: .bold, size: titleLabel?.font.pointSize ?? 15)
-                }
-            
-            case .unselected:
-            
-                let text = !capitalised ? title(for: .normal)?.lowercased() : title(for: .normal)?.capitalized
-                
-                setTitle(text, for: .normal)
-                
-                if let melButton = self as? MELButton {
-                    
-                    melButton.fontWeight = FontWeight.regular.rawValue
-                    
-                } else {
-                    
-                    titleLabel?.font = UIFont.font(ofWeight: .regular, size: titleLabel?.font.pointSize ?? 15)
-                }
-        }
-    }
-}
 
 // MARK: - MPMediaItemPropertyPredicate
 extension MPMediaPredicate {
@@ -177,150 +138,6 @@ extension UIColor {
     class var licorice: UIColor { return UIColor(red:0.1843, green:0.2078, blue:0.2784, alpha:1.0000) }
     
     class var noArtwork: UIColor { return darkTheme ? (useBlackColorBackground ? .black : .licorice) : (useWhiteColorBackground ? .white : .cream) }
-}
-
-// MARK: - Array
-extension Array {
-    
-    func value(at index: Int) -> Element? {
-        
-        guard count > index else { return nil }
-        
-        return self[index]
-    }
-    
-    func inserting(_ element: Element, at index: Index) -> [Element] {
-        
-        var array = self
-        
-        array.insert(element, at: index)
-        
-        return array
-    }
-    
-    func appending(_ element: Element) -> [Element] {
-        
-        var array = self
-        
-        array.append(element)
-        
-        return array
-    }
-    
-    func appending<S>(contentsOf sequence: S) -> [Element] where Element == S.Element, S: Sequence {
-        
-        var array = self
-        
-        array.append(contentsOf: sequence)
-        
-        return array
-    }
-    
-    func removing(from index: Index) -> [Element] {
-        
-        var array = self
-        
-        array.remove(at: index)
-        
-        return array
-    }
-    
-    func moving(from oldIndex: Index, to newIndex: Index) -> [Element] {
-        
-        var array = self
-        
-        let element = array.remove(at: oldIndex)
-        array.insert(element, at: newIndex)
-        
-        return array//.inserting(array.remove(at: oldIndex), at: newIndex)
-    }
-}
-
-extension Array where Element: Equatable {
-    
-    func optionalIndex(of element: Element?) -> Int? {
-        
-        guard let element = element else { return nil }
-        
-        return index(of: element)
-    }
-}
-
-extension Array where Element: Hashable {
-    
-    mutating func removeDuplicates() {
-        
-        var set = Set<Element>()
-        var new = [Element]()
-        
-        for item in self {
-            
-            if !set.contains(item) {
-                
-                set.insert(item)
-                new.append(item)
-            }
-        }
-        
-        self = new
-    }
-    
-    func duplicatesRemoved() -> [Iterator.Element] {
-        
-        var new = self
-        new.removeDuplicates()
-        return new
-    }
-}
-
-extension Array where Element: MPMediaItem {
-    
-    var albumsShuffled: [MPMediaItem] {
-        
-        var albumsDict = [String: [MPMediaItem]]()
-
-        for song in self {
-
-            var array = albumsDict[song.validAlbum] ?? []
-            array.append(song)
-            albumsDict[song.validAlbum] = array
-        }
-
-        return albumsDict.shuffled().map({ $0.value.sorted(by: { $0.albumTrackNumber < $1.albumTrackNumber }) }).reduce([], +)
-    }
-    
-    var canShuffleAlbums: Bool { return first(where: { $0.validAlbum != first?.validAlbum }) != nil }
-}
-
-extension Array where Element: MPMediaPlaylist {
-    
-    var foldersConsidered: [PlaylistContainer] {
-        
-        var childrenArray = [[MPMediaPlaylist]]()
-        let hasParent = filter { $0.parentPersistentID != 0 }
-
-        var ids = Set<Int64>()
-
-        for playlist in hasParent {
-
-            if ids.contains(playlist.parentPersistentID).inverted {
-
-                childrenArray.append([playlist])
-                ids.insert(playlist.parentPersistentID)
-
-            } else {
-
-                if let tuple = childrenArray.enumerated().first(where: { $0.element.first?.parentPersistentID == playlist.parentPersistentID }) {
-
-                    childrenArray[tuple.offset] = tuple.element + [playlist]
-                }
-            }
-        }
-
-        let temp = childrenArray.map({ TempPlaylistContainer(id: $0.first?.parentPersistentID ?? 0, children: $0) })
-        
-        return filter({ $0.parentPersistentID == 0 }).compactMap({ $0.isFolder ? $0.gatherChildren(from: temp, root: $0, index: 0) : PlaylistContainer.init(playlist: $0, children: [], actualChildren: []) })
-    }
 }
 
 // MARK: - Date
@@ -1203,15 +1020,15 @@ extension UIViewControllerPreviewingDelegate where Self: UIViewController {
             vc.modifyBackgroundView(forState: .removed)
         }
         
-        if let vc = viewControllerToCommit as? Arrangeable {
-            
-            vc.updateImage(for: vc.arrangeButton)
-        }
-        
         if let vc = viewControllerToCommit as? Peekable {
             
             vc.peeker = nil
             vc.oldArtwork = nil
+        }
+        
+        if let entityVC = viewControllerToCommit as? EntityItemsViewController {
+            
+            entityVC.updateEffectView(to: .hidden)
         }
         
         if let vc = viewControllerToCommit as? Navigatable, let indexer = vc.activeChildViewController as? IndexContaining, let container = appDelegate.window?.rootViewController as? ContainerViewController {

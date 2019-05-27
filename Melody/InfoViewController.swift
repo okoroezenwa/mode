@@ -53,7 +53,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
     
     enum EntityState { case single, combined(previousIndex: Int) }
     
-//    lazy var applicableSections = InfoSection.applicableSections(for: self.context.entity)
+    lazy var applicableSections = InfoSection.applicableSections(for: self.context.entity)
 //    lazy var sections = self.prepareSections()
     
     var headerView: InfoCollectionReusableView! {
@@ -362,7 +362,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
                     
                     default:
                     
-                        guard let albumsQuery = (query.copy() as? MPMediaQuery)?.grouped(by: .album), let albums = albumsQuery.collections else { return }
+                        guard let albumsQuery = (query.copy() as? MPMediaQuery)?.grouped(by: .album), let albums = albumsQuery.collections, albums.isEmpty.inverted else { return }
                     
                         Transitioner.shared.showInfo(from: self, with: .album(at: 0, within: albums))
                 }
@@ -380,7 +380,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
                     
                     default:
                     
-                        guard let songsQuery = (query.copy() as? MPMediaQuery), let songs = songsQuery.items else { return }
+                        guard let songsQuery = (query.copy() as? MPMediaQuery), let songs = songsQuery.items, songs.isEmpty.inverted else { return }
                         
                         Transitioner.shared.showInfo(from: self, with: .song(location: .list, at: 0, within: songs))
                 }
@@ -393,7 +393,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
                     
                     default:
                         
-                        guard let artistsQuery = (query.copy() as? MPMediaQuery)?.grouped(by: .artist), let collections = artistsQuery.collections else { return }
+                        guard let artistsQuery = (query.copy() as? MPMediaQuery)?.grouped(by: .artist), let collections = artistsQuery.collections, collections.isEmpty.inverted else { return }
                         
                         Transitioner.shared.showInfo(from: self, with: .collection(kind: .artist, at: 0, within: collections))
                 }

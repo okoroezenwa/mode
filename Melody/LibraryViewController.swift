@@ -9,7 +9,7 @@
 import UIKit
 import StoreKit
 
-class LibraryViewController: UIViewController, Contained, OptionsContaining, Navigatable, ArtworkModifying, ChildContaining {
+class LibraryViewController: UIViewController, Contained, OptionsContaining, Navigatable, ArtworkModifying, ChildContaining, HighlightedEntityContaining {
     
     @IBOutlet var containerView: UIView!
     @IBOutlet var emptyStackView: UIStackView!
@@ -33,6 +33,8 @@ class LibraryViewController: UIViewController, Contained, OptionsContaining, Nav
     @objc var lifetimeObservers = Set<NSObject>()
     var section: LibrarySection { return sectionOverride ?? LibrarySection(rawValue: lastUsedLibrarySection) ?? .artists }
     var sectionOverride: LibrarySection?
+    var changeActiveVC = true
+    var highlightedEntities: (song: MPMediaItem?, collection: MPMediaItemCollection?)?
     
     var options: LibraryOptions {
         
@@ -51,25 +53,75 @@ class LibraryViewController: UIViewController, Contained, OptionsContaining, Nav
         return LibraryOptions.init(fromVC: activeChildViewController, configuration: .library, count: count)
     }
     
+    var isSongsViewControllerInitialised = false
+    var isArtistsViewControllerInitialised = false
+    var isAlbumsViewControllerInitialised = false
+    var isGenresViewControllerInitialised = false
+    var isCompilationsViewControllerInitialised = false
+    var isComposersViewControllerInitialised = false
+    var isPlaylistsViewControllerInitialised = false
+    
     @objc lazy var songsViewController: SongsViewController? = {
         
         guard let vc = libraryChildrenStoryboard.instantiateViewController(withIdentifier: "songsVC") as? SongsViewController else { return nil }
         
+        isSongsViewControllerInitialised = true
         return vc
     }()
     
-    @objc lazy var artistsViewController = LibraryViewController.collectionsVC(for: albumArtistsAvailable ? .albumArtist : .artist)
-    @objc lazy var albumsViewController = LibraryViewController.collectionsVC(for: .album)
-    @objc lazy var genresViewController = LibraryViewController.collectionsVC(for: .genre)
-    @objc lazy var compilationsViewController = LibraryViewController.collectionsVC(for: .compilation)
-    @objc lazy var composersViewController = LibraryViewController.collectionsVC(for: .composer)
-    @objc lazy var playlistsViewController = LibraryViewController.collectionsVC(for: .playlist)
+    @objc lazy var artistsViewController: CollectionsViewController? = {
+        
+        guard let vc = LibraryViewController.collectionsVC(for: albumArtistsAvailable ? .albumArtist : .artist) else { return nil }
+        
+        isArtistsViewControllerInitialised = true
+        return vc
+    }()
+    
+    @objc lazy var albumsViewController: CollectionsViewController? = {
+        
+        guard let vc = LibraryViewController.collectionsVC(for: .album) else { return nil }
+        
+        isAlbumsViewControllerInitialised = true
+        return vc
+    }()
+    
+    @objc lazy var genresViewController: CollectionsViewController? = {
+        
+        guard let vc = LibraryViewController.collectionsVC(for: .genre) else { return nil }
+        
+        isGenresViewControllerInitialised = true
+        return vc
+    }()
+    
+    @objc lazy var compilationsViewController: CollectionsViewController? = {
+        
+        guard let vc = LibraryViewController.collectionsVC(for: .compilation) else { return nil }
+        
+        isCompilationsViewControllerInitialised = true
+        return vc
+    }()
+    
+    @objc lazy var composersViewController: CollectionsViewController? = {
+        
+        guard let vc = LibraryViewController.collectionsVC(for: .composer) else { return nil }
+        
+        isComposersViewControllerInitialised = true
+        return vc
+    }()
+    
+    @objc lazy var playlistsViewController: CollectionsViewController? = {
+        
+        guard let vc = LibraryViewController.collectionsVC(for: .playlist) else { return nil }
+        
+        isPlaylistsViewControllerInitialised = true
+        return vc
+    }()
     
     @objc var activeChildViewController: UIViewController? {
         
         didSet {
             
-            guard let oldValue = oldValue else { return }
+            guard changeActiveVC, let oldValue = oldValue else { return }
 
             changeActiveViewControllerFrom(oldValue)
         }
@@ -325,6 +377,26 @@ class LibraryViewController: UIViewController, Contained, OptionsContaining, Nav
         if setTitle {
             
             container?.visualEffectNavigationBar.titleLabel.text = title
+        }
+    }
+    
+    func isViewControllerInitialised(for section: LibrarySection) -> Bool {
+        
+        switch section {
+            
+            case .songs: return isSongsViewControllerInitialised
+            
+            case .artists: return isArtistsViewControllerInitialised
+            
+            case .albums: return isAlbumsViewControllerInitialised
+            
+            case .genres: return isGenresViewControllerInitialised
+            
+            case .compilations: return isCompilationsViewControllerInitialised
+            
+            case .composers: return isComposersViewControllerInitialised
+            
+            case .playlists: return isPlaylistsViewControllerInitialised
         }
     }
     

@@ -53,6 +53,8 @@ public extension MPMusicPlayerController {
               queueGuardCriteria: Bool = warnForQueueInterruption && playGuard,
               completion: (() -> ())? = nil) {
         
+        let startDate = Date()
+        
         let play: () -> () = {
             
             let isSameItem = item == self.nowPlayingItem
@@ -113,81 +115,37 @@ public extension MPMusicPlayerController {
                 
                 self.repeatMode = .none
             }
+                
+            if shouldRespectState.inverted {
             
-//            if shouldRespectState && wasPlaying.inverted {
-//                
-//                if #available(iOS 10.1, *), useSystemPlayer {
-//
-//                    self.prepareToPlay(completionHandler: { _ in
-//
-//                        if isSameItem {
-//
-//                            self.currentPlaybackTime = time
-//                        }
-//                    })
-//
-//                } else {
-//
-//                    self.prepareToPlay()
-//
-//                    if isSameItem {
-//
-//                        self.currentPlaybackTime = time
-//                    }
-//                }
-//
-//            } else {
+                self.play()
             
-                let systemPlayerBlock: (() -> ()) = {
+            } else {
+                
+                if #available(iOS 11.3, *) {
                     
-                    if isSameItem {
-                        
-//                        self.currentPlaybackTime = time
-                        self.prepareToPlay()
-//                        self.currentPlaybackTime = time
-                    }
+                    if wasPlaying.inverted {
                     
-                    if (shouldRespectState && wasPlaying.inverted).inverted {
-                    
-                        self.play()
-                        self.currentPlaybackTime = time
+                        self.pause()
                     
                     } else {
                         
-                        if #available(iOS 11.3, *) {
-                            
-                            self.pause()
-                        }
-                        
-                        self.currentPlaybackTime = time
+                        self.play()
                     }
+                
+                } else {
+                    
+                    self.prepareToPlay()
                 }
                 
-//                if #available(iOS 11, *) {
-//
-//                    systemPlayerBlock()
-//
-//                } else if #available(iOS 10.1, *) {
-//
-//                    self.prepareToPlay(completionHandler: { error in
-//
-//                        if isSameItem {
-//
-//                            self.currentPlaybackTime = time
-//                            self.currentPlaybackTime = time
-//                            self.currentPlaybackTime = time
-//                        }
-//
-//                        self.play()
-//                    })
-//
-//                } else {
-//
-//                    systemPlayerBlock()
-//                }
+            }
+            
+            if isSameItem {
                 
-                systemPlayerBlock()
-//            }
+                let finish = Date()
+                let interval = finish.timeIntervalSince(startDate)
+                self.currentPlaybackTime = time + interval
+            }
             
             completion?()
             notifier.post(name: .queueModified, object: nil)
@@ -298,8 +256,10 @@ public extension MPMusicPlayerController {
                                     controller.remove(song)
                                 }
 
-                                controller.insert(MPMusicPlayerMediaItemQueueDescriptor.init(itemCollection: .init(items: [song])), after: item)
+//                                controller.insert(MPMusicPlayerMediaItemQueueDescriptor.init(itemCollection: .init(items: [song])), after: item)
                             }
+                        
+                            controller.insert(MPMusicPlayerMediaItemQueueDescriptor.init(itemCollection: .init(items: items)), after: item)
                         
                         case .queries(let queries):
                         
@@ -351,6 +311,8 @@ public extension MPMusicPlayerController {
                     notifier.post(name: .saveQueue, object: musicPlayer, userInfo: [String.queueItems: controller.items])
                     
                     if let error = error {
+                        
+                        guard isInDebugMode else { return }
                         
                         UniversalMethods.banner(withTitle: error.localizedDescription).show(for: 1)
                         

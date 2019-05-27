@@ -217,13 +217,23 @@ class Transitioner: NSObject {
         sender.present(vc, animated: true, completion: nil)
     }
     
-    func showAlert(from sender: UIViewController, context: AlertTableViewController.Context, with array: [Setting]) {
+    func showAlert(title: String? = nil, subtitle: String? = nil, from sender: UIViewController, context: AlertTableViewController.Context, with array: [Setting], tapActions: TapActionsDictionary, previewActions: PreviewActionsDictionary = [:], segmentDetails: (array: [(String?, UIImage?)], action: ((UIViewController?) -> ())?) = ([], nil), accessoryActions: AccessoryActionsDictionary = [:], leftAction: AccessoryButtonAction? = nil, rightAction: AccessoryButtonAction? = nil) {
         
         guard let vc = popoverStoryboard.instantiateViewController(withIdentifier: String.init(describing: VerticalPresentationContainerViewController.self)) as? VerticalPresentationContainerViewController else { return }
         
         vc.context = .show
         vc.alertVC.context = context
         vc.alertVC.array = array
+        vc.alertVC.tapActions = tapActions
+        vc.alertVC.previewActions = previewActions
+        vc.alertVC.segmentAction = segmentDetails.action
+        vc.alertVC.accessoryActions = accessoryActions
+        vc.leftButtonAction = leftAction
+        vc.rightButtonAction = rightAction
+        vc.title = title
+        vc.subtitle = subtitle
+        vc.segments = segmentDetails.array
+        vc.requiresSegmentedControl = segmentDetails.array.isEmpty.inverted
         
         sender.present(vc, animated: true, completion: nil)
     }

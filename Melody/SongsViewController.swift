@@ -18,6 +18,8 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
         self.stackView = view.scrollStackView
         view.showRecents = showRecentSongs
         view.collectionView.isHidden = true
+        view.sortButton.setTitle(arrangementLabelText, for: .normal)
+        view.sortButton.addTarget(self, action: #selector(showArranger), for: .touchUpInside)
         self.collectionView = view.collectionView
         view.viewController = self
         view.header.button.addTarget(self, action: #selector(backToStart), for: .touchUpInside)
@@ -33,16 +35,19 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
             shuffleButton = shuffleView.button
             self.shuffleView = shuffleView
             
-            let arrangeBorderView = BorderedButtonView.with(title: .arrangeButtonTitle, image: #imageLiteral(resourceName: "AscendingLines"), tapAction: .init(action: #selector(showArranger), target: self))
-            arrangeBorderView.borderView.centre(activityIndicator)
-            arrangeButton = arrangeBorderView.button
-            self.arrangeBorderView = arrangeBorderView
+            let filterView = BorderedButtonView.with(title: "Filter", image: #imageLiteral(resourceName: "Filter13"), tapClosure: { [weak self] _ in
+                
+                guard let weakSelf = self else { return }
+                
+                weakSelf.invokeSearch()
+            })
+            self.filterView = filterView
             
             let editView = BorderedButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, tapAction: .init(action: #selector(SongActionManager.toggleEditing(_:)), target: songManager), longPressAction: .init(action: #selector(SongActionManager.showActionsForAll(_:)), target: songManager))
             editButton = editView.button
             self.editView = editView
             
-            [shuffleView, arrangeBorderView, editView].forEach({ actionsStackView.addArrangedSubview($0) })
+            [shuffleView, filterView, editView].forEach({ actionsStackView.addArrangedSubview($0) })
         }
     }
     
@@ -50,18 +55,22 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
         
         didSet {
             
-            let view = ScrollHeaderSubview.with(title: arrangementLabelText, image: #imageLiteral(resourceName: "Order10"))
+            let duration = ScrollHeaderSubview.with(title: "Duration", image: #imageLiteral(resourceName: "Time10"))
+            totalDurationLabel = duration.label
             
-            orderLabel = view.label
+            let size = ScrollHeaderSubview.with(title: "Size", image: #imageLiteral(resourceName: "FileSize10"))
+            sizeLabel = size.label
             
-            for view in [view] {
+            let plays = ScrollHeaderSubview.with(title: "Plays", image: #imageLiteral(resourceName: "Plays"))
+            playsLabel = plays.label
+            
+            for view in [duration, size, plays] {
                 
                 stackView.addArrangedSubview(view)
             }
         }
     }
     
-    var orderLabel: MELLabel!
     var activityIndicator = MELActivityIndicatorView.init()
     var arrangeButton: MELButton!
     var editButton: MELButton! {
@@ -76,8 +85,11 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
     }
     var shuffleButton: MELButton!
     var shuffleView: BorderedButtonView!
-    var arrangeBorderView: BorderedButtonView!
+    var filterView: BorderedButtonView!
     var editView: BorderedButtonView!
+    var totalDurationLabel: MELLabel!
+    var sizeLabel: MELLabel!
+    var playsLabel: MELLabel!
     
     var borderedButtons = [BorderedButtonView?]()
     var sectionIndexViewController: SectionIndexViewController?
@@ -92,7 +104,7 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
     var entities: [MPMediaEntity] { return songs }
     var query: MPMediaQuery? { return songsQuery }
     lazy var filteredEntities = [MPMediaEntity]()
-    var highlightedEntity: MPMediaEntity?
+    var highlightedEntity: MPMediaEntity? { return libraryVC?.highlightedEntities?.song }
     var filterContainer: (UIViewController & FilterContainer)?
     var filterEntities: FilterViewController.FilterEntities { return .songs(songs) }
     var highlightedIndex: Int?
@@ -157,39 +169,28 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
         
         didSet {
             
-            if let _ = tableView, let label = orderLabel {
+            if let _ = tableView {
                 
                 sortItems()
-                label.text = arrangementLabelText
+                headerView.sortButton.setTitle(arrangementLabelText, for: .normal)
+                UIView.animate(withDuration: 0.3, animations: { self.headerView.layoutIfNeeded() })
+                
                 prefs.set(sortCriteria.rawValue, forKey: .songsSort)
             }
         }
     }
-    var location: SortLocation = .songs
+    var sortLocation: SortLocation = .songs
     var applySort = true
     var ascending = prefs.bool(forKey: .songsOrder) {
         
         didSet {
             
-            if let _ = tableView, let button = arrangeButton {
-                
-//                songs.reverse()
-//
-//                if filtering {
-//
-//                    filteredEntities.reverse()
-//                }
-//
-//                sections = prepareSections(from: songs)
-//                tableView.reloadData()
-//                animateCells(direction: .vertical)
+            if let _ = tableView {
                 
                 if applySort {
                     
                     sortItems()
                 }
-                
-                updateImage(for: button)
                 prefs.set(ascending, forKey: .songsOrder)
             }
         }
@@ -237,6 +238,7 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
     var operation: BlockOperation?
     var recentOperation: BlockOperation?
     var filterOperation: BlockOperation?
+    @objc var supplementaryOperation: BlockOperation?
     
     override func viewDidLoad() {
         
@@ -259,18 +261,48 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
         refreshControl.addTarget(refresher, action: #selector(Refresher.refresh(_:)), for: .valueChanged)
         tableView.addSubview(refreshControl)
         
+        prepareSupplementaryInfo(animated: false)
         updateHeaderView(withCount: (songsQuery.items ?? []).count)
         
         prepareGestures()
         
         sortItems()
-        updateImage(for: arrangeButton)
     }
     
     func updateTopInset() {
         
         tableView.contentInset.top = libraryVC?.inset ?? VisualEffectNavigationBar.Location.main.total
         tableView.scrollIndicatorInsets.top = libraryVC?.inset ?? VisualEffectNavigationBar.Location.main.total
+    }
+    
+    @objc func prepareSupplementaryInfo(animated: Bool = true) {
+        
+        if animated {
+            
+            UIView.animate(withDuration: 0.3, animations: { self.headerView.layoutIfNeeded() })
+        }
+        
+        supplementaryOperation?.cancel()
+        supplementaryOperation = BlockOperation()
+        supplementaryOperation?.addExecutionBlock({ [weak self] in
+            
+            guard let weakSelf = self, let items = weakSelf.songsQuery.items else { return }
+            
+            let totalDuration = items.totalDuration.stringRepresentation(as: .short)
+            let totalSize = FileSize.init(actualSize: items.totalSize).actualSize.fileSizeRepresentation
+            let plays = items.totalPlays
+            
+            guard weakSelf.supplementaryOperation?.isCancelled == false else { return }
+            
+            OperationQueue.main.addOperation({
+                
+                weakSelf.totalDurationLabel.text = totalDuration
+                weakSelf.sizeLabel.text = totalSize
+                weakSelf.playsLabel.text = plays.formatted
+            })
+        })
+        
+        sortOperationQueue.addOperation(supplementaryOperation!)
     }
     
     func prepareGestures() {
@@ -289,7 +321,7 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
         LongPressManager.shared.gestureRecognisers.append(Weak.init(value: hold))
     }
     
-    @objc func showFilteredContext(_ sender: Any) {
+    @objc func revealEntity(_ sender: Any) {
         
         guard let indexPath: IndexPath = {
             
@@ -339,7 +371,7 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
         shuffleButton.superview?.isHidden = count < 2
         tableView.tableHeaderView = headerView
         
-        var array = [shuffleView, arrangeBorderView, editView]
+        var array = [shuffleView, filterView, editView]
         
         if count < 2 {
             
@@ -448,6 +480,12 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
         libraryVC?.updateViews(inSection: .songs, count: (songsQuery.items ?? []).count, setTitle: setTitle)
     }
     
+    @objc func updateWithQuery() {
+        
+        prepareSupplementaryInfo()
+        sortItems()
+    }
+    
     func prepareTransientObservers() {
         
         let queueObserver = notifier.addObserver(forName: .endQueueModification, object: nil, queue: nil, using: { [weak self] notification in
@@ -486,7 +524,7 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
                 weakSelf.songsQuery.addFilterPredicate(.offline)
             }
             
-            weakSelf.sortItems()
+            weakSelf.updateWithQuery()
         
         }) as! NSObject)
         
@@ -768,23 +806,20 @@ extension SongsViewController: FullySortable {
     
     func sortItems() {
         
-        (arrangeButton.superview as? BorderedButtonView)?.stackView.alpha = 0
-        activityIndicator.startAnimating()
+        headerView.updateSortActivityIndicator(to: .visible)
         
         let mainBlock: ([MPMediaItem], [SortSectionDetails]) -> () = { [weak self] array, details in
             
             guard let weakSelf = self, weakSelf.operation?.isCancelled == false else {
                 
-                self?.activityIndicator.stopAnimating()
-                (self?.arrangeButton.superview as? BorderedButtonView)?.stackView.alpha = 1
+                self?.headerView.updateSortActivityIndicator(to: .hidden)
                 
                 return
             }
             
             weakSelf.songs = array
             weakSelf.sections = details
-            weakSelf.activityIndicator.stopAnimating()
-            (weakSelf.arrangeButton.superview as? BorderedButtonView)?.stackView.alpha = 1
+            weakSelf.headerView.updateSortActivityIndicator(to: .hidden)
             weakSelf.updateTopLabels(setTitle: weakSelf.libraryVC?.container?.activeViewController?.topViewController == weakSelf.libraryVC)
             weakSelf.updateHeaderView(withCount: array.count)
             weakSelf.libraryVC?.updateEmptyLabel(withCount: array.count, text: "There are no songs in your library")
@@ -799,6 +834,8 @@ extension SongsViewController: FullySortable {
                 weakSelf.updateHeaderView(withCount: array.count)
                 weakSelf.tableView.reloadData()
                 weakSelf.animateCells(direction: .vertical, alphaOnly: weakSelf.highlightedIndex != nil)
+                
+                weakSelf.scrollToHighlightedRow()
             }
         }
         
@@ -810,8 +847,7 @@ extension SongsViewController: FullySortable {
                 
                 UniversalMethods.performInMain {
                     
-                    self?.activityIndicator.stopAnimating()
-                    (self?.arrangeButton.superview as? BorderedButtonView)?.stackView.alpha = 1
+                    self?.headerView.updateSortActivityIndicator(to: .hidden)
                 }
                 
                 return
@@ -829,12 +865,19 @@ extension SongsViewController: FullySortable {
                 }
             }()
             
+            UniversalMethods.performInMain {
+                
+                if let song = weakSelf.libraryVC?.highlightedEntities?.song {
+                    
+                    weakSelf.highlightedIndex = array.index(of: song)
+                }
+            }
+            
             guard !weakOperation.isCancelled else {
                 
                 UniversalMethods.performInMain {
                     
-                    self?.activityIndicator.stopAnimating()
-                    (self?.arrangeButton.superview as? BorderedButtonView)?.stackView.alpha = 1
+                    self?.headerView.updateSortActivityIndicator(to: .hidden)
                 }
                 
                 return

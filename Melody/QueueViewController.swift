@@ -60,6 +60,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
     lazy var queueIsBeingEdited = false
     lazy var shouldReload = true
     lazy var shuffleMode = ShuffleMode.none
+    var queueCount: Int { return isQueueAvailable ? queue.count : musicPlayer.queueCount() }
     var isQueueAvailable: Bool { if !useSystemPlayer, forceOldStyleQueue.inverted, #available(iOS 10.3, *), let _ = musicPlayer as? MPMusicPlayerApplicationController { return true } else { return false } }
     @objc var queueExists: Bool { return musicPlayer.nowPlayingItem != nil }
     @objc var userScrolled = false
@@ -249,7 +250,6 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                 
                 weakSelf.queue = controller.items
                 weakSelf.tableView.reloadData()
-                
 //            if weakSelf.presented { weakSelf.animateCells() }
                 
                 weakSelf.updateLoadingViews(hidden: true)
@@ -435,7 +435,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
     
     @objc func handleRightSwipe(_ sender: Any) {
         
-        guard musicPlayer.queueCount() > 1 else { return }
+        guard queueCount > 1 else { return }
         
         toggleEditing(true)
     }
@@ -713,7 +713,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                 })
             })
             
-            let alert = UniversalMethods.alertController(withTitle: (musicPlayer.queueCount() - indexPaths.count).fullCountText(for: .song).capitalized, message: nil, preferredStyle: .actionSheet, actions: update, UniversalMethods.cancelAlertAction())
+            let alert = UniversalMethods.alertController(withTitle: (queueCount - indexPaths.count).fullCountText(for: .song).capitalized, message: nil, preferredStyle: .actionSheet, actions: update, UniversalMethods.cancelAlertAction())
             
             present(alert, animated: true, completion: nil)
             
@@ -795,7 +795,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             weakSelf.keepSelected()
         })
         
-        let allBut = musicPlayer.queueCount() > 1 ? [clear] : []
+        let allBut = queueCount > 1 ? [clear] : []
         var selected: [UIAlertAction] {
             
             if let indexPaths = tableView.indexPathsForSelectedRows, indexPaths.isEmpty.inverted {
@@ -924,7 +924,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             
             if peeker == nil, let parent = parent as? PresentedContainerViewController, parent.altAnimator?.interactor.interactionInProgress != true {
                 
-                animateCells()
+                animateCells(direction: .vertical)
             }
             
             firstScroll = false
@@ -1052,7 +1052,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             
             guard let index = musicPlayer.nowPlayingItemIndex else { return 1 }
             
-            return (musicPlayer.queueCount() - (index + 1)) == 0 ? 1 : musicPlayer.queueCount() - (index + 1)
+            return (queueCount - (index + 1)) == 0 ? 1 : queueCount - (index + 1)
         }
         
         return 0
@@ -1104,7 +1104,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             
             guard let index = musicPlayer.nowPlayingItemIndex else { return standardCell(at: indexPath) }
             
-            if musicPlayer.queueCount() == (index + 1) {
+            if queueCount == (index + 1) {
                 
                 return standardCell(at: indexPath)
                 
@@ -1436,7 +1436,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             
             guard let index = musicPlayer.nowPlayingItemIndex else { return false }
             
-            if (index + 1) == musicPlayer.queueCount() {
+            if (index + 1) == queueCount {
                 
                 return false
             }
@@ -1453,7 +1453,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         
         if indexPath.section == 2 {
             
-            guard (index + 1) != musicPlayer.queueCount() else { return false }
+            guard (index + 1) != queueCount else { return false }
             
             return true
             
@@ -1516,7 +1516,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                         
                     } else {
                         
-                        if index == musicPlayer.queueCount() - 1 || destinationIndexPath.row == 0 {
+                        if index == self.queueCount - 1 || destinationIndexPath.row == 0 {
                             
                             return musicPlayer.nowPlayingItem
                         }
@@ -1534,7 +1534,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                 
                 notifier.post(name: .saveQueue, object: musicPlayer, userInfo: [String.queueItems: controller.items])
                 
-                if let error = error {
+                if let error = error, isInDebugMode {
                     
                     UniversalMethods.banner(withTitle: error.localizedDescription).show(for: 1)
                 }
@@ -1705,7 +1705,7 @@ extension QueueViewController: Attributor {
                 return "?"
             }()
             
-            let end = musicPlayer.queueCount().formatted
+            let end = queueCount.formatted
             
             let string = initial + " of " + end
             let final = "\(title) (\(string))"
@@ -1723,7 +1723,7 @@ extension QueueViewController: Attributor {
             
             if let index = musicPlayer.nowPlayingItemIndex {
                 
-                string = (section == 0 ? index : musicPlayer.queueCount() - (index + 1)).formatted
+                string = (section == 0 ? index : queueCount - (index + 1)).formatted
                 
             } else {
                 
@@ -1754,11 +1754,11 @@ extension QueueViewController {
     
     override var previewActionItems: [UIPreviewActionItem] {
         
-        let clear = UIPreviewAction.init(title: musicPlayer.queueCount() > 1 ? "Clear Queue" : "Stop Playback", style: .destructive, handler: { [weak self] _, vc in
+        let clear = UIPreviewAction.init(title: queueCount > 1 ? "Clear Queue" : "Stop Playback", style: .destructive, handler: { [weak self] _, vc in
             
             guard let weakSelf = self else { return }
             
-            guard musicPlayer.queueCount() > 1 else {
+            guard weakSelf.queueCount > 1 else {
                 
                 weakSelf.peeker?
                     .guardQueue(using:

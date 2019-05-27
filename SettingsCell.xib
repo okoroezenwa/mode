@@ -48,16 +48,16 @@
                                 </constraints>
                             </view>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="pll-Ol-btG">
-                                <rect key="frame" x="27" y="0.0" width="234" height="56.5"/>
+                                <rect key="frame" x="27" y="0.0" width="182" height="56.5"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bzo-CQ-Evv" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                        <rect key="frame" x="10" y="8" width="224" height="21.5"/>
+                                        <rect key="frame" x="10" y="8" width="172" height="21.5"/>
                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" alpha="0.69999998807907104" contentMode="left" verticalHuggingPriority="252" verticalCompressionResistancePriority="752" text="Subtitle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YJ0-eh-FZG" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                        <rect key="frame" x="10" y="34.5" width="224" height="14"/>
+                                        <rect key="frame" x="10" y="34.5" width="172" height="14"/>
                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="14"/>
                                         <nil key="highlightedColor"/>
                                         <userDefinedRuntimeAttributes>
@@ -69,7 +69,7 @@
                                 <edgeInsets key="layoutMargins" top="8" left="10" bottom="8" right="0.0"/>
                             </stackView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="14g-jt-ZW3">
-                                <rect key="frame" x="261" y="0.0" width="50" height="56.5"/>
+                                <rect key="frame" x="209" y="0.0" width="50" height="56.5"/>
                                 <subviews>
                                     <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" text="30s" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MCQ-MI-aT5" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
                                         <rect key="frame" x="10" y="21" width="40" height="15"/>
@@ -86,7 +86,41 @@
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="MCQ-MI-aT5" secondAttribute="trailing" id="4BM-D0-X2p"/>
                                     <constraint firstItem="MCQ-MI-aT5" firstAttribute="centerY" secondItem="14g-jt-ZW3" secondAttribute="centerY" id="rmb-ia-njF"/>
-                                    <constraint firstItem="MCQ-MI-aT5" firstAttribute="leading" secondItem="14g-jt-ZW3" secondAttribute="leading" constant="10" id="xoY-wa-GGa"/>
+                                    <constraint firstItem="MCQ-MI-aT5" firstAttribute="leading" secondItem="14g-jt-ZW3" secondAttribute="leading" priority="900" constant="10" id="xoY-wa-GGa"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0Kv-FX-KNc">
+                                <rect key="frame" x="259" y="0.0" width="52" height="56.5"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KZq-fo-yAX" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="0.0" width="52" height="56.5"/>
+                                        <connections>
+                                            <action selector="accessoryButtonTapped:" destination="inR-PG-oo7" eventType="touchUpInside" id="7Sa-zP-gyI"/>
+                                        </connections>
+                                    </button>
+                                    <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PlQ-CF-MBu" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
+                                        <rect key="frame" x="11" y="13.5" width="30" height="30"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="PlQ-CF-MBu" secondAttribute="height" id="1uc-X0-cti"/>
+                                            <constraint firstAttribute="width" priority="900" constant="30" id="Z4a-rv-pdx"/>
+                                        </constraints>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="15"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                    </view>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="KZq-fo-yAX" secondAttribute="bottom" id="4I8-Eh-Gik"/>
+                                    <constraint firstItem="KZq-fo-yAX" firstAttribute="leading" secondItem="0Kv-FX-KNc" secondAttribute="leading" id="EfW-W8-ghC"/>
+                                    <constraint firstAttribute="trailing" secondItem="KZq-fo-yAX" secondAttribute="trailing" id="QuR-Vz-fy4"/>
+                                    <constraint firstItem="PlQ-CF-MBu" firstAttribute="centerX" secondItem="0Kv-FX-KNc" secondAttribute="centerX" id="ZGb-wt-Ema"/>
+                                    <constraint firstItem="PlQ-CF-MBu" firstAttribute="centerY" secondItem="0Kv-FX-KNc" secondAttribute="centerY" id="hR6-nd-To5"/>
+                                    <constraint firstItem="KZq-fo-yAX" firstAttribute="top" secondItem="0Kv-FX-KNc" secondAttribute="top" id="rOP-Dy-oae"/>
+                                    <constraint firstAttribute="width" priority="900" constant="52" id="sCe-kc-X78"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6TC-T8-XV1">
@@ -95,7 +129,7 @@
                                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ForwardArrow" translatesAutoresizingMaskIntoConstraints="NO" id="fRa-mc-9q2" customClass="MELImageView" customModule="Mode" customModuleProvider="target">
                                         <rect key="frame" x="10" y="21.5" width="14" height="14"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="14" id="5IJ-GY-nl7"/>
+                                            <constraint firstAttribute="width" priority="900" constant="14" id="5IJ-GY-nl7"/>
                                             <constraint firstAttribute="width" secondItem="fRa-mc-9q2" secondAttribute="height" multiplier="1:1" id="aBY-8X-enn"/>
                                         </constraints>
                                         <userDefinedRuntimeAttributes>
@@ -105,8 +139,8 @@
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="fRa-mc-9q2" secondAttribute="trailing" constant="10" id="QFK-uT-FY7"/>
-                                    <constraint firstItem="fRa-mc-9q2" firstAttribute="leading" secondItem="6TC-T8-XV1" secondAttribute="leading" constant="10" id="WoX-mK-DDJ"/>
+                                    <constraint firstAttribute="trailing" secondItem="fRa-mc-9q2" secondAttribute="trailing" priority="900" constant="10" id="QFK-uT-FY7"/>
+                                    <constraint firstItem="fRa-mc-9q2" firstAttribute="leading" secondItem="6TC-T8-XV1" secondAttribute="leading" priority="900" constant="10" id="WoX-mK-DDJ"/>
                                     <constraint firstItem="fRa-mc-9q2" firstAttribute="centerY" secondItem="6TC-T8-XV1" secondAttribute="centerY" id="piV-bb-q07"/>
                                 </constraints>
                             </view>
@@ -117,7 +151,7 @@
                                         <rect key="frame" x="10" y="18.5" width="20" height="20"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="Rxu-ef-fDp" secondAttribute="height" multiplier="1:1" id="Qsv-7y-nSw"/>
-                                            <constraint firstAttribute="width" constant="20" id="gQc-V3-4Ec"/>
+                                            <constraint firstAttribute="width" priority="900" constant="20" id="gQc-V3-4Ec"/>
                                         </constraints>
                                         <userDefinedRuntimeAttributes>
                                             <userDefinedRuntimeAttribute type="boolean" keyPath="greyOverride" value="YES"/>
@@ -126,9 +160,9 @@
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="Rxu-ef-fDp" secondAttribute="trailing" constant="10" id="GcM-sb-dIV"/>
+                                    <constraint firstAttribute="trailing" secondItem="Rxu-ef-fDp" secondAttribute="trailing" priority="900" constant="10" id="GcM-sb-dIV"/>
                                     <constraint firstItem="Rxu-ef-fDp" firstAttribute="centerY" secondItem="sbq-aq-BSq" secondAttribute="centerY" id="wN4-eV-NTE"/>
-                                    <constraint firstItem="Rxu-ef-fDp" firstAttribute="leading" secondItem="sbq-aq-BSq" secondAttribute="leading" constant="10" id="wcC-LS-hKV"/>
+                                    <constraint firstItem="Rxu-ef-fDp" firstAttribute="leading" secondItem="sbq-aq-BSq" secondAttribute="leading" priority="900" constant="10" id="wcC-LS-hKV"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RV6-ND-n0R" customClass="MELSwitch" customModule="Mode" customModuleProvider="target">
@@ -171,6 +205,8 @@
             </tableViewCellContentView>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <connections>
+                <outlet property="accessoryButton" destination="KZq-fo-yAX" id="qzT-6P-lJ5"/>
+                <outlet property="buttonBorderView" destination="PlQ-CF-MBu" id="DZQ-vJ-YOG"/>
                 <outlet property="check" destination="Rxu-ef-fDp" id="UqH-k8-hB1"/>
                 <outlet property="chevron" destination="fRa-mc-9q2" id="Zk6-8a-Au9"/>
                 <outlet property="itemSwitch" destination="RV6-ND-n0R" id="gf1-nG-Wnz"/>

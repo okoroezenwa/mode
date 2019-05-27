@@ -349,4 +349,124 @@ extension EntityVerifiable {
         
         completion?()
     }
+    
+    func showInLibrary(entity: MPMediaEntity, type: Entity, unwinder: UIViewController?) {
+        
+        guard let container = appDelegate.window?.rootViewController as? ContainerViewController, type != .albumArtist else { return }
+        
+        let currentSection = prefs.integer(forKey: .lastUsedLibrarySection)
+        let section = type.librarySection(from: entity)
+        
+        let setHighlightedEntity: () -> () = { [weak container] in
+            
+            let libraryVC = container?.libraryNavigationController?.viewControllers.first as? LibraryViewController ?? container?.libraryNavigationController?.topViewController as? LibraryViewController
+            
+            switch section {
+                
+                case .songs: libraryVC?.highlightedEntities = (entity as? MPMediaItem, nil)
+                
+                default: libraryVC?.highlightedEntities = (nil, entity as? MPMediaItemCollection)
+            }
+        }
+        
+        let scrollToRow: () -> () = { [weak container] in
+            
+            if let tableContainer = (container?.libraryNavigationController?.viewControllers.first as? LibraryViewController ?? container?.libraryNavigationController?.topViewController as? LibraryViewController)?.activeChildViewController as? TableViewContainer {
+                
+                tableContainer.setHighlightedIndex(of: entity)
+                tableContainer.scrollToHighlightedRow()
+            }
+        }
+        
+        useAlternateAnimation = true
+        shouldReturnToContainer = true
+        
+        unwinder?.performSegue(withIdentifier: "unwind", sender: nil)
+        
+        if container.isLibraryNavigationControllerInitialised.inverted {
+            
+            prefs.set(section.rawValue, forKey: .lastUsedLibrarySection)
+            setHighlightedEntity()
+            container.switchViewController(container.libraryButton)
+        
+        } else {
+            
+            guard let details: (libraryVC: LibraryViewController?, needsToReturnToRoot: Bool) = {
+                
+                if let libraryVC = container.libraryNavigationController?.topViewController as? LibraryViewController {
+                    
+                    return (libraryVC, false)
+                
+                } else if let libraryVC = container.libraryNavigationController?.viewControllers.first as? LibraryViewController {
+                    
+                    return (libraryVC, true)
+                }
+                
+                return nil
+            
+            }() else { return }
+            
+            let libraryVCIsTopVC = container.activeViewController == container.libraryNavigationController
+            
+            if section.rawValue == currentSection {
+                
+                if libraryVCIsTopVC.inverted {
+                    
+                    container.switchViewController(container.libraryButton)
+                }
+                
+                setHighlightedEntity()
+                scrollToRow()
+                
+            } else if let libraryVC = details.libraryVC {
+                
+                let oldChild = libraryVC.activeChildViewController
+                
+                if libraryVCIsTopVC.inverted {
+                    
+                    prefs.set(section.rawValue, forKey: .lastUsedLibrarySection)
+                    container.switchViewController(container.libraryButton)
+                
+                } else if let sections = container.filterViewContainer.filterView.properties as? [LibrarySection], let index = sections.index(of: section) {
+                    
+                    container.filterViewContainer.filterView.collectionView(container.filterViewContainer.filterView.collectionView, didSelectItemAt: .init(item: index, section: 0))
+                    container.filterViewContainer.filterView.collectionView.scrollToItem(at: .init(item: index, section: 0), at: .centeredHorizontally, animated: true)
+                    
+                    prefs.set(section.rawValue, forKey: .lastUsedLibrarySection)
+                
+                } else {
+                    
+                    prefs.set(section.rawValue, forKey: .lastUsedLibrarySection)
+                }
+                
+                if libraryVC.isViewControllerInitialised(for: section).inverted {
+                    
+                    setHighlightedEntity()
+                    libraryVC.changeActiveVC = false
+                    libraryVC.activeChildViewController = libraryVC.viewControllerForCurrentSection()
+                    libraryVC.changeActiveVC = true
+                    libraryVC.changeActiveViewControllerFrom(oldChild, animated: libraryVCIsTopVC)
+                
+                } else {
+                    
+                    setHighlightedEntity()
+                    libraryVC.changeActiveVC = false
+                    libraryVC.activeChildViewController = libraryVC.viewControllerForCurrentSection()
+                    libraryVC.changeActiveVC = true
+                    libraryVC.changeActiveViewControllerFrom(oldChild, animated: libraryVCIsTopVC)
+                    scrollToRow()
+                }
+            }
+            
+            if details.needsToReturnToRoot {
+                
+                details.libraryVC?.navigationController?.popToRootViewController(animated: true)
+                
+//                if libraryVCIsTopVC.inverted {
+//
+//                    details.libraryVC?.view.alpha = 1
+//                }
+            }
+        }
+    }
 }

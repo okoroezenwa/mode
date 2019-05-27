@@ -13,9 +13,12 @@ protocol ChildContaining: class {
     var activeChildViewController: UIViewController? { get set }
     var containerView: UIView! { get set }
     var viewControllerSnapshot: UIView? { get set }
+    var changeActiveVC: Bool { get set }
 }
 
 extension ChildContaining where Self: UIViewController {
+    
+    var verticalTranslation: CGFloat { return 20 }
     
     func removeInactiveViewController(inactiveViewController: UIViewController?) {
         
@@ -67,7 +70,7 @@ extension ChildContaining where Self: UIViewController {
         snapshot.frame = containerView.frame
         view.insertSubview(snapshot, aboveSubview: containerView)
         containerView.alpha = 0
-        containerView.transform = .init(translationX: 0, y: 40)
+        containerView.transform = .init(translationX: 0, y: verticalTranslation)
         viewControllerSnapshot = snapshot
         
         removeInactiveViewController(inactiveViewController: vc)
@@ -117,7 +120,7 @@ extension ChildContaining where Self: UIViewController {
             
             UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 1/2, animations: {
                 
-                snapshot.transform = .init(translationX: 0, y: 40)
+                snapshot.transform = .init(translationX: 0, y: self.verticalTranslation)
                 snapshot.alpha = 0
                 
                 guard (self is EntityItemsViewController).inverted else { return }
@@ -148,6 +151,7 @@ extension ChildContaining where Self: UIViewController {
             
             self?.viewControllerSnapshot?.removeFromSuperview()
             self?.viewControllerSnapshot = nil
+            self?.containerView.alpha = 1
             
             completion?()
             

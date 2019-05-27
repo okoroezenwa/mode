@@ -173,6 +173,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         guard let vc = mainChildrenStoryboard.instantiateViewController(withIdentifier: "searchNav") as? UINavigationController else { return nil }
         
         vc.view.clipsToBounds = false
+        isSearchNavigationControllerInitialised = true
         
         return vc
     }()
@@ -182,6 +183,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         guard let vc = mainChildrenStoryboard.instantiateViewController(withIdentifier: "libraryNav") as? UINavigationController else { return nil }
         
         vc.view.clipsToBounds = false
+        isLibraryNavigationControllerInitialised = true
         
         return vc
     }()
@@ -198,6 +200,8 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         }
     }
     var changeActiveVC = true
+    var isSearchNavigationControllerInitialised = false
+    var isLibraryNavigationControllerInitialised = false
     
     override func viewDidLoad() {
         
@@ -385,7 +389,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             
             changeActiveVC = false
             let oldVC = activeViewController
-            switchViewController(sender: button(for: expectedNVC))
+            switchViewController(button(for: expectedNVC))
             changeActiveViewControllerFrom(oldVC, completion: { UniversalMethods.performOnMainThread({ notifier.post(name: .performSecondaryAction, object: self.activeViewController) }, afterDelay: 0.1) })
             changeActiveVC = true
             
@@ -742,7 +746,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         
         guard let song = musicPlayer.nowPlayingItem else { return }
         
-        singleItemActionDetails(for: .show(title: song.validTitle, context: .song(location: .list, at: 0, within: [song])), entity: .song, using: song, from: self, useAlternateTitle: true).handler()
+        singleItemActionDetails(for: .show(title: song.validTitle, context: .song(location: .list, at: 0, within: [song]), canDisplayInLibrary: true), entity: .song, using: song, from: self, useAlternateTitle: true).handler()
     }
     
     func viewController(for startPoint: StartPoint) -> UINavigationController? {
@@ -1024,7 +1028,6 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
                     $0?.alpha = 1
                 })
                 
-                
                 if let keyWindow = UIApplication.shared.keyWindow, !keyWindow.subviews.contains(view) {
                     
                     UIApplication.shared.keyWindow?.addSubview(view)
@@ -1146,110 +1149,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         
         UIView.transition(with: imageView, duration: 0.45, options: .transitionCrossDissolve, animations: { self.imageView.image = imageOverride ?? self.currentModifier?.artworkType.image }, completion: nil)
     }
-    
-//    private func updateActiveViewController() {
-//
-//        if let activeVC = activeViewController {
-//
-//            addChild(activeVC)
-//            activeVC.view.frame = containerView.bounds
-//            activeVC.didMove(toParent: self)
-//            containerView.addSubview(activeVC.view)
-//        }
-//    }
-//
-//    @objc func changeActiveViewControllerFrom(_ vc: UINavigationController?, animated: Bool = true, animateTitle: Bool = false, completion: (() -> ())? = nil) {
-//
-//        guard let activeVC = activeViewController, let inActiveVC = vc else { return }
-//
-//        addChild(activeVC)
-//        inActiveVC.willMove(toParent: nil)
-//
-//        activeVC.view.alpha = 0
-//        containerView.addSubview(activeVC.view)
-//        activeVC.view.frame = containerView.bounds.modifiedBy(x: 0, y: 40)
-//
-//        view.layoutIfNeeded()
-//
-//        if let startPoint = StartPoint(rawValue: lastUsedTab) {
-//
-//            switch startPoint {
-//
-//                case .library:
-//
-//                    self.filterViewContainer.context = .library
-//
-//                case .search:
-//
-//                    if let searchVC = self.searchNavigationController?.viewControllers.first as? SearchViewController {
-//
-//                        self.filterViewContainer.context = .filter(filter: searchVC, container: searchVC)
-//                    }
-//                }
-//        }
-//
-//        UIView.animate(withDuration: animated ? 0.15 : 0, animations: {
-//
-//            inActiveVC.view.frame = self.containerView.bounds.modifiedBy(x: 0, y: 40)
-//            inActiveVC.view.alpha = 0
-//            self.filterViewContainer.filterView.filterTestButton.alpha = 0
-//
-//        }, completion: { _ in
-//
-//            UIView.animate(withDuration: animated ? 0.15 : 0, animations: {
-//
-//                activeVC.view.alpha = 1
-//                activeVC.view.frame = self.containerView.bounds
-//                self.filterViewContainer.filterView.filterTestButton.alpha = 1
-//
-//            }, completion: { _ in
-//
-//                inActiveVC.view.removeFromSuperview()
-//                completion?()
-//            })
-//        })
-//
-//        UIView.animate(withDuration: animated ? 0.3 : 0, animations: {
-//
-//            self.filterViewContainer.filterView.filterInputView.alpha = self.filterViewContainer.filterView.context == .library ? 0 : 1
-//            self.view.layoutIfNeeded()
-//        })
-//
-//        UIView.transition(with: imageView, duration: animated ? 0.3 : 0, options: .transitionCrossDissolve, animations: { self.imageView.image = (activeVC.topViewController as? ArtworkModifying)?.artworkType.image }, completion: nil)
-//
-//        if animateTitle {
-//
-//            visualEffectNavigationBar.animateViews(direction: .forward, section: .preparation, with: inActiveVC.topViewController as? Navigatable, and: activeVC.topViewController as? Navigatable, preferVerticalTransition: true)
-//
-//            UIView.animateKeyframes(withDuration: 0.3, delay: 0, options: .calculationModeCubic, animations: {
-//
-//                UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 1/2, animations: {
-//
-//                    self.visualEffectNavigationBar.animateViews(direction: .forward, section: .firstHalf, with: inActiveVC.topViewController as? Navigatable, and: activeVC.topViewController as? Navigatable, preferVerticalTransition: true)
-//                })
-//
-//                UIView.addKeyframe(withRelativeStartTime: 1/2, relativeDuration: 1/2, animations: {
-//
-//                    self.visualEffectNavigationBar.animateViews(direction: .forward, section: .secondHalf, with: inActiveVC.topViewController as? Navigatable, and: activeVC.topViewController as? Navigatable, preferVerticalTransition: true)
-//                })
-//
-//                UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 1, animations: { self.view.layoutIfNeeded() })
-//
-//            }, completion: { _ in
-//
-//                self.visualEffectNavigationBar.animateViews(direction: .forward, section: .end(completed: true), with: inActiveVC.topViewController as? Navigatable, and: activeVC.topViewController as? Navigatable, preferVerticalTransition: true)
-//            })
-//
-//        } else {
-//
-//            visualEffectNavigationBar.titleLabel.text = (activeVC.topViewController as? Navigatable)?.title
-//        }
-//
-//        inActiveVC.removeFromParent()
-//        activeVC.didMove(toParent: self)
-//        notifier.post(name: .resetInsets, object: nil)
-//    }
-    
+
     func update(_ button: UIButton?, to state: UIButton.SelectionState, animated: Bool = true) {
         
         guard let button: MELButton = {
@@ -1281,7 +1181,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         }, completion: nil)
     }
     
-    @IBAction func switchViewController(sender: UIButton) {
+    @IBAction func switchViewController(_ sender: UIButton) {
         
         if activeViewController == controller(for: sender) {
             
