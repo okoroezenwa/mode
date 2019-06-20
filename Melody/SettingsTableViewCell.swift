@@ -15,7 +15,7 @@ class SettingsTableViewCell: UITableViewCell {
     @IBOutlet var tertiaryLabel: MELLabel!
     @IBOutlet var chevron: MELImageView!
     @IBOutlet var check: MELImageView!
-    @IBOutlet var itemSwitch: MELSwitch!
+    @IBOutlet var itemSwitch: MELSwitchContainer!
     @IBOutlet var borderViews: [MELBorderView]!
     @IBOutlet var accessoryButton: MELButton!
     @IBOutlet var buttonBorderView: MELBorderView!
@@ -174,7 +174,7 @@ class SettingsTableViewCell: UITableViewCell {
                 }
             
                 titleLabel.fontWeight = (cancel ? .semibold : FontWeight.regular).rawValue
-                labelsStackView.layoutMargins.left = 16
+                labelsStackView.layoutMargins.left = cancel ? 0 : 16
                 leadingImageViewLeadingConstraint.constant = 16
                 leadingImageViewWidthConstraint.constant = 22
         }

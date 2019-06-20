@@ -10,6 +10,7 @@ import UIKit
 
 class TableHeaderView: UITableViewHeaderFooterView {
 
+    @IBOutlet var stackView: UIStackView!
     @IBOutlet var label: MELLabel! {
         
         didSet {

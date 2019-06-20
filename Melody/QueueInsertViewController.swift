@@ -13,7 +13,7 @@ class QueueInsertViewController: UIViewController, BorderButtonContaining {
     @IBOutlet var queueStackView: UIStackView!
     @IBOutlet var shuffleLabel: MELLabel!
     @IBOutlet var albumsLabel: MELLabel!
-    @IBOutlet var shuffleSwitch: MELSwitch! {
+    @IBOutlet var shuffleSwitch: MELSwitchContainer! {
         
         didSet {
             
@@ -27,7 +27,7 @@ class QueueInsertViewController: UIViewController, BorderButtonContaining {
             }
         }
     }
-    @IBOutlet var albumsSwitch: MELSwitch! {
+    @IBOutlet var albumsSwitch: MELSwitchContainer! {
         
         didSet {
             

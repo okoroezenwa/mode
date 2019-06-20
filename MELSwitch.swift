@@ -8,7 +8,7 @@
 
 import UIKit
 
-class MELSwitch: UIView {
+class MELSwitchContainer: UIView {
     
     private let mainSwitch = Switch.instance
     var isOn = false

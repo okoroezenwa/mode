@@ -321,7 +321,7 @@
                 <outlet property="titleScrollView" destination="P1K-eF-QI8" id="7D5-3f-yc1"/>
                 <outlet property="titleStackViewEqualHeightConstraint" destination="337-Sb-cEw" id="84h-JH-sN0"/>
             </connections>
-            <point key="canvasLocation" x="45" y="40"/>
+            <point key="canvasLocation" x="44.799999999999997" y="39.580209895052477"/>
         </visualEffectView>
     </objects>
     <resources>

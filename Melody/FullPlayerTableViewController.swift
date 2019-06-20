@@ -10,7 +10,7 @@ import UIKit
 
 class FullPlayerTableViewController: UITableViewController {
     
-    @IBOutlet var bolderTitleSwitch: MELSwitch! {
+    @IBOutlet var bolderTitleSwitch: MELSwitchContainer! {
         
         didSet {
             
@@ -22,7 +22,7 @@ class FullPlayerTableViewController: UITableViewController {
             }
         }
     }
-    @IBOutlet var minimiseSwitch: MELSwitch! {
+    @IBOutlet var minimiseSwitch: MELSwitchContainer! {
         
         didSet {
             
@@ -34,7 +34,7 @@ class FullPlayerTableViewController: UITableViewController {
             }
         }
     }
-    @IBOutlet var closeButtonSwitch: MELSwitch! {
+    @IBOutlet var closeButtonSwitch: MELSwitchContainer! {
         
         didSet {
             
@@ -46,7 +46,7 @@ class FullPlayerTableViewController: UITableViewController {
             }
         }
     }
-    @IBOutlet var separateSwitch: MELSwitch! {
+    @IBOutlet var separateSwitch: MELSwitchContainer! {
         
         didSet {
             
@@ -58,7 +58,7 @@ class FullPlayerTableViewController: UITableViewController {
             }
         }
     }
-    @IBOutlet var avoidSwitch: MELSwitch! {
+    @IBOutlet var avoidSwitch: MELSwitchContainer! {
         
         didSet {
             
@@ -70,7 +70,7 @@ class FullPlayerTableViewController: UITableViewController {
             }
         }
     }
-    @IBOutlet var supplementarySwitch: MELSwitch! {
+    @IBOutlet var supplementarySwitch: MELSwitchContainer! {
         
         didSet {
             
@@ -82,10 +82,10 @@ class FullPlayerTableViewController: UITableViewController {
             }
         }
     }
-    @IBOutlet var starSwitch: MELSwitch!
-    @IBOutlet var likedSwitch: MELSwitch!
-    @IBOutlet var shareSwitch: MELSwitch!
-    @IBOutlet var volumeSwitch: MELSwitch!
+    @IBOutlet var starSwitch: MELSwitchContainer!
+    @IBOutlet var likedSwitch: MELSwitchContainer!
+    @IBOutlet var shareSwitch: MELSwitchContainer!
+    @IBOutlet var volumeSwitch: MELSwitchContainer!
     @IBOutlet var overlayImageView: MELImageView!
     @IBOutlet var smallerImageView: MELImageView!
     @IBOutlet var belowImageView: MELImageView!

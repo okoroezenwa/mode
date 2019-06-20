@@ -231,7 +231,7 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
         
         let queue = OperationQueue()
         queue.name = "Songs Sort Operation Queue"
-        
+//        queue.qualityOfService = .userInteractive
         
         return queue
     }()
@@ -841,6 +841,7 @@ extension SongsViewController: FullySortable {
         
         operation?.cancel()
         operation = BlockOperation()
+//        operation?.qualityOfService = .userInteractive
         operation?.addExecutionBlock({ [weak self] in
             
             guard let weakSelf = self, let weakOperation = weakSelf.operation, !weakOperation.isCancelled, let items = weakSelf.songsQuery.items, !items.isEmpty else {

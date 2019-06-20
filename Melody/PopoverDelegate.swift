@@ -26,7 +26,7 @@ class PopoverDelegate: NSObject, UIPopoverPresentationControllerDelegate {
             vc.preferredContentSize = size
         }
         
-        vc.view.backgroundColor = UIDevice.current.isBlurAvailable ? .clear : darkTheme ? UIColor.darkGray : .white
+        vc.view.backgroundColor = .clear//UIDevice.current.isBlurAvailable ? .clear : darkTheme ? UIColor.darkGray : .white
         
         if let popover = vc.popoverPresentationController {
             

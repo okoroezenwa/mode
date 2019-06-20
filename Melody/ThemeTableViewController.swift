@@ -10,7 +10,7 @@ import UIKit
 
 class ThemeTableViewController: UITableViewController {
 
-    @IBOutlet var nightSwitch: MELSwitch! {
+    @IBOutlet var nightSwitch: MELSwitchContainer! {
         
         didSet {
             
@@ -22,7 +22,7 @@ class ThemeTableViewController: UITableViewController {
             }
         }
     }
-    @IBOutlet var timeSwitch: MELSwitch! {
+    @IBOutlet var timeSwitch: MELSwitchContainer! {
         
         didSet {
             
@@ -34,7 +34,7 @@ class ThemeTableViewController: UITableViewController {
             }
         }
     }
-    @IBOutlet var brightnessSwitch: MELSwitch! {
+    @IBOutlet var brightnessSwitch: MELSwitchContainer! {
         
         didSet {
             

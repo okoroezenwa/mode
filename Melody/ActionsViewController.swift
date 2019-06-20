@@ -13,7 +13,7 @@ class ActionsViewController: UIViewController {
     @IBOutlet var optionsStackView: UIStackView!
     @IBOutlet var offlineButton: MELButton!
     @IBOutlet var offlineButtonBorder: MELBorderView!
-    @IBOutlet var foldersSwitch: MELSwitch! {
+    @IBOutlet var foldersSwitch: MELSwitchContainer! {
         
         didSet {
             
@@ -25,7 +25,7 @@ class ActionsViewController: UIViewController {
             }
         }
     }
-    @IBOutlet var emptyPlaylistsSwitch: MELSwitch! {
+    @IBOutlet var emptyPlaylistsSwitch: MELSwitchContainer! {
         
         didSet {
             
@@ -59,7 +59,7 @@ class ActionsViewController: UIViewController {
     @IBOutlet var allButton: MELButton!
     @IBOutlet var appleMusicButton: MELButton!
     @IBOutlet var yoursButton: MELButton!
-    @IBOutlet var dynamicSwitch: MELSwitch! {
+    @IBOutlet var dynamicSwitch: MELSwitchContainer! {
         
         didSet {
             
@@ -71,7 +71,7 @@ class ActionsViewController: UIViewController {
             }
         }
     }
-    @IBOutlet var boldSwitch: MELSwitch! {
+    @IBOutlet var boldSwitch: MELSwitchContainer! {
         
         didSet {
             
@@ -83,7 +83,7 @@ class ActionsViewController: UIViewController {
             }
         }
     }
-    @IBOutlet var unaddedSwitch: MELSwitch! {
+    @IBOutlet var unaddedSwitch: MELSwitchContainer! {
         
         didSet {
             
@@ -95,7 +95,7 @@ class ActionsViewController: UIViewController {
             }
         }
     }
-    @IBOutlet var preventSwitch: MELSwitch! {
+    @IBOutlet var preventSwitch: MELSwitchContainer! {
         
         didSet {
             

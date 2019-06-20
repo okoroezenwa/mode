@@ -12,12 +12,49 @@ import Foundation
 class Queue {
     
     static let shared = Queue()
+    var currentQueue = [QueueItem]()
+    
+    enum RemovalCompletion { case none, placeFirst, placeAfter(item: MPMediaItem) }
     
     private init() {
     
         notifier.addObserver(self, selector: #selector(updateIndex), name: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer)
         
         notifier.addObserver(self, selector: #selector(saveQueue(with:)), name: .saveQueue, object: musicPlayer)
+    }
+    
+    func remove(_ items: [MPMediaItem], completion: RemovalCompletion = .none) {
+        
+        currentQueue.removeAll(where: { Set(items).contains($0.item) })
+        
+        switch completion {
+            
+            case .none: return
+            
+            case .placeFirst: place(items, after: nil, verifyDuplicates: false, removeAfterPlayback: false)
+            
+            case .placeAfter(item: let item): place(items, after: item, verifyDuplicates: false, removeAfterPlayback: false)
+        }
+    }
+    
+    func place(_ items: [MPMediaItem], after item: MPMediaItem?, verifyDuplicates verify: Bool = true, removeAfterPlayback: Bool = false) {
+        
+        if verify {
+        
+            currentQueue.removeAll(where: { Set(items).contains($0.item) })
+        }
+        
+        let index: Int = {
+            
+            if let index = currentQueue.firstIndex(where: { $0.item == item }) {
+                
+                return currentQueue.index(after: index)
+            }
+            
+            return 0
+        }()
+        
+        currentQueue.insert(contentsOf: items.map({ QueueItem.init(shouldRemoveAfterPlayback: removeAfterPlayback, item: $0) }), at: index)
     }
     
     @objc func saveQueue(with notification: Notification) {
@@ -94,4 +131,11 @@ class Queue {
         prefs.set(time, forKey: .currentPlaybackTime)
         NowPlaying.shared.registered.forEach({ $0?.updateTimes(setValue: true, seeking: false )})
     }
+}
+
+struct QueueItem {
+    
+    var shouldRemoveAfterPlayback: Bool
+//    let location: String
+    let item: MPMediaItem
 }
