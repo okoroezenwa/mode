@@ -437,6 +437,8 @@ class TodayViewController: UIViewController, NCWidgetProviding {
                 case .albums, .songs: return .off
                 
                 case .default, .off: return .songs
+                
+                @unknown default: return .off
             }
         }()
         
@@ -461,6 +463,8 @@ class TodayViewController: UIViewController, NCWidgetProviding {
                 case .one: return .none
                     
                 case .all: return .one
+            
+                @unknown default: return .none
             }
         }()
         

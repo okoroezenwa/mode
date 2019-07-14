@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -202,6 +206,7 @@
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <connections>
                 <outlet property="accessoryButton" destination="KZq-fo-yAX" id="qzT-6P-lJ5"/>
+                <outlet property="bottomBorderView" destination="uYZ-fp-GfV" id="OKe-LZ-zkB"/>
                 <outlet property="buttonBorderView" destination="PlQ-CF-MBu" id="DZQ-vJ-YOG"/>
                 <outlet property="check" destination="Rxu-ef-fDp" id="UqH-k8-hB1"/>
                 <outlet property="chevron" destination="fRa-mc-9q2" id="Zk6-8a-Au9"/>
@@ -214,8 +219,7 @@
                 <outlet property="subtitleLabel" destination="YJ0-eh-FZG" id="p42-bp-WSc"/>
                 <outlet property="tertiaryLabel" destination="MCQ-MI-aT5" id="Lr0-Kw-Rko"/>
                 <outlet property="titleLabel" destination="Bzo-CQ-Evv" id="Ahm-aP-NWR"/>
-                <outletCollection property="borderViews" destination="ShW-pF-68O" collectionClass="NSMutableArray" id="Ofi-RN-cmG"/>
-                <outletCollection property="borderViews" destination="uYZ-fp-GfV" collectionClass="NSMutableArray" id="Yet-fS-dDn"/>
+                <outlet property="topBorderView" destination="ShW-pF-68O" id="5Dz-o2-5Hc"/>
             </connections>
             <point key="canvasLocation" x="82.400000000000006" y="69.715142428785612"/>
         </tableViewCell>

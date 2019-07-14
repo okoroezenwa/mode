@@ -15,7 +15,7 @@ extension String {
     
     var roundedBracketsRemoved: String {
         
-        if let startIndex = index(of: "("), let endIndex = index(of: ")") {
+        if let startIndex = firstIndex(of: "("), let endIndex = firstIndex(of: ")") {
             
             var string = self
             string.removeSubrange(startIndex...endIndex)
@@ -28,7 +28,7 @@ extension String {
     
     var squareBracketsRemoved: String {
         
-        if let startIndex = index(of: "["), let endIndex = index(of: "]") {
+        if let startIndex = firstIndex(of: "["), let endIndex = firstIndex(of: "]") {
             
             var string = self
             string.removeSubrange(startIndex...endIndex)
@@ -54,6 +54,11 @@ extension String {
         return replacingOccurrences(of: "&", with: "")
     }
     
+    var containingBracketsRemoved: String {
+        
+        return replacingOccurrences(of: "(", with: "").replacingOccurrences(of: ")", with: "").replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "]", with: "")
+    }
+    
     func remove(_ category: LyricsTitleRemovalCategory, from type: LyricsTextType) -> String {
         
         switch (category, type) {
@@ -71,6 +76,18 @@ extension String {
                  (.ampersands, .artist) where Mode.removeArtistAmpersands: return ampersandsReplaced
             
             default: return self
+        }
+    }
+    
+    func lyricsRemovalsApplied(for type: LyricsTextType) -> String {
+        
+        if isInDebugMode {
+            
+            return remove(.brackets, from: type).remove(.punctuation, from: type).remove(.censoredWords, from: type).remove(.ampersands, from: type)
+        
+        } else {
+            
+            return remove(.punctuation, from: type).remove(.censoredWords, from: type).remove(.ampersands, from: type).containingBracketsRemoved
         }
     }
 }

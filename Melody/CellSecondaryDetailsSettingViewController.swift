@@ -58,7 +58,7 @@ extension CellSecondaryDetailsSettingViewController: UITableViewDataSource, UITa
         
         let detail = array[indexPath.row]
         
-        if let index = secondaryArray.index(of: detail) {
+        if let index = secondaryArray.firstIndex(of: detail) {
             
             secondaryArray.remove(at: index)
             

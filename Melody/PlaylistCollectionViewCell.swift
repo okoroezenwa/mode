@@ -113,6 +113,8 @@ class PlaylistCollectionViewCell: UICollectionViewCell, ArtworkContainingCell {
                         }
                     
                     case .horizontal: return .zero
+                
+                    @unknown default: return .zero
                 }
             }()
             

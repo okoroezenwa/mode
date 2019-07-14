@@ -478,7 +478,7 @@ extension HeaderView: UICollectionViewDelegate, UICollectionViewDataSource {
                 
                 if collectionsVC.presented, let playlist = collection as? MPMediaPlaylist {
                     
-                    if collectionsVC.selectedPlaylists.firstIndex(of: playlist) == nil, let presentedVC = collectionsVC.libraryVC?.parent as? PresentedContainerViewController {
+                    if collectionsVC.selectedPlaylists.firstIndex(of: playlist) == nil, let _ = collectionsVC.libraryVC?.parent as? PresentedContainerViewController {
                         
                         collectionsVC.selectedPlaylists.append(playlist)
                         collectionsVC.addButton.setTitle("Add (\(collectionsVC.selectedPlaylists.count.formatted))", for: .normal)
@@ -510,7 +510,7 @@ extension HeaderView: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         
-        if let collectionsVC = viewController as? CollectionsViewController, collectionsVC.presented, let playlist = playlists.value(at: indexPath.row), let index = collectionsVC.selectedPlaylists.firstIndex(of: playlist), let presentedVC = collectionsVC.libraryVC?.parent as? PresentedContainerViewController {
+        if let collectionsVC = viewController as? CollectionsViewController, collectionsVC.presented, let playlist = playlists.value(at: indexPath.row), let index = collectionsVC.selectedPlaylists.firstIndex(of: playlist), let _ = collectionsVC.libraryVC?.parent as? PresentedContainerViewController {
             
             collectionsVC.selectedPlaylists.remove(at: index)
             collectionsVC.addButton.setTitle("Add (\(collectionsVC.selectedPlaylists.count.formatted))", for: .normal)

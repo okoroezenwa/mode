@@ -361,7 +361,7 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, I
         let collection = getCollection(from: indexPath, filtering: true)
                 
         entityVC?.highlightedEntities?.collection = collection
-        highlightedIndex = albums.index(of: collection)
+        highlightedIndex = albums.firstIndex(of: collection)
         scrollToHighlightedRow()
     }
     
@@ -817,7 +817,7 @@ extension ArtistAlbumsViewController: FullySortable {
             
             if let entity = self?.entityVC?.highlightedEntities?.collection {
                 
-                self?.highlightedIndex = array.index(of: entity)
+                self?.highlightedIndex = array.firstIndex(of: entity)
             }
             
             guard !operation.isCancelled else {
@@ -879,7 +879,7 @@ extension ArtistAlbumsViewController: CollectionActionable {
                 
                 if weakSelf.showActionsAfterFilling {
                     
-                    weakSelf.showArrayActions(weakSelf.tableView.isEditing ? weakSelf.editButton : weakSelf as Any)
+                    weakSelf.showArrayActions(weakSelf.tableView.isEditing ? weakSelf.editButton as Any : weakSelf as Any)
                 }
                 
                 weakSelf.actionableActivityIndicator.stopAnimating()

@@ -548,7 +548,7 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
         
         let collection = getCollection(from: indexPath, filtering: true)
         
-        highlightedIndex = collections.index(of: collection)
+        highlightedIndex = collections.firstIndex(of: collection)
         scrollToHighlightedRow()
     }
     
@@ -1921,7 +1921,7 @@ extension CollectionsViewController: FullySortable {
                 
                 if let collection = weakSelf.libraryVC?.highlightedEntities?.collection {
                     
-                    weakSelf.highlightedIndex = array.index(of: collection)
+                    weakSelf.highlightedIndex = array.firstIndex(of: collection)
                 }
             }
             
@@ -2074,7 +2074,7 @@ extension CollectionsViewController: CollectionActionable {
                 
                 if weakSelf.showActionsAfterFilling {
                     
-                    weakSelf.showArrayActions(weakSelf.tableView.isEditing ? weakSelf.editButton : weakSelf as Any)
+                    weakSelf.showArrayActions(weakSelf.tableView.isEditing ? weakSelf.editButton as Any : weakSelf as Any)
                 }
                 
                 weakSelf.actionableActivityIndicator.stopAnimating()

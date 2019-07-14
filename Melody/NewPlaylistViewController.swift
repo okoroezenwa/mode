@@ -105,7 +105,7 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
         
         notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillHideNotification, object: nil)
-        notifier.addObserver(tableView, selector: #selector(UITableView.reloadData), name: .lineHeightsCalculated, object: nil)
+        notifier.addObserver(tableView as Any, selector: #selector(UITableView.reloadData), name: .lineHeightsCalculated, object: nil)
         
         let swipeRight = UISwipeGestureRecognizer.init(target: songManager, action: #selector(SongActionManager.toggleEditing(_:)))
         swipeRight.direction = .right
@@ -258,9 +258,7 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
         creationMetadata.descriptionText = descriptionText ?? ""
         
 //        UIApplication.shared.isNetworkActivityIndicatorVisible = true
-        (parent as? PresentedContainerViewController)?.activityIndicator.startAnimating()
-        (parent as? PresentedContainerViewController)?.rightButton.isHidden = true
-        (parent as? PresentedContainerViewController)?.rightBorderView.isHidden = true
+        (parent as? PresentedContainerViewController)?.updateIndicator(to: .visible)
             
         musicLibrary.getPlaylist(with: UUID(), creationMetadata: creationMetadata, completionHandler: { [weak self] playlist, error in
             
@@ -290,9 +288,7 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
                             
                         } else {
                             
-                            parent.rightButton.isHidden = false
-                            parent.rightBorderView.isHidden = false
-                            parent.activityIndicator.stopAnimating()
+                            parent.updateIndicator(to: .hidden)
 //                            UIApplication.shared.isNetworkActivityIndicatorVisible = false
                             parent.performSegue(withIdentifier: "unwind", sender: nil)
                         }
@@ -322,17 +318,13 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
                                         
                                         if weakSelf.fromQueue, let _ = weakSelf.manager {
                                             
-                                            parent.rightButton.isHidden = false
-                                            parent.rightBorderView.isHidden = false
-                                            parent.activityIndicator.stopAnimating()
+                                            parent.updateIndicator(to: .hidden)
 //                                            UIApplication.shared.isNetworkActivityIndicatorVisible = false
                                             notifier.post(name: .endQueueModification, object: nil)
                                             
                                         } else {
                                             
-                                            parent.rightButton.isHidden = false
-                                            parent.rightBorderView.isHidden = false
-                                            parent.activityIndicator.stopAnimating()
+                                            parent.updateIndicator(to: .hidden)
 //                                            UIApplication.shared.isNetworkActivityIndicatorVisible = false
                                             parent.performSegue(withIdentifier: "unwind", sender: nil)
                                         }
@@ -345,17 +337,13 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
                                         
                                         if weakSelf.fromQueue {
                                             
-                                            parent.rightButton.isHidden = false
-                                            parent.rightBorderView.isHidden = false
-                                            parent.activityIndicator.stopAnimating()
+                                            parent.updateIndicator(to: .hidden)
 //                                            UIApplication.shared.isNetworkActivityIndicatorVisible = false
                                             notifier.post(name: .endQueueModification, object: nil)
                                             
                                         } else {
                                             
-                                            parent.rightButton.isHidden = false
-                                            parent.rightBorderView.isHidden = false
-                                            parent.activityIndicator.stopAnimating()
+                                            parent.updateIndicator(to: .hidden)
 //                                            UIApplication.shared.isNetworkActivityIndicatorVisible = false
                                             parent.performSegue(withIdentifier: "unwind", sender: nil)
                                         }
@@ -372,9 +360,7 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
                     newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
                     newBanner.show(duration: 0.6)
                     
-                    parent.rightButton.isHidden = false
-                    parent.rightBorderView.isHidden = false
-                    parent.activityIndicator.stopAnimating()
+                    parent.updateIndicator(to: .hidden)
 //                    UIApplication.shared.isNetworkActivityIndicatorVisible = false
                 }
             }

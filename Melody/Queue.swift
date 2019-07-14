@@ -12,41 +12,73 @@ import Foundation
 class Queue {
     
     static let shared = Queue()
-    var currentQueue = [QueueItem]()
-    
-    enum RemovalCompletion { case none, placeFirst, placeAfter(item: MPMediaItem) }
-    
-    private init() {
-    
-        notifier.addObserver(self, selector: #selector(updateIndex), name: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer)
+    var currentQueue = [MPMediaItem]()
+    var previousItem: MPMediaItem?
+    var queueCount: Int { return useSystemPlayer ? musicPlayer.queueCount() : currentQueue.count }
+    var indexOfNowPlayingItem: Int?
+    var queueWasModifiedWhileInBackground = false // likely will be used if Siri Shortcuts are added.
+    var indexToUse: Int? {
         
-        notifier.addObserver(self, selector: #selector(saveQueue(with:)), name: .saveQueue, object: musicPlayer)
-    }
-    
-    func remove(_ items: [MPMediaItem], completion: RemovalCompletion = .none) {
-        
-        currentQueue.removeAll(where: { Set(items).contains($0.item) })
-        
-        switch completion {
+        if useSystemPlayer {
             
-            case .none: return
+            return musicPlayer.nowPlayingItemIndex
             
-            case .placeFirst: place(items, after: nil, verifyDuplicates: false, removeAfterPlayback: false)
+        } else {
             
-            case .placeAfter(item: let item): place(items, after: item, verifyDuplicates: false, removeAfterPlayback: false)
+            return musicPlayer.nowPlayingItemIndex == indexOfNowPlayingItem ? musicPlayer.nowPlayingItemIndex : indexOfNowPlayingItem
         }
     }
     
-    func place(_ items: [MPMediaItem], after item: MPMediaItem?, verifyDuplicates verify: Bool = true, removeAfterPlayback: Bool = false) {
+    enum RemovalCompletion { case none(completion: EmptyCompletion), placeAfter(item: MPMediaItem?, completion: EmptyCompletion) }
+    
+    private init() {
+    
+        notifier.addObserver(self, selector: #selector(updateIndex), name: .nowPlayingItemChanged, object: musicPlayer)
+        
+        notifier.addObserver(self, selector: #selector(saveQueue), name: .saveQueue, object: musicPlayer)
+    }
+    
+    func remove(_ items: [MPMediaItem], completion: RemovalCompletion) {
+        
+        currentQueue.removeAll(where: { Set(items).contains($0) })
+        
+        switch completion {
+            
+            case .none(completion: let completionBlock):
+                
+                performQueueModificationCompletion()
+                completionBlock()
+            
+            case .placeAfter(item: let item, completion: let completionBlock): place(items, after: item, verifyDuplicates: false, completion: completionBlock)
+        }
+    }
+    
+    func remove(at index: Int, movingTo newIndex: Int?, completion: EmptyCompletion) {
+        
+        let item = currentQueue.remove(at: index)
+        
+        if let newIndex = newIndex {
+            
+            place([item], at: newIndex, completion: completion)
+            
+        } else {
+        
+            performQueueModificationCompletion()
+            
+            completion()
+        }
+    }
+    
+    func place(_ items: [MPMediaItem], after item: MPMediaItem?, verifyDuplicates verify: Bool = true, removeAfterPlayback: Bool = false, completion: EmptyCompletion) {
         
         if verify {
         
-            currentQueue.removeAll(where: { Set(items).contains($0.item) })
+            currentQueue.removeAll(where: { Set(items).contains($0) })
         }
         
         let index: Int = {
             
-            if let index = currentQueue.firstIndex(where: { $0.item == item }) {
+            if let index = currentQueue.firstIndex(where: { $0 == item }) {
                 
                 return currentQueue.index(after: index)
             }
@@ -54,54 +86,112 @@ class Queue {
             return 0
         }()
         
-        currentQueue.insert(contentsOf: items.map({ QueueItem.init(shouldRemoveAfterPlayback: removeAfterPlayback, item: $0) }), at: index)
+        currentQueue.insert(contentsOf: items, at: index)
+        performQueueModificationCompletion()
+        
+        completion()
     }
     
-    @objc func saveQueue(with notification: Notification) {
+    func place(_ items: [MPMediaItem], at index: Int, completion: EmptyCompletion) {
         
-        guard !useSystemPlayer, #available(iOS 10.3, *), let _ = musicPlayer as? MPMusicPlayerApplicationController, let queue = notification.userInfo?[String.queueItems] as? [MPMediaItem] else { return }
+        currentQueue.insert(contentsOf: items, at: index)
+        performQueueModificationCompletion()
         
-        var finalQueue: [MPMediaItem] {
+        completion()
+    }
+    
+    func clearAllButNowPlaying(completion: EmptyCompletion?) {
+        
+        currentQueue = [musicPlayer.nowPlayingItem].compactMap({ $0 })
+        performQueueModificationCompletion()
+        
+        completion?()
+    }
+    
+    func performQueueModificationCompletion(with item: MPMediaItem? = musicPlayer.nowPlayingItem, shouldUpdateIndex: Bool = true) {
+        
+        indexOfNowPlayingItem = item == nil ? nil : (currentQueue.firstIndex(where: { $0 == item }) ?? 0)
+        saveQueue()
+        
+        if shouldUpdateIndex {
             
-            if queue.isEmpty.inverted, let reset = notification.userInfo?["reset"] as? Bool, reset.inverted, forceOldStyleQueue, let data = prefs.object(forKey: .queueItems) as? Data, let items = NSKeyedUnarchiver.unarchiveObject(with: data) as? [MPMediaItem], items.isEmpty.inverted {
-                
-                return items + queue
-            }
+            updateIndex(self)
+        }
+    }
+    
+    @objc func saveQueue() {
+        
+        guard !useSystemPlayer, #available(iOS 10.3, *), let _ = musicPlayer as? MPMusicPlayerApplicationController else { return }
+        
+        let savedData = NSKeyedArchiver.archivedData(withRootObject: currentQueue)
+        prefs.set(savedData, forKey: .queueItems)
+    }
+    
+    @objc func updateIndex(_ sender: Any) {
+        
+        guard !useSystemPlayer, #available(iOS 10.3, *), let _ = musicPlayer as? MPMusicPlayerApplicationController else { return }
+        
+        if queueWasModifiedWhileInBackground.inverted, sender is Notification {
+        
+            indexOfNowPlayingItem = currentQueue.firstIndex(where: { $0 == musicPlayer.nowPlayingItem })
             
-            return queue
+            notifier.post(name: .indexUpdated, object: musicPlayer, userInfo: [.queueChange: true])
         }
         
-        let savedData = NSKeyedArchiver.archivedData(withRootObject: finalQueue)
-        prefs.set(savedData, forKey: .queueItems)
+        prefs.set(musicPlayer.currentPlaybackTime, forKey: .currentPlaybackTime)
         prefs.set(musicPlayer.repeatMode.rawValue, forKey: .repeatMode)
+        
+        if let index = indexToUse {
+            
+            prefs.set(index, forKey: .indexOfNowPlayingItem)
+        }
     }
     
-    @objc func updateIndex() {
+    func updateCurrentQueue(with items: [MPMediaItem], startingItem item: MPMediaItem?, shouldUpdateIndex: Bool = true) {
         
-        guard !useSystemPlayer, #available(iOS 10.3, *), let _ = musicPlayer as? MPMusicPlayerApplicationController, let index = musicPlayer.nowPlayingItemIndex else { return }
+        guard !useSystemPlayer, #available(iOS 10.3, *), let _ = musicPlayer as? MPMusicPlayerApplicationController else { return }
         
-        prefs.set(index, forKey: .indexOfNowPlayingItem)
-        prefs.set(musicPlayer.currentPlaybackTime, forKey: .currentPlaybackTime)
+        currentQueue = items
+        performQueueModificationCompletion(with: item, shouldUpdateIndex: shouldUpdateIndex)
     }
     
     func verifyQueue() {
         
         guard !useSystemPlayer, #available(iOS 10.3, *), let musicPlayer = musicPlayer as? MPMusicPlayerApplicationController, musicPlayer.nowPlayingItem == nil else {
             
-            appDelegate.saveQueue()
+            updateIndex(self)
             
             if #available(iOS 10.3, *), !useSystemPlayer {
                 
-                MPMusicPlayerController.applicationQueuePlayer.perform(queueTransaction: { _ in }, completionHandler: { controller, _ in notifier.post(name: .saveQueue, object: nil, userInfo: [String.queueItems: controller.items]) })
+                MPMusicPlayerController.applicationQueuePlayer.perform(queueTransaction: { _ in }, completionHandler: { controller, _ in self.updateCurrentQueue(with: controller.items, startingItem: controller.items.value(at: prefs.integer(forKey: .indexOfNowPlayingItem))) })
             }
             
             return
         }
         
-        guard let data = prefs.object(forKey: .queueItems) as? Data, let queue = NSKeyedUnarchiver.unarchiveObject(with: data) as? [MPMediaItem], !queue.isEmpty else { return }
+        guard let data = prefs.object(forKey: .queueItems) as? Data, let queue: [MPMediaItem] = {
+            
+            if let items = NSKeyedUnarchiver.unarchiveObject(with: data) as? [MPMediaItem] {
+                
+                currentQueue = items//.map({ QueueItem.init(shouldRemoveAfterPlayback: false, item: $0) })
+                
+                return items
+                
+            }/* else if let items = NSKeyedUnarchiver.unarchiveObject(with: data) as? [QueueItem] {
+                
+                currentQueue = items
+                
+                return items.map({ $0.item })
+            }*/
+            
+            return nil
+            
+        }(), !queue.isEmpty else { return }
         
         let index = prefs.integer(forKey: .indexOfNowPlayingItem)
         let time = prefs.double(forKey: .currentPlaybackTime)
+        
+        indexOfNowPlayingItem = index
         
         musicPlayer.repeatMode = MPMusicRepeatMode.init(rawValue: prefs.integer(forKey: .repeatMode)) ?? .none
         
@@ -116,20 +206,22 @@ class Queue {
             musicPlayer.setQueue(with: .init(items: queue))
         }
         
-        musicPlayer.nowPlayingItem = queue[index < queue.count ? index : 0]
+        let item = queue[index < queue.count ? index : 0]
+        
+        musicPlayer.nowPlayingItem = item
         musicPlayer.prepareToPlay()
 
-        if #available(iOS 11.3, *) { musicPlayer.pause() }
+//        if #available(iOS 12.3, *) { } else if #available(iOS 11.3, *) { musicPlayer.pause() }
         
         UniversalMethods.performOnMainThread({
             
             musicPlayer.currentPlaybackTime = time
-            NowPlaying.shared.container?.updateTimes(setValue: true, seeking: false)
+            NowPlaying.shared.container?.updateTimes(for: item, to: time, setValue: true, seeking: false)
             
         }, afterDelay: 1)
     
         prefs.set(time, forKey: .currentPlaybackTime)
-        NowPlaying.shared.registered.forEach({ $0?.updateTimes(setValue: true, seeking: false )})
+        NowPlaying.shared.registered.forEach({ $0?.updateTimes(for: item, to: time, setValue: true, seeking: false )})
     }
 }
 

@@ -427,7 +427,7 @@ extension EntityVerifiable {
                     prefs.set(section.rawValue, forKey: .lastUsedLibrarySection)
                     container.switchViewController(container.libraryButton)
                 
-                } else if let sections = container.filterViewContainer.filterView.properties as? [LibrarySection], let index = sections.index(of: section) {
+                } else if let sections = container.filterViewContainer.filterView.properties as? [LibrarySection], let index = sections.firstIndex(of: section) {
                     
                     container.filterViewContainer.filterView.collectionView(container.filterViewContainer.filterView.collectionView, didSelectItemAt: .init(item: index, section: 0))
                     container.filterViewContainer.filterView.collectionView.scrollToItem(at: .init(item: index, section: 0), at: .centeredHorizontally, animated: true)

@@ -37,9 +37,9 @@ public extension MPMusicPlayerController {
     
     func fullQueueCount(withInitialSpace: Bool, parentheses: Bool = true) -> String {
         
-        guard let index = nowPlayingItemIndex else { return (withInitialSpace ? " " : "") + (parentheses ? "(" : "") + "? of " + queueCount().formatted + (parentheses ? ")" : "") }
+        guard let index = Queue.shared.indexToUse else { return (withInitialSpace ? " " : "") + (parentheses ? "(" : "") + "? of " + Queue.shared.queueCount.formatted + (parentheses ? ")" : "") }
         
-        return (withInitialSpace ? " " : "") + (parentheses ? "(" : "") + (index + 1).formatted + " of " + queueCount().formatted + (parentheses ? ")" : "")
+        return (withInitialSpace ? " " : "") + (parentheses ? "(" : "") + (index + 1).formatted + " of " + Queue.shared.queueCount.formatted + (parentheses ? ")" : "")
     }
     
     func play(_ items: [MPMediaItem],
@@ -63,7 +63,7 @@ public extension MPMusicPlayerController {
             
             if shuffleMode == .off {
                 
-                notifier.post(name: .saveQueue, object: self, userInfo: [String.queueItems: items])
+                Queue.shared.updateCurrentQueue(with: items, startingItem: item, shouldUpdateIndex: false)
             }
             
             self.pause()//stop()
@@ -154,7 +154,7 @@ public extension MPMusicPlayerController {
                 
                 musicPlayer.perform(queueTransaction: { _ in }, completionHandler: { controller, _ in
                 
-                    notifier.post(name: .saveQueue, object: musicPlayer, userInfo: [String.queueItems: controller.items])
+                    Queue.shared.updateCurrentQueue(with: controller.items, startingItem: item, shouldUpdateIndex: false)
                 })
             }
         }
@@ -227,6 +227,9 @@ public extension MPMusicPlayerController {
             
             let addToQueue: () -> () = {
                 
+                var itemsToInsert = [MPMediaItem]()
+                var itemBefore: MPMediaItem?
+                
                 musicPlayer.perform(queueTransaction: { controller in
                     
                     let checked = Set(controller.items)
@@ -243,9 +246,13 @@ public extension MPMusicPlayerController {
                         }
                     }()
                     
+                    DispatchQueue.main.async { itemBefore = item }
+                    
                     switch queueKind {
                         
                         case .items(let items):
+                            
+                            DispatchQueue.main.async { itemsToInsert = items }
                         
                             for song in items {
 
@@ -255,13 +262,13 @@ public extension MPMusicPlayerController {
 
                                     controller.remove(song)
                                 }
-
-//                                controller.insert(MPMusicPlayerMediaItemQueueDescriptor.init(itemCollection: .init(items: [song])), after: item)
                             }
-                        
-                            controller.insert(MPMusicPlayerMediaItemQueueDescriptor.init(itemCollection: .init(items: items)), after: item)
+
+                        controller.insert(MPMusicPlayerMediaItemQueueDescriptor.init(itemCollection: .init(items: items)), after: item)
                         
                         case .queries(let queries):
+                            
+                            DispatchQueue.main.async { itemsToInsert = queries.reduce([], { $0 + ($1.items ?? []) }) }
                         
                             if queries.count > 1 {
                                 
@@ -308,28 +315,37 @@ public extension MPMusicPlayerController {
                     
                 }, completionHandler: { controller, error in
                     
-                    notifier.post(name: .saveQueue, object: musicPlayer, userInfo: [String.queueItems: controller.items])
+//                    notifier.post(name: .saveQueue, object: musicPlayer, userInfo: [String.queueItems: controller.items])
                     
-                    if let error = error {
-                        
-                        guard isInDebugMode else { return }
+                    if let error = error, isInDebugMode {
                         
                         UniversalMethods.banner(withTitle: error.localizedDescription).show(for: 1)
-                        
-                    } else {
-                        
-                        showAlert()
+                    }
+                    
+                    showAlert()
+                    
+                    Queue.shared.place(itemsToInsert, after: itemBefore, completion: {
                         
                         notifier.post(name: .queueUpdated, object: musicPlayer, userInfo: [String.musicPlayerController: controller])
-                        notifier.post(name: .queueModified, object: nil)
+                        notifier.post(name: .queueModified, object: [.queueChange: true])
                         
                         switch completionKind {
                             
                             case .notification: break//notifier.post(name: .queueUpdated, object: musicPlayer, userInfo: [String.musicPlayerController: controller])
-                                
+                            
                             case .completion(let completion): completion?()
                         }
-                    }
+                    })
+                    
+//                    notifier.post(name: .queueUpdated, object: musicPlayer, userInfo: [String.musicPlayerController: controller])
+//                    notifier.post(name: .queueModified, object: nil)
+//
+//                    switch completionKind {
+//
+//                        case .notification: break//notifier.post(name: .queueUpdated, object: musicPlayer, userInfo: [String.musicPlayerController: controller])
+//
+//                        case .completion(let completion): completion?()
+//                    }
                 })
             }
             
@@ -405,7 +421,7 @@ public extension MPMusicPlayerController {
                         completion?()
                     }
                     
-                    notifier.post(name: .saveQueue, object: musicPlayer, userInfo: [String.queueItems: itemDescriptor.query.items ?? itemDescriptor.itemCollection.items, "reset": false])
+                    Queue.shared.updateCurrentQueue(with: itemDescriptor.query.items ?? itemDescriptor.itemCollection.items, startingItem: nil, shouldUpdateIndex: false)
                     
                     return
                 }
@@ -436,7 +452,7 @@ public extension MPMusicPlayerController {
                     
                 case .after(item: _, index: let index): return index
                     
-                case .last: return queueCount() - 1
+                case .last: return Queue.shared.queueCount - 1
             }
         
         }() else { return nil }
@@ -446,7 +462,7 @@ public extension MPMusicPlayerController {
             
             switch position {
                     
-                case .next, .after: return (index + 1) == queueCount() ? [] : Array((index + 1)...(queueCount() - 1))
+                case .next, .after: return (index + 1) == Queue.shared.queueCount ? [] : Array((index + 1)...(Queue.shared.queueCount - 1))
                     
                 case .last: return []
             }

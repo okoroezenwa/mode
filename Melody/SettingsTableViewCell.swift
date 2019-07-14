@@ -16,7 +16,6 @@ class SettingsTableViewCell: UITableViewCell {
     @IBOutlet var chevron: MELImageView!
     @IBOutlet var check: MELImageView!
     @IBOutlet var itemSwitch: MELSwitchContainer!
-    @IBOutlet var borderViews: [MELBorderView]!
     @IBOutlet var accessoryButton: MELButton!
     @IBOutlet var buttonBorderView: MELBorderView!
     @IBOutlet var stackView: UIStackView!
@@ -24,10 +23,13 @@ class SettingsTableViewCell: UITableViewCell {
     @IBOutlet var leadingImageViewWidthConstraint: NSLayoutConstraint!
     @IBOutlet var labelsStackView: UIStackView!
     @IBOutlet var leadingImageViewLeadingConstraint: NSLayoutConstraint!
+    @IBOutlet var topBorderView: MELBorderView!
+    @IBOutlet var bottomBorderView: MELBorderView!
     
     enum Context { case setting, alert(cancel: Bool) }
     
     weak var delegate: SettingsCellDelegate?
+    var borderViews: [MELBorderView] { return [topBorderView, bottomBorderView] }
     
     override func awakeFromNib() {
         
@@ -85,10 +87,10 @@ class SettingsTableViewCell: UITableViewCell {
         delegate?.accessoryButtonTapped(in: self)
     }
     
-    func prepare(with setting: Setting, animated: Bool = false, context: Context = .setting, alignment: NSTextAlignment = .left) {
+    func prepare(with setting: Setting, animated: Bool = false, context: Context = .setting) {
         
         titleLabel.text = setting.title
-        titleLabel.textAlignment = alignment
+        titleLabel.textAlignment = setting.textAlignment
         subtitleLabel.text = setting.subtitle
         subtitleLabel.isHidden = setting.subtitle == nil
         tertiaryLabel.text = setting.tertiaryDetail
@@ -118,7 +120,9 @@ class SettingsTableViewCell: UITableViewCell {
                 return true
             }
         }()
-//        borderViews.forEach({ $0.isHidden = setting.accessoryType != .none })
+        
+        topBorderView.isHidden = Set([Setting.BorderVisibility.bottom, .none]).contains(setting.borderVisibility)
+        bottomBorderView.isHidden = Set([Setting.BorderVisibility.top, .none]).contains(setting.borderVisibility)
         
         accessoryButton.superview?.isHidden = {
             
@@ -163,6 +167,19 @@ class SettingsTableViewCell: UITableViewCell {
             
                 titleLabel.fontWeight = FontWeight.regular.rawValue
                 labelsStackView.layoutMargins.left = 10
+                
+                labelsStackView.layoutMargins.right = {
+                    
+                    if setting.accessoryType == .none, setting.tertiaryDetail == nil {
+                        
+                        return 10
+                        
+                    } else {
+                        
+                        return 0
+                    }
+                }()
+                
                 leadingImageViewLeadingConstraint.constant = 10
                 leadingImageViewWidthConstraint.constant = 17
             
@@ -201,6 +218,10 @@ struct Setting {
     let accessoryType: Setting.AccessoryType
     let image: UIImage?
     let inactive: (() -> Bool)
+    let textAlignment: NSTextAlignment
+    let borderVisibility: BorderVisibility
+    
+    enum BorderVisibility { case none, top, bottom, both }
     
     enum AccessoryType: Equatable {
         
@@ -243,7 +264,7 @@ struct Setting {
         }
     }
     
-    init(title: String, subtitle: String? = nil, image: UIImage? = nil, tertiaryDetail: String? = nil, accessoryType: AccessoryType, inactive inactiveCondition: @escaping (() -> Bool) = { false }) {
+    init(title: String, subtitle: String? = nil, image: UIImage? = nil, tertiaryDetail: String? = nil, accessoryType: AccessoryType, textAlignment alignment: NSTextAlignment = .left, borderVisibility: BorderVisibility = .none, inactive inactiveCondition: @escaping (() -> Bool) = { false }) {
         
         self.title = title
         self.subtitle = subtitle
@@ -251,6 +272,8 @@ struct Setting {
         self.image = image
         self.accessoryType = accessoryType
         self.inactive = inactiveCondition
+        self.textAlignment = alignment
+        self.borderVisibility = borderVisibility
     }
 }
 

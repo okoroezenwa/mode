@@ -194,6 +194,8 @@ extension NavigationAnimationController: UINavigationControllerDelegate {
                 return self
             
             case .none: return nil
+            
+            @unknown default: return nil
         }
     }
 }

@@ -151,7 +151,7 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
         
         notifier.addObserver(self, selector: #selector(updateUpNextButton), name: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer)
         notifier.addObserver(self, selector: #selector(updateForChangedItems), name: .managerItemsChanged, object: nil)
-        notifier.addObserver(tableView, selector: #selector(UITableView.reloadData), name: .lineHeightsCalculated, object: nil)
+        notifier.addObserver(tableView as Any, selector: #selector(UITableView.reloadData), name: .lineHeightsCalculated, object: nil)
         [Notification.Name.entityCountVisibilityChanged, .showExplicitnessChanged].forEach({ notifier.addObserver(self, selector: #selector(updateEntityCountVisibility), name: $0, object: nil) })
     }
     
@@ -360,7 +360,7 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
         
         tableView.deleteRows(at: details.indexPathsToRemove, with: .none)
         parent.prepare(animated: true)
-        songManager.toggleEditing(editButton)
+        songManager.toggleEditing(editButton as Any)
 //        updateHeaderView(with: (manager?.queue ?? playlistItems).count, animated: true)
     }
     
@@ -415,7 +415,7 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
                 parent.dismiss(animated: true, completion: nil)
             }
 
-            songManager.toggleEditing(editButton)
+            songManager.toggleEditing(editButton as Any)
         }
     }
 
@@ -433,7 +433,7 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
 
             notifier.post(name: .removedFromQueue, object: nil)
 
-            songManager.toggleEditing(editButton)
+            songManager.toggleEditing(editButton as Any)
         }
     }
     

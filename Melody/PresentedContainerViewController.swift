@@ -32,7 +32,7 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
     @IBOutlet var promptLabel: MELLabel!
     @IBOutlet var topStackViewConstraint: NSLayoutConstraint!
     
-    enum ChildContext { case items, playlists, upNext, newPlaylist, settings, tips, queue, playlistDetails, info, songDetails, queueGuard, theme, gestures, playback, tabBar, background, filter, artwork, icon, fullPlayer, libraryRefresh, recents, properties, lyricsInfo, propertySettings }
+    enum ChildContext { case items, playlists, upNext, newPlaylist, settings, tips, queue, playlistDetails, info, songDetails, queueGuard, theme, gestures, playback, tabBar, background, filter, artwork, icon, fullPlayer, libraryRefresh, recents, properties, propertySettings, lyricsInfo, lyricsEdit, savedLyrics }
     
     var context = ChildContext.items
     var manager: QueueManager?
@@ -57,7 +57,7 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
     var transitionStart: (() -> ())?
     var transitionAnimation: (() -> ())?
     var transitionCancellation: (() -> ())?
-    lazy var optionsContext = InfoViewController.Context.song(location: .queue(loaded: true, index: musicPlayer.nowPlayingItemIndex), at: 0, within: [musicPlayer.nowPlayingItem].compactMap({ $0 }))
+    lazy var optionsContext = InfoViewController.Context.song(location: .queue(loaded: true, index: Queue.shared.indexToUse), at: 0, within: [musicPlayer.nowPlayingItem].compactMap({ $0 }))
     lazy var filterContext = FilterViewContext.library
     override var transitioningDelegate: UIViewControllerTransitioningDelegate? {
         
@@ -145,7 +145,15 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
         
         let vc = presentedChilrenStoryboard.instantiateViewController(withIdentifier: "textVC") as! TextViewController
         
-        vc.newPlaylistVC = self.newVC
+        if self.context == .playlistDetails {
+            
+            vc.context = .details
+            vc.newPlaylistVC = self.newVC
+        
+        } else if self.context == .lyricsEdit {
+            
+            vc.context = .lyrics
+        }
         
         return vc
     }()
@@ -241,16 +249,22 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
         
         return vc
     }()
+    @objc lazy var propertySettingsVC: PropertiesTableViewController = {
+        
+        let vc = settingsStoryboard.instantiateViewController(withIdentifier: String.init(describing: PropertiesTableViewController.self)) as! PropertiesTableViewController
+        vc.context = filterContext
+        
+        return vc
+    }()
     @objc lazy var lyricsInfoVC: LyricsInfoViewController = {
         
         let vc = UIStoryboard.init(name: "LyricsInfoViewController", bundle: nil).instantiateViewController(withIdentifier: "LyricsInfoViewController") as! LyricsInfoViewController
         
         return vc
     }()
-    @objc lazy var propertySettingsVC: PropertiesTableViewController = {
+    @objc lazy var savedLyricsVC: SavedLyricsViewController = {
         
-        let vc = settingsStoryboard.instantiateViewController(withIdentifier: String.init(describing: PropertiesTableViewController.self)) as! PropertiesTableViewController
-        vc.context = filterContext
+        let vc = UIStoryboard.init(name: "SavedLyricsViewController", bundle: nil).instantiateViewController(withIdentifier: "SavedLyricsViewController") as! SavedLyricsViewController
         
         return vc
     }()
@@ -289,12 +303,7 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
             
             switch context {
                 
-                case .playlists:
-                    
-//                    prompt = "0 selected playlists"
-//                    updatePrompt(animated: false)
-                    
-                    return playlistsVC
+                case .playlists: return playlistsVC
                 
                 case .upNext: return queueTVC
                 
@@ -308,7 +317,7 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
                 
                 case .queue: return qVC
                 
-                case .playlistDetails: return textVC
+                case .playlistDetails, .lyricsEdit: return textVC
                 
                 case .info: return newOptionsVC
                 
@@ -343,6 +352,8 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
                 case .lyricsInfo: return lyricsInfoVC
                 
                 case .propertySettings: return propertySettingsVC
+                
+                case .savedLyrics: return savedLyricsVC
             }
         }()
         
@@ -365,6 +376,24 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
     @objc func updateStatusBar() {
         
         setNeedsStatusBarAppearanceUpdate()
+    }
+    
+    func updateIndicator(to state: VisibilityState) {
+        
+        switch state {
+            
+            case .hidden:
+            
+                activityIndicator.stopAnimating()
+                rightButton.isHidden = false
+                rightBorderView.isHidden = false
+            
+            case .visible:
+            
+                activityIndicator.startAnimating()
+                rightButton.isHidden = true
+                rightBorderView.isHidden = true
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -519,6 +548,8 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
                 
                 case .lyricsInfo: return "Lyrics Details"
                 
+                case .lyricsEdit: return "Edit Lyrics"
+                
                 case .propertySettings:
                 
                     switch filterContext {
@@ -527,6 +558,8 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
                         
                         case .filter: return "Search Categories"
                     }
+                
+                case .savedLyrics: return "Saved Lyrics"
             }
         }()
         
@@ -543,7 +576,7 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
     
         switch context {
             
-            case /*.items, */.upNext: break
+            case /*.items, */.upNext, .savedLyrics: break
             
             case .filter:
             
@@ -568,7 +601,7 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
                     }
                 }
             
-            case .newPlaylist, /*.playlists,*/ .playlistDetails:
+            case .newPlaylist, .lyricsInfo, .playlistDetails, .lyricsEdit:
                 
                 if updateConstraintsAndButtons {
                     
@@ -581,7 +614,8 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
                     
                     rightButton.setImage(#imageLiteral(resourceName: "Lightbulb"), for: .normal)
                 }
-        case .tips, .playlists, .songDetails, .queueGuard, .theme, .gestures, .playback, .tabBar, .background, .artwork, .icon, .fullPlayer, .libraryRefresh, .recents, .items, .properties, .lyricsInfo, .propertySettings:
+            
+            case .tips, .playlists, .songDetails, .queueGuard, .theme, .gestures, .playback, .tabBar, .background, .artwork, .icon, .fullPlayer, .libraryRefresh, .recents, .items, .properties, .propertySettings:
                 
                 if updateConstraintsAndButtons {
                     
@@ -704,6 +738,8 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
             
             case .filter: filterVC.clearRecentSearches()
             
+            case .savedLyrics: savedLyricsVC.clearLyrics()
+            
             case .info:
             
                 guard isInDebugMode else { break }
@@ -717,7 +753,41 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
             
                 dismissVC()
             
-            case .songDetails, .tips, .queueGuard, .theme, .gestures, .playback, .tabBar, .background, .artwork, .icon, .fullPlayer, .libraryRefresh, .recents, .items, .properties, .lyricsInfo, .propertySettings: break
+            case .lyricsInfo:
+                
+                if lyricsInfoVC.hasChanges {
+            
+                    lyricsInfoVC.currentObject.lyrics = lyricsInfoVC.editedLyrics ?? lyricsInfoVC.currentObject.lyrics
+                    lyricsInfoVC.manager?.storeLyrics(for: lyricsInfoVC.item, via: lyricsInfoVC)
+                
+                    if lyricsInfoVC.item == lyricsInfoVC.manager?.item {
+                        
+                        lyricsInfoVC.manager?.currentObject = lyricsInfoVC.currentObject
+                        lyricsInfoVC.manager?.viewer?.useDeviceLyrics(source: lyricsInfoVC.manager?.currentObject.source, lyrics: lyricsInfoVC.manager?.currentObject.lyrics, animated: true)
+                    
+                    } else {
+                        
+                        UniversalMethods.banner(withTitle: "Lyrics Updated").show(for: 2)
+                    }
+                }
+            
+                dismissVC()
+            
+            case .lyricsEdit:
+                
+                if textVC.textView.text != textVC.object.lyrics {
+                    
+                    textVC.object.lyrics = textVC.textView.text
+                    textVC.updater?.updateLyrics(with: textVC.object)
+                    
+                } else if let lyricsInfoVC = textVC.updater as? LyricsInfoViewController {
+                    
+                    lyricsInfoVC.editedLyrics = nil
+                }
+            
+                dismissVC()
+            
+            case .songDetails, .tips, .queueGuard, .theme, .gestures, .playback, .tabBar, .background, .artwork, .icon, .fullPlayer, .libraryRefresh, .recents, .items, .properties, .propertySettings: break
             
             case /*.items,*/ .upNext:
                 

@@ -109,9 +109,6 @@ class QueueInsertViewController: UIViewController, BorderButtonContaining {
         
         verticalPresentedVC?.setTitle(labelTitle)
         
-//        afterView.isHidden = !allowPlayAfter
-//        laterView.isHidden = !allowPlayLast
-        
         [nextView, afterView, laterView].forEach({
             
             $0.borderViewTopConstraint.constant = 9

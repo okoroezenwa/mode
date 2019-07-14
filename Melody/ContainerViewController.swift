@@ -227,7 +227,6 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         ArtworkManager.shared.container = self
         imageView.image = (activeViewController?.topViewController as? ArtworkModifying)?.artworkType.image
         
-        updateTimes(setValue: true, seeking: false)
         prepareNowPlayingViews(with: musicPlayer.nowPlayingItem, animated: false)
         prepareLifetimeObservers()
         prepareAltAlbumArt()
@@ -819,7 +818,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         
         guard musicPlayer.nowPlayingItem != nil else { return }
         
-        Transitioner.shared.showInfo(from: self, with: .song(location: .queue(loaded: false, index: musicPlayer.nowPlayingItemIndex), at: 0, within: [musicPlayer.nowPlayingItem].compactMap({ $0 })))
+        Transitioner.shared.showInfo(from: self, with: .song(location: .queue(loaded: false, index: Queue.shared.indexToUse), at: 0, within: [musicPlayer.nowPlayingItem].compactMap({ $0 })))
     }
     
     @IBAction func clearItems(_ sender: Any) {

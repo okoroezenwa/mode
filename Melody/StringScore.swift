@@ -24,8 +24,23 @@
 //  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 //  DEALINGS IN THE SOFTWARE.
 //
-
+#warning("Not official version")
 import Foundation
+
+private extension String {
+    
+    func charAt(_ i: Int) -> Character {
+        
+        let index = self.index(self.startIndex, offsetBy: i)
+        
+        return self[index]
+    }
+    
+    func charStrAt(_ i: Int) -> String {
+        
+        return String(charAt(i))
+    }
+}
 
 public extension String {
     
@@ -41,20 +56,19 @@ public extension String {
             return 0
         }
         
-        var
-        runningScore = 0.0,
-        charScore = 0.0,
-        finalScore = 0.0,
-        string = self,
-        lString = string.lowercased(),
-        strLength = string.count,
-        lWord = word.lowercased(),
-        wordLength = word.count,
-        idxOf: String.Index!,
-        startAt = lString.startIndex,
-        fuzzies = 1.0,
-        fuzzyFactor = 0.0,
-        fuzzinessIsNil = true
+        var runningScore = 0.0
+        var charScore = 0.0
+        var finalScore = 0.0
+        
+        let string = self
+        let strLength = string.count
+        let wordLength = word.count
+        
+        var idxOf: String.Index!
+        var startAt = string.startIndex
+        var fuzzies = 1.0
+        var fuzzyFactor = 0.0
+        var fuzzinessIsNil = true
         
         // Cache fuzzyFactor for speed increase
         if let fuzziness = fuzziness {
@@ -66,17 +80,16 @@ public extension String {
             // Find next first case-insensitive match of word's i-th character.
             // The search in "string" begins at "startAt".
             
-//            let range = startAt..<lString.endIndex
-//            let other = range.lowerBound...range.upperBound
-            
-            if let range = lString.range(of:
-                String(lWord[lWord.index(lWord.startIndex, offsetBy: i)] as Character),
-                                         options: NSString.CompareOptions.caseInsensitive,
-                                         range: startAt..<lString.endIndex/*Range<String.Index>.init(uncheckedBounds: (startAt, lString.endIndex))(startAt..<lString.endIndex)*/,
-                                         locale: nil
+            if let range = string.range(
+                of: word.charStrAt(i),
+                options: [.caseInsensitive, .diacriticInsensitive],
+                range: startAt..<string.endIndex,
+                locale: nil
                 ) {
+                
                 // start index of word's i-th character in string.
                 idxOf = range.lowerBound
+                
                 if startAt == idxOf {
                     // Consecutive letter & start-of-string Bonus
                     charScore = 0.7
@@ -87,7 +100,7 @@ public extension String {
                     // Acronym Bonus
                     // Weighing Logic: Typing the first character of an acronym is as if you
                     // preceded it with two perfect character matches.
-                    if string[string.index(idxOf, offsetBy: -1)] == " " {
+                    if string[string.index(before: idxOf)] == " " {
                         charScore += 0.8
                     }
                 }
@@ -117,7 +130,8 @@ public extension String {
         // Reduce penalty for longer strings.
         finalScore = 0.5 * (runningScore / Double(strLength) + runningScore / Double(wordLength)) / fuzzies
         
-        if (lWord[lWord.startIndex] == lString[lString.startIndex]) && (finalScore < 0.85) {
+        if (finalScore < 0.85) &&
+            (word.charStrAt(0).compare(string.charStrAt(0), options: [.caseInsensitive, .diacriticInsensitive]) == .orderedSame) {
             finalScore += 0.15
         }
         

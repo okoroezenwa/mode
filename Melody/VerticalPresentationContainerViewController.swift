@@ -53,7 +53,7 @@ class VerticalPresentationContainerViewController: UIViewController {
     lazy var requiresTopView = [Context.actions, .sort, .show].contains(self.context)
     lazy var requiresSegmentedControl = self.context == .sort
     lazy var segments = [(text: String?, image: UIImage?)]()
-    lazy var setting = Setting.init(title: "Cancel", accessoryType: .none)
+    lazy var setting = Setting.init(title: "Cancel", accessoryType: .none, textAlignment: .center)
     
     var leftButtonAction: AccessoryButtonAction?
     var rightButtonAction: AccessoryButtonAction?
@@ -398,7 +398,7 @@ extension VerticalPresentationContainerViewController: UITableViewDataSource, UI
         
         let cell = tableView.settingCell(for: indexPath)
         
-        cell.prepare(with: setting, context: .alert(cancel: true), alignment: .center)
+        cell.prepare(with: setting, context: .alert(cancel: true))
         
         return cell
     }

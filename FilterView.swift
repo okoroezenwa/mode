@@ -599,11 +599,11 @@ extension FilterView: UICollectionViewDelegate, UICollectionViewDataSource {
                 
                 if let index: Int = {
                     
-                    if let index = (properties as? [Property])?.index(of: oldProperty) {
+                    if let index = (properties as? [Property])?.firstIndex(of: oldProperty) {
                         
                         return index
                         
-                    } else if let _ = (otherProperties as? [Property])?.index(of: oldProperty) {
+                    } else if let _ = (otherProperties as? [Property])?.firstIndex(of: oldProperty) {
                         
                         return properties.count
                     }
@@ -664,11 +664,11 @@ extension FilterView: UICollectionViewDelegate, UICollectionViewDataSource {
                     
                     if let index: Int = {
                         
-                        if let index = (properties as? [LibrarySection])?.index(of: oldSection) {
+                        if let index = (properties as? [LibrarySection])?.firstIndex(of: oldSection) {
                             
                             return index
                             
-                        } else if let _ = (otherProperties as? [LibrarySection])?.index(of: oldSection) {
+                        } else if let _ = (otherProperties as? [LibrarySection])?.firstIndex(of: oldSection) {
                             
                             return properties.count
                         }

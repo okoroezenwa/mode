@@ -194,7 +194,7 @@ extension FilterContainer where Self: UIViewController {
         
         sender?.ignorePropertyChange = true
         
-        if let properties = filterViewContainer.filterView.properties as? [Property], let property = Property(rawValue: property), let index = properties.index(of: property), let sender = sender {
+        if let properties = filterViewContainer.filterView.properties as? [Property], let property = Property(rawValue: property), let index = properties.firstIndex(of: property), let sender = sender {
             
             sender.propertyTest = {
                 

@@ -71,19 +71,19 @@ extension Array where Element: Equatable {
         
         guard let element = element else { return nil }
         
-        return index(of: element)
+        return firstIndex(of: element)
     }
     
     func reorder(by preferredOrder: [Element]) -> [Element] {
         
         return self.sorted { (a, b) -> Bool in
             
-            guard let first = preferredOrder.index(of: a) else {
+            guard let first = preferredOrder.firstIndex(of: a) else {
                 
                 return false
             }
             
-            guard let second = preferredOrder.index(of: b) else {
+            guard let second = preferredOrder.firstIndex(of: b) else {
                 
                 return true
             }

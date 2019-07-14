@@ -31,3 +31,5 @@ typealias ActionDetails = (action: SongAction, title: String, style: UIAlertActi
 typealias SettingsDictionary = [SettingSection: Setting]
 
 typealias SectionDictionary = [Int: (header: String?, footer: String?)]
+
+typealias EmptyCompletion = (() -> ())

@@ -125,7 +125,7 @@ class ActionsViewController: UIViewController {
     lazy var volumeView = VolumeView.instance(leadingWith: 20)
     
 //    @objc lazy var index: CGFloat = 0
-    lazy var context = InfoViewController.Context.song(location: .queue(loaded: false, index: musicPlayer.nowPlayingItemIndex), at: 0, within: [musicPlayer.nowPlayingItem].compactMap({ $0 }))
+    lazy var context = InfoViewController.Context.song(location: .queue(loaded: false, index: Queue.shared.indexToUse), at: 0, within: [musicPlayer.nowPlayingItem].compactMap({ $0 }))
     @objc var libraryVC: LibraryViewController? { return sender as? LibraryViewController ?? sender?.parent as? LibraryViewController }
     var filterer: Filterable? { return sender as? Filterable }
     var overridable: OnlineOverridable? { return sender as? OnlineOverridable }
@@ -647,7 +647,7 @@ class ActionsViewController: UIViewController {
                 
                 if let container = appDelegate.window?.rootViewController as? ContainerViewController {
                     
-                    if container.activeViewController == container.libraryNavigationController, let sections = container.filterViewContainer.filterView.properties as? [LibrarySection], let index = sections.index(of: weakSelf.section(for: sender)) {
+                    if container.activeViewController == container.libraryNavigationController, let sections = container.filterViewContainer.filterView.properties as? [LibrarySection], let index = sections.firstIndex(of: weakSelf.section(for: sender)) {
                         
                         container.filterViewContainer.filterView.collectionView(container.filterViewContainer.filterView.collectionView, didSelectItemAt: .init(row: index, section: 0))
                         container.filterViewContainer.filterView.collectionView.scrollToItem(at: .init(row: index, section: 0), at: .centeredHorizontally, animated: true)
@@ -775,7 +775,7 @@ class ActionsViewController: UIViewController {
         
         if let sender = sender as? InfoViewController {
             
-            let context = InfoViewController.Context.song(location: .queue(loaded: false, index: musicPlayer.nowPlayingItemIndex), at: 0, within: [musicPlayer.nowPlayingItem].compactMap({ $0 }))
+            let context = InfoViewController.Context.song(location: .queue(loaded: false, index: Queue.shared.indexToUse), at: 0, within: [musicPlayer.nowPlayingItem].compactMap({ $0 }))
 
             if persistActionsView || persistPopovers {
                 

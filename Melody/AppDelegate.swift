@@ -100,8 +100,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
                 guard musicPlayer.isPlaying else { return }
                 
-                self.saveQueue()
+                Queue.shared.updateIndex(self)
             })
+        }
+        
+        if prefs.bool(forKey: "lyricsDeleted").inverted {
+            
+            Song.deleteAllLyrics(completion: { prefs.set(true, forKey: "lyricsDeleted") })
         }
         
         return true
@@ -134,36 +139,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillResignActive(_ application: UIApplication) {
         
-        saveQueue()
+        Queue.shared.updateIndex(self)
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
         
-        saveQueue()
-    }
-    
-    @objc func saveQueue() {
-        
-        guard !useSystemPlayer, #available(iOS 10.3, *) else { return }
-        
-        prefs.set(musicPlayer.currentPlaybackTime, forKey: .currentPlaybackTime)
-        prefs.set(musicPlayer.repeatMode.rawValue, forKey: .repeatMode)
-        
-        if let index = musicPlayer.nowPlayingItemIndex {
-            
-            prefs.set(index, forKey: .indexOfNowPlayingItem)
-        }
+        Queue.shared.updateIndex(self)
     }
     
     func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         
-        saveQueue()
+        Queue.shared.updateIndex(self)
         completionHandler(.newData)
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
         
-        saveQueue()
+        Queue.shared.updateIndex(self)
     }
 
 //    func applicationDidBecomeActive(_ application: UIApplication) {
@@ -173,7 +165,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillTerminate(_ application: UIApplication) {
         
-        saveQueue()
+        Queue.shared.updateIndex(self)
         musicLibrary.endGeneratingLibraryChangeNotifications()
     }
     
@@ -198,7 +190,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 
                 } else {
                     
-                    Transitioner.shared.showInfo(from: topVC, with: .song(location: .queue(loaded: false, index: musicPlayer.nowPlayingItemIndex), at: 0, within: [musicPlayer.nowPlayingItem].compactMap({ $0 })))
+                    Transitioner.shared.showInfo(from: topVC, with: .song(location: .queue(loaded: false, index: Queue.shared.indexToUse), at: 0, within: [musicPlayer.nowPlayingItem].compactMap({ $0 })))
                 }
             
             case .nowPlaying:

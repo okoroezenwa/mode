@@ -36,16 +36,6 @@ var isSmallScreen: Bool { return /*traitCollection.verticalSizeClass == .compact
 var isiPhoneX: Bool { return UIApplication.shared.statusBarFrame.height.truncatingRemainder(dividingBy: 20) != 0 }
 var albumArtistsAvailable: Bool { return MPMediaQuery.responds(to: NSSelectorFromString("albumArtistsQuery")) }
 var topViewController: UIViewController? { return topVC(startingFrom: appDelegate.window?.rootViewController) }
-var allowPlayLast: Bool {
-    
-    if !useSystemPlayer && forceOldStyleQueue.inverted && (musicPlayer.nowPlayingItemIndex == musicPlayer.queueCount() - 1 || musicPlayer.queueCount() < 2) {
-        
-        return false
-    }
-    
-    return true
-}
-var allowPlayAfter: Bool { return musicPlayer.queueCount() >= 3/* && musicPlayer.nowPlayingItemIndex == musicPlayer.queueCount() - 1 && !useSystemPlayer*/ }
 var modalIndex: CGFloat = 0
 var collapsedPlaylists: Set<Int64> = []
 

@@ -36,7 +36,7 @@ class RecentsTableViewController: UITableViewController {
         
         tableView.scrollIndicatorInsets.bottom = 14
         
-        notifier.addObserver(tableView, selector: #selector(UITableView.reloadData), name: .appleMusicStatusChecked, object: nil)
+        notifier.addObserver(tableView as Any, selector: #selector(UITableView.reloadData), name: .appleMusicStatusChecked, object: nil)
     }
     
     func toggleSongs() {

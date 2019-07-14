@@ -1237,6 +1237,8 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
                 notifier.post(name: .addedToQueue, object: nil, userInfo: [DictionaryKeys.queueItems: songs])
             
             case .none, .delete: break
+        
+            @unknown default: break
         }
     }
     

@@ -32,7 +32,7 @@ extension BackgroundHideable {
                     view.sendSubviewToBack(subview)
                     subview.translatesAutoresizingMaskIntoConstraints = false
                     
-                    view.addConstraints([NSLayoutConstraint.init(item: view, attribute: .bottom, relatedBy: .equal, toItem: subview, attribute: .bottom, multiplier: 1, constant: 0), NSLayoutConstraint.init(item: view, attribute: .top, relatedBy: .equal, toItem: subview, attribute: .top, multiplier: 1, constant: 0), NSLayoutConstraint.init(item: view, attribute: .leading, relatedBy: .equal, toItem: subview, attribute: .leading, multiplier: 1, constant: 0), NSLayoutConstraint.init(item: view, attribute: .trailing, relatedBy: .equal, toItem: subview, attribute: .trailing, multiplier: 1, constant: 0)])
+                    view.addConstraints([NSLayoutConstraint.init(item: view as Any, attribute: .bottom, relatedBy: .equal, toItem: subview, attribute: .bottom, multiplier: 1, constant: 0), NSLayoutConstraint.init(item: view as Any, attribute: .top, relatedBy: .equal, toItem: subview, attribute: .top, multiplier: 1, constant: 0), NSLayoutConstraint.init(item: view as Any, attribute: .leading, relatedBy: .equal, toItem: subview, attribute: .leading, multiplier: 1, constant: 0), NSLayoutConstraint.init(item: view as Any, attribute: .trailing, relatedBy: .equal, toItem: subview, attribute: .trailing, multiplier: 1, constant: 0)])
                 }
             
             case .removed:
@@ -296,7 +296,7 @@ extension TableViewContainer {
     
     func setHighlightedIndex(of entity: MPMediaEntity) {
         
-        highlightedIndex = entities.index(of: entity)
+        highlightedIndex = entities.firstIndex(of: entity)
     }
 }
 
@@ -501,12 +501,10 @@ extension LargeActivityIndicatorContaining {
         
         if let queueVC = self as? QueueViewController {
             
-            activityVisualEffectView.isHidden = queueVC.queueIsBeingEdited ? hidden : queueVC.firstScroll
-        
-        } else {
-            
-            tableView.isUserInteractionEnabled = hidden
+            activityVisualEffectView.isHidden = queueVC.queueIsBeingEdited ? hidden : queueVC.isQueueAvailable ? hidden : queueVC.firstScroll
         }
+        
+        tableView.isUserInteractionEnabled = hidden
         
         UIView.animate(withDuration: 0.2, animations: { self.activityView.alpha = hidden ? 0 : 1 })
         

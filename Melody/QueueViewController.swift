@@ -56,12 +56,20 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
     @objc var albumArtistQuery: MPMediaQuery?
     
     @objc var query: MPMediaQuery?
-    @objc var queue = [MPMediaItem]()
+    #warning("This will need investigating when testing moving rows in systemMusicPlayer")
+    @objc var queue: [MPMediaItem] {
+        
+        get { return isQueueAvailable ? Queue.shared.currentQueue : systemQueue }
+        
+        set(newValue) { systemQueue = newValue }
+    }
+    lazy var systemQueue = [MPMediaItem]()
     lazy var queueIsBeingEdited = false
     lazy var shouldReload = true
     lazy var shuffleMode = ShuffleMode.none
     var queueCount: Int { return isQueueAvailable ? queue.count : musicPlayer.queueCount() }
     var isQueueAvailable: Bool { if !useSystemPlayer, forceOldStyleQueue.inverted, #available(iOS 10.3, *), let _ = musicPlayer as? MPMusicPlayerApplicationController { return true } else { return false } }
+    var nowPlaying: MPMediaItem?
     @objc var queueExists: Bool { return musicPlayer.nowPlayingItem != nil }
     @objc var userScrolled = false
     @objc var needsDismissal = false
@@ -82,6 +90,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
     var sectionIndexViewController: SectionIndexViewController?
     var navigatable: Navigatable?
     let requiresLargerTrailingConstraint = true
+    lazy var notificationName = isQueueAvailable ? Notification.Name.indexUpdated : .nowPlayingItemChanged
     
     @objc var actionableSongs: [MPMediaItem] { return queue }
     let applicableActions = [.collect, SongAction.newPlaylist, .addTo]
@@ -146,21 +155,27 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             temporaryImageView.image = container.imageView.image
         }
         
+        nowPlaying = musicPlayer.nowPlayingItem
+        
         shouldReturnToContainer = false
         
         notifier.addObserver(self, selector: #selector(applicationChangedState(_:)), name: UIApplication.willEnterForegroundNotification, object: UIApplication.shared)
         
         notifier.addObserver(self, selector: #selector(applicationChangedState(_:)), name: UIApplication.didEnterBackgroundNotification, object: UIApplication.shared)
         
-        notifier.addObserver(self, selector: #selector(reload), name: NSNotification.Name.MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer)
+        notifier.addObserver(self, selector: #selector(reload(_:)), name: notificationName, object: musicPlayer)
         
         notifier.addObserver(self, selector: #selector(reload), name: .shuffleInvoked, object: nil)
         
         notifier.addObserver(self, selector: #selector(updateQueue), name: .queueUpdated, object: musicPlayer)
         
+        notifier.addObserver(self, selector: #selector(reload(_:)), name: .queueModified, object: nil)
+        
         notifier.addObserver(self, selector: #selector(updateExplicitVisibility), name: .showExplicitnessChanged, object: nil)
         
-        notifier.addObserver(tableView, selector: #selector(UITableView.reloadData), name: .lineHeightsCalculated, object: nil)
+        notifier.addObserver(tableView as Any, selector: #selector(UITableView.reloadData), name: .lineHeightsCalculated, object: nil)
+        
+        notifier.addObserver(self, selector: #selector(playbackStopped), name: .playbackStopped, object: nil)
         
         if presented {
             
@@ -224,13 +239,13 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         
         if notification.name == UIApplication.didEnterBackgroundNotification {
             
-            notifier.removeObserver(self, name: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer)
+            notifier.removeObserver(self, name: .nowPlayingItemChanged, object: musicPlayer)
         
         } else {
             
-            reload()
+            reload(self)
             
-            notifier.addObserver(self, selector: #selector(reload), name: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer)
+            notifier.addObserver(self, selector: #selector(reload), name: .nowPlayingItemChanged, object: musicPlayer)
             
 //            if #available(iOS 10, *) { } else { reload() }
         }
@@ -238,23 +253,25 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
     
     @objc func updateQueue() {
         
-        guard !useSystemPlayer, forceOldStyleQueue.inverted, #available(iOS 10.3, *), let musicPlayer = musicPlayer as? MPMusicPlayerApplicationController else { return }
-        
-        updateLoadingViews(hidden: false)
-        
-        musicPlayer.perform(queueTransaction: { _ in }, completionHandler: { [weak self] controller, _ in
-            
-            guard let weakSelf = self else { return }
-            
-            UniversalMethods.performInMain {
-                
-                weakSelf.queue = controller.items
-                weakSelf.tableView.reloadData()
-//            if weakSelf.presented { weakSelf.animateCells() }
-                
-                weakSelf.updateLoadingViews(hidden: true)
-            }
-        })
+//        tableView.reloadData()
+//        
+//        guard !useSystemPlayer, forceOldStyleQueue.inverted, #available(iOS 10.3, *), let musicPlayer = musicPlayer as? MPMusicPlayerApplicationController else { return }
+//
+//        updateLoadingViews(hidden: false)
+//
+//        musicPlayer.perform(queueTransaction: { _ in }, completionHandler: { [weak self] controller, _ in
+//
+//            guard let weakSelf = self else { return }
+//
+//            UniversalMethods.performInMain {
+//
+//                weakSelf.queue = controller.items
+//                weakSelf.tableView.reloadData()
+////            if weakSelf.presented { weakSelf.animateCells() }
+//
+//                weakSelf.updateLoadingViews(hidden: true)
+//            }
+//        })
     }
     
     @objc func showOptions(_ sender: Any) {
@@ -300,7 +317,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             
         } else {
             
-            return .song(location: .queue(loaded: true, index: musicPlayer.nowPlayingItemIndex), at: 0, within: [musicPlayer.nowPlayingItem].compactMap({ $0 }))
+            return .song(location: .queue(loaded: true, index: Queue.shared.indexToUse), at: 0, within: [musicPlayer.nowPlayingItem].compactMap({ $0 }))
         }
     }
     
@@ -318,7 +335,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         
         if isQueueAvailable, queue.isEmpty { return }
         
-        if let index = musicPlayer.nowPlayingItemIndex, index == 0 {
+        if let index = Queue.shared.indexToUse, index == 0 {
             
             tableView.scrollToRow(at: IndexPath.init(row: 0, section: 1), at: .top, animated: true)
             
@@ -328,7 +345,14 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         }
     }
     
-    @objc func reload() {
+    @objc func playbackStopped() {
+        
+        guard !(presentingViewController is NowPlayingViewController) else { return }
+        
+        dismiss(animated: true, completion: nil)
+    }
+    
+    @objc func reload(_ sender: Any) {
         
         if useSystemPlayer || forceOldStyleQueue {
             
@@ -339,7 +363,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             
             if presentedViewController == nil {
                 
-                guard !(presentingViewController is NowPlayingViewController) else { return }
+                guard !(presentingViewController is NowPlayingViewController), useSystemPlayer else { return }
                 
                 dismiss(animated: true, completion: nil)
                 
@@ -356,12 +380,23 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
 //            queueIsSetUpForMove = false
 //            queue = []
 //        }
-
+        
         needsDismissal = false
-        tableView.reloadData()
-        animateCells(direction: .vertical)
-        toggleEditing(false)
-        snapToNowPlaying()
+        
+        if let notification = sender as? Notification, let _ = notification.userInfo?[.queueChange], nowPlaying == musicPlayer.nowPlayingItem {
+            
+            // was causing crashes. Will be an issue when a single song is done playing and notification is sent
+//            tableView.reloadRows(at: [.init(row: 0, section: 1)], with: .none)
+            
+        } else {
+            
+            nowPlaying = musicPlayer.nowPlayingItem
+            tableView.reloadData()
+            animateCells(direction: .vertical)
+            toggleEditing(false)
+            snapToNowPlaying()
+        }
+        
         presenter?.prepare(animated: true, updateConstraintsAndButtons: false)
     }
     
@@ -552,7 +587,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
     
     @IBAction func keepSelected() {
         
-        guard let index = musicPlayer.nowPlayingItemIndex, let nowPlaying = musicPlayer.nowPlayingItem else { return }
+        guard let index = Queue.shared.indexToUse, let nowPlaying = musicPlayer.nowPlayingItem else { return }
         
         guard let indexPaths = tableView.indexPathsForSelectedRows else {
             
@@ -571,9 +606,15 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                 
                 let set = Set(indexPaths.map({ weakSelf.getSong(from: $0) }).compactMap({ $0 }) + [musicPlayer.nowPlayingItem].compactMap({ $0 }))
                 
+                var removedItems = [MPMediaItem]()
+                
                 musicPlayer.perform(queueTransaction: { controller in
                     
+                    self?.updateLoadingViews(hidden: false)
+                    
                     let subtracted = controller.items.filter({ !set.contains($0) })
+                    
+                    DispatchQueue.main.async { removedItems = subtracted }
                     
                     for item in subtracted {
                         
@@ -582,22 +623,33 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                     
                 }, completionHandler: { controller, error in
                     
-                    if let error = error {
+                    if let error = error, isInDebugMode {
                         
                         UniversalMethods.banner(withTitle: error.localizedDescription).show(for: 1)
                     }
                     
-                    notifier.post(name: .saveQueue, object: musicPlayer, userInfo: [String.queueItems: controller.items])
-                    weakSelf.queue = controller.items
-                    weakSelf.tableView.reloadData()
-                    weakSelf.toggleEditing(false)
-                    weakSelf.snapToNowPlaying()
-                    weakSelf.presenter?.prepare(animated: true, updateConstraintsAndButtons: false)
-                    
-                    if let sender = weakSelf.presentingViewController as? NowPlayingViewController {
+                    Queue.shared.remove(removedItems, completion: .none(completion: {
                         
-                        sender.modifyQueueLabel()
-                    }
+                        weakSelf.tableView.reloadData()
+                        weakSelf.toggleEditing(false)
+                        weakSelf.snapToNowPlaying()
+                        weakSelf.presenter?.prepare(animated: true, updateConstraintsAndButtons: false)
+                        notifier.post(name: .queueModified, object: nil, userInfo: [.queueChange: true])
+                    }))
+                    
+                    self?.updateLoadingViews(hidden: true)
+                    
+//                    notifier.post(name: .saveQueue, object: musicPlayer, userInfo: [String.queueItems: controller.items])
+//                    weakSelf.queue = controller.items
+//                    weakSelf.tableView.reloadData()
+//                    weakSelf.toggleEditing(false)
+//                    weakSelf.snapToNowPlaying()
+//                    weakSelf.presenter?.prepare(animated: true, updateConstraintsAndButtons: false)
+//
+//                    if let sender = weakSelf.presentingViewController as? NowPlayingViewController {
+//
+//                        sender.modifyQueueLabel()
+//                    }
                 })
             })
             
@@ -665,7 +717,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
     
     @IBAction func removeSelected(_ sender: Any) {
         
-        guard let index = musicPlayer.nowPlayingItemIndex, let nowPlaying = musicPlayer.nowPlayingItem else { return }
+        guard let index = Queue.shared.indexToUse, let nowPlaying = musicPlayer.nowPlayingItem else { return }
         
         guard let indexPaths = sender as? [IndexPath] ?? tableView.indexPathsForSelectedRows else {
             
@@ -682,11 +734,17 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                 
                 guard let weakSelf = self else { return }
                 
+                var removedItems = [MPMediaItem]()
+                
+                self?.updateLoadingViews(hidden: false)
+                
                 musicPlayer.perform(queueTransaction: { controller in
                     
                     for indexPath in indexPaths {
                         
                         if let item = weakSelf.getSong(from: indexPath) {
+                            
+                            DispatchQueue.main.async { removedItems.append(item) }
                             
                             controller.remove(item)
                         }
@@ -694,22 +752,33 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                     
                     }, completionHandler: { controller, error in
                         
-                        if let error = error {
+                        if let error = error, isInDebugMode {
                             
                             UniversalMethods.banner(withTitle: error.localizedDescription).show(for: 1)
                         }
                         
-                        notifier.post(name: .saveQueue, object: musicPlayer, userInfo: [String.queueItems: controller.items])
-                        weakSelf.queue = controller.items
-                        weakSelf.tableView.reloadData()
-                        weakSelf.toggleEditing(false)
-                        weakSelf.snapToNowPlaying()
-                        weakSelf.presenter?.prepare(animated: true, updateConstraintsAndButtons: false)
-                        
-                        if let sender = weakSelf.presentingViewController as? NowPlayingViewController {
+                        Queue.shared.remove(removedItems, completion: .none(completion: {
                             
-                            sender.modifyQueueLabel()
-                        }
+                            weakSelf.tableView.reloadData()
+                            weakSelf.toggleEditing(false)
+                            weakSelf.snapToNowPlaying()
+                            weakSelf.presenter?.prepare(animated: true, updateConstraintsAndButtons: false)
+                            notifier.post(name: .queueModified, object: nil, userInfo: [.queueChange: true])
+                        }))
+                        
+                        self?.updateLoadingViews(hidden: true)
+                        
+//                        notifier.post(name: .saveQueue, object: musicPlayer, userInfo: [String.queueItems: controller.items])
+//                        weakSelf.queue = controller.items
+//                        weakSelf.tableView.reloadData()
+//                        weakSelf.toggleEditing(false)
+//                        weakSelf.snapToNowPlaying()
+//                        weakSelf.presenter?.prepare(animated: true, updateConstraintsAndButtons: false)
+//
+//                        if let sender = weakSelf.presentingViewController as? NowPlayingViewController {
+//
+//                            sender.modifyQueueLabel()
+//                        }
                 })
             })
             
@@ -813,11 +882,13 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         
         guard let nowPlaying = musicPlayer.nowPlayingItem else { return }
         
-        if !useSystemPlayer, forceOldStyleQueue.inverted, #available(iOS 10.3, *), let musicPlayer = musicPlayer as? MPMusicPlayerApplicationController, let index = musicPlayer.nowPlayingItemIndex, queue.filter({ $0 == nowPlaying }).count < 2 {
+        if !useSystemPlayer, forceOldStyleQueue.inverted, #available(iOS 10.3, *), let musicPlayer = musicPlayer as? MPMusicPlayerApplicationController, let index = Queue.shared.indexToUse, queue.filter({ $0 == nowPlaying }).count < 2 {
             
             musicPlayer.perform(queueTransaction: { [weak self] controller in
                 
                 guard let weakSelf = self else { return }
+                
+                self?.updateLoadingViews(hidden: false)
                 
                 for song in weakSelf.queue.enumerated() where song.offset != index {
                     
@@ -825,22 +896,32 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                 }
                 
             }, completionHandler: { [weak self] controller, error in
+                
+                if let error = error, isInDebugMode {
+                    
+                    UniversalMethods.banner(withTitle: error.localizedDescription).show(for: 1)
+                }
+            
+                Queue.shared.clearAllButNowPlaying(completion: {
+                    
+                    notifier.post(name: .queueModified, object: nil, userInfo: [.queueChange: true])
                     
                     guard let weakSelf = self else { return }
                     
-                    if let error = error, isInDebugMode {
-                        
-                        UniversalMethods.banner(withTitle: error.localizedDescription).show(for: 1)
-                        
-                        return
-                    }
-                    
-                    notifier.post(name: .saveQueue, object: musicPlayer, userInfo: [String.queueItems: controller.items])
-                    notifier.post(name: .queueModified, object: nil)
-                    weakSelf.queue = controller.items
                     weakSelf.tableView.reloadData()
+                    weakSelf.toggleEditing(false)
                     weakSelf.animateCells(direction: .vertical)
                     weakSelf.presenter?.prepare(animated: true, updateConstraintsAndButtons: false)
+                })
+                
+                self?.updateLoadingViews(hidden: true)
+                
+//                notifier.post(name: .saveQueue, object: musicPlayer, userInfo: [String.queueItems: controller.items])
+//                notifier.post(name: .queueModified, object: nil)
+//                weakSelf.queue = controller.items
+//                weakSelf.tableView.reloadData()
+//                weakSelf.animateCells(direction: .vertical)
+//                weakSelf.presenter?.prepare(animated: true, updateConstraintsAndButtons: false)
             })
             
         } else {
@@ -914,19 +995,19 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
     }
 
     override func viewDidLayoutSubviews() {
-        
+
         if firstScroll {
-            
-            if isQueueAvailable, queue.isEmpty { return }
-            
+
+            if queue.isEmpty { return }
+
             tableView.scrollToRow(at: IndexPath.init(row: 0, section: presented ? 2 : 1), at: .top, animated: false)
             tableView.tableHeaderView?.isHidden = false
-            
+
             if peeker == nil, let parent = parent as? PresentedContainerViewController, parent.altAnimator?.interactor.interactionInProgress != true {
-                
+
                 animateCells(direction: .vertical)
             }
-            
+
             firstScroll = false
         }
     }
@@ -946,7 +1027,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         
         if indexPath.section == 0 {
             
-            guard let _ = musicPlayer.nowPlayingItemIndex else { return nil }
+            guard let _ = Queue.shared.indexToUse else { return nil }
             
             if queueIsBeingEdited {
                 
@@ -961,7 +1042,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             
         } else {
             
-            guard let index = musicPlayer.nowPlayingItemIndex else { return nil }
+            guard let index = Queue.shared.indexToUse else { return nil }
             
             return isQueueAvailable ? queue.value(at: index + 1 + indexPath.row) : musicPlayer.item(at: index + 1 + indexPath.row)
         }
@@ -969,7 +1050,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
     
     func getIndex(from indexPath: IndexPath) -> Int? {
         
-        guard let index = musicPlayer.nowPlayingItemIndex, tableView.cellForRow(at: indexPath) is SongTableViewCell else { return nil }
+        guard let index = Queue.shared.indexToUse, tableView.cellForRow(at: indexPath) is SongTableViewCell else { return nil }
         
         if indexPath.section == 0 {
             
@@ -977,7 +1058,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         
         } else if indexPath.section == 1 {
             
-            return musicPlayer.nowPlayingItemIndex
+            return Queue.shared.indexToUse
             
         } else {
             
@@ -1040,7 +1121,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         
         if section == 0 {
             
-            guard let index = musicPlayer.nowPlayingItemIndex else { return 1 }
+            guard let index = Queue.shared.indexToUse else { return 1 }
             
             return index == 0 ? 1 : index
             
@@ -1050,7 +1131,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             
         } else if section == 2 {
             
-            guard let index = musicPlayer.nowPlayingItemIndex else { return 1 }
+            guard let index = Queue.shared.indexToUse else { return 1 }
             
             return (queueCount - (index + 1)) == 0 ? 1 : queueCount - (index + 1)
         }
@@ -1060,14 +1141,14 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        if queueIsBeingEdited, let _ = musicPlayer.nowPlayingItemIndex {
+        if queueIsBeingEdited, let _ = Queue.shared.indexToUse {
             
             return songCell(at: indexPath, with: getSong(from: indexPath))
         }
         
         if indexPath.section == 0 {
             
-            guard let index = musicPlayer.nowPlayingItemIndex else { return standardCell(at: indexPath) }
+            guard let index = Queue.shared.indexToUse else { return standardCell(at: indexPath) }
             
             if index == 0 {
                 
@@ -1102,7 +1183,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             
         } else if indexPath.section == 2 {
             
-            guard let index = musicPlayer.nowPlayingItemIndex else { return standardCell(at: indexPath) }
+            guard let index = Queue.shared.indexToUse else { return standardCell(at: indexPath) }
             
             if queueCount == (index + 1) {
                 
@@ -1123,7 +1204,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         
         if presented {
             
-            guard let index = musicPlayer.nowPlayingItemIndex else { return }
+            guard let index = Queue.shared.indexToUse else { return }
             
             let isQuery = manager == nil
             let song = getSong(from: indexPath)//musicPlayer.item(at: index + 1 + indexPath.row)
@@ -1259,9 +1340,39 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             
             if !tableView.isEditing {
                 
+                let play: (MPMediaItem?, Int) -> () = { item, index in
+                    
+                    let wasPlaying = musicPlayer.isPlaying
+                    
+                    if self.isQueueAvailable {
+                        
+                        musicPlayer.setQueue(with: .init(items: self.queue))
+                        musicPlayer.nowPlayingItem = item
+                        musicPlayer.currentPlaybackTime = 0
+                        musicPlayer.prepareToPlay()
+                        
+                        Queue.shared.indexOfNowPlayingItem = index
+                        
+                    } else {
+                    
+                        musicPlayer.nowPlayingItem = item
+                    }
+                    
+                    if #available(iOS 11.3, *), wasPlaying.inverted {
+                        
+                        musicPlayer.pause()
+                    
+                    } else if wasPlaying {
+                        
+                        musicPlayer.play()
+                    }
+                    
+                    prefs.set(index, forKey: .indexOfNowPlayingItem)
+                }
+                
                 if indexPath.section == 0 {
                     
-                    guard let _ = musicPlayer.nowPlayingItemIndex else { return }
+                    guard let _ = Queue.shared.indexToUse else { return }
                     
                     let item = getSong(from: indexPath)
                     
@@ -1269,28 +1380,14 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                         
                         let play = UIAlertAction.init(title: "Change Song", style: .default, handler: { _ in
                             
-                            musicPlayer.nowPlayingItem = item
-                            
-                            if #available(iOS 11.3, *), musicPlayer.isPlaying.inverted {
-                                
-                                musicPlayer.pause()
-                            }
-                            
-                            prefs.set(indexPath.row, forKey: .indexOfNowPlayingItem)
+                            play(item, indexPath.row)
                         })
                         
                         present(UniversalMethods.alertController(withTitle: item?.validTitle, message: nil, preferredStyle: .actionSheet, actions: play, UniversalMethods.cancelAlertAction()), animated: true, completion: nil)
                         
                     } else {
                         
-                        musicPlayer.nowPlayingItem = item
-                        
-                        if #available(iOS 11.3, *), musicPlayer.isPlaying.inverted {
-                            
-                            musicPlayer.pause()
-                        }
-                        
-                        prefs.set(indexPath.row, forKey: .indexOfNowPlayingItem)
+                        play(item, indexPath.row)
                     }
                     
                 } else if indexPath.section == 1 {
@@ -1299,7 +1396,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                     
                 } else if indexPath.section == 2 {
                     
-                    guard let index = musicPlayer.nowPlayingItemIndex else { return }
+                    guard let index = Queue.shared.indexToUse else { return }
                     
                     let item = getSong(from: indexPath)//musicPlayer.item(at: index + 1 + indexPath.row)
                     
@@ -1307,28 +1404,14 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                         
                         let play = UIAlertAction.init(title: "Change Song", style: .default, handler: { _ in
                             
-                            musicPlayer.nowPlayingItem = item
-                            
-                            if #available(iOS 11.3, *), musicPlayer.isPlaying.inverted {
-                                
-                                musicPlayer.pause()
-                            }
-                            
-                            prefs.set(index + 1 + indexPath.row, forKey: .indexOfNowPlayingItem)
+                            play(item, index + 1 + indexPath.row)
                         })
                         
                         present(UniversalMethods.alertController(withTitle: item?.validTitle, message: nil, preferredStyle: .actionSheet, actions: play, UniversalMethods.cancelAlertAction()), animated: true, completion: nil)
                         
                     } else {
                         
-                        musicPlayer.nowPlayingItem = item
-                        
-                        if #available(iOS 11.3, *), musicPlayer.isPlaying.inverted {
-                            
-                            musicPlayer.pause()
-                        }
-                        
-                        prefs.set(index + 1 + indexPath.row, forKey: .indexOfNowPlayingItem)
+                        play(item, index + 1 + indexPath.row)
                     }
                 }
                 
@@ -1382,7 +1465,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             
             let songNumber: Int? = {
                 
-                guard let index = musicPlayer.nowPlayingItemIndex, indexPath.section != 1 else { return nil }
+                guard let index = Queue.shared.indexToUse, indexPath.section != 1 else { return nil }
                 
                 if queueIsBeingEdited { return indexPath.row + 1 }
                 
@@ -1399,7 +1482,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             
             for category in [SecondaryCategory.loved, .plays, .rating, .lastPlayed, .dateAdded, .genre, .year, .fileSize] {
                 
-                update(category: category, using: song, in: cell, at: indexPath, reusableView: tableView)
+                update(category: category, using: song, in: cell, at: indexPath, reusableView: tableView as Any)
             }
         }
         
@@ -1425,7 +1508,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         
         if indexPath.section == 0 {
             
-            guard let index = musicPlayer.nowPlayingItemIndex else { return false }
+            guard let index = Queue.shared.indexToUse else { return false }
             
             if index == 0 {
                 
@@ -1434,7 +1517,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             
         } else if indexPath.section == 2 {
             
-            guard let index = musicPlayer.nowPlayingItemIndex else { return false }
+            guard let index = Queue.shared.indexToUse else { return false }
             
             if (index + 1) == queueCount {
                 
@@ -1447,7 +1530,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
     
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         
-        guard !presented, let index = musicPlayer.nowPlayingItemIndex else { return false }
+        guard !presented, let index = Queue.shared.indexToUse else { return false }
         
         if queueIsBeingEdited { return true }
         
@@ -1481,7 +1564,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
     
     func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
         
-        guard/* !useSystemPlayer,*/ let _ = musicPlayer.nowPlayingItemIndex else { return false }
+        guard/* !useSystemPlayer,*/ let _ = Queue.shared.indexToUse else { return false }
         
         if queueIsBeingEdited { return true }
         
@@ -1497,11 +1580,15 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
     
     func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
         
-        guard destinationIndexPath != sourceIndexPath, let index = musicPlayer.nowPlayingItemIndex, let relevantItem = getSong(from: sourceIndexPath) else { return }
+        guard destinationIndexPath != sourceIndexPath, let index = Queue.shared.indexToUse, let relevantItem = getSong(from: sourceIndexPath) else { return }
         
         if !useSystemPlayer, forceOldStyleQueue.inverted, #available(iOS 10.3, *), let musicPlayer = musicPlayer as? MPMusicPlayerApplicationController {
             
+            var item: MPMediaItem?
+            
             musicPlayer.perform(queueTransaction: { controller in
+                
+                self.updateLoadingViews(hidden: false)
                 
                 let itemBefore: MPMediaItem? = {
                     
@@ -1528,44 +1615,66 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                 controller.remove(relevantItem)
                 controller.insert(MPMusicPlayerMediaItemQueueDescriptor.init(query: .init(filterPredicates: [.for(.song, using: relevantItem)])), after: itemBefore)
                 
+                DispatchQueue.main.async { item = itemBefore }
+                
             }, completionHandler: { [weak self] controller, error in
                 
-                guard let weakSelf = self else { return }
-                
-                notifier.post(name: .saveQueue, object: musicPlayer, userInfo: [String.queueItems: controller.items])
+//                notifier.post(name: .saveQueue, object: musicPlayer, userInfo: [String.queueItems: controller.items])
                 
                 if let error = error, isInDebugMode {
                     
-                    UniversalMethods.banner(withTitle: error.localizedDescription).show(for: 1)
+                    UniversalMethods.banner(withTitle: error.localizedDescription).show(for: 3)
                 }
                 
-                let indexToRemove = sourceIndexPath.section == 0 ? sourceIndexPath.row : index + 1 + sourceIndexPath.row
-                let indexToAdd: Int = {
+//                let indexToRemove = sourceIndexPath.section == 0 ? sourceIndexPath.row : index + 1 + sourceIndexPath.row
+//                let indexToAdd: Int = {
+//
+//                    if destinationIndexPath.section == 0 {
+//
+//                        if destinationIndexPath.row == 0 || index == 0 {
+//
+//                            return 0
+//                        }
+//
+//                        return destinationIndexPath.row
+//
+//                    } else {
+//
+//                        if index + 1 + destinationIndexPath.row >= Queue.shared.queueCount - 1 {
+//
+//                            return Queue.shared.currentQueue.endIndex - 1
+//                        }
+//
+//                        return sourceIndexPath.section == 0 ? index + 1 + destinationIndexPath.row - 1 : index + 1 + destinationIndexPath.row
+//                    }
+//                }()
+                
+                Queue.shared.remove([relevantItem], completion: .placeAfter(item: item, completion: {
                     
-                    if destinationIndexPath.section == 0 {
+                    if let weakSelf = self {
                         
-                        if destinationIndexPath.row == 0 || index == 0 {
-                            
-                            return 0
-                        }
-                        
-                        return destinationIndexPath.row
-                        
-                    } else {
-                        
-                        if index + 1 + destinationIndexPath.row >= weakSelf.queue.count - 1 {
-                            
-                            return weakSelf.queue.endIndex - 1
-                        }
-                        
-                        return sourceIndexPath.section == 0 ? index + 1 + destinationIndexPath.row - 1 : index + 1 + destinationIndexPath.row
+                        weakSelf.tableView.reloadData()
                     }
-                }()
+                    
+                    notifier.post(name: .queueModified, object: nil, userInfo: [.queueChange: true])
+                }))
 
-                weakSelf.queue.remove(at: indexToRemove)
-                weakSelf.queue.insert(relevantItem, at: indexToAdd)
-                weakSelf.tableView.reloadData()
-                notifier.post(name: .queueModified, object: nil)
+//                Queue.shared.remove(at: indexToRemove, movingTo: indexToAdd, completion: {
+//
+//                    if let weakSelf = self {
+//
+//                        weakSelf.tableView.reloadData()
+//                    }
+//
+//                    notifier.post(name: .queueModified, object: nil, userInfo: [.queueChange: true])
+//                })
+                
+                self?.updateLoadingViews(hidden: true)
+                
+//                weakSelf.queue.remove(at: indexToRemove)
+//                weakSelf.queue.insert(relevantItem, at: indexToAdd)
+//                weakSelf.tableView.reloadData()
+//                notifier.post(name: .queueModified, object: nil, userInfo: [.queueChange: true])
             })
             
             return
@@ -1697,7 +1806,7 @@ extension QueueViewController: Attributor {
             
             let initial: String = {
                 
-                if let index = musicPlayer.nowPlayingItemIndex {
+                if let index = Queue.shared.indexToUse {
                     
                     return (index + 1).formatted
                 }
@@ -1721,7 +1830,7 @@ extension QueueViewController: Attributor {
             
             var string = ""
             
-            if let index = musicPlayer.nowPlayingItemIndex {
+            if let index = Queue.shared.indexToUse {
                 
                 string = (section == 0 ? index : queueCount - (index + 1)).formatted
                 
@@ -1776,7 +1885,9 @@ extension QueueViewController {
                 
                 guard let nowPlaying = musicPlayer.nowPlayingItem else { return }
                 
-                if !useSystemPlayer, forceOldStyleQueue.inverted, #available(iOS 10.3, *), let musicPlayer = musicPlayer as? MPMusicPlayerApplicationController, let index = musicPlayer.nowPlayingItemIndex, let vc = vc as? QueueViewController, vc.queue.filter({ $0 == nowPlaying }).count < 2 {
+                if !useSystemPlayer, forceOldStyleQueue.inverted, #available(iOS 10.3, *), let musicPlayer = musicPlayer as? MPMusicPlayerApplicationController, let index = Queue.shared.indexToUse, let vc = vc as? QueueViewController, vc.queue.filter({ $0 == nowPlaying }).count < 2 {
+                    
+                    self?.updateLoadingViews(hidden: false)
                     
                     musicPlayer.perform(queueTransaction: { controller in
                         
@@ -1787,15 +1898,20 @@ extension QueueViewController {
                         
                     }, completionHandler: { controller, error in
                         
-                        if let error = error {
+                        if let error = error, isInDebugMode {
                             
                             UniversalMethods.banner(withTitle: error.localizedDescription).show(for: 1)
-                            
-                            return
                         }
                         
-                        notifier.post(name: .saveQueue, object: musicPlayer, userInfo: [String.queueItems: controller.items])
-                        notifier.post(name: .queueModified, object: nil)
+                        Queue.shared.clearAllButNowPlaying(completion: {
+                            
+                            notifier.post(name: .queueModified, object: nil, userInfo: [.queueChange: true])
+                        })
+                        
+                        self?.updateLoadingViews(hidden: true)
+                        
+//                        notifier.post(name: .saveQueue, object: musicPlayer, userInfo: [String.queueItems: controller.items])
+//                        notifier.post(name: .queueModified, object: nil)
                         
                         let banner = UniversalMethods.banner(withTitle: "Queue Cleared")
                         banner.titleLabel.font = .myriadPro(ofWeight: .light, size: 25)

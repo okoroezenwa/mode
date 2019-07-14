@@ -359,11 +359,11 @@ extension ArrangeViewController: GestureSelectable {
                 
                 if defaultView.bounds.contains(sender.location(in: defaultView)) {
                     
-                    selectSort(defaultButton)
+                    selectSort(defaultButton as Any)
                     
                 } else if randomView.bounds.contains(sender.location(in: randomView)) {
                     
-                    selectSort(randomButton)
+                    selectSort(randomButton as Any)
                     
                 } else if let indexPath = collectionView.indexPathForItem(at: sender.location(in: collectionView)) {
                     

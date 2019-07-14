@@ -80,7 +80,7 @@ class RateShareView: UIView {
         
         setRating()
         
-        notifier.post(name: .ratingChanged, object: nil, userInfo: [String.id: item.persistentID, String.sender: ratingStackView])
+        notifier.post(name: .ratingChanged, object: nil, userInfo: [String.id: item.persistentID, String.sender: ratingStackView as Any])
     }
     
     @objc func setRating() {
@@ -146,13 +146,13 @@ class RateShareView: UIView {
             
             guard finished, let weakSelf = self else { return }
             
-            notifier.post(name: .likedStateChanged, object: nil, userInfo: [String.id: item.persistentID, String.sender: weakSelf.ratingStackView])
+            notifier.post(name: .likedStateChanged, object: nil, userInfo: [String.id: item.persistentID, String.sender: weakSelf.ratingStackView as Any])
             
             UniversalMethods.performOnMainThread({
             
                 if weakSelf.likedStateButton.image(for: .normal) != weakSelf.image(for: item.likedState) {
                     
-                    UIView.transition(with: weakSelf.likedStateButton, duration: 0.3, options: .transitionCrossDissolve, animations: { weakSelf.prepareLikedView() }, completion: { _ in notifier.post(name: .likedStateChanged, object: nil, userInfo: [String.id: item.persistentID, String.sender: weakSelf.ratingStackView]) })
+                    UIView.transition(with: weakSelf.likedStateButton, duration: 0.3, options: .transitionCrossDissolve, animations: { weakSelf.prepareLikedView() }, completion: { _ in notifier.post(name: .likedStateChanged, object: nil, userInfo: [String.id: item.persistentID, String.sender: weakSelf.ratingStackView as Any]) })
                 }
             
             }, afterDelay: 0.3)

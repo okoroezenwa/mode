@@ -12,7 +12,7 @@ class NowPlaying: NSObject {
 
     @objc var item: MPMediaItem? { return musicPlayer.nowPlayingItem }
     @objc var observers = Set<NSObject>()
-    @objc let notification: Notification = .init(name: .nowPlayingItemChanged, object: nil, userInfo: nil)
+    @objc let notification: Notification = .init(name: .nowPlayingItemChanged, object: musicPlayer, userInfo: useSystemPlayer ? nil : [.queueChange: true])
 
     @objc var timer: Timer?
     @objc var nowPlayingVC: TimerBased? { didSet { prepare(nowPlayingVC) } }
@@ -80,7 +80,7 @@ class NowPlaying: NSObject {
         timerBased?.timeSlider.addTarget(self, action: #selector(slideSeek), for: .valueChanged)
         timerBased?.timeSlider.addTarget(self, action: #selector(commitToSeek(_:)), for: [.touchUpInside, .touchUpOutside, .touchCancel])
         
-        if musicPlayer.nowPlayingItem == nil {
+        if timerBased is ContainerViewController, forceOldStyleQueue.inverted && !useSystemPlayer { } else if musicPlayer.nowPlayingItem == nil {
             
             timerBased?.timeSlider.setValue(0, animated: true)
         
@@ -183,7 +183,7 @@ class NowPlaying: NSObject {
         }
         
         musicPlayer.isPlaying ? musicPlayer.pause() : musicPlayer.play()
-        appDelegate.saveQueue()
+        Queue.shared.updateIndex(self)
     }
     
     @objc func stop(_ gr: UILongPressGestureRecognizer) {
@@ -206,12 +206,17 @@ class NowPlaying: NSObject {
         useAlternateAnimation = true
         shouldReturnToContainer = true
         musicPlayer.stop()
-        notifier.post(name: .saveQueue, object: musicPlayer, userInfo: [String.queueItems: []])
+        Queue.shared.updateCurrentQueue(with: [], startingItem: nil, shouldUpdateIndex: false)
         
         if #available(iOS 11.3, *) {
             
             musicPlayer.setQueue(with: .init(items: []))
             musicPlayer.prepareToPlay()
+            
+            if !useSystemPlayer {
+                
+                notifier.post(name: .playbackStopped, object: nil)
+            }
         }
     }
     
@@ -253,7 +258,7 @@ class NowPlaying: NSObject {
         
         if #available(iOS 10.3, *), !useSystemPlayer, let musicPlayer = musicPlayer as? MPMusicPlayerApplicationController {
             
-            musicPlayer.perform(queueTransaction: { _ in }, completionHandler: { controller, _ in notifier.post(name: .saveQueue, object: nil, userInfo: [String.queueItems: controller.items]) })
+            musicPlayer.perform(queueTransaction: { _ in }, completionHandler: { controller, _ in Queue.shared.updateCurrentQueue(with: controller.items, startingItem: musicPlayer.nowPlayingItem, shouldUpdateIndex: false) })
         }
     }
     

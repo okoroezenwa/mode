@@ -1075,7 +1075,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
             guard gr.state == .began else { return }
         }
         
-        Transitioner.shared.showInfo(from: self, with: .song(location: .queue(loaded: false, index: item == musicPlayer.nowPlayingItem ? musicPlayer.nowPlayingItemIndex : 0), at: 0, within: [item]))
+        Transitioner.shared.showInfo(from: self, with: .song(location: .queue(loaded: false, index: item == musicPlayer.nowPlayingItem ? Queue.shared.indexToUse : 0), at: 0, within: [item]))
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -1089,7 +1089,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
                 if let presentedVC = segue.destination as? PresentedContainerViewController {
                     
                     presentedVC.context = .info
-                    presentedVC.optionsContext = .song(location: .queue(loaded: false, index: musicPlayer.nowPlayingItemIndex), at: 0, within: [activeItem].compactMap({ $0 }))
+                    presentedVC.optionsContext = .song(location: .queue(loaded: false, index: Queue.shared.indexToUse), at: 0, within: [activeItem].compactMap({ $0 }))
                 }
             
             case "toArtistOptions":
@@ -1112,7 +1112,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
             
             case "toLibraryOptions":
                 
-                let options = LibraryOptions.init(fromVC: self, configuration: .nowPlaying, context: .song(location: .queue(loaded: false, index: musicPlayer.nowPlayingItemIndex), at: 0, within: [activeItem].compactMap({ $0 })))
+                let options = LibraryOptions.init(fromVC: self, configuration: .nowPlaying, context: .song(location: .queue(loaded: false, index: Queue.shared.indexToUse), at: 0, within: [activeItem].compactMap({ $0 })))
                 
                 Transitioner.shared.transition(to: segue.destination, using: options, sourceView: actionsButton)
             
@@ -1260,7 +1260,7 @@ extension NowPlayingViewController: UIViewControllerPreviewingDelegate {
         let repeats = UIPreviewActionGroup.init(title: "Repeat...", style: .default, actions: repeatArray)
         
         let first: [UIPreviewActionItem] = [show]
-        let second: [UIPreviewActionItem] = musicPlayer.queueCount() > 1 ? [shuffle, repeats] : []
+        let second: [UIPreviewActionItem] = Queue.shared.queueCount > 1 ? [shuffle, repeats] : [repeats]
         let third: [UIPreviewActionItem] = [stop]
     
         return first + second + third

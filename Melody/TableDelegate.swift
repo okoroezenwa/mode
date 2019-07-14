@@ -1326,7 +1326,7 @@ extension TableDelegate {
             
             case .left:
                 
-                guard musicPlayer.nowPlayingItem != nil, musicPlayer.queueCount() > 1 else { return nil }
+                guard musicPlayer.nowPlayingItem != nil, Queue.shared.queueCount > 1 else { return nil }
             
                 var array = [SwipeAction]()
                 
@@ -1389,7 +1389,7 @@ extension TableDelegate {
                 
                 let edit = SwipeAction.init(style: .default, title: editing ? "done" : "edit", handler: { _, _ in
                     
-                    collectorItemsViewController.songManager.toggleEditing(collectorItemsViewController.editButton)
+                    collectorItemsViewController.songManager.toggleEditing(collectorItemsViewController.editButton as Any)
                 })
                 
                 edit.image = editing ? #imageLiteral(resourceName: "CheckBordered17") : #imageLiteral(resourceName: "Edit17")

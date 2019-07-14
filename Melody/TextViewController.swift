@@ -21,15 +21,21 @@ class TextViewController: UIViewController {
         
         didSet {
             
-            textView.textContainerInset = .init(top: 7, left: 7, bottom: 0, right: 7)
+            textView.textContainerInset = .init(top: context == .details ? 7 : 10, left: 7, bottom: context == .details ? 0 : 4, right: 7)
         }
     }
     @IBOutlet var creatorView: UIView!
     @IBOutlet var searchBarBottomConstraint: NSLayoutConstraint!
+    @IBOutlet var topTitleView: UIView!
+    
+    enum Context { case details, lyrics }
     
     @objc weak var newPlaylistVC: NewPlaylistViewController?
+    weak var updater: LyricsUpdater?
     var textFieldWasFirstResponder = false
     var textViewWasFirstResponder = false
+    var context = Context.details
+    lazy var object = LyricsObject.init(id: 0, name: nil, artist: nil, titleTerm: nil, artistTerm: nil, source: nil)
     
     override func viewDidLoad() {
         
@@ -57,7 +63,10 @@ class TextViewController: UIViewController {
                 weakSelf.textViewWasFirstResponder = true
             }
             
-            weakSelf.searchBarBottomConstraint.constant = 0
+            if weakSelf.context == .details {
+            
+                weakSelf.searchBarBottomConstraint.constant = 0
+            }
         }
         
         (parent as? PresentedContainerViewController)?.transitionAnimation = { [weak self] in
@@ -73,7 +82,10 @@ class TextViewController: UIViewController {
                 weakSelf.textView.resignFirstResponder()
             }
             
-            weakSelf.view.layoutIfNeeded()
+            if weakSelf.context == .details {
+                
+                weakSelf.view.layoutIfNeeded()
+            }
         }
         
         (parent as? PresentedContainerViewController)?.transitionCancellation = { [weak self] in
@@ -113,9 +125,24 @@ class TextViewController: UIViewController {
 
     @objc func prepare() {
         
-        searchBar.text = newPlaylistVC?.creatorText
-        textView.text = newPlaylistVC?.descriptionText
-        searchBar.becomeFirstResponder()
+        switch context {
+            
+            case .details:
+            
+                searchBar.text = newPlaylistVC?.creatorText
+                textView.text = newPlaylistVC?.descriptionText
+                textView.keyboardDismissMode = .onDrag
+                searchBar.becomeFirstResponder()
+            
+            case .lyrics:
+                
+                topTitleView.isHidden = true
+                creatorView.isHidden = true
+            
+                textView.scrollIndicatorInsets.bottom = 14
+                textView.text = object.lyrics
+                textView.keyboardDismissMode = .interactive
+        }
     }
     
     @IBAction func focusDescription() {
@@ -130,12 +157,28 @@ class TextViewController: UIViewController {
     
     @objc func adjustKeyboard(with notification: Notification) {
         
-        guard let keyboardHeightAtEnd = ((notification as NSNotification).userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.size.height, searchBar.isFirstResponder || textView.isFirstResponder else { return }
+        guard let keyboardHeightAtEnd = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.size.height, searchBar.isFirstResponder || textView.isFirstResponder else { return }
         
         let keyboardWillShow = notification.name == UIResponder.keyboardWillShowNotification
         
-        searchBarBottomConstraint.constant = keyboardWillShow && searchBar.isFirstResponder ? keyboardHeightAtEnd - 6 : 0
-        
-        UIView.animate(withDuration: 0.3, animations: { self.view.layoutIfNeeded() })
+        switch context {
+            
+            case .details:
+            
+                searchBarBottomConstraint.constant = keyboardWillShow && searchBar.isFirstResponder ? keyboardHeightAtEnd - 6 : 0
+                
+                UIView.animate(withDuration: 0.3, animations: { self.view.layoutIfNeeded() })
+            
+            case .lyrics: UIView.animate(withDuration: 0.3, animations: {
+                
+                self.textView.contentInset.bottom = keyboardHeightAtEnd - 6
+                self.textView.scrollIndicatorInsets.bottom = keyboardHeightAtEnd + 4
+            })
+        }
     }
+}
+
+protocol LyricsUpdater: LyricsObjectContainer {
+    
+    func updateLyrics(with object: LyricsObject)
 }

@@ -7,7 +7,7 @@
 //
 
 import XCTest
-@testable import Melody
+@testable import Mode
 
 class MelodyTests: XCTestCase {
     

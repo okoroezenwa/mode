@@ -338,7 +338,7 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
         
         let song = getSong(from: indexPath, filtering: true)
         
-        highlightedIndex = songs.index(of: song)
+        highlightedIndex = songs.firstIndex(of: song)
         scrollToHighlightedRow()
     }
    
@@ -870,7 +870,7 @@ extension SongsViewController: FullySortable {
                 
                 if let song = weakSelf.libraryVC?.highlightedEntities?.song {
                     
-                    weakSelf.highlightedIndex = array.index(of: song)
+                    weakSelf.highlightedIndex = array.firstIndex(of: song)
                 }
             }
             

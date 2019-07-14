@@ -397,7 +397,7 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
 
         super.viewDidAppear(animated)
         
-        if let row = array.index(where: { $0 == searchBar.text }) {
+        if let row = array.firstIndex(where: { $0 == searchBar.text }) {
             
             requiredInputView?.pickerView.selectRow(row, inComponent: 0, animated: true)
         }

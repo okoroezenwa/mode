@@ -20,11 +20,12 @@ class SettingsTableViewController: UITableViewController {
         5: ("sleep prevention", nil),
         6: (nil, nil),
         7: (nil, nil),
-        8: (nil, nil)
+        8: (nil, nil),
+        9: (nil, nil)
     ]
     lazy var settings: SettingsDictionary = [
         
-        .init(0, 0): .init(title: "Rate and Review", accessoryType: .none),
+        .init(0, 0): .init(title: "Rate and Review", accessoryType: .none, textAlignment: .center, borderVisibility: .both),
         .init(1, 0): .init(title: "Offline Mode", accessoryType: .onOff(isOn: { showiCloudItems.inverted }, action: { [weak self] in self?.toggleCloud() })),
         .init(1, 1): .init(title: "Night Mode", accessoryType: .onOff(isOn: { darkTheme }, action: { [weak self] in self?.toggleNightMode() })),
         .init(1, 2): .init(title: "Library Refresh", accessoryType: .chevron),
@@ -51,12 +52,13 @@ class SettingsTableViewController: UITableViewController {
         .init(5, 0): .init(title: "Never", accessoryType: .check({ screenLockPreventionMode == InsomniaMode.disabled.rawValue })),
         .init(5, 1): .init(title: "Always", accessoryType: .check({ screenLockPreventionMode == InsomniaMode.always.rawValue })),
         .init(5, 2): .init(title: "While Charging", accessoryType: .check({ screenLockPreventionMode == InsomniaMode.whenCharging.rawValue })),
-        .init(6, 0): .init(title: "Reset All Settings", accessoryType: .none),
+        .init(6, 0): .init(title: "Reset All Settings", accessoryType: .none, textAlignment: .center, borderVisibility: .both),
         .init(7, 0): .init(title: "Show Deinit Banner", accessoryType: .onOff(isOn: { deinitBannersEnabled }, action: { [weak self] in self?.toggleDeinit() })),
         .init(7, 1): .init(title: "Use Descriptor", accessoryType: .onOff(isOn: { useDescriptor }, action: { [weak self] in self?.toggleDescriptor() })),
         .init(7, 2): .init(title: "Use Media Items", accessoryType: .onOff(isOn: { useMediaItems }, action: { [weak self] in self?.toggleMediaItems() })),
         .init(7, 3): .init(title: "Manual Queue Insertion", accessoryType: .onOff(isOn: { useOldStyleQueue }, action: { [weak self] in self?.toggleManual() })),
-        .init(8, 0): .init(title: "Collect New Songs", accessoryType: .none)
+        .init(8, 0): .init(title: "Delete Lyrics", accessoryType: .none, textAlignment: .center, borderVisibility: .both),
+        .init(9, 0): .init(title: "Collect New Songs", accessoryType: .none, textAlignment: .center, borderVisibility: .both)
     ]
 
     override func viewDidLoad() {
@@ -244,7 +246,7 @@ class SettingsTableViewController: UITableViewController {
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         
-        return isInDebugMode ? 9 : 8
+        return isInDebugMode ? 10 : 9
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -360,14 +362,18 @@ class SettingsTableViewController: UITableViewController {
         
         } else if indexPath.section == 8 {
             
-            (parent as? PresentedContainerViewController)?.activityIndicator.startAnimating()
+            Song.deleteAllLyrics()
+            
+        } else if indexPath.section == 9 {
+            
+//            (parent as? PresentedContainerViewController)?.activityIndicator.startAnimating()
             
             let playlists = (MPMediaQuery.playlists().collections as? [MPMediaPlaylist])?.filter({ $0.isAppleMusic })
             playlists?.forEach({ ($0.value(forKey: "itemsQuery") as? MPMediaQuery)?.showAll() })
             let items = playlists?.reduce([], { $0 + $1.items.filter({ $0.existsInLibrary.inverted }) }) ?? []
             
             notifier.post(name: .addedToQueue, object: nil, userInfo: [DictionaryKeys.queueItems: items])
-            (parent as? PresentedContainerViewController)?.activityIndicator.stopAnimating()
+//            (parent as? PresentedContainerViewController)?.activityIndicator.stopAnimating()
         }
         
         tableView.deselectRow(at: indexPath, animated: true)
@@ -375,7 +381,7 @@ class SettingsTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         
-        return indexPath.section == 0 || (indexPath.section == 1 && Set([0, 1]).contains(indexPath.row).inverted) || indexPath.section == 2 || (indexPath.section == 4 && Set([3, 4]).contains(indexPath.row)) || indexPath.section == 5 || indexPath.section == 6 || indexPath.section == 8
+        return indexPath.section == 0 || (indexPath.section == 1 && Set([0, 1]).contains(indexPath.row).inverted) || indexPath.section == 2 || (indexPath.section == 4 && Set([3, 4]).contains(indexPath.row)) || indexPath.section == 5 || indexPath.section == 6 || indexPath.section == 8 || indexPath.section == 9
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {

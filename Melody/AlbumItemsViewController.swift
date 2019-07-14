@@ -432,7 +432,7 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Inf
         let song = getSong(from: indexPath, filtering: true)
         
         entityVC?.highlightedEntities?.song = song
-        highlightedIndex = songs.index(of: song)
+        highlightedIndex = songs.firstIndex(of: song)
         scrollToHighlightedRow()
     }
     
@@ -899,7 +899,7 @@ extension AlbumItemsViewController: FullySortable {
             
             if let song = self?.entityVC?.highlightedEntities?.song {
                 
-                self?.highlightedIndex = array.index(of: song)
+                self?.highlightedIndex = array.firstIndex(of: song)
             }
             
             guard !weakOperation.isCancelled else {

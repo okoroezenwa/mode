@@ -38,4 +38,6 @@ extension NSNotification.Name {
     static let managerItemsChanged = Notification.Name.init("managerItemsChanged")
     static let shuffleInvoked = Notification.Name.init("shuffleInvoked")
     static let propertiesUpdated = Notification.Name(rawValue: "propertiesUpdated")
+    static let playbackStopped = Notification.Name(rawValue: "playbackStopped")
+    static let indexUpdated = Notification.Name.init("indexUpdated")
 }

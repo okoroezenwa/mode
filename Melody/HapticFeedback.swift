@@ -24,52 +24,48 @@ public enum HapticFeedback: HapticEmitting {
 extension HapticFeedback {
     
     public func prepare() {
+        
         switch self {
             
-        case .impact(let style):
-            switch style {
-            
-            case .light:
-                HapticFeedback.lightImpactGenerator.prepare()
+            case .impact(let style):
+                
+                switch style {
+                
+                    case .light: HapticFeedback.lightImpactGenerator.prepare()
 
-            case .medium:
-                HapticFeedback.mediumImpactGenerator.prepare()
+                    case .medium: HapticFeedback.mediumImpactGenerator.prepare()
 
-            case .heavy:
-                HapticFeedback.heavyImpactGenerator.prepare()
+                    case .heavy: HapticFeedback.heavyImpactGenerator.prepare()
 
-            }
+                    @unknown default: break
+                }
             
-        case .selection:
-            HapticFeedback.selectionGenerator.prepare()
+            case .selection: HapticFeedback.selectionGenerator.prepare()
             
-        case .notification:
-            HapticFeedback.notificationGenerator.prepare()
+            case .notification: HapticFeedback.notificationGenerator.prepare()
         }
     }
     
     public func generateFeedback() {
+        
         switch self {
             
-        case .impact(let style):
-            switch style {
+            case .impact(let style):
                 
-            case .light:
-                HapticFeedback.lightImpactGenerator.impactOccurred()
-                
-            case .medium:
-                HapticFeedback.mediumImpactGenerator.impactOccurred()
-                
-            case .heavy:
-                HapticFeedback.heavyImpactGenerator.impactOccurred()
-                
-            }
+                switch style {
+                    
+                    case .light: HapticFeedback.lightImpactGenerator.impactOccurred()
+                    
+                    case .medium: HapticFeedback.mediumImpactGenerator.impactOccurred()
+                    
+                    case .heavy: HapticFeedback.heavyImpactGenerator.impactOccurred()
+                    
+                    @unknown default: break
+                }
             
-        case .selection:
-            HapticFeedback.selectionGenerator.selectionChanged()
+            case .selection: HapticFeedback.selectionGenerator.selectionChanged()
             
-        case .notification(let notificationType):
-            HapticFeedback.notificationGenerator.notificationOccurred(notificationType)
+            case .notification(let notificationType): HapticFeedback.notificationGenerator.notificationOccurred(notificationType)
         }
     }
 }

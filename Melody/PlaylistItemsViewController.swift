@@ -534,7 +534,7 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
         let song = getSong(from: indexPath, filtering: true)
         
         entityVC?.highlightedEntities?.song = song
-        highlightedIndex = songs.index(of: song)
+        highlightedIndex = songs.firstIndex(of: song)
         scrollToHighlightedRow()
     }
     
@@ -1044,7 +1044,7 @@ extension PlaylistItemsViewController: FullySortable {
             
             if let song = weakSelf.entityVC?.highlightedEntities?.song {
                 
-                weakSelf.highlightedIndex = array.index(of: song)
+                weakSelf.highlightedIndex = array.firstIndex(of: song)
             }
             
             guard !weakOperation.isCancelled else {

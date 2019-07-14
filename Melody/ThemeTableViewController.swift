@@ -150,9 +150,9 @@ class ThemeTableViewController: UITableViewController {
     
     func updateButtonViews(using button: UIButton?) {
         
-        if button != nil, let secondView = borderView(for: button), let view = [fromBorderView, toBorderView].first(where: { $0 != secondView }), let firstView = view {
+        if button != nil, let secondView = borderView(for: button), let view = [fromBorderView, toBorderView].first(where: { $0 != secondView }) {
             
-            UIView.transition(from: firstView, to: secondView, duration: 0.3, options: [.transitionCrossDissolve, .showHideTransitionViews], completion: { _ in self.tableView.scrollToRow(at: .init(row: 2, section: 1), at: .none, animated: true) })
+            UIView.transition(from: view, to: secondView, duration: 0.3, options: [.transitionCrossDissolve, .showHideTransitionViews], completion: { _ in self.tableView.scrollToRow(at: .init(row: 2, section: 1), at: .none, animated: true) })
             
         } else if let view = borderView(for: selectedButton) {
             

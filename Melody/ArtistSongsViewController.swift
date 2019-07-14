@@ -337,7 +337,7 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
         let song = getSong(from: indexPath, filtering: true)
         
         entityVC?.highlightedEntities?.song = song
-        highlightedIndex = songs.index(of: song)
+        highlightedIndex = songs.firstIndex(of: song)
         scrollToHighlightedRow()
     }
     
@@ -796,7 +796,7 @@ extension ArtistSongsViewController: FullySortable {
             
             if let song = self?.entityVC?.highlightedEntities?.song {
                 
-                self?.highlightedIndex = array.index(of: song)
+                self?.highlightedIndex = array.firstIndex(of: song)
             }
             
             guard !operation.isCancelled else {

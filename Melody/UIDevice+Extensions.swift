@@ -33,6 +33,8 @@ extension UIDevice {
             case .unknown, .unplugged: return false
             
             case .charging, .full: return true
+        
+            @unknown default: return false
         }
     }
     

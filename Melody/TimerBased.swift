@@ -29,16 +29,16 @@ import UIKit
 
 extension TimerBased {
     
-    func updateTimes(setValue: Bool, seeking: Bool) {
+    func updateTimes(for item: MPMediaItem? = musicPlayer.nowPlayingItem, to time: TimeInterval = musicPlayer.currentPlaybackTime, setValue: Bool, seeking: Bool) {
         
-        if let nowPlaying = musicPlayer.nowPlayingItem {
+        if let item = item {
             
-            startTime??.text = seeking ? TimeInterval(timeSlider.value).nowPlayingRepresentation : musicPlayer.currentPlaybackTime.nowPlayingRepresentation
-            stopTime??.text = (TimeInterval(seeking ? TimeInterval(timeSlider.value) : musicPlayer.currentPlaybackTime) - nowPlaying.playbackDuration).nowPlayingRepresentation
+            startTime??.text = seeking ? TimeInterval(timeSlider.value).nowPlayingRepresentation : time.nowPlayingRepresentation
+            stopTime??.text = (TimeInterval(seeking ? TimeInterval(timeSlider.value) : time) - item.playbackDuration).nowPlayingRepresentation
             
             if setValue {
                 
-                timeSlider.setValue(Float(musicPlayer.currentPlaybackTime), animated: true)
+                timeSlider.setValue(Float(time), animated: false)
             }
             
             if musicPlayer.isPlaying && musicPlayer.currentPlaybackTime < 5 {
@@ -48,7 +48,7 @@ extension TimerBased {
             
         } else {
             
-            timeSlider.setValue(0, animated: true)
+            timeSlider.setValue(0, animated: false)
         }
     }
     
@@ -125,6 +125,8 @@ extension TimerBased {
                 
                 musicPlayer.repeatMode = .all
             }
+        
+            @unknown default: break
         }
         
         if changingMusicPlayer {
@@ -166,6 +168,8 @@ extension TimerBased {
                     
                     musicPlayer.shuffleMode = .off
                 }
+        
+            @unknown default: break
         }
     }
 }

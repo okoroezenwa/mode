@@ -145,7 +145,7 @@ extension SongActionable {
                     
                     if vc.tableView.isEditing {
                         
-                        vc.songManager.toggleEditing(vc.editButton)
+                        vc.songManager.toggleEditing(vc.editButton as Any)
                     }
                     
                     vc.updateItems(at: (0..<vc.tableView.numberOfRows(inSection: 0)).map({ IndexPath.init(row: $0, section: 0) }), for: .remove)
@@ -316,7 +316,7 @@ class SongActionManager: NSObject {
     
     @objc func toggleEditing(_ sender: Any) {
         
-        if actionable is QueueViewController, musicPlayer.queueCount() < 2 { return }
+        if actionable is QueueViewController, Queue.shared.queueCount < 2 { return }
         
         if let searchVC = actionable as? SearchViewController {
             
