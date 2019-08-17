@@ -26,6 +26,10 @@
                     <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="R8u-gM-F8F">
                         <rect key="frame" x="0.0" y="0.0" width="449" height="56.5"/>
                         <subviews>
+                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="P4M-2R-3Wu">
+                                <rect key="frame" x="0.0" y="0.0" width="0.0" height="56.5"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="kZj-RV-gcL">
                                 <rect key="frame" x="0.0" y="0.0" width="27" height="56.5"/>
                                 <subviews>
@@ -154,7 +158,7 @@
                                             <constraint firstAttribute="width" priority="900" constant="20" id="gQc-V3-4Ec"/>
                                         </constraints>
                                         <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="boolean" keyPath="greyOverride" value="YES"/>
+                                            <userDefinedRuntimeAttribute type="boolean" keyPath="greyOverride" value="NO"/>
                                         </userDefinedRuntimeAttributes>
                                     </imageView>
                                 </subviews>
@@ -173,6 +177,9 @@
                                 </constraints>
                             </view>
                         </subviews>
+                        <constraints>
+                            <constraint firstItem="P4M-2R-3Wu" firstAttribute="width" secondItem="sbq-aq-BSq" secondAttribute="width" priority="900" id="Eaf-sd-5Tk"/>
+                        </constraints>
                     </stackView>
                     <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ShW-pF-68O" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
                         <rect key="frame" x="0.0" y="0.0" width="449" height="1"/>
@@ -209,6 +216,7 @@
                 <outlet property="bottomBorderView" destination="uYZ-fp-GfV" id="OKe-LZ-zkB"/>
                 <outlet property="buttonBorderView" destination="PlQ-CF-MBu" id="DZQ-vJ-YOG"/>
                 <outlet property="check" destination="Rxu-ef-fDp" id="UqH-k8-hB1"/>
+                <outlet property="checkMirrorView" destination="P4M-2R-3Wu" id="hZd-oD-LwX"/>
                 <outlet property="chevron" destination="fRa-mc-9q2" id="Zk6-8a-Au9"/>
                 <outlet property="itemSwitch" destination="RV6-ND-n0R" id="gf1-nG-Wnz"/>
                 <outlet property="labelsStackView" destination="pll-Ol-btG" id="4gN-53-gbH"/>

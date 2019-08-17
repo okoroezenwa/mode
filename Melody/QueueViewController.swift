@@ -55,6 +55,8 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
     @objc var artistQuery: MPMediaQuery?
     @objc var albumArtistQuery: MPMediaQuery?
     
+    var preferredEditingStyle = EditingStyle.select
+    
     @objc var query: MPMediaQuery?
     #warning("This will need investigating when testing moving rows in systemMusicPlayer")
     @objc var queue: [MPMediaItem] {
@@ -600,7 +602,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         
         if !useSystemPlayer, forceOldStyleQueue.inverted, #available(iOS 10.3, *), let musicPlayer = musicPlayer as? MPMusicPlayerApplicationController {
             
-            let update = UIAlertAction.init(title: "Update Queue", style: .destructive, handler: { [weak self] _ in
+            let update = AlertAction.init(title: "Update Queue", style: .destructive, handler: { [weak self] in
                 
                 guard let weakSelf = self else { return }
                 
@@ -653,9 +655,11 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                 })
             })
             
-            let alert = UniversalMethods.alertController(withTitle: (indexPaths.count + 1).fullCountText(for: .song).capitalized, message: nil, preferredStyle: .actionSheet, actions: update, UniversalMethods.cancelAlertAction())
+            Transitioner.shared.showAlert(title: (indexPaths.count + 1).fullCountText(for: .song).capitalized, from: self, with: update)
             
-            present(alert, animated: true, completion: nil)
+//            let alert = UniversalMethods.alertController(withTitle: (indexPaths.count + 1).fullCountText(for: .song).capitalized, message: nil, preferredStyle: .actionSheet, actions: update, UniversalMethods.cancelAlertAction())
+//
+//            present(alert, animated: true, completion: nil)
             
             return
         }
@@ -730,7 +734,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         
         if !useSystemPlayer, forceOldStyleQueue.inverted, #available(iOS 10.3, *), let musicPlayer = musicPlayer as? MPMusicPlayerApplicationController {
             
-            let update = UIAlertAction.init(title: "Update Queue", style: .destructive, handler: { [weak self] _ in
+            let update = AlertAction.init(title: "Update Queue", style: .destructive, handler: { [weak self] in
                 
                 guard let weakSelf = self else { return }
                 
@@ -782,9 +786,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                 })
             })
             
-            let alert = UniversalMethods.alertController(withTitle: (queueCount - indexPaths.count).fullCountText(for: .song).capitalized, message: nil, preferredStyle: .actionSheet, actions: update, UniversalMethods.cancelAlertAction())
-            
-            present(alert, animated: true, completion: nil)
+            Transitioner.shared.showAlert(title: (queueCount - indexPaths.count).fullCountText(for: .song).capitalized, from: self, with: update)
             
             return
         }
@@ -841,23 +843,23 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         
         guard let _ = musicPlayer.nowPlayingItem else { return }
         
-        let clear = UIAlertAction.init(title: "All But Now Playing", style: .destructive, handler: { [weak self] _ in
+        let clear = AlertAction.init(info: .init(title: "All But Now Playing", accessoryType: .none), context: .alert(.destructive), handler: { [weak self] in
             
             guard let weakSelf = self else { return }
             
             weakSelf.clearQueue()
         })
         
-        let stop = UIAlertAction.init(title: "All", style: .destructive, handler: { _ in NowPlaying.shared.stopPlayback() })
+        let stop = AlertAction.init(info: .init(title: "All", accessoryType: .none), context: .alert(.destructive), handler: NowPlaying.shared.stopPlayback)
         
-        let clearSelected = UIAlertAction.init(title: "Selected", style: .destructive, handler: { [weak self] _ in
+        let clearSelected = AlertAction.init(info: .init(title: "Selected", accessoryType: .none), context: .alert(.destructive), handler: { [weak self] in
             
             guard let weakSelf = self else { return }
             
             weakSelf.removeSelected(weakSelf)
         })
         
-        let clearUnselected = UIAlertAction.init(title: "Unselected", style: .destructive, handler: { [weak self] _ in
+        let clearUnselected = AlertAction.init(info: .init(title: "Unselected", accessoryType: .none), context: .alert(.destructive), handler: { [weak self] in
             
             guard let weakSelf = self else { return }
             
@@ -865,7 +867,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         })
         
         let allBut = queueCount > 1 ? [clear] : []
-        var selected: [UIAlertAction] {
+        var selected: [AlertAction] {
             
             if let indexPaths = tableView.indexPathsForSelectedRows, indexPaths.isEmpty.inverted {
                 
@@ -875,7 +877,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             return []
         }
         
-        present(UIAlertController.withTitle("Clear...", message: nil, style: .actionSheet, actions: [stop] + selected + allBut + [.cancel()]), animated: true, completion: nil)
+        Transitioner.shared.showAlert(title: "Clear...", from: self, context: .other, with: [stop] + selected + allBut)
     }
     
     @objc func clearQueue() {
@@ -1378,12 +1380,11 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                     
                     if warnForQueueInterruption && changeGuard {
                         
-                        let play = UIAlertAction.init(title: "Change Song", style: .default, handler: { _ in
-                            
-                            play(item, indexPath.row)
-                        })
+                        let play = AlertAction.init(title: "Change Song", style: .default, handler: {  play(item, indexPath.row) })
                         
-                        present(UniversalMethods.alertController(withTitle: item?.validTitle, message: nil, preferredStyle: .actionSheet, actions: play, UniversalMethods.cancelAlertAction()), animated: true, completion: nil)
+                        Transitioner.shared.showAlert(title: item?.validTitle, from: self, with: play)
+                        
+//                        present(UniversalMethods.alertController(withTitle: item?.validTitle, message: nil, preferredStyle: .actionSheet, actions: play, UniversalMethods.cancelAlertAction()), animated: true, completion: nil)
                         
                     } else {
                         
@@ -1402,12 +1403,9 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                     
                     if warnForQueueInterruption && changeGuard {
                         
-                        let play = UIAlertAction.init(title: "Change Song", style: .default, handler: { _ in
-                            
-                            play(item, index + 1 + indexPath.row)
-                        })
+                        let play = AlertAction.init(title: "Change Song", style: .default, handler: {  play(item, index + 1 + indexPath.row) })
                         
-                        present(UniversalMethods.alertController(withTitle: item?.validTitle, message: nil, preferredStyle: .actionSheet, actions: play, UniversalMethods.cancelAlertAction()), animated: true, completion: nil)
+                        Transitioner.shared.showAlert(title: item?.validTitle, from: self, with: play)
                         
                     } else {
                         
@@ -1476,6 +1474,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
 
             cell.delegate = self
             cell.swipeDelegate = self
+            cell.preferredEditingStyle = preferredEditingStyle
             cell.playButton.isUserInteractionEnabled = false
 
             updateImageView(using: song, in: cell, indexPath: indexPath, reusableView: tableView)
@@ -1557,10 +1556,10 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         return .none
     }
     
-//    func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
-//        
-//        return false
-//    }
+    func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
+        
+        return false
+    }
     
     func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
         
@@ -1869,14 +1868,7 @@ extension QueueViewController {
             
             guard weakSelf.queueCount > 1 else {
                 
-                weakSelf.peeker?
-                    .guardQueue(using:
-                        .withTitle(nil,
-                                   message: nil,
-                                   style: .actionSheet,
-                                   actions: .stop, .cancel()),
-                                onCondition: warnForQueueInterruption && clearGuard,
-                                fallBack: NowPlaying.shared.stopPlayback)
+                weakSelf.peeker? .guardQueue(with: [.stop], onCondition: warnForQueueInterruption && clearGuard, fallBack: NowPlaying.shared.stopPlayback)
                 
                 return
             }
@@ -1924,12 +1916,11 @@ extension QueueViewController {
                 }
             }
             
-            let action = UIAlertAction.init(title: "Clear Queue", style: .destructive, handler: { _ in
-                
-                clear(vc)
-            })
+            let action = AlertAction.init(title: "Clear Queue", style: .destructive, handler: { clear(vc) })
             
-            weakSelf.peeker?.present(UIAlertController.withTitle(nil, message: nil, style: .actionSheet, actions: action, .cancel()), animated: true, completion: nil)
+            Transitioner.shared.showAlert(title: nil, from: weakSelf.peeker, with: action)
+            
+//            weakSelf.peeker?.present(UIAlertController.withTitle(nil, message: nil, style: .actionSheet, actions: action, .cancel()), animated: true, completion: nil)
         })
         
         return [clear]
@@ -1940,7 +1931,16 @@ extension QueueViewController: EntityCellDelegate {
     
     func editButtonTapped(in cell: SongTableViewCell) {
         
+        guard let indexPath = tableView.indexPath(for: cell) else { return }
         
+        if cell.isSelected {
+            
+            tableView.deselectRow(at: indexPath, animated: false)
+            
+        } else {
+            
+            self.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
+        }
     }
     
     func artworkTapped(in cell: SongTableViewCell) {
@@ -1963,7 +1963,9 @@ extension QueueViewController: EntityCellDelegate {
             actions.insert(singleItemAlertAction(for: .library, entity: .song, using: item, from: self), at: 3)
         }
         
-        present(UIAlertController.withTitle(nil, message: cell.nameLabel.text, style: .actionSheet, actions: actions + [.cancel()] ), animated: true, completion: nil)
+        Transitioner.shared.showAlert(title: cell.nameLabel.text, from: self, with: actions)
+        
+//        present(UIAlertController.withTitle(nil, message: cell.nameLabel.text, style: .actionSheet, actions: actions + [.cancel()] ), animated: true, completion: nil)
     }
     
     func scrollViewTapped(in cell: SongTableViewCell) {

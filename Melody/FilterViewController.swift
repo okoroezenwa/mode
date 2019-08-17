@@ -592,23 +592,25 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         
         if canShuffleAlbums {
             
-            var array = [UIAlertAction]()
+            var array = [AlertAction]()
             
-            let shuffle = UIAlertAction.init(title: .shuffle(.songs), style: .default, handler: { _ in
+            let shuffle = AlertAction.init(title: .shuffle(.songs), style: .default, requiresDismissalFirst: true, handler: {
                 
                 musicPlayer.play(songs, startingFrom: nil, shuffleMode: .songs, from: self, withTitle: (self.tableContainer?.filteredEntities.count ?? 0).countText(for: self.entities.entityType), alertTitle: .shuffle(.songs))
             })
             
             array.append(shuffle)
             
-            let shuffleAlbums = UIAlertAction.init(title: .shuffle(.albums), style: .default, handler: { _ in
+            let shuffleAlbums = AlertAction.init(title: .shuffle(.albums), style: .default, requiresDismissalFirst: true, handler: {
                 
                 musicPlayer.play(songs.albumsShuffled, startingFrom: nil, from: self, withTitle: (self.tableContainer?.filteredEntities.count ?? 0).countText(for: self.entities.entityType), alertTitle: .shuffle(.albums))
             })
             
             array.append(shuffleAlbums)
             
-            present(UIAlertController.withTitle(nil, message: "Filtered Items", style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
+            Transitioner.shared.showAlert(title: "Filtered Items", from: self, with: array)
+            
+//            present(UIAlertController.withTitle(nil, message: "Filtered Items", style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
             
         } else {
             
@@ -769,7 +771,12 @@ extension FilterViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         
-        return filtering ? .insert : .none
+        return /*filtering ? .insert : */.none
+    }
+    
+    func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
+        
+        return false
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {

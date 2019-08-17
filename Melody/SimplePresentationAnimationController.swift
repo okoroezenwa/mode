@@ -86,7 +86,7 @@ class SimplePresentationAnimationController: NSObject, UIViewControllerAnimatedT
                         }
                     })
                     
-                    view.backgroundColor = /*darkTheme ? UIColor.white.withAlphaComponent(0.05) : */UIColor.black.withAlphaComponent(/*weakSelf.orientation == .horizontal ? 0.2 : */0.3)
+                    view.backgroundColor = UIColor.black.withAlphaComponent(0.3)
                 
                 case .reverse:
                     
@@ -104,7 +104,7 @@ class SimplePresentationAnimationController: NSObject, UIViewControllerAnimatedT
             }
         }
         
-        UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: orientation == .vertical ? 1 : 0.8, initialSpringVelocity: 0, options: [.curveLinear, .allowUserInteraction], animations: animations, completion: { _ in
+        UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: orientation == .vertical ? 1 : 0.8, initialSpringVelocity: 0, options: [.curveEaseOut, .allowUserInteraction], animations: animations, completion: { _ in
             
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
             

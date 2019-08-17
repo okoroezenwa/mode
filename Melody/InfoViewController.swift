@@ -64,6 +64,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
             
             updateCornersAndShadows()
             prepareViews()
+            entityRatingStackView.addArrangedSubview(rateShareView)
             
             headerView.addToView.tapAction = .init(action: #selector(SongActionManager.showActionsForAll(_:)), target: songManager)
             headerView.queueView.tapAction = .init(action: #selector(addToQueue), target: self)
@@ -104,6 +105,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
     var skipsLabel: MELLabel! { return headerView.skipsLabel }
     var updatedLabel: MELLabel! { return headerView.updatedLabel }
     var skipsTitleLabel: MELLabel! { return headerView.skipsTitleLabel }
+    /*@objc */lazy var rateShareView = RateShareView.instance(container: self)
     
     var albumButton: MELButton? { return alternateButton2 }
     var artistButton: MELButton? { return alternateButton1 }
@@ -625,23 +627,17 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
         
         if canShuffleAlbums {
             
-            var array = [UIAlertAction]()
-            
-            let shuffle = UIAlertAction.init(title: .shuffle(.songs), style: .default, handler: { _ in
+            let shuffle = AlertAction.init(title: .shuffle(.songs), style: .default, requiresDismissalFirst: true, handler: {
                 
                 musicPlayer.play(details.array, startingFrom: nil, shuffleMode: .songs, from: self, withTitle: details.title, alertTitle: .shuffle(.songs), completion: { self.parent?.performSegue(withIdentifier: "unwind", sender: nil) })
             })
             
-            array.append(shuffle)
-            
-            let shuffleAlbums = UIAlertAction.init(title: .shuffle(.albums), style: .default, handler: { _ in
+            let shuffleAlbums = AlertAction.init(title: .shuffle(.albums), style: .default, requiresDismissalFirst: true, handler: {
                 
                 musicPlayer.play(details.array.albumsShuffled, startingFrom: nil, from: self, withTitle: details.title, alertTitle: .shuffle(.albums), completion: { self.parent?.performSegue(withIdentifier: "unwind", sender: nil) })
             })
             
-            array.append(shuffleAlbums)
-            
-            present(UIAlertController.withTitle(nil, message: titleButton.titleLabel?.text, style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
+            Transitioner.shared.showAlert(title: titleButton.titleLabel?.text, from: self, with: shuffle, shuffleAlbums)
             
         } else {
             
@@ -1413,10 +1409,10 @@ extension InfoViewController {
             
             if case .collection = context {
                 
-                headerView.rateShareView.canLikeEntity = false
+                rateShareView.canLikeEntity = false
             }
             
-            headerView.rateShareView.entity = {
+            rateShareView.entity = {
             
                 switch context {
                     

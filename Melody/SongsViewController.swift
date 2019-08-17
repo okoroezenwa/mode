@@ -428,7 +428,7 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
         
         if let collectionView = collectionView {
             
-            collectionView.reloadItems(at: collectionView.indexPathsForVisibleItems)
+            collectionView.reloadData()//reloadItems(at: collectionView.indexPathsForVisibleItems)
         }
     }
     
@@ -442,7 +442,7 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
             
             if let collectionView = collectionView {
                 
-                collectionView.reloadItems(at: collectionView.indexPathsForVisibleItems)
+                collectionView.reloadData()//reloadItems(at: collectionView.indexPathsForVisibleItems)
             }
         
         } else {
@@ -658,23 +658,23 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
         
         if canShuffleAlbums {
             
-            var array = [UIAlertAction]()
+            var array = [AlertAction]()
             
-            let shuffle = UIAlertAction.init(title: .shuffle(.songs), style: .default, handler: { _ in
+            let shuffle = AlertAction.init(title: .shuffle(.songs), style: .default, requiresDismissalFirst: true, handler: {
                 
                 musicPlayer.play(songs, startingFrom: nil, shuffleMode: .songs, from: self, withTitle: "All " ?+ self.libraryVC?.preferredTitle, alertTitle: .shuffle(.songs))
             })
             
             array.append(shuffle)
             
-            let shuffleAlbums = UIAlertAction.init(title: .shuffle(.albums), style: .default, handler: { _ in
+            let shuffleAlbums = AlertAction.init(title: .shuffle(.albums), style: .default, requiresDismissalFirst: true, handler: {
                 
                 musicPlayer.play(songs.albumsShuffled, startingFrom: nil, from: self, withTitle: "All" ?+ self.libraryVC?.preferredTitle, alertTitle: .shuffle(.albums))
             })
             
             array.append(shuffleAlbums)
             
-            present(UIAlertController.withTitle(nil, message: "All " ?+ self.libraryVC?.preferredTitle, style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
+            Transitioner.shared.showAlert(title: "All " ?+ self.libraryVC?.preferredTitle, from: self, with: array)
             
         } else {
             

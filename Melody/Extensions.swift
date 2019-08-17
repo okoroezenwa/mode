@@ -241,6 +241,7 @@ extension CGRect {
 extension UIView {
     
     enum PinDirection { case top, bottom }
+    enum ViewOrientation { case horizontally, vertically }
     
     func shadowPath(cornerRadius radius: CGFloat? = nil) -> CGPath {
         
@@ -288,6 +289,70 @@ extension UIView {
         bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: insets.bottom).isActive = true
     }
     
+    func filled(with view: UIView, withInsets insets: UIEdgeInsets = .zero) -> UIView {
+        
+        self.fill(with: view, withInsets: insets)
+        
+        return self
+    }
+    
+    func stack(_ oriented: ViewOrientation, with views: [UIView], spacing: CGFloat) {
+        
+        views.enumerated().forEach({ (offset, view) in
+            
+            addSubview(view)
+            
+            if offset == 0 {
+                
+                leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0).isActive = true
+                topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
+                
+                if oriented == .vertically {
+                
+                    trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0).isActive = true
+                
+                } else if oriented == .horizontally {
+                    
+                    bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
+                }
+            
+            } else if offset == views.endIndex - 1, let viewBefore = views.value(at: max(0, views.endIndex - 2)) {
+                
+                bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
+                trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0).isActive = true
+                
+                if oriented == .vertically {
+                    
+                    leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0).isActive = true
+                    viewBefore.bottomAnchor.constraint(equalTo: view.topAnchor, constant: spacing).isActive = true
+                
+                } else if oriented == .horizontally {
+                    
+                    topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
+                    viewBefore.trailingAnchor.constraint(equalTo: view.leadingAnchor, constant: spacing).isActive = true
+                }
+            
+            } else if let viewBefore = views.value(at: max(0, offset - 1)) {
+                
+                trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0).isActive = true
+                bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
+                
+                if oriented == .vertically {
+                    
+                    leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0).isActive = true
+                    trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0).isActive = true
+                    viewBefore.bottomAnchor.constraint(equalTo: view.topAnchor, constant: spacing).isActive = true
+                
+                } else if oriented == .horizontally {
+                    
+                    topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
+                    bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
+                    viewBefore.trailingAnchor.constraint(equalTo: view.leadingAnchor, constant: spacing).isActive = true
+                }
+            }
+        })
+    }
+    
     func constrain(_ view: UIView, to direction: PinDirection, of vc: UIViewController, withInsets insets: UIEdgeInsets = .zero) {
         
         addSubview(view)
@@ -318,6 +383,16 @@ extension UIView {
             NSLayoutConstraint.init(item: self, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: width),
             NSLayoutConstraint.init(item: self, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: height)
         ])
+    }
+    
+    static var clear: UIView {
+        
+        let view = UIView.init(frame: .zero)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .clear
+        view.clipsToBounds = false
+        
+        return view
     }
 }
 
@@ -594,6 +669,11 @@ extension UITableView {
         return dequeueReusableCell(withIdentifier: .settingsCell, for: indexPath) as! SettingsTableViewCell
     }
     
+    func loginCell(for indexPath: IndexPath) -> LoginDetailsTableViewCell {
+        
+        return dequeueReusableCell(withIdentifier: .loginCell, for: indexPath) as! LoginDetailsTableViewCell
+    }
+    
     var sectionHeader: TableHeaderView? {
         
         return dequeueReusableHeaderFooterView(withIdentifier: .sectionHeader) as? TableHeaderView
@@ -841,11 +921,13 @@ extension UIAlertAction {
 
 extension UIAlertController {
     
+    /// Variadic Version
     static func withTitle(_ title: String?, message: String?, style: UIAlertController.Style, actions: UIAlertAction..., popoverDetails details: (rect: CGRect, view: UIView)? = nil) -> UIAlertController {
         
         return self.withTitle(title, message: message, style: style, popoverDetails: details, actions: actions)
     }
     
+    /// Array Version
     static func withTitle(_ title: String?, message: String?, style: UIAlertController.Style, popoverDetails details: (rect: CGRect, view: UIView)? = nil, actions: [UIAlertAction]) -> UIAlertController {
         
         let alert = UIAlertController.init(title: title, message: message, preferredStyle: style)

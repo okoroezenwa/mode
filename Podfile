@@ -6,6 +6,7 @@ target 'Mode' do
   use_frameworks!
 
   pod 'SwiftSoup'
+  pod 'LastFm'
 
 end
 

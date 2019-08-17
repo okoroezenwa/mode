@@ -6,3 +6,4 @@
 #import "UIImageEffects.h"
 #import "MPMusicPlayerController+Other.h"
 #import "MPMediaQuery+Other.h"
+#import "LastFm/LastFm.h"

@@ -35,13 +35,7 @@ class InfoCollectionReusableView: UICollectionReusableView {
     @IBOutlet var playlistsBorderView: MELBorderView!
     @IBOutlet var queueStackView: UIStackView!
     @IBOutlet var explicitButton: MELButton!
-    @IBOutlet var entityRatingStackView: UIStackView! {
-        
-        didSet {
-            
-            entityRatingStackView.addArrangedSubview(rateShareView)
-        }
-    }
+    @IBOutlet var entityRatingStackView: UIStackView!
     @IBOutlet var addedTitleLabel: MELLabel! // 'created' for playlists; 'last addition' for other collections
     @IBOutlet var playsTitleLabel: MELLabel! // 'total plays' for collections
     @IBOutlet var bpmLabel: MELLabel!
@@ -53,7 +47,6 @@ class InfoCollectionReusableView: UICollectionReusableView {
     @objc let queueView = BorderedButtonView.with(title: "Queue...", image: #imageLiteral(resourceName: "AddSong10"), tapAction: nil)
     @objc let insertView = BorderedButtonView.with(title: "Insert...", image: #imageLiteral(resourceName: "AddToPlaylist10"), tapAction: nil)
     @objc let addToView = BorderedButtonView.with(title: "Add to...", image: #imageLiteral(resourceName: "AddNoBorderSmall"), tapAction: nil)
-    @objc let rateShareView = RateShareView.instance()
     
     override func awakeFromNib() {
         

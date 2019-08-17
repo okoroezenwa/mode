@@ -92,6 +92,9 @@
 		BE34C96D21A9C40A00236BAE /* GestureSelectableCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = BE34C96C21A9C40A00236BAE /* GestureSelectableCell.xib */; };
 		BE34C96F21A9C62700236BAE /* GestureSelectableCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE34C96E21A9C62700236BAE /* GestureSelectableCollectionViewCell.swift */; };
 		BE358980219EA1F300637E9F /* AlertTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE35897F219EA1F300637E9F /* AlertTableViewController.swift */; };
+		BE37EDF722E5A65700AF1F6F /* LastFMTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE37EDF622E5A65700AF1F6F /* LastFMTableViewController.swift */; };
+		BE37EDF922E5E14200AF1F6F /* LoginDetailsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = BE37EDF822E5E14200AF1F6F /* LoginDetailsCell.xib */; };
+		BE37EDFB22E5E1D100AF1F6F /* LoginDetailsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE37EDFA22E5E1D100AF1F6F /* LoginDetailsTableViewCell.swift */; };
 		BE381D5420DA7B6A00D6C2F3 /* SettingsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = BE381D5320DA7B6A00D6C2F3 /* SettingsCell.xib */; };
 		BE3A5FAB1D81B01500F4F2F2 /* LibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3A5FAA1D81B01500F4F2F2 /* LibraryViewController.swift */; };
 		BE3AE1301D77235E00B9DC47 /* AlbumItemsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3AE12F1D77235E00B9DC47 /* AlbumItemsViewController.swift */; };
@@ -136,6 +139,8 @@
 		BE573D011E66A1290021DCBD /* MainChildren.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BE573D001E66A1290021DCBD /* MainChildren.storyboard */; };
 		BE573D041E66A1760021DCBD /* LibraryChildren.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BE573D021E66A1760021DCBD /* LibraryChildren.storyboard */; };
 		BE573D061E66A2AD0021DCBD /* Globals.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE573D051E66A2AD0021DCBD /* Globals.swift */; };
+		BE5BB4FD22E1C50300F03322 /* Scrobbler.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5BB4FC22E1C50200F03322 /* Scrobbler.swift */; };
+		BE5BB4FF22E3176500F03322 /* LastFMTableViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BE5BB4FE22E3176500F03322 /* LastFMTableViewController.storyboard */; };
 		BE5BC87E1E18E7A4003889F9 /* NoAccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5BC87D1E18E7A4003889F9 /* NoAccessView.swift */; };
 		BE601EF622DA3A1C0028E8E2 /* SavedLyricsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE601EF522DA3A1C0028E8E2 /* SavedLyricsViewController.swift */; };
 		BE63F5681D57C50200D03019 /* QueueViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE63F5671D57C50200D03019 /* QueueViewController.swift */; };
@@ -428,6 +433,9 @@
 		BE34C96C21A9C40A00236BAE /* GestureSelectableCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GestureSelectableCell.xib; sourceTree = "<group>"; };
 		BE34C96E21A9C62700236BAE /* GestureSelectableCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureSelectableCollectionViewCell.swift; sourceTree = "<group>"; };
 		BE35897F219EA1F300637E9F /* AlertTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertTableViewController.swift; sourceTree = "<group>"; };
+		BE37EDF622E5A65700AF1F6F /* LastFMTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastFMTableViewController.swift; sourceTree = "<group>"; };
+		BE37EDF822E5E14200AF1F6F /* LoginDetailsCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LoginDetailsCell.xib; sourceTree = "<group>"; };
+		BE37EDFA22E5E1D100AF1F6F /* LoginDetailsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginDetailsTableViewCell.swift; sourceTree = "<group>"; };
 		BE381D5320DA7B6A00D6C2F3 /* SettingsCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SettingsCell.xib; sourceTree = "<group>"; };
 		BE3A5FAA1D81B01500F4F2F2 /* LibraryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibraryViewController.swift; sourceTree = "<group>"; };
 		BE3AE12F1D77235E00B9DC47 /* AlbumItemsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbumItemsViewController.swift; sourceTree = "<group>"; };
@@ -472,6 +480,8 @@
 		BE573D001E66A1290021DCBD /* MainChildren.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = MainChildren.storyboard; sourceTree = "<group>"; };
 		BE573D031E66A1760021DCBD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LibraryChildren.storyboard; sourceTree = "<group>"; };
 		BE573D051E66A2AD0021DCBD /* Globals.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Globals.swift; sourceTree = "<group>"; };
+		BE5BB4FC22E1C50200F03322 /* Scrobbler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scrobbler.swift; sourceTree = "<group>"; };
+		BE5BB4FE22E3176500F03322 /* LastFMTableViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LastFMTableViewController.storyboard; sourceTree = "<group>"; };
 		BE5BC87D1E18E7A4003889F9 /* NoAccessView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NoAccessView.swift; path = Melody/NoAccessView.swift; sourceTree = "<group>"; };
 		BE601EF522DA3A1C0028E8E2 /* SavedLyricsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedLyricsViewController.swift; sourceTree = "<group>"; };
 		BE63F5671D57C50200D03019 /* QueueViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueueViewController.swift; sourceTree = "<group>"; };
@@ -890,6 +900,7 @@
 				BED2C2BC2043401C009BB73F /* LibraryRefreshTableViewController.swift */,
 				BEB76FBF20505066001FCA00 /* RecentsTableViewController.swift */,
 				BE7DE705214BACE30032FCBD /* PropertiesTableViewController.swift */,
+				BE37EDF622E5A65700AF1F6F /* LastFMTableViewController.swift */,
 			);
 			name = Settings;
 			sourceTree = "<group>";
@@ -950,6 +961,7 @@
 		BE2715351D5A7584001F01FF /* Table View Cells */ = {
 			isa = PBXGroup;
 			children = (
+				BE37EDFA22E5E1D100AF1F6F /* LoginDetailsTableViewCell.swift */,
 				BE7B424020DABD0800EB7CD5 /* SettingsTableViewCell.swift */,
 				BEBF0E7520461B2F001C29CC /* RecentSearchTableViewCell.swift */,
 				BEDC53AC1EBCECFD00566424 /* SongDetailsTableViewCell.swift */,
@@ -1007,6 +1019,7 @@
 				BE2E7CC71E61F1AE00FD69C4 /* Settings.swift */,
 				BEE614F81DAFC0B200E057DA /* Formatter.swift */,
 				BE0136AD211EFDAB00D7588A /* LyricsManager.swift */,
+				BE5BB4FC22E1C50200F03322 /* Scrobbler.swift */,
 			);
 			name = "Delegates & Handlers";
 			sourceTree = "<group>";
@@ -1097,6 +1110,7 @@
 		BE573CF41E669E430021DCBD /* Storyboards */ = {
 			isa = PBXGroup;
 			children = (
+				BE5BB4FE22E3176500F03322 /* LastFMTableViewController.storyboard */,
 				BEDAA11522D8FC520082EC3E /* SavedLyricsViewController.storyboard */,
 				BE0F5C2A1D2D663F00C9E8A1 /* Main.storyboard */,
 				BE573D021E66A1760021DCBD /* LibraryChildren.storyboard */,
@@ -1146,6 +1160,7 @@
 		BEB3AC711DD881B900682854 /* XIBS */ = {
 			isa = PBXGroup;
 			children = (
+				BE37EDF822E5E14200AF1F6F /* LoginDetailsCell.xib */,
 				BEDB79A72191BC870013F9A9 /* InfoLyricsCell.xib */,
 				BE381D5320DA7B6A00D6C2F3 /* SettingsCell.xib */,
 				BED9BBFE202D96F2007FEC65 /* Switch.xib */,
@@ -1456,8 +1471,10 @@
 				BE73B1E31D96708C0059D084 /* SongCell.xib in Resources */,
 				BEC0B16B2021D506008CBEB5 /* Light App Icon Thin@3x.png in Resources */,
 				BEBC4E321FB2DAE200F18E06 /* InputView.xib in Resources */,
+				BE37EDF922E5E14200AF1F6F /* LoginDetailsCell.xib in Resources */,
 				BEC04C081D30257B0095D856 /* MyriadPro-Semibold.otf in Resources */,
 				BE21DB001F229EF600441BF6 /* TableFooterView.xib in Resources */,
+				BE5BB4FF22E3176500F03322 /* LastFMTableViewController.storyboard in Resources */,
 				BE0F5C311D2D663F00C9E8A1 /* LaunchScreen.storyboard in Resources */,
 				BEDAA11622D8FC520082EC3E /* SavedLyricsViewController.storyboard in Resources */,
 				BEFF556C212874F0006CBAEE /* VisualEffectNavigationBar.xib in Resources */,
@@ -1559,10 +1576,14 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Mode/Pods-Mode-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/KissXML/KissXML.framework",
+				"${BUILT_PRODUCTS_DIR}/LastFm/LastFm.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftSoup/SwiftSoup.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/KissXML.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LastFm.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftSoup.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1675,6 +1696,7 @@
 				BE0136AC211E12C500D7588A /* ModeOnlyStringExtensions.swift in Sources */,
 				BEC933DF1F6D9B3600FB5984 /* SwipeTableViewCell+Accessibility.swift in Sources */,
 				BE15AA1F1E869B100053D10B /* Notification + Extensions.swift in Sources */,
+				BE5BB4FD22E1C50300F03322 /* Scrobbler.swift in Sources */,
 				BEF7CD221EAC965D007543C9 /* Actionable.swift in Sources */,
 				BE6D57912027079F00F0B7AA /* Fonts + Extensions.swift in Sources */,
 				BE2E7CCB1E62059F00FD69C4 /* MELSegmentedControl.swift in Sources */,
@@ -1736,7 +1758,9 @@
 				BEDC53AD1EBCECFD00566424 /* SongDetailsTableViewCell.swift in Sources */,
 				BE7223B61ECE7B3500A7C071 /* InfoCollectionReusableView.swift in Sources */,
 				BEFA282A1D3426E500DE7018 /* UIDevice+Extensions.swift in Sources */,
+				BE37EDF722E5A65700AF1F6F /* LastFMTableViewController.swift in Sources */,
 				BEB57D9E1D569A9A0078264A /* UIImage+UIStatusBarStyle.m in Sources */,
+				BE37EDFB22E5E1D100AF1F6F /* LoginDetailsTableViewCell.swift in Sources */,
 				BE358980219EA1F300637E9F /* AlertTableViewController.swift in Sources */,
 				BEE7F6451E6362A5005927C7 /* MELImageView.swift in Sources */,
 				BEB76FC020505067001FCA00 /* RecentsTableViewController.swift in Sources */,
@@ -1996,7 +2020,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				sharedBuildNumber = 15442;
+				sharedBuildNumber = 15777;
 				sharedVersionNumber = 1.2;
 			};
 			name = Debug;
@@ -2048,7 +2072,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				VALIDATE_PRODUCT = YES;
-				sharedBuildNumber = 15442;
+				sharedBuildNumber = 15777;
 				sharedVersionNumber = 1.2;
 			};
 			name = Release;

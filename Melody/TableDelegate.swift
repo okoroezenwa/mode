@@ -19,6 +19,8 @@ class TableDelegate: NSObject, Detailing {
     lazy var playlistContainers = [PlaylistContainer]()
     lazy var collapsedPlaylistChildren = [Int64: [PlaylistContainer]]()
     
+    var preferredEditingStyle = EditingStyle.insert
+    
     var querySectionsType: QuerySectionsType {
         
         switch location {
@@ -277,13 +279,13 @@ extension TableDelegate: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         
-        return .insert
+        return .none//.insert
     }
     
-//    func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
-//        
-//        return false
-//    }
+    func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
+        
+        return false
+    }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         
@@ -521,6 +523,8 @@ extension TableDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath, filtering: Bool) -> UITableViewCell {
         
         let cell = tableView.songCell(for: indexPath)
+        
+        cell.preferredEditingStyle = preferredEditingStyle
         
         switch location {
             
@@ -979,7 +983,7 @@ extension TableDelegate {
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath, filtering: Bool) {
         
-        guard editingStyle == .insert else { return }
+//        guard editingStyle == .insert else { return }
         
         notifier.post(name: .addedToQueue, object: nil, userInfo: [DictionaryKeys.queueItems: items(at: indexPath, filtering: filtering)])
         
@@ -1077,7 +1081,9 @@ extension TableDelegate: EntityCellDelegate {
             actions.insert(actionable.singleItemAlertAction(for: .library, entity: .song, using: item, from: vc), at: 3)
         }
         
-        vc.present(UIAlertController.withTitle(nil, message: cell.nameLabel.text, style: .actionSheet, actions: actions + [.cancel()] ), animated: true, completion: nil)
+        Transitioner.shared.showAlert(title: cell.nameLabel.text, from: vc, with: actions)
+        
+//        vc.present(UIAlertController.withTitle(nil, message: cell.nameLabel.text, style: .actionSheet, actions: actions + [.cancel()] ), animated: true, completion: nil)
     }
     
     func scrollViewTapped(in cell: SongTableViewCell) {
@@ -1125,10 +1131,10 @@ extension TableDelegate: EntityCellDelegate {
             
             if songs.count > 1 {
                 
-                var array = [UIAlertAction]()
+//                var array = [UIAlertAction]()
                 let canShuffleAlbums = songs.canShuffleAlbums
                 
-                let play = UIAlertAction.init(title: "Play", style: .default, handler: { _ in
+                var actions = [AlertAction.init(info: AlertInfo.init(title: "Play", accessoryType: .none), requiresDismissalFirst: true, handler: {
                     
                     musicPlayer.play(songs, startingFrom: songs.first, from: container as? UIViewController, withTitle: cell.nameLabel.text, alertTitle: "Play", completion: { [weak self] in
                         
@@ -1136,11 +1142,8 @@ extension TableDelegate: EntityCellDelegate {
                         
                         weakSelf.container?.filterContainer?.saveRecentSearch(withTitle: weakSelf.container?.filterContainer?.searchBar?.text, resignFirstResponder: false)
                     })
-                })
-                
-                array.append(play)
-                
-                let shuffle = UIAlertAction.init(title: .shuffle(canShuffleAlbums ? .songs : .none), style: .default, handler: { _ in
+                    
+                }), AlertAction.init(info: AlertInfo.init(title: .shuffle(canShuffleAlbums ? .songs : .none), accessoryType: .none), requiresDismissalFirst: true, handler: {
                     
                     musicPlayer.play(songs, startingFrom: nil, shuffleMode: .songs, from: container as? UIViewController, withTitle: cell.nameLabel.text, alertTitle: .shuffle(canShuffleAlbums ? .songs : .none), completion: { [weak self] in
                         
@@ -1148,13 +1151,11 @@ extension TableDelegate: EntityCellDelegate {
                         
                         weakSelf.container?.filterContainer?.saveRecentSearch(withTitle: weakSelf.container?.filterContainer?.searchBar?.text, resignFirstResponder: false)
                     })
-                })
-                
-                array.append(shuffle)
+                })]
                 
                 if canShuffleAlbums {
                     
-                    let shuffleAlbums = UIAlertAction.init(title: .shuffle(.albums), style: .default, handler: { _ in
+                    actions.append(AlertAction.init(info: AlertInfo.init(title: .shuffle(.albums), accessoryType: .none), requiresDismissalFirst: true, handler: {
                         
                         musicPlayer.play(songs.albumsShuffled, startingFrom: nil, from: container as? UIViewController, withTitle: cell.nameLabel.text, alertTitle: .shuffle(.albums), completion: { [weak self] in
                             
@@ -1162,12 +1163,10 @@ extension TableDelegate: EntityCellDelegate {
                             
                             weakSelf.container?.filterContainer?.saveRecentSearch(withTitle: weakSelf.container?.filterContainer?.searchBar?.text, resignFirstResponder: false)
                         })
-                    })
-                    
-                    array.append(shuffleAlbums)
+                    }))
                 }
                 
-                (container.filterContainer ?? container as? UIViewController)?.present(UIAlertController.withTitle(cell.nameLabel.text, message: nil, style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
+                Transitioner.shared.showAlert(title: cell.nameLabel.text, from: container.filterContainer ?? container as? UIViewController, context: .other, with: actions)
                 
             } else {
                 

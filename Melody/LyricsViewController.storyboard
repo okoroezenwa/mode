@@ -35,6 +35,33 @@
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="umW-lK-Jk0">
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="611"/>
                                         <subviews>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3fh-d4-3Kp" customClass="GradientView" customModule="Mode" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="0.0" width="375" height="611"/>
+                                                <subviews>
+                                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" editable="NO" textAlignment="center" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3bZ-5Y-Vw4" customClass="MELTextView" customModule="Mode" customModuleProvider="target">
+                                                        <rect key="frame" x="0.0" y="0.0" width="375" height="611"/>
+                                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                        <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
+                                                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                                    </textView>
+                                                </subviews>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="trailing" secondItem="3bZ-5Y-Vw4" secondAttribute="trailing" id="FoF-C8-YME"/>
+                                                    <constraint firstItem="3bZ-5Y-Vw4" firstAttribute="top" secondItem="3fh-d4-3Kp" secondAttribute="top" id="GyZ-6N-gYx"/>
+                                                    <constraint firstAttribute="bottom" secondItem="3bZ-5Y-Vw4" secondAttribute="bottom" id="LHD-Ux-TcR"/>
+                                                    <constraint firstItem="3bZ-5Y-Vw4" firstAttribute="leading" secondItem="3fh-d4-3Kp" secondAttribute="leading" id="aRs-br-CfR"/>
+                                                </constraints>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="boolean" keyPath="horizontal" value="NO"/>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="midStart">
+                                                        <real key="value" value="0.040000000000000001"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="midEnd">
+                                                        <real key="value" value="0.95999999999999996"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                </userDefinedRuntimeAttributes>
+                                            </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VCA-0E-1MP">
                                                 <rect key="frame" x="0.0" y="0.0" width="375" height="611"/>
                                                 <subviews>
@@ -60,7 +87,7 @@
                                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jHm-uF-rea" customClass="MELButton" customModule="Mode" customModuleProvider="target">
                                                                         <rect key="frame" x="0.0" y="0.0" width="191.5" height="50"/>
                                                                         <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="25"/>
-                                                                        <state key="normal" title="Button"/>
+                                                                        <state key="normal" title="Try Again"/>
                                                                         <userDefinedRuntimeAttributes>
                                                                             <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
                                                                                 <integer key="value" value="0"/>
@@ -96,33 +123,6 @@
                                                     <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="M7G-tz-CYP" secondAttribute="trailing" constant="10" id="MF7-5Y-do2"/>
                                                     <constraint firstItem="M7G-tz-CYP" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="VCA-0E-1MP" secondAttribute="leading" constant="10" id="fui-EQ-fLo"/>
                                                 </constraints>
-                                            </view>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3fh-d4-3Kp" customClass="GradientView" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="0.0" width="375" height="611"/>
-                                                <subviews>
-                                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" editable="NO" textAlignment="center" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3bZ-5Y-Vw4" customClass="MELTextView" customModule="Mode" customModuleProvider="target">
-                                                        <rect key="frame" x="0.0" y="0.0" width="375" height="611"/>
-                                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                        <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                                                    </textView>
-                                                </subviews>
-                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="trailing" secondItem="3bZ-5Y-Vw4" secondAttribute="trailing" id="FoF-C8-YME"/>
-                                                    <constraint firstItem="3bZ-5Y-Vw4" firstAttribute="top" secondItem="3fh-d4-3Kp" secondAttribute="top" id="GyZ-6N-gYx"/>
-                                                    <constraint firstAttribute="bottom" secondItem="3bZ-5Y-Vw4" secondAttribute="bottom" id="LHD-Ux-TcR"/>
-                                                    <constraint firstItem="3bZ-5Y-Vw4" firstAttribute="leading" secondItem="3fh-d4-3Kp" secondAttribute="leading" id="aRs-br-CfR"/>
-                                                </constraints>
-                                                <userDefinedRuntimeAttributes>
-                                                    <userDefinedRuntimeAttribute type="boolean" keyPath="horizontal" value="NO"/>
-                                                    <userDefinedRuntimeAttribute type="number" keyPath="midStart">
-                                                        <real key="value" value="0.040000000000000001"/>
-                                                    </userDefinedRuntimeAttribute>
-                                                    <userDefinedRuntimeAttribute type="number" keyPath="midEnd">
-                                                        <real key="value" value="0.95999999999999996"/>
-                                                    </userDefinedRuntimeAttribute>
-                                                </userDefinedRuntimeAttributes>
                                             </view>
                                         </subviews>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

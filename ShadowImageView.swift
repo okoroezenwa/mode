@@ -23,8 +23,21 @@ class ShadowImageView: UIImageView {
         notifier.addObserver(self, selector: #selector(changeThemeColor), name: .themeChanged, object: nil)
     }
     
+    convenience init(radius: CGFloat, blur: CGFloat, length: CGFloat) {
+        
+        self.init(frame: .zero)
+        
+        clipsToBounds = false
+        translatesAutoresizingMaskIntoConstraints = false
+        self.radius = radius
+        self.blur = blur
+        self.length = length
+        
+        changeThemeColor()
+    }
+    
     @objc func changeThemeColor() {
         
-        image = .resizableShadowImage(withSideLength: length, cornerRadius: radius, shadow: Shadow(offset: .zero, blur: blur, color: darkTheme ? .gray : .darkGray))
+        image = .resizableShadowImage(withSideLength: length, cornerRadius: radius, shadow: Shadow(offset: .zero, blur: blur, color: UIColor.darkGray.withAlphaComponent(0.7)))
     }
 }

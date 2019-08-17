@@ -8,15 +8,11 @@
 
 import UIKit
 
-typealias TapActionsDictionary = [Int: () -> ()]
-typealias PreviewActionsDictionary = [Int: (UIViewController) -> UIViewController?]
-typealias AccessoryActionsDictionary = [Int: AccessoryButtonAction]
-
 class AlertTableViewController: UITableViewController, PreviewTransitionable {
     
-    enum Context { case show }
+    enum Context { case show, other, queue(title: String?, kind: MPMusicPlayerController.QueueKind, context: QueueInsertController.Context) }
     
-    var array = [Setting]()
+    var actions = [AlertAction]()
     var context = Context.show
     var verticalPresentedVC: VerticalPresentationContainerViewController? { return parent as? VerticalPresentationContainerViewController }
     
@@ -33,19 +29,22 @@ class AlertTableViewController: UITableViewController, PreviewTransitionable {
     }
     
     var segmentAction: ((UIViewController?) -> ())?
-    
-    var tapActions = TapActionsDictionary()
-    var previewActions = PreviewActionsDictionary()
-    var accessoryActions = AccessoryActionsDictionary()
+    var queueInsertController: QueueInsertController?
 
     override func viewDidLoad() {
         
         super.viewDidLoad()
         
-        verticalPresentedVC?.containerViewHeightConstraint.constant = (FontManager.shared.alertCellHeight + 2) * CGFloat(array.count)
+        verticalPresentedVC?.containerViewHeightConstraint.constant = (FontManager.shared.alertCellHeight + 2) * CGFloat(actions.count)
+        
+        if case .queue = context {
+            
+            queueInsertController = QueueInsertController.init(vc: self)
+        }
         
         verticalPresentedVC?.view.layoutIfNeeded()
         tableView.scrollIndicatorInsets.bottom = 15
+        tableView.separatorInset.left = actions.first?.info.subtitle == nil && actions.first?.info.image == nil ? 0 : 54
         
         notifier.addObserver(self, selector: #selector(updateScrollView), name: UIApplication.didChangeStatusBarFrameNotification, object: UIApplication.shared)
         
@@ -84,16 +83,16 @@ extension AlertTableViewController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return array.count
+        return actions.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.settingCell(for: indexPath)
         
-        cell.prepare(with: array[indexPath.row], context: .alert(cancel: false))
+        cell.prepare(with: actions[indexPath.row])
         
-        if context == .show {
+        if case .show = context {
             
             cell.delegate = self
         }
@@ -105,14 +104,41 @@ extension AlertTableViewController {
         
         tableView.deselectRow(at: indexPath, animated: true)
         
-        tapActions[indexPath.row]?()
+        let action = actions[indexPath.row]
         
-        dismiss(animated: true, completion: nil)
+        switch context {
+            
+            case .show:
+                
+                action.handler?()
+                dismiss(animated: true, completion: nil)
+            
+            case .other:
+                
+                if action.requiresDismissalFirst.inverted {
+                    
+                    action.handler?()
+                }
+                
+                dismiss(animated: true, completion: {
+                    
+                    guard action.requiresDismissalFirst else { return }
+                    
+                    action.handler?()
+                })
+            
+            case .queue: action.handler?()
+        }
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
         return FontManager.shared.alertCellHeight + 2
+    }
+    
+    override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+        
+        return actions[indexPath.row].info.inactive().inverted
     }
 }
 
@@ -124,11 +150,13 @@ extension AlertTableViewController: UIViewControllerPreviewingDelegate {
             
             case .show:
             
-                guard let indexPath = tableView.indexPathForRow(at: location), let action = previewActions[indexPath.row], let cell = tableView.cellForRow(at: indexPath) else { return nil }
+                guard let indexPath = tableView.indexPathForRow(at: location), let action = actions[indexPath.row].previewAction, let cell = tableView.cellForRow(at: indexPath) else { return nil }
                 
                 previewingContext.sourceRect = cell.frame
             
                 return action(self)
+            
+            default: return nil
         }
     }
     
@@ -146,7 +174,7 @@ extension AlertTableViewController: SettingsCellDelegate {
     
     func accessoryButtonTapped(in cell: SettingsTableViewCell) {
         
-        guard let indexPath = tableView.indexPath(for: cell), let action = accessoryActions[indexPath.row] else { return }
+        guard let indexPath = tableView.indexPath(for: cell), let action = actions[indexPath.row].accessoryAction else { return }
         
         action(cell.accessoryButton, self)
     }
@@ -169,9 +197,9 @@ extension AlertTableViewController: GestureSelectable {
             
             case .began, .changed:
                 
-                guard let indexPath = tableView.indexPathForRow(at: sender.location(in: tableView)) else {
+                guard let indexPath = tableView.indexPathForRow(at: sender.location(in: tableView)), actions[indexPath.row].info.inactive().inverted else {
                     
-                    noSelection()
+                    noSelection(withinChildViewFrame: true)
                     
                     return
                 }
@@ -187,16 +215,35 @@ extension AlertTableViewController: GestureSelectable {
             
                 self.tableView(tableView, didSelectRowAt: indexPath)
         
-            default: noSelection()
+            default: noSelection(withinChildViewFrame: true)
         }
     }
     
-    func noSelection() {
+    func noSelection(withinChildViewFrame: Bool) {
         
         if let indexPath = selectedIndexPath {
             
             selectedIndexPath = nil
             tableView.deselectRow(at: indexPath, animated: false)
+        }
+    }
+}
+
+extension AlertTableViewController: StaticOptionResponder {
+    
+    func selectedStaticOption(at index: Int) {
+        
+        guard case .queue = context else { return }
+        
+        switch index {
+            
+            case 0: queueInsertController?.addToQueue(.next)
+            
+            case 1: queueInsertController?.addToQueue(.after)
+            
+            case 2: queueInsertController?.addToQueue(.last)
+            
+            default: break
         }
     }
 }

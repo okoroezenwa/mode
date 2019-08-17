@@ -52,6 +52,8 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
     
     var borderedButtons = [BorderedButtonView?]()
     
+    var preferredEditingStyle = EditingStyle.select
+    
     @objc var actionableSongs: [MPMediaItem] { return manager?.queue ?? playlistItems }
     let applicableActions = [SongAction.remove]
     @objc lazy var songManager: SongActionManager = { return SongActionManager.init(actionable: self) }()
@@ -418,14 +420,14 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
     
     @objc func clear() {
         
-        var array = [UIAlertAction]()
+        var array = [AlertAction]()
         
         let clearAll = alertAction(for: .remove, from: self, using: manager?.queue ?? playlistItems)
         array.append(clearAll)
         
         if let indexPaths = tableView.indexPathsForSelectedRows, !indexPaths.isEmpty {
             
-            let clear = UIAlertAction.init(title: "Selected", style: .destructive, handler: { [weak self] _ in
+            let clear = AlertAction.init(title: "Selected", style: .destructive, handler: { [weak self] in
                 
                 guard let weakSelf = self else { return }
                 
@@ -436,7 +438,7 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
             
             if indexPaths.count < (manager?.queue ?? playlistItems).count {
                 
-                let keep = UIAlertAction.init(title: "Unselected", style: .destructive, handler: { [weak self] _ in
+                let keep = AlertAction.init(title: "Unselected", style: .destructive, handler: { [weak self] in
                     
                     guard let weakSelf = self else { return }
                     
@@ -447,7 +449,9 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
             }
         }
         
-        present(UIAlertController.withTitle("Clear...", message: nil, style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
+        Transitioner.shared.showAlert(title: "Clear...", from: self, with: array)
+        
+//        present(UIAlertController.withTitle("Clear...", message: nil, style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
     }
     
     @IBAction func addSongs() {
@@ -551,12 +555,11 @@ extension NewPlaylistViewController: UITableViewDelegate, UITableViewDataSource 
         cell.prepare(with: song, songNumber: songCountVisible.inverted ? nil : indexPath.row + 1)
         cell.delegate = self
         cell.swipeDelegate = self
+        cell.preferredEditingStyle = preferredEditingStyle
         cell.playButton.isUserInteractionEnabled = false
         cell.infoButton.isUserInteractionEnabled = false
         cell.infoButton.alpha = 0
         cell.optionsView.isHidden = true
-        cell.editingView.isHidden = true
-        cell.editingView.alpha = 0
         updateImageView(using: song, in: cell, indexPath: indexPath, reusableView: tableView)
         
         for category in [SecondaryCategory.loved, .plays, .rating, .lastPlayed, .dateAdded, .genre, .year, .fileSize] {
@@ -617,6 +620,11 @@ extension NewPlaylistViewController: UITableViewDelegate, UITableViewDataSource 
             playlistItems.insert(song, at: destinationIndexPath.row)
         }
     }
+    
+    func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
+        
+        return false
+    }
 }
 
 extension NewPlaylistViewController: UISearchBarDelegate {
@@ -636,7 +644,16 @@ extension NewPlaylistViewController: EntityCellDelegate {
     
     func editButtonTapped(in cell: SongTableViewCell) {
         
+        guard let indexPath = tableView.indexPath(for: cell) else { return }
         
+        if cell.isSelected {
+            
+            tableView.deselectRow(at: indexPath, animated: false)
+            
+        } else {
+        
+            self.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
+        }
     }
     
     func artworkTapped(in cell: SongTableViewCell) {

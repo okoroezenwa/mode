@@ -29,6 +29,8 @@ public extension String {
     static let secondarySizeSuffix = "secondarySizeSuffix"
     static let modeURL = "modeapp://"
     static let filterViewContext = "filterViewContext"
+    static let lastFMSessionKey = "lastFMSessionKey"
+    static let lastFMUsername = "lastFMUsername"
     
     static func shuffle(_ suffix: ShuffleSuffix = .none) -> String {
         
@@ -80,6 +82,7 @@ public extension String {
     static let otherCell = "otherCell"
     static let recentCell = "RecentCell"
     static let settingsCell = "SettingsCell"
+    static let loginCell = "LoginDetailsCell"
     static let sectionHeader = "TableHeaderView"
     static let sectionFooter = "TableFooterView"
     
@@ -147,7 +150,7 @@ public extension String {
 // MARK: - Enums
 public extension String {
     
-    enum ShuffleSuffix { case none, songs, albums }
+    enum ShuffleSuffix: Int { case none, songs, albums }
     
     enum URLAction: String {
         

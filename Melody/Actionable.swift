@@ -25,22 +25,22 @@ extension SongActionable {
         
         guard !actionableSongs.isEmpty, let vc = self as? UIViewController else { return }
         
-        var selection: [UIAlertAction] {
+        var selection: [AlertAction] {
             
-            if let container = self as? EntityContainer, (sender is UIButton || sender is UITapGestureRecognizer || (sender is UILongPressGestureRecognizer && container.tableView.isEditing)) {
+            if let container = self as? EntityContainer, container.tableView.isEditing {
                 
-                return [UIAlertAction.init(title: "End Editing", style: .default, handler: { [weak self] action in
+                return [AlertAction.init(title: "End Editing", style: .default, handler: { [weak self] in
                 
-                    guard container.tableView.isEditing else { return }
+                    guard let weakSelf = self, container.tableView.isEditing else { return }
                     
-                    self?.songManager.toggleEditing(action)
+                    weakSelf.songManager.toggleEditing("end")
                 })]
             }
             
             return []
         }
         
-        let actions = alertActions(from: vc) + selection + [.cancel()]
+        let actions = alertActions(from: vc) + selection// + [.cancel()]
         
         let title: String? = {
             
@@ -60,16 +60,30 @@ extension SongActionable {
             return (collectionTitle ?? "") + actionableSongs.count.fullCountText(for: .song)
         }()
         
-        let alert = UIAlertController.withTitle(nil, message: title, style: .actionSheet, actions: actions)
-        vc.present(alert, animated: true, completion: nil)
+        Transitioner.shared.showAlert(title: title, from: vc, with: actions)
+        
+//        let alert = UIAlertController.withTitle(nil, message: title, style: .actionSheet, actions: actions)
+//        vc.present(alert, animated: true, completion: nil)
     }
     
-    func alertActions(from vc: UIViewController) -> [UIAlertAction] {
+    func alertActions(from vc: UIViewController) -> [AlertAction] {
         
         return applicableActions.map({ alertAction(for: $0, from: vc, using: actionableSongs, alternateTitle: vc is InfoViewController) })
     }
     
-    func alertAction(for action: SongAction, from vc: UIViewController, using array: [MPMediaItem], alternateTitle: Bool = false) -> UIAlertAction {
+    func alertAction(for action: SongAction, from vc: UIViewController, using array: [MPMediaItem], alternateTitle: Bool = false) -> AlertAction {
+        
+        let details = actionDetails(for: action, from: vc, using: array, alternateTitle: alternateTitle)
+        
+        return AlertAction.init(title: details.title, style: details.style, requiresDismissalFirst: action.requiresDismissalFirst, handler: { details.handler() })
+    }
+    
+    func systemAlertActions(from vc: UIViewController) -> [UIAlertAction] {
+        
+        return applicableActions.map({ systemAlertAction(for: $0, from: vc, using: actionableSongs, alternateTitle: vc is InfoViewController) })
+    }
+    
+    func systemAlertAction(for action: SongAction, from vc: UIViewController, using array: [MPMediaItem], alternateTitle: Bool = false) -> UIAlertAction {
         
         let details = actionDetails(for: action, from: vc, using: array, alternateTitle: alternateTitle)
         
@@ -361,7 +375,7 @@ class SongActionManager: NSObject {
             
             if isEditing {
                 
-                if sender is UILongPressGestureRecognizer || sender is UISwipeGestureRecognizer || sender is UIAlertAction || ((container is CollectorViewController || container is NewPlaylistViewController || (container is FilterViewController && (container as? FilterViewController)?.filtering == false)) && (sender is UIButton || sender is UITapGestureRecognizer)) || sender is SwipeAction || sender is Notification {
+                if sender is UILongPressGestureRecognizer || sender is UISwipeGestureRecognizer || sender is UIAlertAction || (sender as? String) == "end" || ((container is CollectorViewController || container is NewPlaylistViewController || (container is FilterViewController && (container as? FilterViewController)?.filtering == false)) && (sender is UIButton || sender is UITapGestureRecognizer)) || sender is SwipeAction || sender is Notification {
                     
                     if let superview = actionable.editButton.superview as? BorderedButtonView {
                         
@@ -529,11 +543,18 @@ protocol SingleItemActionable: SongActionable { }
 
 extension SingleItemActionable {
     
-    func singleItemAlertAction(for action: SongAction, entity: Entity, using item: MPMediaEntity, from vc: UIViewController, useAlternateTitle alternateTitle: Bool = false) -> UIAlertAction {
+    func singleItemSystemAlertAction(for action: SongAction, entity: Entity, using item: MPMediaEntity, from vc: UIViewController, useAlternateTitle alternateTitle: Bool = false) -> UIAlertAction {
         
         let details = singleItemActionDetails(for: action, entity: entity, using: item, from: vc, useAlternateTitle: alternateTitle)
         
         return UIAlertAction.init(title: details.title, style: details.style, handler: { _ in details.handler() })
+    }
+    
+    func singleItemAlertAction(for action: SongAction, entity: Entity, using item: MPMediaEntity, from vc: UIViewController, useAlternateTitle alternateTitle: Bool = false) -> AlertAction {
+        
+        let details = singleItemActionDetails(for: action, entity: entity, using: item, from: vc, useAlternateTitle: alternateTitle)
+        
+        return AlertAction.init(title: details.title, style: details.style, requiresDismissalFirst: action.requiresDismissalFirst, handler: details.handler)
     }
     
     func singleItemActionDetails(for action: SongAction, entity: Entity, using item: MPMediaEntity, from vc: UIViewController, useAlternateTitle alternateTitle: Bool = false) -> ActionDetails {
@@ -761,7 +782,7 @@ extension SingleItemActionable {
                         
                     }() else { return }
                     
-                    var context: QueueInsertViewController.Context {
+                    var context: QueueInsertController.Context {
                         
                         if let container = vc as? FilterContainer & UIViewController {
                             
@@ -809,22 +830,36 @@ extension SingleItemActionable {
                     
                     }(), let song: MPMediaItem = (item as? MPMediaItemCollection)?.items.first ?? item as? MPMediaItem, let verifiable = vc as? EntityVerifiable else { return }
                     
-                    var settings = [Setting]()
-                    var tapActions = TapActionsDictionary()
-                    var previewActions = PreviewActionsDictionary()
-                    var accessoryActions = AccessoryActionsDictionary()
+                    var actions = [AlertAction]()
                     
                     details.entities.filter({ verifiable.verifyLibraryStatus(of: song, itemProperty: $0, animated: false, updateButton: false) == .present }).enumerated().forEach({ index, verifiedEntity in
                         
-                        tapActions[index] = { [weak vc, weak item] in
+                        actions.append(
+                            .init(info: .init(title: "\(entity == verifiedEntity ? "This " : "")" + verifiedEntity.title(albumArtistOverride: details.albumArtOverride).capitalized,
+                                subtitle: item.title(for: verifiedEntity, basedOn: entity),
+                                image: verifiedEntity.images.size22,
+                                accessoryType: .button(type: .image(#imageLiteral(resourceName: "InfoNoBorder13")), bordered: true)),
                             
-                            if entity == .playlist {
+                            handler: { [weak vc, weak item] in
                                 
-                                guard let playlist = item as? MPMediaPlaylist, let transitioner = vc as? PlaylistTransitionable else { return }
+                                if entity == .playlist {
+                                    
+                                    guard let playlist = item as? MPMediaPlaylist, let transitioner = vc as? PlaylistTransitionable else { return }
+                                    
+                                    transitioner.playlistQuery = MPMediaQuery.init(filterPredicates: [.for(.playlist, using: playlist)]).grouped(by: .playlist)
+                                    
+                                    verifiable.performUnwindSegue(with: .playlist, isEntityAvailable: true, title: "playlist", completion: {
+                                        
+                                        if let container = vc as? FilterContainer & UIViewController {
+                                            
+                                            container.saveRecentSearch(withTitle: container.searchBar.text, resignFirstResponder: false)
+                                        }
+                                    })
+                                    
+                                    return
+                                }
                                 
-                                transitioner.playlistQuery = MPMediaQuery.init(filterPredicates: [.for(.playlist, using: playlist)]).grouped(by: .playlist)
-                                
-                                verifiable.performUnwindSegue(with: .playlist, isEntityAvailable: true, title: "playlist", completion: {
+                                verifiable.performUnwindSegue(with: verifiedEntity, isEntityAvailable: true, title: verifiedEntity.title(albumArtistOverride: true), completion: {
                                     
                                     if let container = vc as? FilterContainer & UIViewController {
                                         
@@ -832,71 +867,52 @@ extension SingleItemActionable {
                                     }
                                 })
                                 
-                                return
-                            }
-                            
-                            verifiable.performUnwindSegue(with: verifiedEntity, isEntityAvailable: true, title: verifiedEntity.title(albumArtistOverride: true), completion: {
-                                
-                                if let container = vc as? FilterContainer & UIViewController {
+                            }, accessoryAction: { [weak item, weak self] _, presenter in
                                     
-                                    container.saveRecentSearch(withTitle: container.searchBar.text, resignFirstResponder: false)
+                                    guard let item = item, let collection = verifiedEntity.collection(from: item), let context = verifiedEntity.singleCollectionInfoContext(for: collection) else { return }
+                                    
+                                    presenter.dismiss(animated: true, completion: {
+                                        
+                                        self?.singleItemActionDetails(for: .info(context: context), entity: entity, using: item, from: vc, useAlternateTitle: alternateTitle).handler()
+                                    })
+                            
+                            }, previewAction: { [weak item] source in
+                                
+                                guard let vc = entityStoryboard.instantiateViewController(withIdentifier: "entityItems") as? EntityItemsViewController, let item = item else { return nil }
+                                
+                                var highlightedAlbum: MPMediaItemCollection? {
+                                    
+                                    switch entity {
+                                        
+                                        case .album: return item as? MPMediaItemCollection
+                                        
+                                        case .song: return MPMediaQuery.init(filterPredicates: [.for(.album, using: song.albumPersistentID)]).grouped(by: .album).collections?.first
+                                        
+                                        default: return nil
+                                    }
                                 }
-                            })
-                            
-                        }
-                        
-                        previewActions[index] = { [weak item] source in
-                            
-                            guard let vc = entityStoryboard.instantiateViewController(withIdentifier: "entityItems") as? EntityItemsViewController, let item = item else { return nil }
-                            
-                            var highlightedAlbum: MPMediaItemCollection? {
                                 
-                                switch entity {
-                                    
-                                    case .album: return item as? MPMediaItemCollection
-                                    
-                                    case .song: return MPMediaQuery.init(filterPredicates: [.for(.album, using: song.albumPersistentID)]).grouped(by: .album).collections?.first
-                                    
-                                    default: return nil
-                                }
-                            }
-                            
-                            return Transitioner.shared.transition(to: verifiedEntity,
-                                                                  vc: vc,
-                                                                  from: source,
-                                                                  sender: MPMediaQuery.init(filterPredicates: [.for(entity == verifiedEntity ? entity : verifiedEntity, using: entity == verifiedEntity ? item.persistentID : verifiedEntity.persistentID(from: song))]).grouped(by: verifiedEntity.grouping).collections?.first,
-                                                                  highlightedItem: entity == .song ? song : nil,
-                                                                  highlightedAlbum: highlightedAlbum,
-                                                                  preview: true,
-                                                                  titleOverride: ((appDelegate.window?.rootViewController as? ContainerViewController)?.activeViewController?.topViewController as? Navigatable)?.preferredTitle)
-                            
-                        }
-                        
-                        accessoryActions[index] = { [weak item, weak self] _, presenter in
-                            
-                            guard let item = item, let collection = verifiedEntity.collection(from: item), let context = verifiedEntity.singleCollectionInfoContext(for: collection) else { return }
-                            
-                            presenter.dismiss(animated: true, completion: {
-                                
-                                self?.singleItemActionDetails(for: .info(context: context), entity: entity, using: item, from: vc, useAlternateTitle: alternateTitle).handler()
-                            })
-                        }
-                        
-                        settings.append(Setting.init(title: "\(entity == verifiedEntity ? "This " : "")" + verifiedEntity.title(albumArtistOverride: details.albumArtOverride).capitalized,
-                                                     subtitle: item.title(for: verifiedEntity, basedOn: entity),
-                                                     image: verifiedEntity.images.size22,
-                                                     accessoryType: Setting.AccessoryType.button(type: .image(#imageLiteral(resourceName: "InfoNoBorder13")), bordered: true)))
+                                return Transitioner
+                                    .shared
+                                    .transition(
+                                        to: verifiedEntity,
+                                        vc: vc,
+                                        from: source,
+                                        sender: MPMediaQuery.init(filterPredicates: [.for(entity == verifiedEntity ? entity : verifiedEntity, using: entity == verifiedEntity ? item.persistentID : verifiedEntity.persistentID(from: song))]).grouped(by: verifiedEntity.grouping).collections?.first,
+                                        highlightedItem: entity == .song ? song : nil,
+                                        highlightedAlbum: highlightedAlbum,
+                                        preview: true,
+                                        titleOverride: ((appDelegate.window?.rootViewController as? ContainerViewController)?.activeViewController?.topViewController as? Navigatable)?.preferredTitle
+                                )
+                        }))
                     })
                     
                     Transitioner.shared.showAlert(title: item.title(for: entity, basedOn: entity),
                                                   subtitle: "Go to...",
                                                   from: vc,
                                                   context: .show,
-                                                  with: settings,
-                                                  tapActions: tapActions,
-                                                  previewActions: previewActions,
-                                                  segmentDetails: (canDisplay ? [("Show in \(2.countText(for: entity, compilationOverride: song.isCompilation, capitalised: true))", nil)] : [], canDisplay ? { alertVC in verifiable.showInLibrary(entity: item, type: entity, unwinder: alertVC) } : nil),
-                                                  accessoryActions: accessoryActions,
+                                                  with: actions,
+                                                  segmentDetails: (canDisplay ? [.init(title: "Show in \(2.countText(for: entity, compilationOverride: song.isCompilation, capitalised: true))")] : [], canDisplay ? { alertVC in verifiable.showInLibrary(entity: item, type: entity, unwinder: alertVC) } : nil),
                                                   rightAction: { [weak self] _, presenter in
                         
                         presenter.dismiss(animated: true, completion: {
@@ -914,7 +930,7 @@ extension SingleItemActionable {
                     
                     let actions = Array(0...5).map({ value in
                         
-                        UIAlertAction.init(title: value == 0 ? "Unrated" : "\(value) stars", style: .default, handler: { _ in
+                        AlertAction.init(title: value == 0 ? "Unrated" : "\(value) stars", style: .default, handler: {
                             
                             song.set(property: MPMediaItemPropertyRating, to: value)
                             
@@ -925,7 +941,7 @@ extension SingleItemActionable {
                         })
                     })
                     
-                    vc.present(UIAlertController.withTitle(song.validTitle, message: "Rate...", style: .actionSheet, actions: actions + [.cancel()]), animated: true, completion: nil)
+                    Transitioner.shared.showAlert(title: song.validTitle, subtitle: "Rate...", from: vc, with: actions)
                 })
             
             case .likedState:
@@ -934,7 +950,7 @@ extension SingleItemActionable {
                     
                     guard let settable = item as? Settable else { return }
                     
-                    let actions = [.none, LikedState.liked, .disliked].map({ (value) -> UIAlertAction in
+                    let actions = [.none, LikedState.liked, .disliked].map({ value -> AlertAction in
                         
                         var title: String {
                             
@@ -948,7 +964,7 @@ extension SingleItemActionable {
                             }
                         }
                         
-                        return UIAlertAction.init(title: title, style: .default, handler: { _ in
+                        return AlertAction.init(title: title, style: .default, handler: {
                             
                             settable.set(property: item is MPMediaItem || item is MPMediaPlaylist ? .likedState : .albumLikedState, to: NSNumber.init(value: value.rawValue))
                             

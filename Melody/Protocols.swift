@@ -464,20 +464,16 @@ extension BorderButtonContaining {
                 
                     view.borderViewLeadingConstraint.constant = 10
                     view.borderViewTrailingConstraint.constant = borderedButtons.count < 3 ? 5 : edgeConstraint
-//                    view.button.contentEdgeInsets.left = borderedButtons.count < 3 ? 5 : edgeConstraint
                 
                 case .middle(single: let single):
                 
                     view.borderViewLeadingConstraint.constant = single ? 10 : middleConstraint
                     view.borderViewTrailingConstraint.constant = single ? 10 : middleConstraint
-//                    view.button.contentEdgeInsets.left = 0
-//                    view.button.contentEdgeInsets.right = 0
                 
                 case .trailing:
                 
                     view.borderViewLeadingConstraint.constant = borderedButtons.count < 3 ? 5 : edgeConstraint
                     view.borderViewTrailingConstraint.constant = 10
-//                    view.button.contentEdgeInsets.right = borderedButtons.count < 3 ? 5 : edgeConstraint
             }
         }
     }
@@ -605,4 +601,9 @@ extension LocationBroadcastable {
             fatalError("No other VC should invoke this")
         }
     }
+}
+
+protocol EditControlContaining: class {
+    
+    var preferredEditingStyle: EditingStyle { get set }
 }

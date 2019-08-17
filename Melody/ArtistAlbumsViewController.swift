@@ -627,23 +627,11 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, I
         
         if canShuffleAlbums {
             
-            var array = [UIAlertAction]()
+            let shuffle = AlertAction.init(title: .shuffle(.songs), style: .default, requiresDismissalFirst: true, handler: { musicPlayer.play(songs, startingFrom: nil, shuffleMode: .songs, from: self, withTitle: self.entityVC?.title, alertTitle: .shuffle(.songs)) })
             
-            let shuffle = UIAlertAction.init(title: .shuffle(.songs), style: .default, handler: { _ in
-                
-                musicPlayer.play(songs, startingFrom: nil, shuffleMode: .songs, from: self, withTitle: self.entityVC?.title, alertTitle: .shuffle(.songs))
-            })
+            let shuffleAlbums = AlertAction.init(title: .shuffle(.albums), style: .default, requiresDismissalFirst: true, handler: { musicPlayer.play(songs.albumsShuffled, startingFrom: nil, from: self, withTitle: self.entityVC?.title, alertTitle: .shuffle(.albums)) })
             
-            array.append(shuffle)
-            
-            let shuffleAlbums = UIAlertAction.init(title: .shuffle(.albums), style: .default, handler: { _ in
-                
-                musicPlayer.play(songs.albumsShuffled, startingFrom: nil, from: self, withTitle: self.entityVC?.title, alertTitle: .shuffle(.albums))
-            })
-            
-            array.append(shuffleAlbums)
-            
-            present(UIAlertController.withTitle(nil, message: entityVC?.title, style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
+            Transitioner.shared.showAlert(title: entityVC?.title, from: self, with: shuffle, shuffleAlbums)
             
         } else {
             

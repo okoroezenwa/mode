@@ -15,16 +15,25 @@ extension UIViewController {
         return String.init(describing: type(of: self))
     }
     
-    func guardQueue(using alertController: UIAlertController, onCondition condition: Bool, fallBack: () -> ()) {
+    /// Array Version
+    func guardQueue(title: String? = nil, subtitle: String? = nil, with actions: [AlertAction], onCondition condition: Bool, fallBack: () -> ()) {
         
         if condition {
             
-            present(alertController, animated: true, completion: nil)
+            Transitioner.shared.showAlert(title: title, subtitle: subtitle, from: self, context: .other, with: actions)
+            
+//            present(alertController, animated: true, completion: nil)
             
         } else {
             
             fallBack()
         }
+    }
+    
+    /// Variadic Version
+    func guardQueue(title: String? = nil, subtitle: String? = nil, with actions: AlertAction..., onCondition condition: Bool, fallBack: () -> ()) {
+        
+        guardQueue(title: title, subtitle: subtitle, with: actions, onCondition: condition, fallBack: fallBack)
     }
     
     @objc func showSettings(with sender: Any) {

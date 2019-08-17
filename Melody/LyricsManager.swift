@@ -55,6 +55,7 @@ class LyricsManager: NSObject {
             } else if item.validLyrics.isEmpty {
                 
                 currentObject = .init(id: item.persistentID, name: item.validTitle, artist: item.validArtist, titleTerm: item.validTitle.lowercased().lyricsRemovalsApplied(for: .title), artistTerm: item.validArtist.lowercased().lyricsRemovalsApplied(for: .artist), source: Location.genius.rawValue)
+                
                 viewer?.prepareLyrics(for: item, updateBottomView: oldValue != nil)
                 
             } else {
@@ -333,7 +334,7 @@ class LyricsManager: NSObject {
     
     func storeLyrics(for item: MPMediaItem?, via container: LyricsObjectContainer, completion: Completions? = nil) {
         
-        let completion = completion ?? ({ self.viewer?.performSuccesfulLyricsCheck(with: container.currentObject.lyrics) }, { self.displayMessage(.error, from: container) })
+        let completion = completion ?? ({ self.viewer?.useDeviceLyrics(source: container.currentObject.source, lyrics: container.currentObject.lyrics, animated: true) }, { self.displayMessage(.error, from: container) })
         
         guard item?.persistentID == container.currentObject.id else {
             

@@ -23,9 +23,9 @@ class TableHeaderView: UITableViewHeaderFooterView {
     @IBOutlet var labelLeadingConstraint: NSLayoutConstraint!
     @IBOutlet var rightButton: UIButton!
     @IBOutlet var rightButtonViewConstraint: NSLayoutConstraint!
+    @IBOutlet var leftButtonBorderViewWidthConstraint: NSLayoutConstraint!
+    @IBOutlet var leftButtonBorderViewBottomConstraint: NSLayoutConstraint!
     @IBOutlet var leftButtonWidthConstraint: NSLayoutConstraint!
-    @IBOutlet var leftButtonBottomConstraint: NSLayoutConstraint!
-    @IBOutlet var leftButtonLeadingConstraint: NSLayoutConstraint!
     @IBOutlet var leftButtonBorderView: MELBorderView!
     @IBOutlet var leftButtonBorderViewTrailingConstraint: NSLayoutConstraint!
     @IBOutlet var labelBottomConstraint: NSLayoutConstraint!
@@ -59,12 +59,12 @@ class TableHeaderView: UITableViewHeaderFooterView {
         
         didSet {
             
-            leftButtonWidthConstraint.constant = isRecentsButton ? 17 : 24
-            leftButtonBottomConstraint.constant = isRecentsButton ? 7 : 4
-            leftButtonLeadingConstraint.constant = isRecentsButton ? 14 : 17
+            leftButtonBorderViewWidthConstraint.constant = isRecentsButton ? 17 : 24
+            leftButtonBorderViewBottomConstraint.constant = isRecentsButton ? 7 : 4
             leftButtonBorderViewTrailingConstraint.constant = isRecentsButton ? 0 : 10
+            leftButtonWidthConstraint.constant = isRecentsButton ? 31 : 44
 //            button.contentEdgeInsets.bottom = isRecentsButton ? 11 : 12
-            button.contentEdgeInsets.right = isRecentsButton ? 5 : 15
+            button.contentEdgeInsets.right = isRecentsButton ? 5 : 17
             button.setImage(isRecentsButton ? #imageLiteral(resourceName: "BackArrow9") : #imageLiteral(resourceName: "AddNoBorderSmall"), for: .normal)
             leftButtonBorderView.layer.cornerRadius = isRecentsButton ? 8.5 : 12
         }

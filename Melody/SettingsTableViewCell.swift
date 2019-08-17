@@ -15,6 +15,7 @@ class SettingsTableViewCell: UITableViewCell {
     @IBOutlet var tertiaryLabel: MELLabel!
     @IBOutlet var chevron: MELImageView!
     @IBOutlet var check: MELImageView!
+    @IBOutlet var checkMirrorView: UIView!
     @IBOutlet var itemSwitch: MELSwitchContainer!
     @IBOutlet var accessoryButton: MELButton!
     @IBOutlet var buttonBorderView: MELBorderView!
@@ -26,7 +27,10 @@ class SettingsTableViewCell: UITableViewCell {
     @IBOutlet var topBorderView: MELBorderView!
     @IBOutlet var bottomBorderView: MELBorderView!
     
-    enum Context { case setting, alert(cancel: Bool) }
+    enum Context: Equatable {
+        
+        case setting, alert(UIAlertAction.Style)
+    }
     
     weak var delegate: SettingsCellDelegate?
     var borderViews: [MELBorderView] { return [topBorderView, bottomBorderView] }
@@ -89,12 +93,30 @@ class SettingsTableViewCell: UITableViewCell {
     
     func prepare(with setting: Setting, animated: Bool = false, context: Context = .setting) {
         
+        let isAlert: Bool = {
+            
+            if case .alert = context { return true }
+            
+            return false
+        }()
+        
         titleLabel.text = setting.title
-        titleLabel.textAlignment = setting.textAlignment
+        
+        let preferredAlignment: NSTextAlignment = {
+            
+            if case .alert = context, setting.image == nil, setting.subtitle == nil {
+                
+                return .center
+            }
+            
+            return setting.textAlignment
+        }()
+        
+        titleLabel.textAlignment = preferredAlignment
         subtitleLabel.text = setting.subtitle
         subtitleLabel.isHidden = setting.subtitle == nil
         tertiaryLabel.text = setting.tertiaryDetail
-        tertiaryLabel.superview?.isHidden = setting.tertiaryDetail == nil
+        tertiaryLabel.superview?.isHidden = isAlert || setting.tertiaryDetail == nil
         leadingImageView.image = setting.image
         leadingImageView.superview?.isHidden = setting.image == nil
         chevron.superview?.isHidden = {
@@ -121,8 +143,18 @@ class SettingsTableViewCell: UITableViewCell {
             }
         }()
         
-        topBorderView.isHidden = Set([Setting.BorderVisibility.bottom, .none]).contains(setting.borderVisibility)
-        bottomBorderView.isHidden = Set([Setting.BorderVisibility.top, .none]).contains(setting.borderVisibility)
+        checkMirrorView.isHidden = {
+        
+            if case .check = setting.accessoryType, preferredAlignment == .center {
+                
+                return false
+            }
+            
+            return true
+        }()
+        
+        topBorderView.isHidden = isAlert || Set([Setting.BorderVisibility.bottom, .none]).contains(setting.borderVisibility)
+        bottomBorderView.isHidden = isAlert || Set([Setting.BorderVisibility.top, .none]).contains(setting.borderVisibility)
         
         accessoryButton.superview?.isHidden = {
             
@@ -183,18 +215,24 @@ class SettingsTableViewCell: UITableViewCell {
                 leadingImageViewLeadingConstraint.constant = 10
                 leadingImageViewWidthConstraint.constant = 17
             
-            case .alert(let cancel):
+            case .alert(let type):
             
                 if titleLabel.textStyle != TextStyle.alert.rawValue {
                     
                     titleLabel.textStyle = TextStyle.alert.rawValue
                 }
             
-                titleLabel.fontWeight = (cancel ? .semibold : FontWeight.regular).rawValue
-                labelsStackView.layoutMargins.left = cancel ? 0 : 16
+                titleLabel.colorOverride = type == .destructive ? .red : nil
+                titleLabel.fontWeight = (type == .cancel ? .semibold : FontWeight.regular).rawValue
+                labelsStackView.layoutMargins.left = type == .cancel || setting.image == nil ? 0 : 16
                 leadingImageViewLeadingConstraint.constant = 16
                 leadingImageViewWidthConstraint.constant = 22
         }
+        
+        setInactiveIfNecessary(setting)
+    }
+    
+    func setInactiveIfNecessary(_ setting: Setting) {
         
         titleLabel.lightOverride = setting.inactive()
         subtitleLabel.lightOverride = setting.inactive()
@@ -202,6 +240,11 @@ class SettingsTableViewCell: UITableViewCell {
         chevron.lightOverride = setting.inactive()
         check.lightOverride = setting.inactive()
         itemSwitch.isUserInteractionEnabled = setting.inactive().inverted
+    }
+    
+    func prepare(with action: AlertAction) {
+        
+        prepare(with: action.info, animated: false, context: action.context)
     }
 }
 
@@ -277,6 +320,8 @@ struct Setting {
     }
 }
 
+typealias AlertInfo = Setting
+
 struct SettingSection: Hashable {
     
     let section: Int
@@ -294,4 +339,41 @@ struct SettingSection: Hashable {
         
         return .init(indexPath.section, indexPath.row)
     }
+}
+
+struct AlertAction {
+    
+    enum AlertStyle { case `default`, destructive, cancel }
+    
+    let info: AlertInfo
+    let context: SettingsTableViewCell.Context
+    let requiresDismissalFirst: Bool
+    let handler: (() -> ())?
+    let accessoryAction: ((MELButton, UIViewController) -> ())?
+    let previewAction: ((UIViewController) -> UIViewController?)?
+    
+    init(info: AlertInfo, context: SettingsTableViewCell.Context = .alert(.default), requiresDismissalFirst: Bool = false, handler: (() -> ())?, accessoryAction: ((MELButton, UIViewController) -> ())? = nil, previewAction: ((UIViewController) -> UIViewController?)? = nil) {
+        
+        self.info = info
+        self.context = context
+        self.requiresDismissalFirst = requiresDismissalFirst
+        self.handler = handler
+        self.accessoryAction = accessoryAction
+        self.previewAction = previewAction
+    }
+    
+    init(title: String, style: UIAlertAction.Style = .default, accessoryType type: Setting.AccessoryType = .none, requiresDismissalFirst: Bool = false, handler: (() -> ())?, accessoryAction: ((MELButton, UIViewController) -> ())? = nil, previewAction: ((UIViewController) -> UIViewController?)? = nil) {
+        
+        self.info = AlertInfo.init(title: title, accessoryType: type)
+        self.context = .alert(style)
+        self.requiresDismissalFirst = requiresDismissalFirst
+        self.handler = handler
+        self.accessoryAction = accessoryAction
+        self.previewAction = previewAction
+    }
+}
+
+extension AlertAction {
+    
+    static var stop = AlertAction.init(info: AlertInfo.init(title: "Stop Playback", accessoryType: .none, textAlignment: .center), context: .alert(.destructive), handler: NowPlaying.shared.stopPlayback)
 }

@@ -69,6 +69,8 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
     @objc var peeker: UIViewController?
     var oldArtwork: UIImage?
     
+    var preferredEditingStyle = EditingStyle.select
+    
     lazy var songManager: SongActionManager = { SongActionManager.init(actionable: self) }()
     var actionableSongs: [MPMediaItem] { return manager.queue }
     let applicableActions = [SongAction.newPlaylist, .addTo]
@@ -260,9 +262,11 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
     
     @IBAction func showAddActions() {
         
-        let actions = applicableActions.map({ alertAction(for: $0, from: self, using: manager.queue) }) + [.cancel()]
+        let actions = applicableActions.map({ alertAction(for: $0, from: self, using: manager.queue) })// + [.cancel()]
         
-        present(UIAlertController.withTitle(nil, message: "Add To...", style: .actionSheet, actions: actions), animated: true, completion: nil)
+        Transitioner.shared.showAlert(title: "Add To...", from: self, with: actions)
+        
+//        present(UIAlertController.withTitle(nil, message: "Add To...", style: .actionSheet, actions: actions), animated: true, completion: nil)
     }
     
     @IBAction func showPlayShuffleActions(_ sender: Any) {
@@ -277,21 +281,21 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
             
             if canShuffleAlbums {
                 
-                let shuffleSongs = UIAlertAction.init(title: .shuffle(.songs), style: .default, handler: { [weak self] _ in
+                let shuffleSongs = AlertAction.init(title: .shuffle(.songs), style: .default, requiresDismissalFirst: true, handler: { [weak self] in
                     
                     guard let weakSelf = self else { return }
                     
                     musicPlayer.play(weakSelf.manager.queue.shuffled(), startingFrom: nil, from: weakSelf, withTitle: nil, alertTitle: .shuffle(.songs), completion: { notifier.post(name: .endQueueModification, object: nil) })
                 })
                 
-                let shuffleAlbums = UIAlertAction.init(title: .shuffle(.albums), style: .default, handler: { [weak self] _ in
+                let shuffleAlbums = AlertAction.init(title: .shuffle(.albums), style: .default, requiresDismissalFirst: true, handler: { [weak self] in
                     
                     guard let weakSelf = self else { return }
                     
                     musicPlayer.play(weakSelf.manager.queue.albumsShuffled, startingFrom: nil, from: weakSelf, withTitle: nil, alertTitle: .shuffle(.albums), completion: { notifier.post(name: .endQueueModification, object: nil) })
                 })
                 
-                present(UIAlertController.withTitle(nil, message: "Collected Songs", style: .actionSheet, actions: shuffleSongs, shuffleAlbums, .cancel()), animated: true, completion: nil)
+                Transitioner.shared.showAlert(title: "Collected Songs", from: self, with: shuffleSongs, shuffleAlbums)
                 
             } else {
                 
@@ -366,18 +370,18 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
     
     @objc func clear() {
 
-        var array = [UIAlertAction]()
+        var array = [AlertAction]()
 
-        let clearAll = UIAlertAction.init(title: "All", style: .destructive, handler: { _ in notifier.post(name: .endQueueModification, object: nil) })
+        let clearAll = AlertAction.init(info: .init(title: "All", accessoryType: .none), context: .alert(.destructive), handler: { notifier.post(name: .endQueueModification, object: nil) })
         
         array.append(clearAll)
 
         if let indexPaths = tableView.indexPathsForSelectedRows, !indexPaths.isEmpty {
 
-            let clear = UIAlertAction.init(title: "Selected", style: .destructive, handler: { [weak self] _ in
-
+            let clear = AlertAction.init(info: .init(title: "Selected", accessoryType: .none), context: .alert(.destructive), handler: { [weak self] in
+                
                 guard let weakSelf = self else { return }
-
+                
                 weakSelf/*.updateItems(at: indexPaths, for: .remove)*/.removeSelected()
             })
 
@@ -385,18 +389,18 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
 
             if indexPaths.count < manager.queue.count {
 
-                let keep = UIAlertAction.init(title: "Unselected", style: .destructive, handler: { [weak self] _ in
-
+                let keep = AlertAction.init(info: .init(title: "Unselected", accessoryType: .none), context: .alert(.destructive), handler: { [weak self] in
+                    
                     guard let weakSelf = self else { return }
-
-                    weakSelf/*.updateItems(at: indexPaths, for: .keep)*/.retainSelected()
+                    
+                    weakSelf/*.updateItems(at: indexPaths, for: .remove)*/.retainSelected()
                 })
 
                 array.append(keep)
             }
         }
-
-        present(UIAlertController.withTitle("Clear...", message: nil, style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
+        
+        Transitioner.shared.showAlert(title: "Clear...", from: self, context: .other, with: array)
     }
     
     @IBAction func removeSelected() {
@@ -514,6 +518,7 @@ extension CollectorViewController: UITableViewDelegate, UITableViewDataSource {
 
             cell.delegate = self
             cell.swipeDelegate = self
+            cell.preferredEditingStyle = preferredEditingStyle
             cell.playButton.isUserInteractionEnabled = false
             cell.prepare(with: song, songNumber: songCountVisible.inverted ? nil : indexPath.row + 1)
             updateImageView(using: song, in: cell, indexPath: indexPath, reusableView: tableView)
@@ -584,6 +589,11 @@ extension CollectorViewController: UITableViewDelegate, UITableViewDataSource {
             tableView.deselectRow(at: indexPath, animated: true)
         }
     }
+    
+    func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
+        
+        return false
+    }
 }
 
 //extension CollectorViewController: SongCellButtonDelegate {
@@ -601,16 +611,39 @@ extension CollectorViewController: EntityCellDelegate {
     
     func editButtonTapped(in cell: SongTableViewCell) {
         
+        guard let indexPath = tableView.indexPath(for: cell) else { return }
         
+        if cell.isSelected {
+            
+            tableView.deselectRow(at: indexPath, animated: false)
+            
+        } else {
+            
+            self.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
+        }
     }
     
     func artworkTapped(in cell: SongTableViewCell) {
         
         guard let indexPath = tableView.indexPath(for: cell) else { return }
         
-        cell.setHighlighted(true, animated: true)
-        self.tableView(tableView, didSelectRowAt: indexPath)
-        cell.setHighlighted(false, animated: true)
+        if tableView.isEditing.inverted {
+        
+            cell.setHighlighted(true, animated: true)
+            self.tableView(tableView, didSelectRowAt: indexPath)
+            cell.setHighlighted(false, animated: true)
+        
+        } else {
+            
+            if cell.isSelected {
+                
+                tableView.deselectRow(at: indexPath, animated: false)
+                
+            } else {
+                
+                self.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
+            }
+        }
     }
     
     func accessoryButtonTapped(in cell: SongTableViewCell) {
@@ -634,7 +667,9 @@ extension CollectorViewController: EntityCellDelegate {
 //
 //        }), at: 0)
         
-        present(UIAlertController.withTitle(nil, message: cell.nameLabel.text, style: .actionSheet, actions: actions + [.cancel()] ), animated: true, completion: nil)
+        Transitioner.shared.showAlert(title: cell.nameLabel.text, from: self, with: actions)
+        
+//        present(UIAlertController.withTitle(nil, message: cell.nameLabel.text, style: .actionSheet, actions: actions + [.cancel()] ), animated: true, completion: nil)
     }
     
     func scrollViewTapped(in cell: SongTableViewCell) {
@@ -643,7 +678,14 @@ extension CollectorViewController: EntityCellDelegate {
         
         if tableView.isEditing {
             
-            tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
+            if cell.isSelected {
+                
+                tableView.deselectRow(at: indexPath, animated: false)
+                
+            } else {
+                
+                self.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
+            }
             
         } else {
             

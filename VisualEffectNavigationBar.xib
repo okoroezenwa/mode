@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -139,27 +139,28 @@
                                                     <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" horizontalCompressionResistancePriority="999" verticalCompressionResistancePriority="999" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="P1K-eF-QI8" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
                                                         <rect key="frame" x="0.0" y="0.0" width="241" height="57"/>
                                                         <subviews>
-                                                            <stackView opaque="NO" contentMode="scaleToFill" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="Rgk-Zh-1E7">
-                                                                <rect key="frame" x="10" y="10" width="186" height="37"/>
+                                                            <stackView opaque="NO" contentMode="scaleToFill" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="Rgk-Zh-1E7">
+                                                                <rect key="frame" x="10" y="10" width="226" height="37"/>
                                                                 <subviews>
-                                                                    <view hidden="YES" contentMode="scaleToFill" horizontalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="FHH-mf-Q5m">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="0.0" height="37"/>
+                                                                    <view contentMode="scaleToFill" horizontalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="FHH-mf-Q5m">
+                                                                        <rect key="frame" x="0.0" y="0.0" width="30" height="37"/>
                                                                         <subviews>
-                                                                            <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="252" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" image="Artists" translatesAutoresizingMaskIntoConstraints="NO" id="Ofg-i6-SIT" customClass="MELImageView" customModule="Mode" customModuleProvider="target">
-                                                                                <rect key="frame" x="0.0" y="-3" width="0.0" height="37"/>
+                                                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="252" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" image="NoAlbum75" translatesAutoresizingMaskIntoConstraints="NO" id="Ofg-i6-SIT" customClass="MELImageView" customModule="Mode" customModuleProvider="target">
+                                                                                <rect key="frame" x="0.0" y="1" width="30" height="30"/>
                                                                                 <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                                                <constraints>
+                                                                                    <constraint firstAttribute="width" secondItem="Ofg-i6-SIT" secondAttribute="height" id="Y72-OK-Zod"/>
+                                                                                </constraints>
                                                                             </imageView>
                                                                         </subviews>
                                                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                         <constraints>
                                                                             <constraint firstAttribute="trailing" secondItem="Ofg-i6-SIT" secondAttribute="trailing" id="0ZI-wd-1W3"/>
                                                                             <constraint firstItem="Ofg-i6-SIT" firstAttribute="leading" secondItem="FHH-mf-Q5m" secondAttribute="leading" id="PcE-qB-0Ht"/>
-                                                                            <constraint firstItem="Ofg-i6-SIT" firstAttribute="top" secondItem="FHH-mf-Q5m" secondAttribute="top" constant="-3" id="S1p-YT-N82"/>
-                                                                            <constraint firstAttribute="bottom" secondItem="Ofg-i6-SIT" secondAttribute="bottom" constant="3" id="qAe-Bd-e4F"/>
                                                                         </constraints>
                                                                     </view>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="753" horizontalCompressionResistancePriority="999" verticalCompressionResistancePriority="999" text="Entity Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jV8-HO-ys4" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="186" height="37"/>
+                                                                        <rect key="frame" x="40" y="0.0" width="186" height="37"/>
                                                                         <fontDescription key="fontDescription" name="MyriadPro-Bold" family="Myriad Pro" pointSize="34"/>
                                                                         <nil key="textColor"/>
                                                                         <nil key="highlightedColor"/>
@@ -171,6 +172,10 @@
                                                                         </userDefinedRuntimeAttributes>
                                                                     </label>
                                                                 </subviews>
+                                                                <constraints>
+                                                                    <constraint firstItem="Ofg-i6-SIT" firstAttribute="top" secondItem="jV8-HO-ys4" secondAttribute="top" priority="900" constant="1" id="hKz-qe-xLA"/>
+                                                                    <constraint firstItem="Ofg-i6-SIT" firstAttribute="bottom" secondItem="jV8-HO-ys4" secondAttribute="bottom" constant="-6" id="hcl-CR-YZD"/>
+                                                                </constraints>
                                                             </stackView>
                                                         </subviews>
                                                         <gestureRecognizers/>
@@ -325,7 +330,6 @@
         </visualEffectView>
     </objects>
     <resources>
-        <image name="Artists" width="15" height="20"/>
         <image name="BackArrow9" width="7" height="9"/>
         <image name="Discard" width="9" height="13"/>
         <image name="NoAlbum75" width="75" height="75"/>

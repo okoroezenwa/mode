@@ -27,7 +27,7 @@ class RateShareView: UIView {
         }
     }
     var canLikeEntity = true
-    weak var nowPlayingVC: NowPlayingViewController?
+    weak var container: UIViewController?
     
     override func awakeFromNib() {
         
@@ -41,7 +41,37 @@ class RateShareView: UIView {
         let tapGR = UITapGestureRecognizer.init(target: self, action: #selector(tap(_:)))
         ratingStackView.addGestureRecognizer(tapGR)
         
+        let hold = UILongPressGestureRecognizer.init(target: self, action: #selector(setLastFMAffinity(_:)))
+        hold.minimumPressDuration = longPressDuration
+        likedStateButton.addGestureRecognizer(hold)
+        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: hold))
+        
         notifier.addObserver(self, selector: #selector(update), name: UIApplication.willEnterForegroundNotification, object: UIApplication.shared)
+    }
+    
+    @objc func setLastFMAffinity(_ gr: UILongPressGestureRecognizer) {
+        
+        guard gr.state == .began, let song = entity as? MPMediaItem, let container = container else { return }
+            
+        guard Scrobbler.shared.sessionInfoObtained else {
+            
+            UniversalMethods.banner(withTitle: "Not logged in to Last.fm").show(for: 2)
+            
+            return
+        }
+        
+        let actions = [AlertAction.init(info: .init(title: "Loved", image: #imageLiteral(resourceName: "Loved22"), accessoryType: .none), handler: {
+            
+            Scrobbler.shared.love(song)
+            container.dismiss(animated: true, completion: nil)
+            
+        }), .init(info: .init(title: "Unloved", image: #imageLiteral(resourceName: "Unloved22"), accessoryType: .none), handler: {
+            
+            Scrobbler.shared.unlove(song)
+            container.dismiss(animated: true, completion: nil)
+        })]
+        
+        Transitioner.shared.showAlert(title: "Last.fm", subtitle: "Set as...", from: container, context: .other, with: actions)
     }
     
     func determineOverrides() {
@@ -128,19 +158,19 @@ class RateShareView: UIView {
         
         guard let item = entity as? Settable else { return }
         
-        var value: Int {
+        let value: LikedState = {
             
             switch item.likedState {
                 
-                case .none: return LikedState.liked.rawValue
+                case .none: return LikedState.liked
                     
-                case .liked: return LikedState.disliked.rawValue
+                case .liked: return LikedState.disliked
                     
-                case .disliked: return LikedState.none.rawValue
+                case .disliked: return LikedState.none
             }
-        }
+        }()
         
-        item.set(property: entity is MPMediaItem || entity is MPMediaPlaylist ? .likedState : .albumLikedState, to: NSNumber.init(value: value))
+        item.set(property: entity is MPMediaItem || entity is MPMediaPlaylist ? .likedState : .albumLikedState, to: NSNumber.init(value: value.rawValue))
         
         UIView.transition(with: likedStateButton, duration: 0.3, options: .transitionCrossDissolve, animations: { self.prepareLikedView() }, completion: { [weak self] finished in
             
@@ -163,9 +193,9 @@ class RateShareView: UIView {
         
         var images: [UIImage] {
             
-            if let _ = nowPlayingVC {
+            if let nowPlayingVC = container as? NowPlayingViewController {
                 
-                return [UIImage.from(nowPlayingVC?.view)].compactMap({ $0 })
+                return [UIImage.from(nowPlayingVC.view)].compactMap({ $0 })
             }
             
             if let item = entity as? MPMediaItem {
@@ -205,10 +235,10 @@ class RateShareView: UIView {
 
 extension RateShareView {
     
-    @objc class func instance(nowPlayingVC: NowPlayingViewController? = nil) -> RateShareView {
+    @objc class func instance(container: UIViewController) -> RateShareView {
         
         let view = Bundle.main.loadNibNamed("RateShareView", owner: nil, options: nil)?.first as! RateShareView
-        view.nowPlayingVC = nowPlayingVC
+        view.container = container
         
         return view
     }

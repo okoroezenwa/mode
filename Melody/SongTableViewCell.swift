@@ -38,6 +38,7 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell {
     @IBOutlet var mainViewInnerViewLeadingConstraint: NSLayoutConstraint!
     @IBOutlet var textStackView: UIStackView!
     @IBOutlet var textContainingStackView: UIStackView!
+    @IBOutlet var editButton: MELButton!
     
     @objc lazy var playsView = ScrollHeaderSubview.forCell(title: "-", image: #imageLiteral(resourceName: "Plays"))
     
@@ -62,6 +63,17 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell {
     @objc lazy var albumArtistView = ScrollHeaderSubview.forCell(title: "-", image: #imageLiteral(resourceName: "GenresSmall"))
     
     weak var delegate: EntityCellDelegate?
+    
+    var preferredEditingStyle = Mode.EditingStyle.select {
+        
+        didSet {
+            
+            guard oldValue != preferredEditingStyle else { return }
+            
+            updateEditingView()
+        }
+    }
+    
     var width: CGFloat { return artworkContainer.frame.width }
     
     @objc lazy var indicator: ESTMusicIndicatorView = {
@@ -140,6 +152,25 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell {
         })
         
         UniversalMethods.addShadow(to: artworkContainer, radius: 4, opacity: 0.35, shouldRasterise: true)
+    }
+    
+    func updateEditingView() {
+        
+        editButton.setImage({
+            
+            switch preferredEditingStyle {
+                
+                case .insert: return #imageLiteral(resourceName: "AddNoBorderSmall")
+                
+                case .select: return isSelected ? #imageLiteral(resourceName: "Check") : nil
+            }
+            
+        }(), for: .normal)
+        
+        editBorderView.alphaOverride = preferredEditingStyle == .select && isSelected.inverted ? 0.1 : (useLighterBorders ? 0 : 0.03)
+        editBorderView.layer.borderWidth = preferredEditingStyle == .select && isSelected.inverted ? 1.2 : 0
+        editBorderView.bordered = preferredEditingStyle == .select && isSelected.inverted
+        editBorderView.clear = preferredEditingStyle == .select && isSelected.inverted
     }
     
     func view(for category: SecondaryCategory) -> ScrollHeaderSubview {
@@ -268,11 +299,12 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell {
         
         guard let playingView = playingView else { return }
         
-        infoBorderView.alphaOverride = touched ? 0.05 : 0
+        infoBorderView.alphaOverride = touched ? 0.03 : 0
         playingView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
         selectedBackgroundView?.backgroundColor = Themer.borderViewColor()
         (explicitView.viewWithTag(1) as? MELBorderView)?.changeThemeColor()
-        editBorderView.alphaOverride = touched ? 0.05 : 0
+        
+        editBorderView.alphaOverride = (preferredEditingStyle == .select && isSelected.inverted ? 0.2 : (touched ? 0.03 : 0)) + (useLighterBorders ? 0 : 0.03)
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -280,6 +312,11 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell {
         super.setSelected(selected, animated: animated)
         
         performSelectionOverrides(touched: selected)
+        
+        if preferredEditingStyle == .select {
+            
+            updateEditingView()
+        }
     }
     
     override func setHighlighted(_ highlighted: Bool, animated: Bool) {
@@ -288,23 +325,24 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell {
         
         performSelectionOverrides(touched: highlighted)
     }
-    /// for the custom edit button
-//    override func setEditing(_ editing: Bool, animated: Bool) {
-//
-//        super.setEditing(editing, animated: animated)
-//
-//        mainViewInnerViewLeadingConstraint.constant = editing ? 0 : 10
-//
-//        UIView.animate(withDuration: animated ? 0.3 : 0, animations: {
-//
-//            if editing.inverted && self.editingView.isHidden { } else {
-//
-//                self.editingView.isHidden = editing.inverted
-//            }
-//
-//            self.contentView.layoutIfNeeded()
-//        })
-//    }
+    
+    override func setEditing(_ editing: Bool, animated: Bool) {
+
+        super.setEditing(editing, animated: animated)
+
+        mainViewInnerViewLeadingConstraint.constant = editing ? 0 : 10
+
+        UIView.animate(withDuration: animated ? 0.3 : 0, animations: {
+
+            if editing.inverted && self.editingView.isHidden { } else {
+
+                self.editingView.isHidden = editing.inverted
+            }
+            
+            self.editingView.alpha = editing ? 1 : 0
+            self.contentView.layoutIfNeeded()
+        })
+    }
     
     override func addSubview(_ view: UIView) {
 
@@ -316,9 +354,9 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell {
             imageView.translatesAutoresizingMaskIntoConstraints = false
             view.centre(imageView, withOffsets: .init(x: 0, y: 1))
         
-        } else {
+        } else if view.className.contains("EditControl") {
             
-            
+            view.isHidden = true
         }
 
         super.addSubview(view)
@@ -578,7 +616,7 @@ extension SongTableViewCell {
     }
 }
 
-@objc protocol EntityCellDelegate {
+protocol EntityCellDelegate: EditControlContaining {
     
     func artworkTapped(in cell: SongTableViewCell)
     func scrollViewTapped(in cell: SongTableViewCell)

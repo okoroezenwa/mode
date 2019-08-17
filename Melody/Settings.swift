@@ -137,6 +137,41 @@ var hiddenLibrarySections: [LibrarySection] { return prefs.array(forKey: .hidden
 var activeFont: Font { return Font(rawValue: prefs.integer(forKey: .activeFont)) ?? .system }
 var barBlurBehaviour: BarBlurBehavour { return BarBlurBehavour(rawValue: prefs.integer(forKey: .barBlurBehaviour)) ?? .all }
 //var visibleInfoItems: [InfoSection] { return prefs.array(forKey: .visibleInfoItems)?.compactMap({ InfoSection.from($0 as? InfoSection.RawValue) }) ?? [] }
+var includeAlbumName: Bool {
+    
+    get { return prefs.bool(forKey: .includeAlbumName) }
+    
+    set { prefs.set(newValue, forKey: .includeAlbumName) }
+}
+
+var showLastFMLoginAlert: Bool {
+    
+    get { return prefs.bool(forKey: .showLastFMLoginAlert) }
+    
+    set { prefs.set(newValue, forKey: .showLastFMLoginAlert) }
+}
+
+var showScrobbleAlert: Bool {
+    
+    get { return prefs.bool(forKey: .showScrobbleAlert) }
+    
+    set { prefs.set(newValue, forKey: .showScrobbleAlert) }
+}
+
+var showLoveAlert: Bool {
+    
+    get { return prefs.bool(forKey: .showLoveAlert) }
+    
+    set { prefs.set(newValue, forKey: .showLoveAlert) }
+}
+
+var showNowPlayingUpdateAlert: Bool {
+    
+    get { return prefs.bool(forKey: .showNowPlayingUpdateAlert) }
+    
+    set { prefs.set(newValue, forKey: .showNowPlayingUpdateAlert) }
+}
+
 
 class Settings {
     
@@ -176,7 +211,7 @@ class Settings {
             .composersOrder: true,
             .compilationsSort: SortCriteria.standard.rawValue,
             .compilationsOrder: true,
-            .playlistsSort: SortCriteria.standard.rawValue,
+            .playlistsSort: SortCriteria.title.rawValue,
             .playlistsOrder: true,
             .firstAuthorisation: true,
             .hideEmptyPlaylists: isInDebugMode,
@@ -199,16 +234,16 @@ class Settings {
             .darkTheme: false,
             .showExplicitness: true,
             .songCountVisible: true,
-            .playlistsView: PlaylistView.all.rawValue,
+            .playlistsView: isInDebugMode ? PlaylistView.user.rawValue : PlaylistView.all.rawValue,
             .songCellCategories: Settings.songSecondarySubviews,
             .infoBoldText: false, // not set
             .deinitBannersEnabled: false,
-            .showInfoButtons: !isInDebugMode,
+            .showInfoButtons: true,
             .addGuard: false,
             .playGuard: true,
-            .stopGuard: false,
+            .stopGuard: isInDebugMode,
             .clearGuard: true,
-            .changeGuard: false,
+            .changeGuard: isInDebugMode,
             .removeGuard: true,
             .microPlayer: true,
             .refreshMode: RefreshMode.refresh.rawValue, // may not bother
@@ -227,7 +262,7 @@ class Settings {
             .manualNightMode: true,
             .showCloseButton: !isInDebugMode,
             .collectorPreventsDuplicates: true,
-            .showSectionChooserEverywhere: false,
+            .showSectionChooserEverywhere: true,
             .fasterNowPlayingStartup: false,
             .lighterBorders: isInDebugMode,
             .tabBarScrollToTop: true,
@@ -240,10 +275,10 @@ class Settings {
             .secondarySizeSuffix: Int64.FileSize.megabyte.rawValue,
             .cornerRadius: CornerRadius.automatic.rawValue,
             .filterProperties: Property.allCases.map({ $0.rawValue }),
-            .librarySections: [LibrarySection.playlists, .songs, .artists, .albums, .genres, .composers, .compilations].map({ $0.rawValue }),
-            .useCompactCollector: true,
+            .librarySections: defaultLibrarySections.map({ $0.rawValue }),
+            .useCompactCollector: false,
             .otherFilterProperties: [Int](),
-            .otherLibrarySections: [Int](),
+            .otherLibrarySections: defaultOtherLibrarySections.map({ $0.rawValue }),
             .widgetCornerRadius: CornerRadius.large.rawValue,
             .listsCornerRadius: CornerRadius.automatic.rawValue,
             .infoCornerRadius: CornerRadius.automatic.rawValue,
@@ -253,7 +288,7 @@ class Settings {
             .filterFuzziness: 0.4,
             .iconLineWidth: IconLineWidth.thin.rawValue,
             .iconTheme: IconTheme.light.rawValue,
-            .compressOnPause: true,
+            .compressOnPause: isInDebugMode.inverted,
             .avoidDoubleHeightBar: !isiPhoneX,
             .separationMethod: defaultSeparationMethod.rawValue,
             .showNowPlayingSupplementaryView: true,
@@ -281,9 +316,15 @@ class Settings {
             .useBlackColorBackground: false,
             .hiddenFilterProperties: [Int](),
             .hiddenLibrarySections: [Int](),
+            "barConstant": 2,//isInDebugMode ? 2 : 0,
             .activeFont: Font.system.rawValue,
             .barBlurBehaviour: BarBlurBehavour.all.rawValue/*,
-            .visibleInfoItems: InfoSection.allCases.map({ $0.rawValue })*/
+            .visibleInfoItems: InfoSection.allCases.map({ $0.rawValue })*/,
+            .includeAlbumName: true,
+            .showLastFMLoginAlert: true,
+            .showScrobbleAlert: false,
+            .showLoveAlert: true,
+            .showNowPlayingUpdateAlert: false
         ])
         
         sharedDefaults.register(defaults: [
@@ -329,7 +370,11 @@ class Settings {
         
         #else
         
-        if #available(iOS 11, *) {
+        if isInDebugMode, #available(iOS 12.2, *) {
+            
+            return false
+            
+        } else if #available(iOS 11, *) {
             
             return true
             
@@ -383,13 +428,13 @@ class Settings {
     
     static var useOldQueue: Bool {
         
-        if #available(iOS 11.3, *) {
-            
-            return isInDebugMode
-            
-        } else if #available(iOS 11, *) {
+        if isInDebugMode, #available(iOS 12.2, *) {
             
             return false
+            
+        } else if #available(iOS 11.3, *) {
+            
+            return isInDebugMode
             
         } else if #available(iOS 10.3, *) {
             
@@ -406,6 +451,13 @@ class Settings {
     static var defaultRecentlyUpdatedPlaylistSorts: [PlaylistView] { return isInDebugMode ? [.appleMusic] : [] }
     static var defaultTabBarBehaviour: TabBarTapBehaviour { return isInDebugMode ? .scrollToTop : .returnThenScroll }
     static var defaultGestureDuration: GestureDuration { return isInDebugMode ? .short : .medium }
+    static var defaultLibrarySections: [LibrarySection] {
+        
+        let sections = [LibrarySection.playlists, .songs, .artists]
+        
+        return isInDebugMode ? sections : sections + [.albums, .genres, .composers, .compilations]
+    }
+    static var defaultOtherLibrarySections: [LibrarySection] { return isInDebugMode ? [.albums, .genres, .composers, .compilations] : [] }
     
     static func components(from date: Date) -> TimeConstraintComponents {
         
@@ -544,6 +596,11 @@ extension String {
     static let activeFont = "activeFont"
     static let barBlurBehaviour = "barBlurBehaviour"
     static let visibleInfoItems = "visibleInfoItems"
+    static let includeAlbumName = "includeAlbumName"
+    static let showLastFMLoginAlert = "showLastFMLoginAlert"
+    static let showScrobbleAlert = "showScrobbleAlert"
+    static let showLoveAlert = "showLoveAlert"
+    static let showNowPlayingUpdateAlert = "showNowPlayingUpdateAlert"
 }
 
 // MARK: - Notification Settings Constants

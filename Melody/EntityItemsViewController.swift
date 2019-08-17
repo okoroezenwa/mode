@@ -556,18 +556,6 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         }
     }
     
-//    @objc func cornerRadiusForContainerType() -> CGFloat {
-//
-//        switch entityContainerType {
-//
-//            case .album: return ceil((14/45) * artworkImageViewContainer.bounds.width)
-//
-//            case .playlist: return ceil((6/45) * artworkImageViewContainer.bounds.width)
-//
-//            case .collection: return 33// the width that should always be, as the view is the same across devices //artworkImageViewContainer.bounds.width / 2
-//        }
-//    }
-    
     func contextForContainerType() -> InfoViewController.Context? {
         
         guard let collection = collection else { return nil }
@@ -591,80 +579,17 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         let albumCount = query?.collections?.count ?? 0
         let songCount = query?.items?.count ?? 0
         
-        let songs = UIAlertAction.init(title: "Songs (\(songCount.formatted))", style: .default, handler: { [weak self] _ in
-            
-            self?.activeChildViewController = self?.artistSongsViewController
+        let songs = AlertAction.init(title: "Songs (\(songCount.formatted))", style: .default, accessoryType: .check({ [weak self] in self?.activeChildViewController == self?.artistSongsViewController }), handler: { [weak self] in self?.activeChildViewController = self?.artistSongsViewController })
         
-        }).checked(given: activeChildViewController == artistSongsViewController)
+        let albums = AlertAction.init(title: "Albums (\(albumCount.formatted))", style: .default, accessoryType: .check({ [weak self] in self?.activeChildViewController == self?.artistAlbumsViewController }), handler: { [weak self] in self?.activeChildViewController = self?.artistAlbumsViewController })
         
-        let albums = UIAlertAction.init(title: "Albums (\(albumCount.formatted))", style: .default, handler: { [weak self] _ in
-            
-            self?.activeChildViewController = self?.artistAlbumsViewController
-        
-        }).checked(given: activeChildViewController == artistAlbumsViewController)
-        
-        present(UIAlertController.withTitle(title, message: nil, style: .actionSheet, actions: songs, albums, .cancel()), animated: true, completion: nil)
+        Transitioner.shared.showAlert(title: title, from: self, with: songs, albums)
     }
     
     @IBAction func dismissVC() {
         
         _ = navigationController?.popViewController(animated: true)
     }
-//
-//    @objc func changeActiveViewControllerFrom(_ vc: UIViewController?) {
-//
-//        guard let activeVC = activeChildViewController, let inActiveVC = vc else { return }
-//
-//        inActiveVC.willMove(toParent: nil)
-//
-//        addChild(activeVC)
-//
-//        activeVC.view.alpha = 0
-//        activeVC.view.frame = containerView.bounds
-//        activeVC.view.transform = CGAffineTransform.init(translationX: 0, y: 50)
-//        containerView.addSubview(activeVC.view)
-//
-//        // call before adding child view controller's view as subview
-//        activeVC.didMove(toParent: self)
-//
-//        UIView.animateKeyframes(withDuration: 0.3, delay: 0, options: .calculationModeCubic, animations: {
-//
-//            UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 1/2, animations: {
-//
-//                inActiveVC.view.transform = CGAffineTransform.init(translationX: 0, y: 50)
-//                inActiveVC.view.alpha = 0
-//            })
-//
-//            UIView.addKeyframe(withRelativeStartTime: 1/2, relativeDuration: 1/2, animations: {
-//
-//                activeVC.view.transform = CGAffineTransform.identity
-//                activeVC.view.alpha = 1
-//            })
-//
-//        }, completion: { _ in
-//
-//            inActiveVC.view.transform = CGAffineTransform.identity
-//            inActiveVC.view.removeFromSuperview()
-//
-//            // call after removing child view controller's view from hierarchy
-//            inActiveVC.removeFromParent()
-//        })
-//    }
-//
-//    private func updateActiveViewController() {
-//
-//        if let activeVC = activeChildViewController {
-//
-//            // call before adding child view controller's view as subview
-//            addChild(activeVC)
-//
-//            activeVC.view.frame = containerView.bounds
-//            containerView.addSubview(activeVC.view)
-//
-//            // call before adding child view controller's view as subview
-//            activeVC.didMove(toParent: self)
-//        }
-//    }
     
     @objc @discardableResult func performTransition(to vc: UIViewController, sender: Any?, perform3DTouchActions: Bool = false) -> UIViewController? {
         
@@ -747,18 +672,6 @@ extension EntityItemsViewController: EntityVerifiable {
             Transitioner.shared.showInfo(from: peeker, with: context)
         })
         
-//        let artist = UIPreviewAction(title: "Show Artist", style: .default, handler: { [weak self] _, _ in
-//
-//            guard let weakSelf = self, let peeker = weakSelf.peeker, let useAlbumArtist = weakSelf.query?.items?.first?.isCompilation else { return }
-//
-//            shouldReturnToContainer = true
-//            peeker.performSegue(withIdentifier: "unwind", sender: nil)
-//
-//            weakSelf.verifyLibraryStatus(of: weakSelf.query?.items?.first, itemProperty: useAlbumArtist ? .albumArtist : .artist)
-//
-//            weakSelf.container?.unwindToArtist(with: useAlbumArtist ? weakSelf.albumArtistQuery : weakSelf.artistQuery, item: weakSelf.currentItem, album: nil, kind: useAlbumArtist ? .albumArtist : .artist)
-//        })
-        
         guard (query?.items ?? []).isEmpty.inverted else { return [info] }
         
         let songs = self.songs
@@ -796,7 +709,7 @@ extension EntityItemsViewController: EntityVerifiable {
         
         let shuffleArray: [UIPreviewActionItem] = (query?.items ?? []).count > 1 ? canShuffleAlbums ? [shuffleGroup] : [shuffle] : []
         
-        let array: [UIPreviewActionItem] = [play] + shuffleArray + [info] + (musicPlayer.nowPlayingItem == nil ? [] : [queue])// + (entityContainerType == .album ? [artist] : [])
+        let array: [UIPreviewActionItem] = [play] + shuffleArray + [info] + (musicPlayer.nowPlayingItem == nil ? [] : [queue])
         
         return array
     }

@@ -168,13 +168,15 @@ public extension MPMusicPlayerController {
         
         if let vc = vc, useAlert {
             
-            let interrupt = UIAlertAction.init(title: alertTitle, style: .default, handler: { _ in
-                
-                play()
-            })
+            Transitioner.shared.showAlert(title: title, subtitle: subtitle, from: vc, context: .other, with: .init(info: .init(title: alertTitle, accessoryType: .none), requiresDismissalFirst: true, handler: play))
             
-            let alert = UniversalMethods.alertController(withTitle: title, message: subtitle, preferredStyle: .actionSheet, actions: interrupt, UniversalMethods.cancelAlertAction())
-            vc.present(alert, animated: true, completion: nil)
+//            let interrupt = UIAlertAction.init(title: alertTitle, style: .default, handler: { _ in
+//
+//                play()
+//            })
+//
+//            let alert = UniversalMethods.alertController(withTitle: title, message: subtitle, preferredStyle: .actionSheet, actions: interrupt, UniversalMethods.cancelAlertAction())
+//            vc.present(alert, animated: true, completion: nil)
             
         } else {
             
@@ -349,14 +351,14 @@ public extension MPMusicPlayerController {
                 })
             }
             
-            let action = UIAlertAction.init(title: alertTitle, style: .default, handler: { _ in
-            
-                addToQueue()
-            })
+//            let action = UIAlertAction.init(title: alertTitle, style: .default, handler: { _ in
+//
+//                addToQueue()
+//            })
             
             if let vc = vc {
                 
-                vc.guardQueue(using: .withTitle(title, message: subtitle, style: .actionSheet, actions: action, .cancel()), onCondition: warnForQueueInterruption && addGuard, fallBack: addToQueue)
+                vc.guardQueue(title: title, subtitle: subtitle, with: AlertAction.init(info: AlertInfo.init(title: alertTitle, accessoryType: .none, textAlignment: .center), handler: addToQueue), onCondition: warnForQueueInterruption && addGuard, fallBack: addToQueue)
             
             } else {
                 

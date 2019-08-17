@@ -580,34 +580,26 @@ extension HeaderView: PlaylistCollectionCellDelegate {
                     
                     if songs.count > 1 {
                         
-                        var array = [UIAlertAction]()
                         let canShuffleAlbums = songs.canShuffleAlbums
                         
-                        let play = UIAlertAction.init(title: "Play", style: .default, handler: { _ in
+                        var actions = [AlertAction.init(info: AlertInfo.init(title: "Play", accessoryType: .none), requiresDismissalFirst: true, handler: {
                             
                             musicPlayer.play(songs, startingFrom: nil, from: collectionsVC, withTitle: cell.nameLabel.text, alertTitle: "Play")
-                        })
-                        
-                        array.append(play)
-                        
-                        let shuffle = UIAlertAction.init(title: .shuffle(canShuffleAlbums ? .songs : .none), style: .default, handler: { _ in
+                            
+                        }), AlertAction.init(info: AlertInfo.init(title: .shuffle(canShuffleAlbums ? .songs : .none), accessoryType: .none), requiresDismissalFirst: true, handler: {
                             
                             musicPlayer.play(songs, startingFrom: nil, shuffleMode: .songs, from: collectionsVC, withTitle: cell.nameLabel.text, alertTitle: .shuffle(canShuffleAlbums ? .songs : .none))
-                        })
-                        
-                        array.append(shuffle)
+                        })]
                         
                         if canShuffleAlbums {
                             
-                            let shuffleAlbums = UIAlertAction.init(title: .shuffle(.albums), style: .default, handler: { _ in
+                            actions.append(AlertAction.init(info: AlertInfo.init(title: .shuffle(.albums), accessoryType: .none), requiresDismissalFirst: true, handler: {
                                 
-                                musicPlayer.play(songs.albumsShuffled, startingFrom: nil, from: collectionsVC, withTitle: cell.nameLabel.text, alertTitle: .shuffle(.albums))
-                            })
-                            
-                            array.append(shuffleAlbums)
+                                musicPlayer.play(songs.albumsShuffled, startingFrom: nil, from: collectionsVC, withTitle: cell.nameLabel.text,  alertTitle: .shuffle(.albums))
+                            }))
                         }
                         
-                        collectionsVC.present(UIAlertController.withTitle(cell.nameLabel.text, message: nil, style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
+                        Transitioner.shared.showAlert(title: cell.nameLabel.text, from: collectionsVC, context: .other, with: actions)
                         
                     } else {
                         
@@ -659,6 +651,8 @@ extension HeaderView: PlaylistCollectionCellDelegate {
             actions.insert(vc.singleItemAlertAction(for: .library, entity: .song, using: item, from: vc), at: 4)
         }
         
-        vc.present(UIAlertController.withTitle(nil, message: cell.nameLabel.text, style: .actionSheet, actions: actions + [.cancel()] ), animated: true, completion: nil)
+        Transitioner.shared.showAlert(title: cell.nameLabel.text, from: vc, with: actions)
+        
+//        vc.present(UIAlertController.withTitle(nil, message: cell.nameLabel.text, style: .actionSheet, actions: actions + [.cancel()] ), animated: true, completion: nil)
     }
 }

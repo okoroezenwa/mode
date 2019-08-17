@@ -90,7 +90,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         }
     }
     
-    @objc lazy var rateShareView: RateShareView = { RateShareView.instance(nowPlayingVC: self) }()
+    @objc lazy var rateShareView: RateShareView = { RateShareView.instance(container: self) }()
     lazy var volumeView = VolumeView.instance(leadingWith: 25)
     
     override var modalPresentationStyle: UIModalPresentationStyle {
@@ -146,7 +146,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
     let playPauseButtonNeedsAnimation = false
     let prefersBoldOnTap = false
     var updateableView: UIView? { return detailsView }
-    @objc var lyricsVisible = false
+    var lyricsViewVisibility = VisibilityState.hidden
     var activeItem: MPMediaItem? { return alternateItem ?? musicPlayer.nowPlayingItem }
     
     var artwork: UIImage? {
@@ -284,7 +284,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         
         guard let item = activeItem else { return }
         
-        let info = UIAlertAction.init(title: "Get Info", style: .default, handler: { [weak self] _ in
+        let info = AlertAction.init(title: "Get Info", style: .default, requiresDismissalFirst: true, handler: { [weak self] in
             
             guard let weakSelf = self else { return }
             
@@ -307,7 +307,9 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
 //        let x = alertActions(from: self)
         array.insert(info, at: 2)
         
-        present(UIAlertController.withTitle(nil, message: activeItem?.validTitle, style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
+        Transitioner.shared.showAlert(title: activeItem?.validTitle, from: self, with: array)
+        
+//        present(UIAlertController.withTitle(nil, message: activeItem?.validTitle, style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
     }
     
     @objc func goToQueue(_ sender: UIGestureRecognizer) {
@@ -785,13 +787,13 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         if let nowPlaying = musicPlayer.nowPlayingItem {
             
             if warnForQueueInterruption && clearGuard {
-                
-                let clear = UIAlertAction.init(title: "Clear Queue", style: .destructive, handler: { _ in
+                #warning("Check if this can use the queue guard booleans")
+                let clear = AlertAction.init(title: "Clear Queue", style: .destructive, requiresDismissalFirst: true, handler: {
                     
                     musicPlayer.play([nowPlaying], startingFrom: nowPlaying, respectingPlaybackState: true, from: nil, withTitle: nil, alertTitle: "")
                 })
                 
-                peeker?.present(UniversalMethods.alertController(withTitle: nil, message: nil, preferredStyle: .actionSheet, actions: clear, .cancel()), animated: true, completion: nil)
+                Transitioner.shared.showAlert(title: nil, from: peeker, with: clear)
                 
             } else {
                 
@@ -867,7 +869,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
             verifyLibraryStatus(of: currentItem, itemProperty: .artist)
             verifyLibraryStatus(of: currentItem, itemProperty: .album)
             
-            if let lyricsVC = children.first as? LyricsViewController {
+            if let lyricsVC = children.first as? LyricsViewController, lyricsViewVisibility == .visible {
                 
                 lyricsVC.manager.item = currentItem
             }
@@ -878,17 +880,22 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         }
     }
     
-    @objc func modifyLyricsView(hidden: Bool) {
+    func modifyLyricsView(to state: VisibilityState) {
         
-        lyricsVisible = !hidden
-        lyricsVisualEffectView.isUserInteractionEnabled = !hidden
+        if state == .visible, let lyricsVC = children.first as? LyricsViewController {
+            
+            lyricsVC.manager.item = activeItem
+        }
         
-        lyricsButton.update(for: hidden ? .unselected : .selected)
+        lyricsViewVisibility = state
+        lyricsVisualEffectView.isUserInteractionEnabled = state == .visible
+        
+        lyricsButton.update(for: state == .hidden ? .unselected : .selected)
         
         UIView.animate(withDuration: 0.3, animations: {
         
-            self.lyricsVisualEffectView.effect = hidden ? nil : Themer.vibrancyContainingEffect
-            self.lyricsVisualEffectView.alpha = hidden ? 0 : 1
+            self.lyricsVisualEffectView.effect = state == .hidden ? nil : Themer.vibrancyContainingEffect
+            self.lyricsVisualEffectView.alpha = state == .hidden ? 0 : 1
         })
         
         setNeedsStatusBarAppearanceUpdate()
@@ -896,7 +903,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
     
     @IBAction func viewLyrics() {
         
-        modifyLyricsView(hidden: lyricsVisible)
+        modifyLyricsView(to: lyricsViewVisibility == .hidden ? .visible : .hidden)
     }
 
     @objc func modifyQueueLabel() {
@@ -926,7 +933,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
             (musicPlayer.isPlaying || !compressOnPause) &&
             dynamicStatusBar &&
             activeItem?.actualArtwork != nil &&
-            !lyricsVisible
+            lyricsViewVisibility == .hidden
             else { return darkTheme ? .lightContent : .default }
 
         return activeItem?.artwork?.image(at: CGSize.init(width: 20, height: 20))?.crop(within: CGRect.init(x: 5, y: 0, width: 20, height: (UIApplication.shared.statusBarFrame.height / UIScreen.main.bounds.width) * 10))?.statusBarStyle() ?? .default
@@ -935,11 +942,9 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
     @objc func preparePlaybackGestures() {
         
         let seekBackward = UILongPressGestureRecognizer(target: self, action: #selector(seekBackward(_:)))
-//        seekBackward.minimumPressDuration = 0.5
         previous.addGestureRecognizer(seekBackward)
         
         let seekForward = UILongPressGestureRecognizer(target: self, action: #selector(seekForward(_:)))
-//        seekForward.minimumPressDuration = 0.5
         nextButton.addGestureRecognizer(seekForward)
     }
     
@@ -1226,14 +1231,7 @@ extension NowPlayingViewController: UIViewControllerPreviewingDelegate {
             
             guard let weakSelf = self else { return }
             
-            weakSelf.peeker?
-                .guardQueue(using: 
-                    .withTitle(nil,
-                               message: nil,
-                               style: .actionSheet,
-                               actions: .stop, .cancel()),
-                            onCondition: warnForQueueInterruption && stopGuard,
-                            fallBack: NowPlaying.shared.stopPlayback)
+            weakSelf.peeker?.guardQueue(with: [.stop], onCondition: warnForQueueInterruption && stopGuard, fallBack: NowPlaying.shared.stopPlayback)
         })
         
         let shuffle = UIPreviewAction.init(title: musicPlayer.shuffleMode == .off ? .shuffle() : "Unshuffle", style: .default, handler: { _, _ in

@@ -78,23 +78,13 @@ extension FilterContainer where Self: UIViewController {
         
         switch filter.filterProperty {
             
-        case .size:
-            
-            let actions = Array(Int64.FileSize.byte.rawValue...Int64.FileSize.terabyte.rawValue).compactMap({ Int64.FileSize(rawValue: $0) }).map({ size in UIAlertAction.init(title: size.suffix, style: .default, handler: { _ in action(size) }) })
-            
-            let clear = UIAlertAction.init(title: "Clear", style: .destructive, handler: { [weak self] _ in
+            case .size:
                 
-                guard let weakSelf = self else { return }
+                let actions = Array(Int64.FileSize.byte.rawValue...Int64.FileSize.terabyte.rawValue).compactMap({ Int64.FileSize(rawValue: $0) }).map({ size in AlertAction.init(title: size.suffix, style: .default, handler: { action(size) }) })
                 
-                weakSelf.searchBar.text = nil
-                weakSelf.searchBar?(weakSelf.searchBar, textDidChange: "")
-            })
+                Transitioner.shared.showAlert(title: nil, from: self, with: actions)
             
-            let array = searchBar.text?.isEmpty == true ? [] : [clear]
-            
-            present(UIAlertController.withTitle(nil, message: nil, style: .actionSheet, actions: actions + array + [.cancel()]), animated: true, completion: nil)
-            
-        default: return
+            default: return
         }
     }
     
@@ -243,7 +233,7 @@ extension FilterContainer where Self: UIViewController {
     
     func clearRecentSearches() {
         
-        let delete = UIAlertAction.init(title: "Clear \(tableView.isEditing && (tableView.indexPathsForSelectedRows ?? []).isEmpty.inverted ? "Selected" : "All")", style: .destructive, handler: { [weak self] _ in
+        let delete = AlertAction.init(title: "Clear \(tableView.isEditing && (tableView.indexPathsForSelectedRows ?? []).isEmpty.inverted ? "Selected" : "All")", style: .destructive, handler: { [weak self] in
             
             guard let weakSelf = self else { return }
             
@@ -257,18 +247,16 @@ extension FilterContainer where Self: UIViewController {
             }
         })
         
-        present(UIAlertController.withTitle(nil, message: nil, style: .actionSheet, actions: delete, .cancel()), animated: true, completion: nil)
+        Transitioner.shared.showAlert(title: nil, from: self, with: delete)
     }
     
     func showPropertyTests() {
         
         guard let sender = sender else { return }
         
-        var actions = [UIAlertAction]()
-        
-        [PropertyTest.contains, .isExactly, .beginsWith, .endsWith, .isOver, .isUnder].filter({ sender.filterTests.contains($0) }).forEach({ test in
+        let actions = [PropertyTest.contains, .isExactly, .beginsWith, .endsWith, .isOver, .isUnder].filter({ sender.filterTests.contains($0) }).map({ test in
             
-            let action = UIAlertAction.init(title: sender.title(for: test, property: sender.filterProperty), style: .default, handler: { [weak self] _ in
+            AlertAction.init(title: sender.title(for: test, property: sender.filterProperty), style: .default, accessoryType: .check({ test == sender.propertyTest }), handler: { [weak self] in
                 
                 guard let weakSelf = self else { return }
                 
@@ -276,11 +264,11 @@ extension FilterContainer where Self: UIViewController {
                 weakSelf.updateTestView()
                 weakSelf.requiredInputView?.pickerView.reloadAllComponents()
             })
-            
-            actions.append(action.checked(given: test == sender.propertyTest))
         })
         
-        present(UIAlertController.withTitle(nil, message: sender.filterProperty.title.capitalized, style: .actionSheet, actions: actions + [.cancel()]), animated: true, completion: nil)
+        Transitioner.shared.showAlert(title: sender.filterProperty.title.capitalized, from: self, with: actions)
+        
+//        present(UIAlertController.withTitle(nil, message: sender.filterProperty.title.capitalized, style: .actionSheet, actions: actions + [.cancel()]), animated: true, completion: nil)
     }
     
     func deleteRecentSearch(in cell: RecentSearchTableViewCell) {
@@ -292,10 +280,12 @@ extension FilterContainer where Self: UIViewController {
         let test = PropertyTest(rawValue: search.propertyTest ?? "") ?? filter.initialPropertyTest(for: property)
         let alertTitle = property.title + " " + filter.title(for: test, property: property)
         
-        let clear = UIAlertAction.init(title: "Clear", style: .destructive, handler: { _ in self.clear(items: self.recentSearches[indexPath.row]) })
+        let clear = AlertAction.init(title: "Clear", style: .destructive, handler: { self.clear(items: self.recentSearches[indexPath.row]) })
         
-        let alert = UniversalMethods.alertController(withTitle: alertTitle, message: search.title, preferredStyle: .actionSheet, actions: clear, UniversalMethods.cancelAlertAction())
+        Transitioner.shared.showAlert(title: alertTitle, subtitle: search.title, from: self, with: clear)
         
-        present(alert, animated: true, completion: nil)
+//        let alert = UniversalMethods.alertController(withTitle: alertTitle, message: search.title, preferredStyle: .actionSheet, actions: clear, UniversalMethods.cancelAlertAction())
+//        
+//        present(alert, animated: true, completion: nil)
     }
 }

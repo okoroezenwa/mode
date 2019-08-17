@@ -211,16 +211,16 @@ class FilterView: UIView {
             }
         }
         
-        let settings = UIAlertAction.init(title: title, style: .default, handler: { [weak self] _ in
+        let settings = AlertAction.init(title: title, style: .default, requiresDismissalFirst: true, handler: { [weak self] in
             
             guard let weakSelf = self, let vc = topViewController else { return }
             
             Transitioner.shared.showPropertySettings(from: vc, with: weakSelf.context)
         })
         
-        guard let indexPath = collectionView.indexPathForItem(at: gr.location(in: collectionView))/*, let cell = collectionView.cellForItem(at: indexPath) as? PropertyCollectionViewCell*/ else {
+        guard let indexPath = collectionView.indexPathForItem(at: gr.location(in: collectionView)) else {
             
-            topViewController?.present(UIAlertController.withTitle(nil, message: nil, style: .actionSheet, actions: settings, .cancel()), animated: true, completion: nil)
+            Transitioner.shared.showAlert(title: nil, from: topViewController, with: settings)
             
             return
         }
@@ -228,7 +228,7 @@ class FilterView: UIView {
         let isOtherCell = indexPath.row > properties.count - 1
         let property = isOtherCell ? nil : properties[indexPath.row]
         
-        let move = UIAlertAction.init(title: isOtherCell ? "Ungroup" : "Group into \"Other\"", style: .default, handler: { [weak self] _ in
+        let move = AlertAction.init(title: isOtherCell ? "Ungroup" : "Group into \"Other\"", style: .default, handler: { [weak self] in
             
             guard let weakSelf = self else { return }
             
@@ -261,7 +261,7 @@ class FilterView: UIView {
             }
         })
         
-        let hide = UIAlertAction.init(title: "Hide" + (isOtherCell ? " All" : ""), style: .destructive, handler: { [weak self] _ in
+        let hide = AlertAction.init(title: "Hide" + (isOtherCell ? " All" : ""), style: .destructive, handler: { [weak self] in
             
             guard let weakSelf = self else { return }
             
@@ -290,7 +290,7 @@ class FilterView: UIView {
             }
         })
         
-        topViewController?.present(UIAlertController.withTitle(property?.title ?? "Other", message: nil, style: .actionSheet, actions: hide, move, settings, .cancel()), animated: true, completion: nil)
+        Transitioner.shared.showAlert(title: property?.title ?? "Other", from: topViewController, with: hide, move, settings)
     }
     
     class func with(context: FilterViewContext) -> FilterView {
@@ -326,7 +326,7 @@ class FilterView: UIView {
         })
     }
     
-    func collectorAlertActions(from actions: [ContainerViewController.CollectorActions]) -> [UIAlertAction] {
+    func collectorAlertActions(from actions: [ContainerViewController.CollectorActions]) -> [AlertAction] {
         
         guard let container = appDelegate.window?.rootViewController as? ContainerViewController else { return [] }
         
@@ -336,7 +336,7 @@ class FilterView: UIView {
                 
                 case .play:
                     
-                    return UIAlertAction.init(title: "Play", style: .default, handler: { _ in
+                    return AlertAction.init(title: "Play", style: .default, requiresDismissalFirst: true, handler: {
                         
                         musicPlayer.play(container.queue, startingFrom: container.queue.first, from: container, withTitle: container.queue.count.fullCountText(for: .song), alertTitle: "Play")
                         
@@ -345,14 +345,11 @@ class FilterView: UIView {
                 
                 case .clear:
                     
-                    return UIAlertAction.init(title: "Discard Collected", style: .destructive, handler: { _ in
-                        
-                        notifier.post(name: .endQueueModification, object: nil)
-                    })
+                    return AlertAction.init(title: "Discard Collected", style: .destructive, requiresDismissalFirst: true, handler: { notifier.post(name: .endQueueModification, object: nil) })
                 
                 case .shuffleSongs:
                     
-                    return UIAlertAction.init(title: .shuffle(.songs), style: .default, handler: { _ in
+                    return AlertAction.init(title: .shuffle(.songs), style: .default, requiresDismissalFirst: true, handler: {
                         
                         musicPlayer.play(container.queue, startingFrom: nil, shuffleMode: .songs, from: container, withTitle: container.queue.count.fullCountText(for: .song), alertTitle: .shuffle(.songs))
                         
@@ -361,7 +358,7 @@ class FilterView: UIView {
                 
                 case .shuffleAlbums:
                     
-                    return UIAlertAction.init(title: .shuffle(.albums), style: .default, handler: { _ in
+                    return AlertAction.init(title: .shuffle(.albums), style: .default, requiresDismissalFirst: true, handler: {
                         
                         musicPlayer.play(container.queue.albumsShuffled, startingFrom: nil, from: container, withTitle: container.queue.count.fullCountText(for: .song), alertTitle: .shuffle(.albums))
                         
@@ -370,7 +367,7 @@ class FilterView: UIView {
                 
                 case .queue:
                     
-                    return UIAlertAction.init(title: "Queue...", style: .default, handler: { [weak self] _ in
+                    return AlertAction.init(title: "Queue...", style: .default, requiresDismissalFirst: true, handler: { [weak self] in
                         
                         guard let weakSelf = self, let vc: UIViewController = {
                            
@@ -388,7 +385,7 @@ class FilterView: UIView {
                 
                 case .existingPlaylist:
                     
-                    return UIAlertAction.init(title: "Add to Playlists...", style: .default, handler: { [weak self] _ in
+                    return AlertAction.init(title: "Add to Playlists...", style: .default, requiresDismissalFirst: true, handler: { [weak self] in
                         
                         guard let weakSelf = self, let vc: UIViewController = {
                            
@@ -406,7 +403,7 @@ class FilterView: UIView {
                 
                 case .newPlaylist:
                     
-                    return UIAlertAction.init(title: "Create Playlist...", style: .default, handler: { [weak self] _ in
+                    return AlertAction.init(title: "Create Playlist...", style: .default, requiresDismissalFirst: true, handler: { [weak self] in
                         
                         guard let weakSelf = self, let vc: UIViewController = {
                            
@@ -448,13 +445,21 @@ class FilterView: UIView {
         
         actions.append(contentsOf: [.newPlaylist, .existingPlaylist, .clear])
         
-        let collectorActions = collectorAlertActions(from: actions) + [.cancel()]
+        let collectorActions = collectorAlertActions(from: actions)// + [.cancel()]
         
         switch context {
             
-        case .filter(filter: _, container: let filterContainer) where filterContainer is FilterViewController: filterContainer?.present(UIAlertController.withTitle(container.queue.count.fullCountText(for: .song), message: nil, style: .actionSheet, actions: collectorActions), animated: true, completion: nil)
+            case .filter(filter: _, container: let filterContainer) where filterContainer is FilterViewController:
+                
+                Transitioner.shared.showAlert(title: container.queue.count.fullCountText(for: .song), from: filterContainer, with: collectorActions)
+                
+//                filterContainer?.present(UIAlertController.withTitle(container.queue.count.fullCountText(for: .song), message: nil, style: .actionSheet, actions: collectorActions), animated: true, completion: nil)
             
-            default: container.present(UIAlertController.withTitle(container.queue.count.fullCountText(for: .song), message: nil, style: .actionSheet, actions: collectorActions), animated: true, completion: nil)
+            default:
+                
+                Transitioner.shared.showAlert(title: container.queue.count.fullCountText(for: .song), from: container, with: collectorActions)
+                
+//                container.present(UIAlertController.withTitle(container.queue.count.fullCountText(for: .song), message: nil, style: .actionSheet, actions: collectorActions), animated: true, completion: nil)
         }
     }
     
@@ -745,9 +750,7 @@ extension FilterView: UICollectionViewDelegate, UICollectionViewDataSource {
         
         if indexPath.row == properties.count {
             
-            let actions = otherProperties.enumerated().map({ (index, property) -> UIAlertAction in
-                
-                let action = UIAlertAction.init(title: property.title, style: .default, handler: { [weak self] _ in self?.selectCell(at: indexPath, usingOtherArray: true, arrayIndex: index) })
+            let actions = otherProperties.enumerated().map({ (index, property) -> AlertAction in
                 
                 var isCurrentProperty: Bool {
                     
@@ -759,10 +762,12 @@ extension FilterView: UICollectionViewDelegate, UICollectionViewDataSource {
                     }
                 }
                 
-                return action.checked(given: isCurrentProperty)
+                return AlertAction.init(title: property.title, style: .default, accessoryType: .check({ isCurrentProperty }), handler: { [weak self] in self?.selectCell(at: indexPath, usingOtherArray: true, arrayIndex: index) })
             })
             
-            topViewController?.present(UIAlertController.withTitle(nil, message: nil, style: .actionSheet, actions: actions + [.cancel()]), animated: true, completion: nil)
+            Transitioner.shared.showAlert(title: nil, from: topViewController, with: actions)
+            
+//            topViewController?.present(UIAlertController.withTitle(nil, message: nil, style: .actionSheet, actions: actions + [.cancel()]), animated: true, completion: nil)
             
             collectionView.deselectItem(at: indexPath, animated: true)
             

@@ -102,12 +102,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 
                 Queue.shared.updateIndex(self)
             })
+        
+        } else {
+            
+            NowPlaying.shared.nowPlayingItem = musicPlayer.nowPlayingItem
+            
+            if let item = musicPlayer.nowPlayingItem {
+            
+                Queue.shared.plays[item.persistentID] = item.playCount
+            }
         }
         
         if prefs.bool(forKey: "lyricsDeleted").inverted {
             
             Song.deleteAllLyrics(completion: { prefs.set(true, forKey: "lyricsDeleted") })
         }
+        
+        Scrobbler.shared.setupLastFM(completion: ({
+            
+            guard let item = NowPlaying.shared.nowPlayingItem, musicPlayer.isPlaying else { return }
+            
+            Scrobbler.shared.setNowPlayingTo(item)
+            
+        }, { }))
         
         return true
     }
@@ -157,11 +174,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         Queue.shared.updateIndex(self)
     }
-
-//    func applicationDidBecomeActive(_ application: UIApplication) {
-//        
-//        
-//    }
 
     func applicationWillTerminate(_ application: UIApplication) {
         
@@ -453,15 +465,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: - Core Data Saving support
     
     @objc func saveContext() {
+        
         if managedObjectContext.hasChanges {
+            
             do {
+                
                 try managedObjectContext.save()
                 
-            } catch {
+            } catch let error {
+                
                 // Replace this implementation with code to handle the error appropriately.
                 // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nserror = error as NSError
-                NSLog("Unresolved error \(nserror), \(nserror.userInfo)")
+                print(error)
             }
         }
     }

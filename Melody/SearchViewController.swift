@@ -83,6 +83,8 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
     @objc var albumArtistQuery: MPMediaQuery?
     @objc var playlistQuery: MPMediaQuery?
     
+    var preferredEditingStyle = EditingStyle.insert
+    
     lazy var borderedButtons = [BorderedButtonView?]()
     
     @objc var ignoreKeyboardForInset = true
@@ -422,7 +424,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         
         tableView.setEditing(true, animated: true)
         
-        editView.animateChange(title: "Done", image: .doneImage)
+        editView?.animateChange(title: "Done", image: .doneImage)
     }
     
     @objc func handleLeftSwipe(_ sender: Any) {
@@ -1197,6 +1199,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
         
         cell.delegate = self
         cell.swipeDelegate = self
+        cell.preferredEditingStyle = preferredEditingStyle
         
         cell.playButton.isUserInteractionEnabled = allowPlayOnly
         
@@ -1210,10 +1213,12 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         
-        switch editingStyle {
-            
-            case .insert:
-                
+        guard filtering else { return }
+        
+//        switch editingStyle {
+//
+//            case .insert:
+//
                 let songs: [MPMediaItem] = {
                     
                     switch sectionDetails[indexPath.section].category {
@@ -1235,11 +1240,11 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
                 }()
                 
                 notifier.post(name: .addedToQueue, object: nil, userInfo: [DictionaryKeys.queueItems: songs])
-            
-            case .none, .delete: break
-        
-            @unknown default: break
-        }
+//
+//            case .none, .delete: break
+//
+//            @unknown default: break
+//        }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -1249,7 +1254,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         
-        return filtering ? .insert : .none
+        return /*filtering ? .insert : */.none
     }
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
@@ -1342,6 +1347,11 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
     func sectionIndexTitles(for tableView: UITableView) -> [String]? {
         
         return filtering || self.numberOfSections(in: tableView) > 1 ? sectionDetails.map({ String($0.0.prefix(2)).capitalized }) : nil
+    }
+    
+    func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
+        
+        return false
     }
 }
 
@@ -1526,17 +1536,17 @@ extension SearchViewController: EntityCellDelegate {
             
             if songs.count > 1 {
                 
-                var array = [UIAlertAction]()
+                var array = [AlertAction]()
                 let canShuffleAlbums = songs.canShuffleAlbums
                 
-                let play = UIAlertAction.init(title: "Play", style: .default, handler: { _ in
+                let play = AlertAction.init(title: "Play", style: .default, requiresDismissalFirst: true, handler: {
                     
                     musicPlayer.play(songs, startingFrom: songs.first, from: self, withTitle: cell.nameLabel.text, alertTitle: "Play", completion: { self.saveRecentSearch(withTitle: self.searchBar?.text, resignFirstResponder: false) })
                 })
                 
                 array.append(play)
                 
-                let shuffle = UIAlertAction.init(title: .shuffle(canShuffleAlbums ? .songs : .none), style: .default, handler: { _ in
+                let shuffle = AlertAction.init(title: .shuffle(canShuffleAlbums ? .songs : .none), style: .default, requiresDismissalFirst: true, handler: {
                     
                     musicPlayer.play(songs, startingFrom: nil, shuffleMode: .songs, from: self, withTitle: cell.nameLabel.text, alertTitle: .shuffle(canShuffleAlbums ? .songs : .none), completion: { self.saveRecentSearch(withTitle: self.searchBar?.text, resignFirstResponder: false) })
                 })
@@ -1545,7 +1555,7 @@ extension SearchViewController: EntityCellDelegate {
                 
                 if canShuffleAlbums {
                     
-                    let shuffleAlbums = UIAlertAction.init(title: .shuffle(.albums), style: .default, handler: { _ in
+                    let shuffleAlbums = AlertAction.init(title: .shuffle(.albums), style: .default, requiresDismissalFirst: true, handler: {
                         
                         musicPlayer.play(songs.albumsShuffled, startingFrom: nil, from: self, withTitle: cell.nameLabel.text, alertTitle: .shuffle(.albums), completion: { self.saveRecentSearch(withTitle: self.searchBar?.text, resignFirstResponder: false) })
                     })
@@ -1553,7 +1563,9 @@ extension SearchViewController: EntityCellDelegate {
                     array.append(shuffleAlbums)
                 }
                 
-                present(UIAlertController.withTitle(cell.nameLabel.text, message: nil, style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
+                Transitioner.shared.showAlert(title: cell.nameLabel.text, from: self, with: array)
+                
+//                present(UIAlertController.withTitle(cell.nameLabel.text, message: nil, style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
                 
             } else {
                 
@@ -1564,7 +1576,11 @@ extension SearchViewController: EntityCellDelegate {
     
     func editButtonTapped(in cell: SongTableViewCell) {
         
+        guard let indexPath = tableView.indexPath(for: cell) else { return }
         
+        cell.setHighlighted(true, animated: true)
+        self.tableView(tableView, didSelectRowAt: indexPath)
+        cell.setHighlighted(false, animated: true)
     }
     
     func accessoryButtonTapped(in cell: SongTableViewCell) {
@@ -1591,7 +1607,9 @@ extension SearchViewController: EntityCellDelegate {
             actions.insert(singleItemAlertAction(for: .library, entity: .song, using: item, from: self), at: 3)
         }
         
-        present(UIAlertController.withTitle(nil, message: cell.nameLabel.text, style: .actionSheet, actions: actions + [.cancel()] ), animated: true, completion: nil)
+        Transitioner.shared.showAlert(title: cell.nameLabel.text, from: self, with: actions)
+        
+//        present(UIAlertController.withTitle(nil, message: cell.nameLabel.text, style: .actionSheet, actions: actions + [.cancel()] ), animated: true, completion: nil)
     }
     
     func scrollViewTapped(in cell: SongTableViewCell) {

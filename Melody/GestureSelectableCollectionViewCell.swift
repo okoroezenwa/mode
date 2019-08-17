@@ -12,7 +12,20 @@ class GestureSelectableCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet var selectedBorderView: MELBorderView!
     @IBOutlet var imageView: MELImageView!
-    @IBOutlet var label: MELLabel!
+    @IBOutlet var titleLabel: MELLabel!
+    @IBOutlet var subtitleLabel: MELLabel!
+    @IBOutlet var effectView: UIVisualEffectView!
+    @IBOutlet var insets: [NSLayoutConstraint]!
+    
+    var inset: CGFloat = 10 {
+        
+        didSet {
+            
+            guard oldValue != inset else { return }
+            
+            insets.forEach({ $0.constant = inset })
+        }
+    }
     
     var useBorderView = true {
         
@@ -20,7 +33,20 @@ class GestureSelectableCollectionViewCell: UICollectionViewCell {
             
             guard oldValue != useBorderView else { return }
             
-            selectedBackgroundView = useBorderView ? nil : MELBorderView()
+            selectedBackgroundView = useBorderView ? nil : MELBorderView(override: 0.03)
+        }
+    }
+    
+    var useEffectView = false {
+        
+        didSet {
+            
+            guard oldValue != useEffectView else { return }
+            
+            effectView.isHidden = useEffectView.inverted
+            effectView.superview?.layer.cornerRadius = useEffectView ? 15 : 0
+            effectView.superview?.clipsToBounds = useEffectView
+            selectedBorderView.layer.cornerRadius = useEffectView ? 0 : 10
         }
     }
     
@@ -49,11 +75,13 @@ class GestureSelectableCollectionViewCell: UICollectionViewCell {
         super.awakeFromNib()
     }
     
-    func prepare(with text: String?, image: UIImage? = nil, style: TextStyle = .body) {
+    func prepare(with title: String?, subtitle: String? = nil, image: UIImage? = nil, style: TextStyle = .body) {
         
-        label.text = text
-        label.textStyle = style.rawValue
+        titleLabel.text = title
+        titleLabel.textStyle = style.rawValue
+        subtitleLabel.text = subtitle
+        subtitleLabel.isHidden = subtitle == nil
         imageView.image = image
-        imageView.isHidden = image == nil
+        imageView.superview?.isHidden = image == nil
     }
 }

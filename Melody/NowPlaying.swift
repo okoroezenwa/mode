@@ -13,11 +13,30 @@ class NowPlaying: NSObject {
     @objc var item: MPMediaItem? { return musicPlayer.nowPlayingItem }
     @objc var observers = Set<NSObject>()
     @objc let notification: Notification = .init(name: .nowPlayingItemChanged, object: musicPlayer, userInfo: useSystemPlayer ? nil : [.queueChange: true])
-
+    
+    var previousItem: MPMediaItem?
+    var nowPlayingItem: MPMediaItem? {
+        
+        didSet {
+            
+            if let song = nowPlayingItem, song != oldValue, Scrobbler.shared.sessionInfoObtained {
+                
+                if musicPlayer.isPlaying {
+                
+                    Scrobbler.shared.setNowPlayingTo(song)
+                }
+                
+                Queue.shared.plays[song.persistentID] = song.playCount
+                previousItem = oldValue
+            }
+        }
+    }
+    
     @objc var timer: Timer?
     @objc var nowPlayingVC: TimerBased? { didSet { prepare(nowPlayingVC) } }
     @objc var container: TimerBased? { didSet { prepare(container) } }
     @objc var cell: TimerBased? { didSet { prepare(cell) } }
+    lazy var scrobbleCount = 5
     
     var registered: [TimerBased?] { return [cell, container, nowPlayingVC] }
     
@@ -32,6 +51,8 @@ class NowPlaying: NSObject {
         observers.insert(notifier.addObserver(forName: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer, queue: nil, using: { [weak self] _ in
             
             guard let weakSelf = self else { return }
+            
+            weakSelf.nowPlayingItem = musicPlayer.nowPlayingItem
             
             notifier.post(weakSelf.notification)
             weakSelf.modifyTimerForNotification()
@@ -49,13 +70,28 @@ class NowPlaying: NSObject {
         
         observers.insert(notifier.addObserver(forName: .MPMusicPlayerControllerPlaybackStateDidChange, object: musicPlayer, queue: nil, using: { [weak self] _ in
             
-            self?.modifyTimerForNotification()
             self?.registered.forEach({ $0?.modifyPlayPauseButton() })
             
-            if musicPlayer.playbackState == .stopped {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {
                 
-                UniversalMethods.performOnMainThread({ self?.modifyTimerForNotification() }, afterDelay: 0.3)
-            }
+                self?.modifyTimerForNotification()
+                
+                if musicPlayer.playbackState == .stopped {
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+                        
+                        self?.scrobbleIfNeeded(self?.previousItem)
+                        self?.scrobbleIfNeeded(self?.nowPlayingItem)
+                    })
+                    
+                } else {
+                    
+                    if musicPlayer.isPlaying, let nowPlaying = musicPlayer.nowPlayingItem {
+                        
+                        Scrobbler.shared.setNowPlayingTo(nowPlaying)
+                    }
+                }
+            })
             
         }) as! NSObject)
         
@@ -76,7 +112,6 @@ class NowPlaying: NSObject {
     
     @objc func prepare(_ timerBased: TimerBased?) {
         
-//        timerBased?.timeSlider.addTarget(self, action: #selector(beginSlideSeek), for: .touchDown)
         timerBased?.timeSlider.addTarget(self, action: #selector(slideSeek), for: .valueChanged)
         timerBased?.timeSlider.addTarget(self, action: #selector(commitToSeek(_:)), for: [.touchUpInside, .touchUpOutside, .touchCancel])
         
@@ -147,12 +182,32 @@ class NowPlaying: NSObject {
             
             registered.forEach({ $0?.timeSlider.setValue(0, animated: true) })
         }
+        
+        if Scrobbler.shared.sessionInfoObtained {
+            
+            if scrobbleCount == 0 {
+            
+                scrobbleIfNeeded(previousItem)
+                scrobbleIfNeeded(nowPlayingItem)
+                scrobbleCount = 5
+            
+            } else {
+                
+                scrobbleCount -= 1
+            }
+        }
     }
     
-//    @objc func beginSlideSeek() {
-//
-//        invalidateTimer()
-//    }
+    func scrobbleIfNeeded(_ item: MPMediaItem?) {
+        
+        guard let song = item, let count = Queue.shared.plays[song.persistentID], song.playCount > count else {
+            
+            return
+        }
+        
+        Queue.shared.plays[song.persistentID] = song.playCount
+        Scrobbler.shared.scrobble(song, completion: nil)
+    }
     
     @objc func slideSeek() {
         
@@ -171,13 +226,13 @@ class NowPlaying: NSObject {
         
         if musicPlayer.nowPlayingItem == nil {
             
-            let playAll = UIAlertAction.init(title: "Play All", style: .default, handler: { _ in appDelegate.perform(.playAll) })
+            let playAll = AlertAction.init(info: .init(title: "Play All", accessoryType: .none), requiresDismissalFirst: true, handler: { appDelegate.perform(.playAll) })
             
-            let shuffleSongs = UIAlertAction.init(title: "Shuffle Songs", style: .default, handler: { _ in appDelegate.perform(.shuffleSongs) })
+            let shuffleSongs = AlertAction.init(info: .init(title: "Shuffle Songs", accessoryType: .none), requiresDismissalFirst: true, handler: { appDelegate.perform(.shuffleSongs) })
             
-            let shuffleAlbums = UIAlertAction.init(title: "Shuffle Albums", style: .default, handler: { _ in appDelegate.perform(.shuffleAlbums) })
+            let shuffleAlbums = AlertAction.init(info: .init(title: "Shuffle Albums", accessoryType: .none), requiresDismissalFirst: true, handler: { appDelegate.perform(.shuffleAlbums) })
             
-            topViewController?.present(UIAlertController.withTitle(nil, message: nil, style: .actionSheet, actions: playAll, shuffleSongs, shuffleAlbums, .cancel()), animated: true, completion: nil)
+            Transitioner.shared.showAlert(title: nil, from: topViewController, context: .other, with: playAll, shuffleSongs, shuffleAlbums)
             
             return
         }
@@ -190,14 +245,7 @@ class NowPlaying: NSObject {
         
         if gr.state == .began, musicPlayer.nowPlayingItem != nil {
             
-            topVC(startingFrom: appDelegate.window?.rootViewController)?
-                .guardQueue(using:
-                    .withTitle(nil,
-                               message: nil,
-                               style: .actionSheet,
-                               actions: .stop, .cancel()),
-                            onCondition: warnForQueueInterruption && stopGuard,
-                            fallBack: stopPlayback)
+            topVC(startingFrom: appDelegate.window?.rootViewController)?.guardQueue(with: [.stop], onCondition: warnForQueueInterruption && stopGuard, fallBack: NowPlaying.shared.stopPlayback)
         }
     }
     

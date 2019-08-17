@@ -910,23 +910,13 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
         
         if canShuffleAlbums {
             
-            var array = [UIAlertAction]()
+            let shuffle = AlertAction.init(title: .shuffle(.songs), style: .default, requiresDismissalFirst: true, handler: { musicPlayer.play(songs, startingFrom: nil, shuffleMode: .songs, from: self, withTitle: self.playlist?.name ??? "Untitled Playlist", alertTitle: .shuffle(.songs)) })
             
-            let shuffle = UIAlertAction.init(title: .shuffle(.songs), style: .default, handler: { _ in
-                
-                musicPlayer.play(songs, startingFrom: nil, shuffleMode: .songs, from: self, withTitle: self.playlist?.name ??? "Untitled Playlist", alertTitle: .shuffle(.songs))
-            })
+            let shuffleAlbums = AlertAction.init(title: .shuffle(.albums), style: .default, requiresDismissalFirst: true, handler: { musicPlayer.play(songs.albumsShuffled, startingFrom: nil, from: self, withTitle: self.playlist?.name ??? "Untitled Playlist", alertTitle: .shuffle(.albums)) })
             
-            array.append(shuffle)
+            Transitioner.shared.showAlert(title: entityVC?.title, from: self, with: shuffle, shuffleAlbums)
             
-            let shuffleAlbums = UIAlertAction.init(title: .shuffle(.albums), style: .default, handler: { _ in
-                
-                musicPlayer.play(songs.albumsShuffled, startingFrom: nil, from: self, withTitle: self.playlist?.name ??? "Untitled Playlist", alertTitle: .shuffle(.albums))
-            })
-            
-            array.append(shuffleAlbums)
-            
-            present(UIAlertController.withTitle(nil, message: entityVC?.title, style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
+//            present(UIAlertController.withTitle(nil, message: entityVC?.title, style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
             
         } else {
             

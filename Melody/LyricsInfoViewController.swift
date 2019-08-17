@@ -72,7 +72,6 @@ class LyricsInfoViewController: UIViewController, TableViewContaining {
         
         super.viewDidLoad()
         
-        tableView.contentInset.bottom = 14
         tableView.scrollIndicatorInsets.bottom = 14
     }
     
@@ -231,6 +230,7 @@ extension LyricsInfoViewController: UITableViewDelegate, UITableViewDataSource {
                     
                     let cell = tableView.settingCell(for: indexPath)
                     
+                    cell.titleLabel.attributes = nil
                     cell.prepare(with: Setting.init(title: lyrics, accessoryType: .none))
                     cell.titleLabel.attributes = [.init(name: .paragraphStyle, value: .other(NSMutableParagraphStyle.withLineHeight(1.2, alignment: .left)), range: lyrics.nsRange())]
                     cell.titleLabel.numberOfLines = 0
@@ -330,21 +330,21 @@ extension LyricsInfoViewController: UITableViewDelegate, UITableViewDataSource {
                 self.present(presentedVC, animated: true, completion: nil)
             }
             
-            if editedLyrics != nil {
+            if editedLyrics == nil {
                 
                 editAction()
                 
             } else {
             
-                let edit = UIAlertAction.init(title: "Edit", style: .default, handler: { _ in editAction() })
+                let edit = AlertAction.init(title: "Edit", style: .default, requiresDismissalFirst: true, handler: editAction)
                 
-                let revert = UIAlertAction.init(title: "Revert", style: .destructive, handler: { _ in
+                let revert = AlertAction.init(title: "Revert", style: .destructive, handler: {
                     
                     self.editedLyrics = nil
                     tableView.reloadRows(at: [indexPath], with: .none)
                 })
                 
-                present(UIAlertController.withTitle(nil, message: nil, style: .actionSheet, actions: edit, revert, .cancel()), animated: true, completion: nil)
+                Transitioner.shared.showAlert(title: nil, from: self, with: edit, revert)
             }
         }
         

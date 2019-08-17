@@ -105,11 +105,11 @@ class PlaylistCollectionViewCell: UICollectionViewCell, ArtworkContainingCell {
                         
                         switch position {
                             
-                        case .leading: return .init(top: topConstraint - 8, left: 10 - 8, bottom: 10, right: smallerExpression)
-                            
-                        case .middle: return .init(top: topConstraint - 8, left: largerExpression, bottom: 10, right: largerExpression)
-                            
-                        case .trailing: return .init(top: topConstraint - 8, left: smallerExpression, bottom: 10, right: 10 - 8)
+                            case .leading: return .init(top: topConstraint - 8, left: 10 - 8, bottom: 10, right: smallerExpression)
+                                
+                            case .middle: return .init(top: topConstraint - 8, left: largerExpression, bottom: 10, right: largerExpression)
+                                
+                            case .trailing: return .init(top: topConstraint - 8, left: smallerExpression, bottom: 10, right: 10 - 8)
                         }
                     
                     case .horizontal: return .zero

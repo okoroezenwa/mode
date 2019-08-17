@@ -418,7 +418,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         
         var actions = [SongAction.collect, .newPlaylist, .addTo].map({ singleItemAlertAction(for: $0, entity: .song, using: item, from: self) })
         
-        actions.insert(.init(title: "Get Info", style: .default, handler: { [weak self] _ in
+        actions.insert(.init(title: "Get Info", style: .default, requiresDismissalFirst: true, handler: { [weak self] in
             
             guard let weakSelf = self else { return }
             
@@ -431,7 +431,9 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             actions.insert(singleItemAlertAction(for: .library, entity: .song, using: item, from: self), at: 2)
         }
         
-        present(UIAlertController.withTitle(item.validTitle, message: item.validArtist + " — " + item.validAlbum, style: .actionSheet, actions: actions + [.cancel()]), animated: true, completion: nil)
+        Transitioner.shared.showAlert(title: item.validArtist + " — " + item.validAlbum, from: self, with: actions)
+        
+//        present(UIAlertController.withTitle(item.validTitle, message: item.validArtist + " — " + item.validAlbum, style: .actionSheet, actions: actions + [.cancel()]), animated: true, completion: nil)
     }
     
     @objc func performPlayingItemActions(_ sender: UISwipeGestureRecognizer) {
@@ -442,7 +444,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             
             case UISwipeGestureRecognizer.Direction.left: showOptions(self)
             
-            case UISwipeGestureRecognizer.Direction.up: guardQueue(using: UIAlertController.withTitle(nil, message: nil, style: .actionSheet, actions: .stop, .cancel()), onCondition: true, fallBack: { NowPlaying.shared.stopPlayback() })
+            case UISwipeGestureRecognizer.Direction.up: guardQueue(with: .stop, onCondition: true, fallBack: { NowPlaying.shared.stopPlayback() })
             
             default: break
         }
@@ -828,16 +830,13 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             guard sender.state == .began else { return }
         }
         
-        let removeItems = UIAlertAction.init(title: "Discard Collected", style: .destructive, handler: { _ in
-            
-            notifier.post(name: .endQueueModification, object: nil)
-        })
+        let remove = AlertAction.init(title: "Discard Collected", style: .destructive, handler: { notifier.post(name: .endQueueModification, object: nil) })
         
-        let cancel = UIAlertAction.init(title: "Cancel", style: .cancel, handler: nil)
+        Transitioner.shared.showAlert(title: nil, from: self, with: remove)
         
-        let alert = UniversalMethods.alertController(withTitle: nil, message: nil, preferredStyle: .actionSheet, actions: removeItems, cancel)
-        
-        present(alert, animated: true, completion: nil)
+//        let alert = UniversalMethods.alertController(withTitle: nil, message: nil, preferredStyle: .actionSheet, actions: removeItems, cancel)
+//
+//        present(alert, animated: true, completion: nil)
     }
 
     @IBAction func clearItemsImmediately(_ gr: UILongPressGestureRecognizer) {
@@ -1227,38 +1226,40 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
     
     @IBAction func showAddOptions() {
         
-        let new = UIAlertAction.init(title: "Create Playlist...", style: .default, handler: { [weak self] _ in
+        let new = AlertAction.init(title: "Create Playlist...", style: .default, requiresDismissalFirst: true, handler: { [weak self] in
             
             guard let weakSelf = self else { return }
             
             weakSelf.performSegue(withIdentifier: "toNewPlaylist", sender: nil)
         })
         
-        let add = UIAlertAction.init(title: "Add to Playlists...", style: .default, handler: { [weak self] _ in
+        let add = AlertAction.init(title: "Add to Playlists...", style: .default, requiresDismissalFirst: true, handler: { [weak self] in
             
             guard let weakSelf = self else { return }
             
             weakSelf.performSegue(withIdentifier: "toPlaylists", sender: nil)
         })
         
-        present(UIAlertController.withTitle("Collected Songs", message: nil, style: .actionSheet, actions: new, add, .cancel()), animated: true, completion: nil)
+        Transitioner.shared.showAlert(title: "Collected Songs", from: self, with: new, add)
+        
+//        present(UIAlertController.withTitle("Collected Songs", message: nil, style: .actionSheet, actions: new, add, .cancel()), animated: true, completion: nil)
     }
     
     @IBAction func playQueue(_ sender: Any) {
         
         if queue.count > 1 {
             
-            var array = [UIAlertAction]()
+            var array = [AlertAction]()
             let canShuffleAlbums = queue.canShuffleAlbums
             
-            let play = UIAlertAction.init(title: "Play", style: .default, handler: { _ in
+            let play = AlertAction.init(title: "Play", style: .default, requiresDismissalFirst: true, handler: {
                 
                 musicPlayer.play(self.queue, startingFrom: self.queue.first, from: self, withTitle: self.queue.count.fullCountText(for: .song), alertTitle: "Play", completion: { notifier.post(name: .endQueueModification, object: nil) })
             })
             
             array.append(play)
             
-            let shuffle = UIAlertAction.init(title: .shuffle(canShuffleAlbums ? .songs : .none), style: .default, handler: { _ in
+            let shuffle = AlertAction.init(title: .shuffle(canShuffleAlbums ? .songs : .none), style: .default, requiresDismissalFirst: true, handler: {
                 
                 musicPlayer.play(self.queue, startingFrom: nil, shuffleMode: .songs, from: self, withTitle: self.queue.count.fullCountText(for: .song), alertTitle: .shuffle(canShuffleAlbums ? .songs : .none), completion: { notifier.post(name: .endQueueModification, object: nil) })
             })
@@ -1267,7 +1268,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             
             if canShuffleAlbums {
                 
-                let shuffleAlbums = UIAlertAction.init(title: .shuffle(.albums), style: .default, handler: { _ in
+                let shuffleAlbums = AlertAction.init(title: .shuffle(.albums), style: .default, requiresDismissalFirst: true, handler: {
                     
                     musicPlayer.play(self.queue.albumsShuffled, startingFrom: nil, from: nil, withTitle: self.queue.count.fullCountText(for: .song), alertTitle: .shuffle(.albums), completion: { notifier.post(name: .endQueueModification, object: nil) })
                 })
@@ -1275,7 +1276,9 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
                 array.append(shuffleAlbums)
             }
             
-            present(UIAlertController.withTitle(queue.count.fullCountText(for: .song), message: nil, style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
+            Transitioner.shared.showAlert(title: queue.count.fullCountText(for: .song), from: self, with: array)
+            
+//            present(UIAlertController.withTitle(queue.count.fullCountText(for: .song), message: nil, style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
             
         } else {
             

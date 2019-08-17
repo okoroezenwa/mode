@@ -8,49 +8,22 @@
 
 import UIKit
 
-class QueueInsertViewController: UIViewController, BorderButtonContaining {
+typealias ApplicableShuffle = String.ShuffleSuffix
 
-    @IBOutlet var queueStackView: UIStackView!
-    @IBOutlet var shuffleLabel: MELLabel!
-    @IBOutlet var albumsLabel: MELLabel!
-    @IBOutlet var shuffleSwitch: MELSwitchContainer! {
-        
-        didSet {
-            
-            shuffleSwitch.action = { [weak self] in
-                
-                guard let weakSelf = self else { return }
-                
-                weakSelf.shuffled = !weakSelf.shuffled
-                
-                UIView.transition(with: weakSelf.albumsLabel, duration: 0.3, options: .transitionCrossDissolve, animations: { weakSelf.updateAlbumsView() }, completion: nil)
-            }
-        }
-    }
-    @IBOutlet var albumsSwitch: MELSwitchContainer! {
-        
-        didSet {
-            
-            albumsSwitch.action = { [weak self] in
-                
-                guard let weakSelf = self else { return }
-                
-                weakSelf.byAlbums = !weakSelf.byAlbums
-                weakSelf.albumsSwitch.setOn(weakSelf.byAlbums, animated: true)
-            }
-        }
-    }
+class QueueInsertController {
     
     enum Context { case collector(manager: QueueManager?), filterContainer((FilterContainer & UIViewController)?), other }
-    
-    var borderedButtons = [BorderedButtonView?]()
-    var shuffled = false
-    var byAlbums = false
+    enum QueuePosition { case next, after, last }
+
     var context = Context.other
-    
-    let nextView = BorderedButtonView.with(title: "Next", image: #imageLiteral(resourceName: "PlayNext"), tapAction: nil)
-    let afterView = BorderedButtonView.with(title: "After...", image: #imageLiteral(resourceName: "PlayAfter"), tapAction: nil)
-    let laterView = BorderedButtonView.with(title: "Last", image: #imageLiteral(resourceName: "PlayLater"), tapAction: nil)
+    var applicableShuffle = ApplicableShuffle.none
+    var activeShuffle = ApplicableShuffle.none {
+        
+        didSet {
+            
+            alertVC?.tableView.reloadData()
+        }
+    }
     
     var labelTitle: String { return title ?? singleSongTitle ?? query?.items?.count.fullCountText(for: .song) ?? songs.count.fullCountText(for: .song) }
     
@@ -61,7 +34,8 @@ class QueueInsertViewController: UIViewController, BorderButtonContaining {
         return (query?.items ?? songs).first?.validTitle
     }
     
-    var verticalPresentedVC: VerticalPresentationContainerViewController? { return parent as? VerticalPresentationContainerViewController }
+    var title: String?
+    weak var alertVC: AlertTableViewController?
     
     var kind = MPMusicPlayerController.QueueKind.items([]) {
         
@@ -80,15 +54,18 @@ class QueueInsertViewController: UIViewController, BorderButtonContaining {
         
         didSet {
             
-            canShuffle = (query?.items ?? []).count > 1
-            canShuffleAlbums = {
+            applicableShuffle = {
                 
-                if let query = query?.copy() as? MPMediaQuery, let collections = query.grouped(by: .album).collections {
+                if let query = query?.copy() as? MPMediaQuery, let collections = query.grouped(by: .album).collections, collections.count > 1 {
                     
-                    return collections.count > 1
+                    return .albums
+                    
+                } else if (query?.items ?? []).count > 1 {
+                    
+                    return .songs
                 }
                 
-                return false
+                return .none
             }()
         }
     }
@@ -96,53 +73,49 @@ class QueueInsertViewController: UIViewController, BorderButtonContaining {
         
         didSet {
             
-            canShuffle = songs.count > 1
-            canShuffleAlbums = songs.canShuffleAlbums
+            applicableShuffle = {
+                
+                if songs.canShuffleAlbums {
+                    
+                    return .albums
+                    
+                } else if songs.count > 1 {
+                    
+                    return .songs
+                }
+                
+                return .none
+            }()
         }
     }
-    var canShuffle = false
-    var canShuffleAlbums = false
     
-    override func viewDidLoad() {
+    init(vc: AlertTableViewController) {
         
-        super.viewDidLoad()
-        
-        verticalPresentedVC?.setTitle(labelTitle)
-        
-        [nextView, afterView, laterView].forEach({
+        switch vc.context {
             
-            $0.borderViewTopConstraint.constant = 9
-            $0.borderViewBottomConstraint.constant = 10
-            queueStackView.addArrangedSubview($0)
-            $0.tapAction = .init(action: #selector(addToQueue(_:)), target: self)
-            
-            if !$0.isHidden {
+            case .queue(title: let title, kind: let kind, context: let context):
                 
-                borderedButtons.append($0)
-            }
-        })
-        
-        updateButtons()
-        
-        updateShuffleView()
-        updateAlbumsView()
+                defer {
+                    
+                    self.kind = kind
+                    self.title = title
+                    self.context = context
+                    
+                    vc.verticalPresentedVC?.setTitle(labelTitle)
+                }
+            
+                self.alertVC = vc
+            
+            default: fatalError("No other context should invoke Queue Insert Controller.")
+        }
     }
     
-    func updateShuffleView() {
+    func addToQueue(_ sender: QueuePosition) {
         
-        shuffleLabel.lightOverride = !canShuffle
-        shuffleSwitch.isUserInteractionEnabled = canShuffle
-    }
-    
-    func updateAlbumsView() {
+        alertVC?.verticalPresentedVC?.staticView.isUserInteractionEnabled = false
+        alertVC?.view.isUserInteractionEnabled = false
         
-        albumsLabel.lightOverride = !shuffled || !canShuffleAlbums || !canShuffle
-        albumsSwitch.isUserInteractionEnabled = shuffled && canShuffle && canShuffleAlbums
-    }
-    
-    @objc func addToQueue(_ sender: UITapGestureRecognizer) {
-        
-        if sender.view == afterView {
+        if sender == .after {
             
             guard let presentedVC = presentedStoryboard.instantiateViewController(withIdentifier: "presentedVC") as? PresentedContainerViewController else { return }
             
@@ -151,21 +124,17 @@ class QueueInsertViewController: UIViewController, BorderButtonContaining {
                 presentedVC.manager = manager
                 presentedVC.queueTVC.shuffleMode = {
                     
-                    if shuffled, !byAlbums {
+                    switch activeShuffle {
                         
-                        return .songs
+                        case .albums: return .albums
                         
-                    } else if shuffled, byAlbums {
+                        case .songs: return .songs
                         
-                        return .albums
-                        
-                    } else {
-                        
-                        return .none
+                        case .none: return .none
                     }
                 }()
                 
-            } else if let query = query, !shuffled {
+            } else if let query = query, activeShuffle == .none {
 
                 presentedVC.query = query
                 
@@ -177,7 +146,12 @@ class QueueInsertViewController: UIViewController, BorderButtonContaining {
             presentedVC.context = .upNext
             presentedVC.queueTVC.title = labelTitle
             
-            present(presentedVC, animated: true, completion: nil)
+            alertVC?.present(presentedVC, animated: true, completion: { [weak self] in
+                
+                self?.alertVC?.verticalPresentedVC?.staticCollectionView.deselectItem(at: .init(item: 1, section: 0), animated: false)
+                self?.alertVC?.verticalPresentedVC?.staticView.isUserInteractionEnabled = true
+                self?.alertVC?.view.isUserInteractionEnabled = true
+            })
             
         } else {
             
@@ -189,7 +163,7 @@ class QueueInsertViewController: UIViewController, BorderButtonContaining {
                     
                     return .items(items)
                 
-                } else if let query = query, !shuffled {
+                } else if let query = query, activeShuffle == .none {
                     
                     return .queries([query].compactMap({ $0 }))
                 
@@ -201,12 +175,22 @@ class QueueInsertViewController: UIViewController, BorderButtonContaining {
             
             let alertType: MPMusicPlayerController.QueueModificationAlert = title?.isEmpty == false ? .entity(name: labelTitle) : .arbitrary(count: items.count)
             
-            musicPlayer.insert(kind, sender.view == nextView ? .next : .last, alertType: alertType, from: self, withTitle: labelTitle, subtitle: nil, alertTitle: "\(shuffled ? .shuffle() : "Play") \(sender.view == nextView ? "Next" : "Later")", completionKind: .completion({
+            let alertTitle: String = {
+                
+                switch activeShuffle {
+                    
+                    case .none: return "Play"
+                    
+                    default: return .shuffle(activeShuffle)
+                }
+            }()
+            
+            musicPlayer.insert(kind, sender == .next ? .next : .last, alertType: alertType, from: alertVC, withTitle: labelTitle, subtitle: nil, alertTitle: "\(alertTitle) \(sender == .next ? "Next" : "Later")", completionKind: .completion({
                 
                 if case .collector = self.context {
                     
                     notifier.post(name: .endQueueModification, object: nil)
-                    self.performSegue(withIdentifier: "unwind", sender: nil)
+                    self.alertVC?.performSegue(withIdentifier: "unwind", sender: nil)
                     
                 } else {
                     
@@ -215,7 +199,7 @@ class QueueInsertViewController: UIViewController, BorderButtonContaining {
                         container?.saveRecentSearch(withTitle: container?.searchBar?.text, resignFirstResponder: false)
                     }
                     
-                    self.performSegue(withIdentifier: "unwind", sender: nil)
+                    self.alertVC?.performSegue(withIdentifier: "unwind", sender: nil)
                 }
             }))
         }
@@ -223,34 +207,22 @@ class QueueInsertViewController: UIViewController, BorderButtonContaining {
     
     func requiredSongs() -> [MPMediaItem] {
         
-        if shuffled, !byAlbums {
+        switch activeShuffle {
             
-            return (query?.items ?? songs).shuffled()
-        
-        } else if shuffled, byAlbums {
+            case .albums:
             
-            if let query = query?.copy() as? MPMediaQuery, let collections = query.grouped(by: .album).collections?.shuffled() {
-                
-                return collections.reduce([], { $0 + $1.items })
+                if let query = query?.copy() as? MPMediaQuery, let collections = query.grouped(by: .album).collections?.shuffled() {
+                    
+                    return collections.reduce([], { $0 + $1.items })
+                    
+                } else {
+                    
+                    return songs.albumsShuffled
+                }
             
-            } else {
-                
-                return songs.albumsShuffled
-            }
-        
-        } else {
+            case .songs: return (query?.items ?? songs).shuffled()
             
-            return (query?.items ?? songs)
-        }
-    }
-    
-    deinit {
-        
-        if isInDebugMode, deinitBannersEnabled {
-            
-            let banner = UniversalMethods.banner(withTitle: "QIVC going away...")
-            banner.titleLabel.font = .myriadPro(ofWeight: .light, size: 22)
-            banner.show(for: 0.3)
+            case .none: return (query?.items ?? songs)
         }
     }
 }

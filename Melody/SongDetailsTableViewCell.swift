@@ -38,7 +38,7 @@ class SongDetailsTableViewCell: UITableViewCell {
                     
                 case .lastPlayed: return ("Last Played", #imageLiteral(resourceName: "LastPlayed14"))
                     
-                case .loved: return ("Loved", #imageLiteral(resourceName: "NoLove14"))
+                case .loved: return ("Affinity", #imageLiteral(resourceName: "NoLove14"))
                     
                 case .plays: return ("Plays", #imageLiteral(resourceName: "Plays14"))
                     

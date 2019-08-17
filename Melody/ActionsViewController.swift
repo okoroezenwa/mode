@@ -121,7 +121,7 @@ class ActionsViewController: UIViewController {
         }
     }
     
-    lazy var rateShareView: RateShareView = { RateShareView.instance(nowPlayingVC: self.sender as? NowPlayingViewController) }()
+    lazy var rateShareView: RateShareView = { RateShareView.instance(container: self.sender as? NowPlayingViewController ?? self) }()
     lazy var volumeView = VolumeView.instance(leadingWith: 20)
     
 //    @objc lazy var index: CGFloat = 0

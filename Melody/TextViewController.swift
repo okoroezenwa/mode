@@ -21,7 +21,7 @@ class TextViewController: UIViewController {
         
         didSet {
             
-            textView.textContainerInset = .init(top: context == .details ? 7 : 10, left: 7, bottom: context == .details ? 0 : 4, right: 7)
+            textView.textContainerInset = .init(top: context == .details ? 7 : 10, left: 7, bottom: context == .details ? 0 : 7, right: 7)
         }
     }
     @IBOutlet var creatorView: UIView!

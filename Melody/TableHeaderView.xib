@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -24,16 +24,19 @@
                     <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FLG-Dh-NI2">
-                            <rect key="frame" x="0.0" y="0.0" width="49" height="44"/>
+                            <rect key="frame" x="0.0" y="0.0" width="44" height="44"/>
                             <subviews>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="bottom" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nDO-hp-fnA" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                    <rect key="frame" x="0.0" y="0.0" width="49" height="44"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="44" height="44"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" priority="900" constant="44" id="9UR-Nx-gs8"/>
+                                    </constraints>
                                     <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                     <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="17" maxY="11"/>
                                     <state key="normal" image="AddNoBorderSmall"/>
                                 </button>
                                 <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Vz6-Fm-scF" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                    <rect key="frame" x="15" y="16" width="24" height="24"/>
+                                    <rect key="frame" x="10" y="16" width="24" height="24"/>
                                     <color key="backgroundColor" white="0.0" alpha="0.050000000000000003" colorSpace="calibratedWhite"/>
                                     <constraints>
                                         <constraint firstAttribute="width" secondItem="Vz6-Fm-scF" secondAttribute="height" multiplier="1:1" id="9i7-Na-AjC"/>
@@ -52,16 +55,15 @@
                                 <constraint firstItem="nDO-hp-fnA" firstAttribute="top" secondItem="FLG-Dh-NI2" secondAttribute="top" id="I3B-8h-TzF"/>
                                 <constraint firstAttribute="bottom" secondItem="nDO-hp-fnA" secondAttribute="bottom" id="RTU-5i-SGn"/>
                                 <constraint firstAttribute="trailing" secondItem="nDO-hp-fnA" secondAttribute="trailing" id="YNh-LI-QxQ"/>
-                                <constraint firstItem="nDO-hp-fnA" firstAttribute="leading" secondItem="FLG-Dh-NI2" secondAttribute="leading" id="hha-BV-oqE"/>
+                                <constraint firstItem="nDO-hp-fnA" firstAttribute="leading" secondItem="FLG-Dh-NI2" secondAttribute="leading" priority="800" id="hha-BV-oqE"/>
                                 <constraint firstAttribute="trailing" secondItem="Vz6-Fm-scF" secondAttribute="trailing" priority="900" constant="10" id="k32-Om-Ak8"/>
-                                <constraint firstItem="Vz6-Fm-scF" firstAttribute="leading" secondItem="FLG-Dh-NI2" secondAttribute="leading" priority="900" constant="15" id="tPg-e8-J9r"/>
                             </constraints>
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="boolean" keyPath="hidden" value="YES"/>
                             </userDefinedRuntimeAttributes>
                         </view>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="G6s-Sf-cN2">
-                            <rect key="frame" x="49" y="0.0" width="282" height="44"/>
+                            <rect key="frame" x="44" y="0.0" width="287" height="44"/>
                             <subviews>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="HEADING (20)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pd0-qL-KSC" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
                                     <rect key="frame" x="10" y="18" width="132" height="22"/>
@@ -77,7 +79,7 @@
                                     </userDefinedRuntimeAttributes>
                                 </label>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vZL-Z0-HOO">
-                                    <rect key="frame" x="0.0" y="0.0" width="282" height="44"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="287" height="44"/>
                                 </button>
                             </subviews>
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -169,10 +171,10 @@
                 <outlet property="labelBottomConstraint" destination="hUp-fQ-Xkv" id="t6j-d1-AoN"/>
                 <outlet property="labelLeadingConstraint" destination="Vcr-WA-HBD" id="wK4-xZ-AWb"/>
                 <outlet property="leftButtonBorderView" destination="Vz6-Fm-scF" id="Pka-vR-VBO"/>
+                <outlet property="leftButtonBorderViewBottomConstraint" destination="01h-RP-bgG" id="NLa-qd-msz"/>
                 <outlet property="leftButtonBorderViewTrailingConstraint" destination="k32-Om-Ak8" id="dTQ-IJ-mF8"/>
-                <outlet property="leftButtonBottomConstraint" destination="01h-RP-bgG" id="Rv7-ST-8AY"/>
-                <outlet property="leftButtonLeadingConstraint" destination="tPg-e8-J9r" id="buB-8A-ii8"/>
-                <outlet property="leftButtonWidthConstraint" destination="tOV-fk-tUD" id="eJB-I9-duW"/>
+                <outlet property="leftButtonBorderViewWidthConstraint" destination="tOV-fk-tUD" id="9MQ-vV-tnN"/>
+                <outlet property="leftButtonWidthConstraint" destination="9UR-Nx-gs8" id="y3B-ep-TtS"/>
                 <outlet property="rightButton" destination="0rX-ta-j56" id="AIt-dc-yu5"/>
                 <outlet property="rightButtonViewConstraint" destination="u1s-mC-ZbJ" id="YcV-fy-ROJ"/>
                 <outlet property="stackView" destination="m8U-3l-zqa" id="X6m-2W-34x"/>

@@ -135,53 +135,53 @@ class VisualEffectNavigationBar: MELVisualEffectView {
             
             prepareRightView(for: entityVC.rightViewMode)
         }
+        
+        layoutIfNeeded()
+        
+        entityImageView.layer.cornerRadius = 4//entityImageView.frame.height / 2
     }
     
     @objc func viewTemporarySettings(_ sender: UILongPressGestureRecognizer) {
         
         guard sender.state == .began else { return }
         
-        let font = UIAlertAction.init(title: "Change Font", style: .default, handler: { [weak self] _ in self?.changeFont() })
+        let font = AlertAction.init(title: "Change Font", style: .default, requiresDismissalFirst: true, handler: { [weak self] in self?.changeFont() })
+        let constant = AlertAction.init(title: "Change Bar Constant", style: .default, requiresDismissalFirst: true, handler: { [weak self] in self?.updateBarConstant(0) })
+        let blur = AlertAction.init(title: "Change Bar Blur Behaviour", style: .default, requiresDismissalFirst: true, handler: { [weak self] in self?.changeBarBlurBehaviour() })
         
-        let constant = UIAlertAction.init(title: "Change Bar Constant", style: .default, handler: { [weak self] action in self?.updateBarConstant(action) })
-        
-        let blur = UIAlertAction.init(title: "Change Bar Blur Behaviour", style: .default, handler: { [weak self] _ in self?.changeBarBlurBehaviour() })
-        
-        topViewController?.present(UIAlertController.withTitle(nil, message: nil, style: .actionSheet, actions: font, constant, blur, .cancel()), animated: true, completion: nil)
+        Transitioner.shared.showAlert(title: nil, from: topViewController, with: font, constant, blur)
     }
     
     func changeFont() {
         
         let actions = Font.allCases.map({ font in
             
-            UIAlertAction.init(title: font.name, style: .default, handler: { _ in
+            AlertAction.init(title: font.name, style: .default, accessoryType: .check({ font == activeFont }), handler: {
                 
                 prefs.set(font.rawValue, forKey: .activeFont)
                 notifier.post(name: .activeFontChanged, object: nil)
-            
-            }).checked(given: font == activeFont)
+            })
         })
         
-        topViewController?.present(UIAlertController.withTitle(nil, message: nil, style: .actionSheet, actions: actions + [.cancel()]), animated: true, completion: nil)
+        Transitioner.shared.showAlert(title: nil, from: topViewController, with: actions)
     }
     
     func updateBarConstant(_ sender: Any) {
         
-        if let _ = sender as? UIAlertAction {
+        if let _ = sender as? Int {
             
             let actions = [("None", 0), ("Small", 1), ("Large", 2)].map({ tuple in
                 
-                UIAlertAction.init(title: tuple.0, style: .default, handler: { [weak self] _ in
+                AlertAction.init(title: tuple.0, style: .default, accessoryType: .check({ prefs.integer(forKey: "barConstant") == tuple.1 }), handler: { [weak self] in
                 
                     guard let weakSelf = self else { return }
                     
                     prefs.set(tuple.1, forKey: "barConstant")
                     weakSelf.updateBarConstant(weakSelf)
-                
-                }).checked(given: prefs.integer(forKey: "barConstant") == tuple.1)
+                })
             })
             
-            topViewController?.present(UIAlertController.withTitle(nil, message: nil, style: .actionSheet, actions: actions + [.cancel()]), animated: true, completion: nil)
+            Transitioner.shared.showAlert(title: nil, from: topViewController, with: actions)
             
         } else {
             
@@ -211,15 +211,14 @@ class VisualEffectNavigationBar: MELVisualEffectView {
         
         let actions = BarBlurBehavour.allCases.map({ behaviour in
             
-            UIAlertAction.init(title: behaviour.title, style: .default, handler: { _ in
+            AlertAction.init(title: behaviour.title, style: .default, accessoryType: .check({ barBlurBehaviour == behaviour }), handler: {
                 
                 prefs.set(behaviour.rawValue, forKey: .barBlurBehaviour)
                 notifier.post(name: .barBlurBehaviourChanged, object: nil)
-            
-            }).checked(given: barBlurBehaviour == behaviour)
+            })
         })
         
-        topViewController?.present(UIAlertController.withTitle(nil, message: nil, style: .actionSheet, actions: actions + [.cancel()]), animated: true, completion: nil)
+        Transitioner.shared.showAlert(title: nil, from: topViewController, with: actions)
     }
     
     func location(from navigatable: Navigatable?) -> Location {

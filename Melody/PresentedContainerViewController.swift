@@ -32,7 +32,7 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
     @IBOutlet var promptLabel: MELLabel!
     @IBOutlet var topStackViewConstraint: NSLayoutConstraint!
     
-    enum ChildContext { case items, playlists, upNext, newPlaylist, settings, tips, queue, playlistDetails, info, songDetails, queueGuard, theme, gestures, playback, tabBar, background, filter, artwork, icon, fullPlayer, libraryRefresh, recents, properties, propertySettings, lyricsInfo, lyricsEdit, savedLyrics }
+    enum ChildContext { case items, playlists, upNext, newPlaylist, settings, tips, queue, playlistDetails, info, songDetails, queueGuard, theme, gestures, playback, tabBar, background, filter, artwork, icon, fullPlayer, libraryRefresh, recents, properties, propertySettings, lyricsInfo, lyricsEdit, savedLyrics, lastFM }
     
     var context = ChildContext.items
     var manager: QueueManager?
@@ -268,6 +268,12 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
         
         return vc
     }()
+    @objc lazy var lastFMVC: LastFMTableViewController = {
+        
+        let vc = UIStoryboard.init(name: "LastFMTableViewController", bundle: nil).instantiateViewController(withIdentifier: "LastFMTableViewController") as! LastFMTableViewController
+        
+        return vc
+    }()
     @objc var activeViewController: UIViewController? {
         
         didSet {
@@ -354,6 +360,8 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
                 case .propertySettings: return propertySettingsVC
                 
                 case .savedLyrics: return savedLyricsVC
+                
+                case .lastFM: return lastFMVC
             }
         }()
         
@@ -385,8 +393,7 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
             case .hidden:
             
                 activityIndicator.stopAnimating()
-                rightButton.isHidden = false
-                rightBorderView.isHidden = false
+                updateRightButton(true)
             
             case .visible:
             
@@ -560,6 +567,8 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
                     }
                 
                 case .savedLyrics: return "Saved Lyrics"
+                
+                case .lastFM: return "Last.fm"
             }
         }()
         
@@ -573,7 +582,11 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
         }
         
         updatePrompt(animated: animated)
+        updateRightButton(updateConstraintsAndButtons)
+    }
     
+    func updateRightButton(_ updateConstraintsAndButtons: Bool) {
+        
         switch context {
             
             case /*.items, */.upNext, .savedLyrics: break
@@ -592,6 +605,8 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
                     
                     if isInDebugMode {
                         
+                        rightButton.isHidden = false
+                        rightBorderView.isHidden = false
                         rightButton.setImage(#imageLiteral(resourceName: "More13"), for: .normal)
                         
                     } else {
@@ -605,6 +620,8 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
                 
                 if updateConstraintsAndButtons {
                     
+                    rightButton.isHidden = false
+                    rightBorderView.isHidden = false
                     rightButton.setImage(#imageLiteral(resourceName: "Check"), for: .normal)
                 }
             
@@ -612,26 +629,26 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
                 
                 if updateConstraintsAndButtons {
                     
+                    rightButton.isHidden = false
+                    rightBorderView.isHidden = false
                     rightButton.setImage(#imageLiteral(resourceName: "Lightbulb"), for: .normal)
                 }
             
-            case .tips, .playlists, .songDetails, .queueGuard, .theme, .gestures, .playback, .tabBar, .background, .artwork, .icon, .fullPlayer, .libraryRefresh, .recents, .items, .properties, .propertySettings:
+            case .tips, .playlists, .songDetails, .queueGuard, .theme, .gestures, .playback, .tabBar, .background, .artwork, .icon, .fullPlayer, .libraryRefresh, .recents, .items, .properties, .propertySettings, .lastFM:
                 
                 if updateConstraintsAndButtons {
                     
                     rightButton.isHidden = true
                     rightBorderView.isHidden = true
                 }
-                        
+            
             case .queue:
                 
                 if updateConstraintsAndButtons {
                     
-                    rightButton.isHidden = !Settings.isInDebugMode
-                    rightBorderView.isHidden = !Settings.isInDebugMode
-                    rightButton.setImage(#imageLiteral(resourceName: "History13"), for: .normal)
-                    rightButton.imageEdgeInsets.left = 1
-                    rightButton.imageEdgeInsets.bottom = 1
+                    rightButton.isHidden = false
+                    rightBorderView.isHidden = false
+                    rightButton.setImage(#imageLiteral(resourceName: "More13"), for: .normal)
                 }
         }
     }
@@ -787,16 +804,13 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
             
                 dismissVC()
             
-            case .songDetails, .tips, .queueGuard, .theme, .gestures, .playback, .tabBar, .background, .artwork, .icon, .fullPlayer, .libraryRefresh, .recents, .items, .properties, .propertySettings: break
+            case .songDetails, .tips, .queueGuard, .theme, .gestures, .playback, .tabBar, .background, .artwork, .icon, .fullPlayer, .libraryRefresh, .recents, .items, .properties, .propertySettings, .lastFM: break
             
             case /*.items,*/ .upNext:
                 
-                let removeItems = UIAlertAction.init(title: "Discard Collected", style: .destructive, handler: { _ in
-                    
-                    notifier.post(name: .endQueueModification, object: nil)
-                })
+                let remove = AlertAction.init(title: "Discard Collected", style: .destructive, handler: { notifier.post(name: .endQueueModification, object: nil) })
                 
-                present(UniversalMethods.alertController(withTitle: nil, message: nil, preferredStyle: .actionSheet, actions: removeItems, UniversalMethods.cancelAlertAction()), animated: true, completion: nil)
+                Transitioner.shared.showAlert(title: "Discard Collected", from: self, with: remove)
         }
     }
     

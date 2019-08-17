@@ -13,7 +13,7 @@ class Queue {
     
     static let shared = Queue()
     var currentQueue = [MPMediaItem]()
-    var previousItem: MPMediaItem?
+    var plays = [MPMediaEntityPersistentID: Int]()
     var queueCount: Int { return useSystemPlayer ? musicPlayer.queueCount() : currentQueue.count }
     var indexOfNowPlayingItem: Int?
     var queueWasModifiedWhileInBackground = false // likely will be used if Siri Shortcuts are added.
@@ -53,22 +53,6 @@ class Queue {
         }
     }
     
-    func remove(at index: Int, movingTo newIndex: Int?, completion: EmptyCompletion) {
-        
-        let item = currentQueue.remove(at: index)
-        
-        if let newIndex = newIndex {
-            
-            place([item], at: newIndex, completion: completion)
-            
-        } else {
-        
-            performQueueModificationCompletion()
-            
-            completion()
-        }
-    }
-    
     func place(_ items: [MPMediaItem], after item: MPMediaItem?, verifyDuplicates verify: Bool = true, removeAfterPlayback: Bool = false, completion: EmptyCompletion) {
         
         if verify {
@@ -85,14 +69,6 @@ class Queue {
             
             return 0
         }()
-        
-        currentQueue.insert(contentsOf: items, at: index)
-        performQueueModificationCompletion()
-        
-        completion()
-    }
-    
-    func place(_ items: [MPMediaItem], at index: Int, completion: EmptyCompletion) {
         
         currentQueue.insert(contentsOf: items, at: index)
         performQueueModificationCompletion()
@@ -208,10 +184,10 @@ class Queue {
         
         let item = queue[index < queue.count ? index : 0]
         
+        NowPlaying.shared.nowPlayingItem = item
+        plays[item.persistentID] = item.playCount
         musicPlayer.nowPlayingItem = item
         musicPlayer.prepareToPlay()
-
-//        if #available(iOS 12.3, *) { } else if #available(iOS 11.3, *) { musicPlayer.pause() }
         
         UniversalMethods.performOnMainThread({
             
@@ -225,9 +201,9 @@ class Queue {
     }
 }
 
-struct QueueItem {
-    
-    var shouldRemoveAfterPlayback: Bool
+//struct QueueItem {
+//
+//    var shouldRemoveAfterPlayback: Bool
 //    let location: String
-    let item: MPMediaItem
-}
+//    let item: MPMediaItem
+//}

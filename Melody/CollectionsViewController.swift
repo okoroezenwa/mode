@@ -564,7 +564,13 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
     
     @objc func changeRecentsType() {
         
-        let added = UIAlertAction.init(title: "Added", style: .default, handler: { [weak self] action in
+        let added = AlertAction.init(title: "Added", style: .default, accessoryType: .check({ [weak self] in
+            
+            guard let weakSelf = self else { return false }
+            
+            return recentlyUpdatedPlaylistSorts.contains(weakSelf.currentPlaylistsView)
+            
+        }), handler: { [weak self] in
             
             guard let weakSelf = self, recentlyUpdatedPlaylistSorts.contains(weakSelf.currentPlaylistsView) else { return }
             
@@ -572,10 +578,15 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
             prefs.set(array, forKey: .recentlyUpdatedPlaylistSorts)
             
             notifier.post(name: .recentlyUpdatedPlaylistSortsChanged, object: nil, userInfo: ["playlistsView": weakSelf.currentPlaylistsView.rawValue])
+        })
         
-        }).checked(given: recentlyUpdatedPlaylistSorts.contains(currentPlaylistsView))
-        
-        let updated = UIAlertAction.init(title: "Updated", style: .default, handler: { [weak self] action in
+        let updated = AlertAction.init(title: "Updated", style: .default, accessoryType: .check({ [weak self] in
+            
+            guard let weakSelf = self else { return false }
+            
+            return recentlyUpdatedPlaylistSorts.contains(weakSelf.currentPlaylistsView).inverted
+            
+        }), handler: { [weak self] in
             
             guard let weakSelf = self, recentlyUpdatedPlaylistSorts.contains(weakSelf.currentPlaylistsView).inverted else { return }
             
@@ -583,10 +594,11 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
             prefs.set(array, forKey: .recentlyUpdatedPlaylistSorts)
             
             notifier.post(name: .recentlyUpdatedPlaylistSortsChanged, object: nil, userInfo: ["playlistsView": weakSelf.currentPlaylistsView.rawValue])
+        })
         
-        }).checked(given: recentlyUpdatedPlaylistSorts.contains(currentPlaylistsView).inverted)
+        Transitioner.shared.showAlert(title: "Recently...", from: self, with: added, updated)
         
-        present(UIAlertController.withTitle(nil, message: "Recently...", style: .actionSheet, actions: added, updated, .cancel()), animated: true, completion: nil)
+//        present(UIAlertController.withTitle(nil, message: "Recently...", style: .actionSheet, actions: added, updated, .cancel()), animated: true, completion: nil)
     }
     
     @IBAction func showOptions() {
@@ -1062,39 +1074,30 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
     
     @objc func changePlaylistView() {
         
-        let appleMusic = UIAlertAction.init(title: "Apple Music Playlists", style: .default, handler: { [weak self] _ in
-            
-            guard let weakSelf = self else { return }
-            
-            weakSelf.changeView(from: weakSelf.currentPlaylistsView, to: .appleMusic)
-        
-        }).checked(given: currentPlaylistsView == .appleMusic)
-        
-        let myPlaylists = UIAlertAction.init(title: "My Playlists", style: .default, handler: { [weak self] _ in
-            
-            guard let weakSelf = self else { return }
-            
-            weakSelf.changeView(from: weakSelf.currentPlaylistsView, to: .user)
-        
-        }).checked(given: currentPlaylistsView == .user)
-        
-        let allPlaylists = UIAlertAction.init(title: "All Playlists", style: .default, handler: { [weak self] _ in
+        var actions = [AlertAction.init(info: AlertInfo.init(title: "All", accessoryType: .check({ self.currentPlaylistsView == .all })), handler: { [weak self] in
             
             guard let weakSelf = self else { return }
             
             weakSelf.changeView(from: weakSelf.currentPlaylistsView, to: .all)
-        
-        }).checked(given: currentPlaylistsView == .all)
-        
-        var actions = [allPlaylists]
+        })]
         
         if case .appleMusic = appDelegate.appleMusicStatus {
             
-            actions.append(myPlaylists)
-            actions.append(appleMusic)
+            actions.append(contentsOf: [AlertAction.init(info: AlertInfo.init(title: "Mine", accessoryType: .check({ self.currentPlaylistsView == .user })), handler: { [weak self] in
+                
+                guard let weakSelf = self else { return }
+                
+                weakSelf.changeView(from: weakSelf.currentPlaylistsView, to: .user)
+                
+            }), AlertAction.init(info: AlertInfo.init(title: "Apple Music", accessoryType: .check({ self.currentPlaylistsView == .appleMusic })), handler: { [weak self] in
+                
+                guard let weakSelf = self else { return }
+                
+                weakSelf.changeView(from: weakSelf.currentPlaylistsView, to: .appleMusic)
+            })])
         }
         
-        present(UIAlertController.withTitle("Show...", message: nil, style: .actionSheet, actions: actions + [.cancel()]), animated: true, completion: nil)
+        Transitioner.shared.showAlert(title: "Visible Playlists", from: self, context: .other, with: actions)
     }
     
     func changeView(from currentView: PlaylistView, to newView: PlaylistView) {
@@ -1146,7 +1149,7 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
         
         if let collectionView = collectionView {
             
-            collectionView.reloadItems(at: collectionView.indexPathsForVisibleItems)
+            collectionView.reloadData()//reloadItems(at: collectionView.indexPathsForVisibleItems)
         }
     }
     
@@ -1160,7 +1163,7 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
             
             if let collectionView = collectionView {
                 
-                collectionView.reloadItems(at: collectionView.indexPathsForVisibleItems)
+                collectionView.reloadData()//reloadItems(at: collectionView.indexPathsForVisibleItems)
             }
         
         } else {
@@ -1257,9 +1260,9 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
         let songs = collectionsQuery.items ?? collections.flatMap({ $0.items })
         let canShuffleAlbums = songs.canShuffleAlbums
         
-        var array = [UIAlertAction]()
+        var array = [AlertAction]()
         
-        let shuffle = UIAlertAction.init(title: .shuffle(canShuffleAlbums ? .songs : .none), style: .default, handler: { _ in
+        let shuffle = AlertAction.init(title: .shuffle(canShuffleAlbums ? .songs : .none), style: .default, requiresDismissalFirst: true, handler: {
             
             musicPlayer.play(songs, startingFrom: nil, shuffleMode: .songs, from: self, withTitle: "All " ?+ self.libraryVC?.preferredTitle, alertTitle: .shuffle(canShuffleAlbums ? .songs : .none))
         })
@@ -1268,7 +1271,7 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
         
         if canShuffleAlbums {
         
-            let shuffleAlbums = UIAlertAction.init(title: .shuffle(.albums), style: .default, handler: { _ in
+            let shuffleAlbums = AlertAction.init(title: .shuffle(.albums), style: .default, requiresDismissalFirst: true, handler: {
                 
                 musicPlayer.play(songs.albumsShuffled, startingFrom: nil, from: self, withTitle: "All " ?+ self.libraryVC?.preferredTitle, alertTitle: .shuffle(.albums))
             })
@@ -1276,7 +1279,9 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
             array.append(shuffleAlbums)
         }
         
-        present(UIAlertController.withTitle(nil, message: "All " ?+ self.libraryVC?.preferredTitle, style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
+        Transitioner.shared.showAlert(title: "All " ?+ self.libraryVC?.preferredTitle, from: self, with: array)
+        
+//        present(UIAlertController.withTitle(nil, message: "All " ?+ self.libraryVC?.preferredTitle, style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
     }
     
     @objc func getCollection(inSection section: Int, row: Int, filtering: Bool = false) -> MPMediaItemCollection {
@@ -1440,14 +1445,13 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
             }) })
         }
         
-        let add = [UIAlertAction.init(title: duplicates.count > 0 ? "Add With \(duplicateText.capitalized)" : "Add \((manager?.queue ?? itemsToAdd).count.fullCountText(for: .song, capitalised: true))", style: .default, handler: { _ in
-            addSongs(true) })]
+        let add = [AlertAction.init(title: duplicates.count > 0 ? "Add With \(duplicateText.capitalized)" : "Add \((manager?.queue ?? itemsToAdd).count.fullCountText(for: .song, capitalised: true))", style: .default, handler: { addSongs(true) })]
         
-        let noDuplicates = duplicates.isEmpty ? [] : [UIAlertAction.init(title: "Add Without \(duplicateText.capitalized)", style: .default, handler: { _ in addSongs(false) })]
+        let noDuplicates = duplicates.isEmpty ? [] : [AlertAction.init(title: "Add Without \(duplicateText.capitalized)", style: .default, handler: { addSongs(false) })]
         
 //        let review = duplicates.isEmpty ? [] : [UIAlertAction.init(title: "Review Duplicates", style: .default, handler: nil)]
         
-        (filterContainer ?? self).present(UniversalMethods.alertController(withTitle: selectedPlaylists.count.fullCountText(for: .playlist, capitalised: true), message: !duplicates.isEmpty ? duplicates.count.formatted + " " + duplicateText : nil, preferredStyle: .actionSheet, actions: add + noDuplicates + [.cancel()]), animated: true, completion: nil)
+        Transitioner.shared.showAlert(title: selectedPlaylists.count.fullCountText(for: .playlist, capitalised: true), subtitle: !duplicates.isEmpty ? duplicates.count.formatted + " " + duplicateText : nil, from: filterContainer ?? self, with: add + noDuplicates)
     }
     
     @objc func addItems(to playlist: MPMediaPlaylist) {
@@ -1525,14 +1529,11 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
             })
         }
         
-        let add = [UIAlertAction.init(title: duplicates.count > 0 ? "Add With \(duplicateText.capitalized)" : "Add \((manager?.queue ?? itemsToAdd).count == 1 ? "Song" : "Songs")", style: .default, handler: { _ in
-            
-            addSongs(true)
-        })]
+        let add = [AlertAction.init(title: duplicates.count > 0 ? "Add With \(duplicateText.capitalized)" : "Add \((manager?.queue ?? itemsToAdd).count == 1 ? "Song" : "Songs")", style: .default, handler: { addSongs(true) })]
         
-        let noDuplicates = duplicates.isEmpty || duplicates.count == (manager?.queue ?? itemsToAdd).count ? [] : [UIAlertAction.init(title: "Add Without \(duplicateText.capitalized)", style: .default, handler: { _ in addSongs(false) })]
+        let noDuplicates = duplicates.isEmpty || duplicates.count == (manager?.queue ?? itemsToAdd).count ? [] : [AlertAction.init(title: "Add Without \(duplicateText.capitalized)", style: .default, handler: { addSongs(false) })]
         
-        (filterContainer ?? self).present(UniversalMethods.alertController(withTitle: playlist.name ??? "Untitled Playlist", message: !duplicates.isEmpty ? duplicates.count.formatted + " " + duplicateText : nil, preferredStyle: .actionSheet, actions: add + noDuplicates + [.cancel()]), animated: true, completion: nil)
+        Transitioner.shared.showAlert(title: playlist.name ??? "Untitled Playlist", subtitle: !duplicates.isEmpty ? duplicates.count.formatted + " " + duplicateText : nil, from: filterContainer ?? self, with: add + noDuplicates)
     }
 }
 

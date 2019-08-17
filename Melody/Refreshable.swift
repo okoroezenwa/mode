@@ -41,20 +41,20 @@ class Refresher: NSObject {
                 
                 guard let vc = refreshable as? UIViewController else { return }
             
-                let offline = UIAlertAction.init(title: "Go \(showiCloudItems ? "Offline" : "Online")", style: .default, handler: { _ in
+                let offline = AlertAction.init(title: "Go \(showiCloudItems ? "Offline" : "Online")", style: .default, handler: {
                 
                     prefs.set(!showiCloudItems, forKey: .iCloudItems)
                     notifier.post(name: .iCloudVisibilityChanged, object: nil)
                 })
                 
-                let reload = UIAlertAction.init(title: "Refresh", style: .default, handler: { [weak self] _ in
+                let reload = AlertAction.init(title: "Refresh", style: .default, handler: { [weak self] in
                     
                     guard let weakSelf = self, let sorter = weakSelf.refreshable as? Arrangeable else { return }
                     
                     sorter.sortItems()
                 })
             
-                let theme = UIAlertAction.init(title: "\(darkTheme ? "Light" : "Dark") Theme", style: .default, handler: { _ in
+                let theme = AlertAction.init(title: "\(darkTheme ? "Light" : "Dark") Theme", style: .default, handler: {
                     
                     prefs.set(!darkTheme, forKey: .darkTheme)
 //                    notifier.post(name: .themeChanged, object: nil)
@@ -65,14 +65,14 @@ class Refresher: NSObject {
                     }
                 })
             
-                let filter = UIAlertAction.init(title: "Filter", style: .default, handler: { [weak self] _ in
+                let filter = AlertAction.init(title: "Filter", style: .default, requiresDismissalFirst: true, handler: { [weak self] in
                     
                     guard let weakSelf = self, let filter = weakSelf.refreshable as? Filterable else { return }
                     
                     filter.invokeSearch()
                 })
-            
-                vc.present(UIAlertController.withTitle(nil, message: nil, style: .actionSheet, actions: filter, reload, offline, theme, .cancel()), animated: true, completion: { [weak self] in
+                
+                Transitioner.shared.showAlert(title: nil, from: vc, with: filter, reload, offline, theme, completion: { [weak self] in
                     
                     guard let weakSelf = self else { return }
                     
@@ -81,7 +81,17 @@ class Refresher: NSObject {
                         refreshable.tableView.setContentOffset(.zero, animated: true)
                     }
                 })
-                
+            
+//                vc.present(UIAlertController.withTitle(nil, message: nil, style: .actionSheet, actions: filter, reload, offline, theme, .cancel()), animated: true, completion: { [weak self] in
+//
+//                    guard let weakSelf = self else { return }
+//
+//                    if let refreshable = weakSelf.refreshable, abs(refreshable.tableView.contentOffset.y) > 10 {
+//
+//                        refreshable.tableView.setContentOffset(.zero, animated: true)
+//                    }
+//                })
+            
             case .filter:
                 
                 guard let filter = refreshable as? Filterable else {

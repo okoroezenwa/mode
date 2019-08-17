@@ -23,26 +23,6 @@ class BorderedButtonView: UIView {
     @IBOutlet var stackView: UIStackView!
     @IBOutlet var imageViewBottomConstraint: NSLayoutConstraint!
     
-    enum Position { case leading, middle, trailing }
-    
-    var position = Position.middle {
-        
-        didSet {
-            
-            switch position {
-                
-                case .leading:
-                
-                    borderViewLeadingConstraint.constant = 10
-                    borderViewTrailingConstraint.constant = 6
-                
-                case .middle: break
-                
-                case .trailing: break
-            }
-        }
-    }
-    
     var tapAction: BorderedButtonActionDetails? {
         
         didSet {
@@ -153,16 +133,20 @@ class BorderedButtonView: UIView {
                 self.stackView.alpha = 1
             })
             
-        }, completion: { _ in snapshot.removeFromSuperview() })
+        }, completion: { _ in
+            
+            self.stackView.transform = .identity
+            self.stackView.alpha = 1
+            snapshot.removeFromSuperview()
+        })
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 
         super.touchesBegan(touches, with: event)
         
-        /*UIView.transition(with: label, duration: 0.2, options: .transitionCrossDissolve, animations: { self.*/label.lightOverride = true// }, completion: nil)
-        
-        /*UIView.transition(with: imageView, duration: 0.2, options: .transitionCrossDissolve, animations: { self.*/imageView.lightOverride = true// }, completion: nil)
+        label.lightOverride = true
+        imageView.lightOverride = true
     }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {

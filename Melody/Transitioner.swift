@@ -113,15 +113,19 @@ class Transitioner: NSObject {
     
     @discardableResult func transition(to vc: UIViewController, from sorter: Arrangeable, sourceRect: CGRect? = nil, sourceView: UIView? = nil) -> ArrangeViewController? {
         
-        if let verticalPresentedVC = vc as? VerticalPresentationContainerViewController {
+        if let vc = vc as? VerticalPresentationContainerViewController {
             
-            verticalPresentedVC.segments = [("Ascending", #imageLiteral(resourceName: "Ascending17")), ("Descending", #imageLiteral(resourceName: "Descending17"))]
-            verticalPresentedVC.context = .sort
-            verticalPresentedVC.arrangeVC.sorter = sorter
+            vc.segments = [.init(title: "Ascending", image: #imageLiteral(resourceName: "Ascending17")), .init(title: "Descending", image: #imageLiteral(resourceName: "Descending17"))]
+            vc.staticOptions = [.init(title: "Default"), .init(title: "Random")]
+            vc.context = .sort
+            vc.arrangeVC.sorter = sorter
+            vc.requiresSegmentedControl = true
+            vc.requiresStaticView = true
+            vc.leftButtonAction = { button, _ in vc.arrangeVC.persist(button) }
             
 //            PopoverDelegate.shared.prepare(vc: verticalPresentedVC, preferredSize: .init(width: 350, height: 169), sourceView: sourceView ?? sorter.arrangeButton, sourceRect: sourceRect ?? sorter.arrangeButton.bounds.modifiedBy(width: 0, height: 5), permittedDirections: [.up, .down])
             
-            return verticalPresentedVC.arrangeVC
+            return vc.arrangeVC
         }
         
         return nil
@@ -194,17 +198,39 @@ class Transitioner: NSObject {
         sender.present(vc, animated: true, completion: nil)
     }
     
-    func addToQueue(from sender: UIViewController, kind: MPMusicPlayerController.QueueKind, context: QueueInsertViewController.Context, index: CGFloat = -1, title: String? = nil) {
+    func addToQueue(from sender: UIViewController, kind: MPMusicPlayerController.QueueKind, context: QueueInsertController.Context, index: CGFloat = -1, title: String? = nil) {
         
-        if let vc = popoverStoryboard.instantiateViewController(withIdentifier: String.init(describing: VerticalPresentationContainerViewController.self)) as? VerticalPresentationContainerViewController {
+        guard let vc = popoverStoryboard.instantiateViewController(withIdentifier: String.init(describing: VerticalPresentationContainerViewController.self)) as? VerticalPresentationContainerViewController else { return }
             
-            vc.context = .insert
-            vc.insertVC.kind = kind
-            vc.insertVC.title = title
-            vc.insertVC.context = context
-            
-            sender.present(vc, animated: true, completion: nil)
-        }
+        vc.context = .alert
+        vc.alertVC.context = .queue(title: title, kind: kind, context: context)
+        vc.subtitle = "Queue..."
+        vc.alertVC.actions = [
+            .init(info:
+                .init(title: "Unshuffled",
+                      accessoryType: .check({ vc.alertVC.queueInsertController?.activeShuffle == .some(.none) }),
+                      inactive: { vc.alertVC.queueInsertController!.applicableShuffle.rawValue < ApplicableShuffle.songs.rawValue }),
+                  context: .alert(.default),
+                  handler: { vc.alertVC.queueInsertController?.activeShuffle = .none }),
+            .init(info:
+                .init(title: "Shuffled Songs",
+                      accessoryType: .check({ vc.alertVC.queueInsertController?.activeShuffle == .songs }),
+                      inactive: { vc.alertVC.queueInsertController!.applicableShuffle.rawValue < ApplicableShuffle.songs.rawValue }),
+                  context: .alert(.default),
+                  handler: { vc.alertVC.queueInsertController?.activeShuffle = .songs }),
+            .init(info:
+                .init(title: "Shuffled Albums",
+                      accessoryType: .check({ vc.alertVC.queueInsertController?.activeShuffle == .albums }),
+                      inactive: { vc.alertVC.queueInsertController!.applicableShuffle.rawValue < ApplicableShuffle.albums.rawValue }),
+                  context: .alert(.default),
+                  handler: { vc.alertVC.queueInsertController?.activeShuffle = .albums })
+        ]
+        vc.requiresSegmentedControl = false
+        vc.requiresTopBorderView = true
+        vc.staticOptions = [.init(title: "Next", image: #imageLiteral(resourceName: "PlayNext")), .init(title: "After...", image: #imageLiteral(resourceName: "PlayAfter")), .init(title: "Last", image: #imageLiteral(resourceName: "PlayLater"))]
+        vc.requiresStaticView = true
+        
+        sender.present(vc, animated: true, completion: nil)
     }
     
     func showPropertySettings(from sender: UIViewController, with context: FilterViewContext) {
@@ -217,24 +243,29 @@ class Transitioner: NSObject {
         sender.present(vc, animated: true, completion: nil)
     }
     
-    func showAlert(title: String? = nil, subtitle: String? = nil, from sender: UIViewController, context: AlertTableViewController.Context, with array: [Setting], tapActions: TapActionsDictionary, previewActions: PreviewActionsDictionary = [:], segmentDetails: (array: [(String?, UIImage?)], action: ((UIViewController?) -> ())?) = ([], nil), accessoryActions: AccessoryActionsDictionary = [:], leftAction: AccessoryButtonAction? = nil, rightAction: AccessoryButtonAction? = nil) {
+    /// Array Version
+    func showAlert(title: String?, subtitle: String? = nil, from sender: UIViewController?, context: AlertTableViewController.Context = .other, with actions: [AlertAction], segmentDetails: SegmentDetails = ([], nil), leftAction: AccessoryButtonAction? = nil, rightAction: AccessoryButtonAction? = nil, completion: (() -> ())? = nil) {
         
         guard let vc = popoverStoryboard.instantiateViewController(withIdentifier: String.init(describing: VerticalPresentationContainerViewController.self)) as? VerticalPresentationContainerViewController else { return }
         
-        vc.context = .show
+        vc.context = .alert
         vc.alertVC.context = context
-        vc.alertVC.array = array
-        vc.alertVC.tapActions = tapActions
-        vc.alertVC.previewActions = previewActions
+        vc.alertVC.actions = actions
         vc.alertVC.segmentAction = segmentDetails.action
-        vc.alertVC.accessoryActions = accessoryActions
         vc.leftButtonAction = leftAction
         vc.rightButtonAction = rightAction
         vc.title = title
         vc.subtitle = subtitle
         vc.segments = segmentDetails.array
         vc.requiresSegmentedControl = segmentDetails.array.isEmpty.inverted
+        vc.requiresTopBorderView = true
         
-        sender.present(vc, animated: true, completion: nil)
+        sender?.present(vc, animated: true, completion: completion)
+    }
+    
+    /// Variadic Version
+    func showAlert(title: String?, subtitle: String? = nil, from sender: UIViewController?, context: AlertTableViewController.Context = .other, with actions: AlertAction..., segmentDetails: SegmentDetails = ([], nil), leftAction: AccessoryButtonAction? = nil, rightAction: AccessoryButtonAction? = nil, completion: (() -> ())? = nil) {
+        
+        showAlert(title: title, subtitle: subtitle, from: sender, context: context, with: actions, segmentDetails: segmentDetails, leftAction: leftAction, rightAction: rightAction, completion: completion)
     }
 }

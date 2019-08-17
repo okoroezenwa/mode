@@ -50,6 +50,15 @@ class MELLabel: UILabel {
     
     @objc var allowFontChange = true
     @objc var scaleFactor: CGFloat = 1
+    var colorOverride: UIColor? {
+        
+        didSet {
+            
+            guard updateTheme else { return }
+            
+            changeThemeColor()
+        }
+    }
     
     @objc var fontWeight = FontWeight.regular.rawValue {
         
@@ -116,7 +125,7 @@ class MELLabel: UILabel {
     
     @objc func changeThemeColor() {
         
-        let colour = lightOverride ? Themer.tempInactiveColours : Themer.textColour(for: greyOverride ? .subtitle : .title)
+        let colour = colorOverride ?? (lightOverride ? Themer.tempInactiveColours : Themer.textColour(for: greyOverride ? .subtitle : .title))
         textColor = colour
         
         if let attributes = attributes, let text = text {

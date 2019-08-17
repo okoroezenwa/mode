@@ -33,11 +33,13 @@ class LyricsViewController: UIViewController {
     
     #warning("Needs localisation update")
     var textAlignment: NSTextAlignment = .left
-    lazy var manager = LyricsManager(viewer: self, detailer: nil)
+    var manager = LyricsManager(viewer: nil, detailer: nil)
     
     override func viewDidLoad() {
         
         super.viewDidLoad()
+        
+        manager = LyricsManager(viewer: self, detailer: nil)
         
         updateBottomView(to: .hidden, animated: false)
     }
@@ -92,14 +94,6 @@ class LyricsViewController: UIViewController {
     
     func updateBottomView(to state: VisibilityState, animated: Bool = true) {
         
-//        if isInDebugMode.inverted {
-//
-//            bottomStackView.isHidden = true
-//            bottomStackView.alpha = 0
-//
-//            return
-//        }
-        
         UIView.animate(withDuration: animated ? 0.3 : 0, animations: {
             
             self.bottomStackView.alpha = state == .hidden ? 0 : 1
@@ -136,14 +130,14 @@ class LyricsViewController: UIViewController {
     @IBAction func showLocationActions() {
         
         let isFromGenius = manager.currentObject.source == LyricsManager.Location.genius.rawValue
-        var actions = [UIAlertAction]()
+        var actions = [AlertAction]()
         
-        actions.append(UIAlertAction.init(title: isFromGenius ? "Refresh Lyrics" : "Refresh from Genius", style: .default, handler: { _ in
+        actions.append(.init(info: .init(title: isFromGenius ? "Refresh Lyrics" : "Refresh from Genius", accessoryType: .none), handler: {
             
             self.prepareLyrics(for: self.manager.item, updateBottomView: true)
         }))
         
-        actions.append(UIAlertAction.init(title: "Remove Lyrics", style: .destructive, handler: { _ in
+        actions.append(.init(info: .init(title: "Remove Lyrics", accessoryType: .none), context: .alert(.destructive), handler: {
             
             self.manager.currentObject.isDeleted = true
             self.manager.storeLyrics(for: self.manager.item, via: self.manager, completion: ({ self.manager.displayMessage(.deleted, from: self.manager) }, { self.manager.displayMessage(.error, from: self.manager) }))
@@ -151,7 +145,7 @@ class LyricsViewController: UIViewController {
         
         if isFromGenius, let lyricsURL = manager.currentObject.url, let url = URL.init(string: lyricsURL) {
             
-            actions.append(UIAlertAction.init(title: "Show on Genius", style: .default, handler: { _ in
+            actions.append(.init(info: .init(title: "Show on Genius", accessoryType: .none), handler: {
                 
                 let vc: SFSafariViewController = {
                     
@@ -170,31 +164,7 @@ class LyricsViewController: UIViewController {
             }))
         }
         
-        actions.append(UIAlertAction.init(title: "Manage Saved Lyrics", style: .default, handler: { _ in
-
-            guard let presentedVC = presentedStoryboard.instantiateViewController(withIdentifier: "presentedVC") as? PresentedContainerViewController else { return }
-            
-            presentedVC.context = .savedLyrics
-            
-            self.present(presentedVC, animated: true, completion: nil)
-        }))
-        
-        present(UIAlertController.withTitle(nil, message: nil, style: .actionSheet, actions: actions + [.cancel()]), animated: true, completion: nil)
-    }
-    
-    func performSuccesfulLyricsCheck(with text: String?) {
-        
-        activityIndicator.stopAnimating()
-        unavailableView.isHidden = true
-        
-        textView.contentOffset = .zero
-        textView.text = text
-        gradientView.isHidden = false
-        
-        locationButton?.setImage(#imageLiteral(resourceName: "Web"), for: .normal)
-        locationButton?.setTitle(LyricsManager.Location.genius.rawValue, for: .normal)
-        
-        updateBottomView(to: .visible)
+        Transitioner.shared.showAlert(title: nil, from: self, context: .other, with: actions)
     }
     
     func displayUnavailable(with message: LyricsManager.ErrorMessage) {
@@ -210,14 +180,16 @@ class LyricsViewController: UIViewController {
     
     @IBAction func actOnError() {
         
+        guard let item = manager.item else { return }
+        
         switch manager.currentMessage {
             
             case .deleted:
             
                 manager.currentObject.isDeleted = false
-                manager.storeLyrics(for: manager.item, via: manager)
+                manager.storeLyrics(for: item, via: manager)
             
-            default: prepareLyrics(for: manager.item, updateBottomView: true)
+            default: prepareLyrics(for: item, updateBottomView: true)
         }
     }
     
@@ -230,6 +202,7 @@ class LyricsViewController: UIViewController {
 //            banner.show(for: 0.3)
 //        }
         
+        UIApplication.shared.isNetworkActivityIndicatorVisible = false
         manager.viewerOperation?.cancel()
     }
 }

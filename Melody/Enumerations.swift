@@ -71,6 +71,8 @@ enum TabBarTapBehaviour: Int { case nothing, scrollToTop, returnToStart, returnT
 
 enum Location { case playlist, album, artist(point: EntityItemsViewController.StartPoint), songs, collections(kind: CollectionsKind), fullPlayer, miniPlayer, collector, queue, search, info, newPlaylist, filter, unknown }
 
+enum EditingStyle { case insert, select/*, both*/ }
+
 // MARK: - Well-Defined
 
 enum GestureDuration: Int {
@@ -496,15 +498,7 @@ enum CornerRadius: Int {
     
     func updateCornerRadius(on layer: CALayer?, width: CGFloat, entityType: Entity, globalRadiusType: CornerRadius) {
         
-        let details = radiusDetails(for: entityType, width: width, globalRadiusType: globalRadiusType)/*{
-            
-            switch globalRadiusType {
-                
-                case .automatic: return (self.radius(for: entityType, width: width), (self == .rounded || self == .automatic && Set([Entity.artist, .albumArtist, .genre, .composer]).contains(entityType)).inverted)
-                
-                default: return (globalRadiusType.radius(for: entityType, width: width), globalRadiusType != .rounded)
-            }
-        }()*/
+        let details = radiusDetails(for: entityType, width: width, globalRadiusType: globalRadiusType)
         
         layer?.setRadiusTypeIfNeeded(to: details.useContinuousCorners)
         layer?.cornerRadius = details.radius
@@ -571,7 +565,7 @@ enum Property: Int, PropertyStripPresented, CaseIterable {
             
             case .year: return "Year"
             
-            case .status: return "Status"
+            case .status: return "Affinity"
         }
     }
     
@@ -766,6 +760,16 @@ enum SongAction {
             case .play: return #imageLiteral(resourceName: "PlayFilled17")
             
             case .shuffle: return #imageLiteral(resourceName: "Shuffle")
+        }
+    }
+    
+    var requiresDismissalFirst: Bool {
+        
+        switch self {
+            
+            case .addTo, .newPlaylist, .play, .shuffle, .info, .queue, .rate, .likedState, .show: return true
+        
+            default: return false
         }
     }
 }

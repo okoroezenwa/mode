@@ -25,6 +25,8 @@ class MELTableView: UITableView {
     @objc var regular = false { didSet { register(MELTableViewCell.self, forCellReuseIdentifier: .otherCell) } }
     
     @objc var settings = false { didSet { register(UINib.init(nibName: .settingsCell, bundle: nil), forCellReuseIdentifier: .settingsCell) } }
+    
+    @objc var login = false { didSet { register(UINib.init(nibName: .loginCell, bundle: nil), forCellReuseIdentifier: .loginCell) } }
 
     override func awakeFromNib() {
         
