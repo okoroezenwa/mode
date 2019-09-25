@@ -232,7 +232,7 @@ class NowPlaying: NSObject {
             
             let shuffleAlbums = AlertAction.init(info: .init(title: "Shuffle Albums", accessoryType: .none), requiresDismissalFirst: true, handler: { appDelegate.perform(.shuffleAlbums) })
             
-            Transitioner.shared.showAlert(title: nil, from: topViewController, context: .other, with: playAll, shuffleSongs, shuffleAlbums)
+            topViewController?.showAlert(title: nil, context: .other, with: playAll, shuffleSongs, shuffleAlbums)
             
             return
         }
@@ -243,9 +243,20 @@ class NowPlaying: NSObject {
     
     @objc func stop(_ gr: UILongPressGestureRecognizer) {
         
-        if gr.state == .began, musicPlayer.nowPlayingItem != nil {
+        guard musicPlayer.nowPlayingItem != nil else { return }
+        
+        switch gr.state {
             
-            topVC(startingFrom: appDelegate.window?.rootViewController)?.guardQueue(with: [.stop], onCondition: warnForQueueInterruption && stopGuard, fallBack: NowPlaying.shared.stopPlayback)
+            case .began: topVC(startingFrom: appDelegate.window?.rootViewController)?.guardQueue(with: [.stop], onCondition: warnForQueueInterruption && stopGuard, fallBack: NowPlaying.shared.stopPlayback)
+            
+            case .changed, .ended:
+            
+                if let verticalPresentedVC = topVC() as? VerticalPresentationContainerViewController {
+                    
+                    verticalPresentedVC.gestureActivated(gr)
+                }
+            
+            default: break
         }
     }
     

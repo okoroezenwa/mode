@@ -108,7 +108,7 @@ extension FontManager {
         return TextStyle.allCases.reduce(LineHeights(), {
             
             var dictionary = $0
-            dictionary[$1] = ceil(("y" as NSString).boundingRect(with: .init(width: 100, height: CGFloat.greatestFiniteMagnitude), options: .usesLineFragmentOrigin, attributes: [.font: UIFont.font(ofWeight: .regular, size: $1.textSize())], context: nil).height)
+            dictionary[$1] = height(for: $1)
             
             return dictionary
         })
@@ -243,5 +243,10 @@ extension FontManager {
             
             case .myriadPro: return 0
         }
+    }
+    
+    func height(for style: TextStyle) -> CGFloat {
+        
+        return ceil(("y" as NSString).boundingRect(with: .init(width: 100, height: CGFloat.greatestFiniteMagnitude), options: .usesLineFragmentOrigin, attributes: [.font: UIFont.font(ofWeight: .regular, size: style.textSize())], context: nil).height)
     }
 }

@@ -749,11 +749,20 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
             
             case .settings: settingsVC.performSegue(withIdentifier: "toTips", sender: nil)
             
-            case .queue: break
+            case .queue: qVC.songManager.showActionsForAll(qVC)
             
             case .playlists: break
             
-            case .filter: filterVC.clearRecentSearches()
+            case .filter:
+                
+                if filterVC.filtering {
+                    
+                    filterVC.songManager.showActionsForAll(filterVC)
+                    
+                } else {
+                
+                    filterVC.clearRecentSearches()
+                }
             
             case .savedLyrics: savedLyricsVC.clearLyrics()
             
@@ -810,7 +819,7 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
                 
                 let remove = AlertAction.init(title: "Discard Collected", style: .destructive, handler: { notifier.post(name: .endQueueModification, object: nil) })
                 
-                Transitioner.shared.showAlert(title: "Discard Collected", from: self, with: remove)
+                showAlert(title: "Discard Collected", with: remove)
         }
     }
     

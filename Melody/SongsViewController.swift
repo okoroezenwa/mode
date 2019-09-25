@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, ComposerTransitionable, GenreTransitionable, InfoLoading, CellAnimatable, SingleItemActionable, BorderButtonContaining, Refreshable, IndexContaining, LibrarySectionContainer, EntityVerifiable, TopScrollable, EntityContainer {
+class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, ComposerTransitionable, GenreTransitionable, InfoLoading, CellAnimatable, SingleItemActionable, PillButtonContaining, Refreshable, IndexContaining, LibrarySectionContainer, EntityVerifiable, TopScrollable, EntityContainer {
 
     @IBOutlet var tableView: MELTableView!
     lazy var headerView: HeaderView = {
@@ -31,11 +31,11 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
         
         didSet {
             
-            let shuffleView = BorderedButtonView.with(title: .shuffleButtonTitle, image: #imageLiteral(resourceName: "Shuffle13"), tapAction: .init(action: #selector(shuffle), target: self))
+            let shuffleView = PillButtonView.with(title: .shuffleButtonTitle, image: #imageLiteral(resourceName: "Shuffle13"), tapAction: .init(action: #selector(shuffle), target: self))
             shuffleButton = shuffleView.button
             self.shuffleView = shuffleView
             
-            let filterView = BorderedButtonView.with(title: "Filter", image: #imageLiteral(resourceName: "Filter13"), tapClosure: { [weak self] _ in
+            let filterView = PillButtonView.with(title: "Filter", image: #imageLiteral(resourceName: "Filter13"), tapClosure: { [weak self] _ in
                 
                 guard let weakSelf = self else { return }
                 
@@ -43,7 +43,7 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
             })
             self.filterView = filterView
             
-            let editView = BorderedButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, tapAction: .init(action: #selector(SongActionManager.toggleEditing(_:)), target: songManager), longPressAction: .init(action: #selector(SongActionManager.showActionsForAll(_:)), target: songManager))
+            let editView = PillButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, tapAction: .init(action: #selector(SongActionManager.toggleEditing(_:)), target: songManager), longPressAction: .init(action: #selector(SongActionManager.showActionsForAll(_:)), target: songManager))
             editButton = editView.button
             self.editView = editView
             
@@ -84,14 +84,14 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
         }
     }
     var shuffleButton: MELButton!
-    var shuffleView: BorderedButtonView!
-    var filterView: BorderedButtonView!
-    var editView: BorderedButtonView!
+    var shuffleView: PillButtonView!
+    var filterView: PillButtonView!
+    var editView: PillButtonView!
     var totalDurationLabel: MELLabel!
     var sizeLabel: MELLabel!
     var playsLabel: MELLabel!
     
-    var borderedButtons = [BorderedButtonView?]()
+    var borderedButtons = [PillButtonView?]()
     var sectionIndexViewController: SectionIndexViewController?
     var navigatable: Navigatable? { return libraryVC }
     let requiresLargerTrailingConstraint = false
@@ -101,7 +101,12 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
     lazy var songManager: SongActionManager = { return SongActionManager.init(actionable: self) }()
     
     lazy var tableDelegate: TableDelegate = { TableDelegate.init(container: self, location: .songs) }()
-    var entities: [MPMediaEntity] { return songs }
+    var entities: [MPMediaEntity] {
+        
+        get { return songs }
+        
+        set { songs = newValue as? [MPMediaItem] ?? [] }
+    }
     var query: MPMediaQuery? { return songsQuery }
     lazy var filteredEntities = [MPMediaEntity]()
     var highlightedEntity: MPMediaEntity? { return libraryVC?.highlightedEntities?.song }
@@ -165,13 +170,14 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
     
     weak var libraryVC: LibraryViewController? { return parent as? LibraryViewController }
     
+    lazy var staticSortCriteria: SortCriteria = .standard
     var sortCriteria = SortCriteria(rawValue: songsCriteria) ?? .standard {
         
         didSet {
             
             if let _ = tableView {
                 
-                sortItems()
+                sortAllItems()
                 headerView.sortButton.setTitle(arrangementLabelText, for: .normal)
                 UIView.animate(withDuration: 0.3, animations: { self.headerView.layoutIfNeeded() })
                 
@@ -189,7 +195,7 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
                 
                 if applySort {
                     
-                    sortItems()
+                    sortAllItems()
                 }
                 prefs.set(ascending, forKey: .songsOrder)
             }
@@ -266,7 +272,7 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
         
         prepareGestures()
         
-        sortItems()
+        sortAllItems()
     }
     
     func updateTopInset() {
@@ -483,7 +489,7 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
     @objc func updateWithQuery() {
         
         prepareSupplementaryInfo()
-        sortItems()
+        sortAllItems()
     }
     
     func prepareTransientObservers() {
@@ -532,7 +538,7 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
             
             guard let weakSelf = self else { return }
             
-            weakSelf.sortItems()
+            weakSelf.sortAllItems()
         
         }) as! NSObject)
         
@@ -563,7 +569,7 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
             guard let weakSelf = self else { return }
             
             weakSelf.songsQuery = weakSelf.getCurrentQuery()
-            weakSelf.sortItems()
+            weakSelf.sortAllItems()
             weakSelf.updateTopLabels(setTitle: true)
             
         }) as! NSObject)
@@ -674,7 +680,7 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
             
             array.append(shuffleAlbums)
             
-            Transitioner.shared.showAlert(title: "All " ?+ self.libraryVC?.preferredTitle, from: self, with: array)
+            showAlert(title: "All " ?+ self.libraryVC?.preferredTitle, with: array)
             
         } else {
             
@@ -804,8 +810,8 @@ extension SongsViewController: TableViewContainer {
 
 extension SongsViewController: FullySortable {
     
-    func sortItems() {
-        
+    /*func sortItems() {
+    
         headerView.updateSortActivityIndicator(to: .visible)
         
         let mainBlock: ([MPMediaItem], [SortSectionDetails]) -> () = { [weak self] array, details in
@@ -892,7 +898,7 @@ extension SongsViewController: FullySortable {
         sortOperationQueue.addOperation(operation!)
         
         getRecents()
-    }
+    }*/
     
     func getRecents() {
         

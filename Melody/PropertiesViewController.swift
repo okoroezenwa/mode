@@ -26,10 +26,62 @@ class PropertiesViewController: UIViewController {
     enum KeyType: String { case property = "P", selector = "S" }
     enum Operation: String { case get = "G", set = "S" }
     enum Button { case leftButton, rightButton }
+    enum Key: String {
+        
+        case persistentID, mediaLibrary, multiverseIdentifier, itemsQuery, artworkCatalog, dateAccessed, lyrics, effectiveAlbumArtist, effectiveStopTime, playCountSinceSync, storeCloudAlbumID, cloudUniversalLibraryID, existsInLibrary, isCloudMix, storeCloudID, isPlaybackHistoryPlaylist, cloudShareURL, cloudGlobalID, cloudIsSubscribed, albumStoreID, artistArtworkCatalog, artistStoreID, albumArtistArtworkCatalog, albumArtistStoreID, genreStoreID, composerStoreID
+        
+        static func keys(for entityType: Entity) -> [Key] {
+        
+            let array = [Key.persistentID, .mediaLibrary, .multiverseIdentifier]
+            let collectionArray = [Key.itemsQuery]
+            
+            let others: [Key] = {
+            
+                switch entityType {
+                    
+                    case .song: return [.artworkCatalog, .dateAccessed, .lyrics, .effectiveAlbumArtist, .effectiveStopTime, .playCountSinceSync, .storeCloudAlbumID, .cloudUniversalLibraryID]
+                    
+                    case .playlist: return collectionArray + [.artworkCatalog, .existsInLibrary, .isCloudMix, .storeCloudID, .isPlaybackHistoryPlaylist, .cloudShareURL, .cloudGlobalID, .cloudIsSubscribed]
+                    
+                    case .album: return collectionArray + [.albumStoreID]
+                    
+                    case .artist: return collectionArray + [.artistArtworkCatalog, .artistStoreID]
+                    
+                    case .albumArtist: return collectionArray + [.albumArtistArtworkCatalog, .albumArtistStoreID]
+                    
+                    case .genre: return collectionArray + [.genreStoreID]
+                    
+                    case .composer: return collectionArray + [.composerStoreID]
+                }
+            }()
+            
+            return array + others
+        }
+        
+        var preferredKeyType: PropertiesViewController.KeyType {
+            
+            switch self {
+                
+                case .persistentID, .mediaLibrary, .multiverseIdentifier, .itemsQuery, .artworkCatalog, .dateAccessed, .lyrics, .effectiveAlbumArtist, .effectiveStopTime, .playCountSinceSync, .existsInLibrary, .isCloudMix, .artistArtworkCatalog, .albumArtistArtworkCatalog: return .selector
+                
+                default: return .property
+            }
+        }
+        
+        var preferredOperation: PropertiesViewController.Operation {
+            
+            switch self {
+                
+                case .playCountSinceSync, .lyrics: return .set
+                
+                default: return .get
+            }
+        }
+    }
     
     var entityType = Entity.song
     var entity: MPMediaEntity?
-    lazy var properties = PropertiesViewController.properties(for: entityType)
+    lazy var keys = Key.keys(for: entityType)
     var keyType = KeyType.property {
         
         didSet {
@@ -153,16 +205,14 @@ extension PropertiesViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return properties.count
+        return keys.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: .otherCell, for: indexPath) as! MELTableViewCell
         
-        cell.textLabel?.text = properties[indexPath.row]
-        
-//        cell.selectedBackgroundView = MELBorderView()
+        cell.textLabel?.text = keys[indexPath.row].rawValue
         cell.textLabel?.font = UIFont.font(ofWeight: .regular, size: 17)
         
         return cell
@@ -170,8 +220,12 @@ extension PropertiesViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        propertyInput.text = properties[indexPath.row]
-        searchBar(propertyInput, textDidChange: properties[indexPath.row])
+        let key = keys[indexPath.row]
+        
+        propertyInput.text = key.rawValue
+        operation = key.preferredOperation
+        keyType = key.preferredKeyType
+//        searchBar(propertyInput, textDidChange: key.rawValue)
         
         tableView.deselectRow(at: indexPath, animated: true)
     }
@@ -207,25 +261,5 @@ extension PropertiesViewController {
             
             case .selector: return entity.responds(to: NSSelectorFromString(text)) == true ? String(describing: entity.value(forKey: text) ?? "") : nil
         }
-    }
-    
-    class func properties(for entityType: Entity) -> [String] {
-        
-        let array = ["persistentID", "mediaLibrary"]
-        let collectionArray = ["groupingType", "itemsQuery", "mediaTypes", "artworkCatalog", "artistArtworkCatalog", "albumArtistArtworkCatalog", "_artworkCatalogRepresentativeItem", "multiverseIdentifier"]
-        
-        let others: [String] = {
-        
-            switch entityType {
-                
-                case .song: return ["cachedPropertyValues", "dateAccessed", "lyrics", "effectiveAlbumArtist", "effectiveStopTime", "playCountSinceSync"]
-                
-                case .playlist: return collectionArray + ["existsInLibrary", "isCloudMix", "representativeArtists", "seedItems", "seedTracksQuery"]
-                
-                default: return collectionArray
-            }
-        }()
-        
-        return array + others
     }
 }

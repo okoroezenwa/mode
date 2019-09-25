@@ -71,7 +71,7 @@ class RateShareView: UIView {
             container.dismiss(animated: true, completion: nil)
         })]
         
-        Transitioner.shared.showAlert(title: "Last.fm", subtitle: "Set as...", from: container, context: .other, with: actions)
+        container.showAlert(title: "Last.fm", subtitle: "Set as...", context: .other, with: actions)
     }
     
     func determineOverrides() {

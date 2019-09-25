@@ -54,15 +54,28 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
     }
     @objc var needsDismissal = false
     @objc var artwork: UIImage?
-    var topArtwork: UIImage?
-    var rightViewMode: VisualEffectNavigationBar.RightViewMode {
+    var topArtwork: UIImage? {
         
-        get { return .artwork(topArtwork, details: (listsCornerRadius ?? cornerRadius).radiusDetails(for: entityForContainerType(), width: inset - 12, globalRadiusType: cornerRadius)) }
+        didSet {
+            
+            smallArtwork = topArtwork?.at(.init(width: smallArtworkHeight, height: smallArtworkHeight))
+        }
+    }
+    var smallArtwork: UIImage?
+    var oldArtwork: UIImage?
+    var buttonDetails: NavigationBarButtonDetails {
+        
+        get { return (.actions, query?.items?.isEmpty != false) }
         
         set { }
     }
-    
-    var oldArtwork: UIImage?
+    var artworkDetails: NavigationBarArtworkDetails? {
+        
+        get { return (navBarArtworkMode == .large ? topArtwork : smallArtwork, (listsCornerRadius ?? cornerRadius).radiusDetails(for: entityForContainerType(), width: navBarArtworkMode == .large ? inset - 18 : smallArtworkHeight, globalRadiusType: cornerRadius)) }
+        
+        set { }
+    }
+    var smallArtworkHeight: CGFloat { return (FontManager.shared.heightsDictionary[.heading] ?? FontManager.shared.height(for: .heading)) - 4 }
     @objc weak var peeker: UIViewController? {
         
         didSet {
@@ -76,7 +89,12 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
     var highlightedEntities: (song: MPMediaItem?, collection: MPMediaItemCollection?)?
     @objc var backLabelText: String?
     @objc var ascending = true
-    var sortCriteria = SortCriteria.standard
+    lazy var sortCriteria: SortCriteria = {
+        
+        guard isInDebugMode, entityContainerType == .collection, Set([AlbumBasedCollectionKind.artist, .albumArtist]).contains(kind) else { return .standard }
+        
+        return .albumName
+    }()
     @objc var albumAscending = true
     var albumSortCriteria = SortCriteria.standard
     @objc var currentItem: MPMediaItem?
@@ -117,7 +135,7 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         
         let vc = entityStoryboard.instantiateViewController(withIdentifier: "artistSongsVC") as!  ArtistSongsViewController
         vc.ascending = self.ascending
-        vc.sortCriteria = self.sortCriteria
+        vc.staticSortCriteria = self.sortCriteria
         return vc
     }()
     
@@ -125,7 +143,7 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         
         let vc = entityStoryboard.instantiateViewController(withIdentifier: "artistAlbumsVC") as!  ArtistAlbumsViewController
         vc.ascending = self.albumAscending
-        vc.sortCriteria = self.albumSortCriteria
+        vc.staticSortCriteria = self.albumSortCriteria
         return vc
     }()
     
@@ -133,7 +151,7 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         
         let vc = entityStoryboard.instantiateViewController(withIdentifier: "playlistItems") as!  PlaylistItemsViewController
         vc.ascending = self.ascending
-        vc.sortCriteria = self.sortCriteria
+        vc.staticSortCriteria = self.sortCriteria
         return vc
     }()
     
@@ -141,7 +159,7 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         
         let vc = entityStoryboard.instantiateViewController(withIdentifier: "albumItems") as! AlbumItemsViewController
         vc.ascending = self.ascending
-        vc.sortCriteria = self.sortCriteria
+        vc.staticSortCriteria = self.sortCriteria
         return vc
     }()
     
@@ -583,7 +601,7 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         
         let albums = AlertAction.init(title: "Albums (\(albumCount.formatted))", style: .default, accessoryType: .check({ [weak self] in self?.activeChildViewController == self?.artistAlbumsViewController }), handler: { [weak self] in self?.activeChildViewController = self?.artistAlbumsViewController })
         
-        Transitioner.shared.showAlert(title: title, from: self, with: songs, albums)
+        showAlert(title: title, with: songs, albums)
     }
     
     @IBAction func dismissVC() {

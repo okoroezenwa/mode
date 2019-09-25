@@ -105,7 +105,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         
         get { return activeViewController }
         
-        set { activeViewController = activeChildViewController as? UINavigationController }
+        set { activeViewController = newValue as? UINavigationController /* changed from activeChildViewController to newValue in Xcode 11*/ }
     }
     
     var viewControllerSnapshot: UIView? { didSet { oldValue?.removeFromSuperview() } }
@@ -247,7 +247,8 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         visualEffectNavigationBar.stackViewTopConstraint = constraint
         constraint.isActive = true
         
-        visualEffectNavigationBar.prepareRightView(for: (activeViewController?.topViewController as? Navigatable)?.rightViewMode ?? .none, initialPreparation: true)
+        visualEffectNavigationBar.prepareArtwork(for: activeViewController?.topViewController as? Navigatable)
+        visualEffectNavigationBar.prepareRightButton(for: activeViewController?.topViewController as? Navigatable)
         
         updateEffectViewConstraints(animated: false)
         
@@ -407,9 +408,18 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
     
     @objc func showNowPlayingActions(_ sender: UILongPressGestureRecognizer) {
         
-        guard sender.state == .began else { return }
-        
-        presentActions()
+        switch sender.state {
+            
+            case .began: presentActions()
+            
+            case .changed, .ended:
+            
+                guard useSystemAlerts.inverted, let verticalPresentedVC = presentedViewController as? VerticalPresentationContainerViewController else { return }
+            
+                verticalPresentedVC.gestureActivated(sender)
+            
+            default: break
+        }
     }
     
     @objc func presentActions() {
@@ -431,9 +441,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             actions.insert(singleItemAlertAction(for: .library, entity: .song, using: item, from: self), at: 2)
         }
         
-        Transitioner.shared.showAlert(title: item.validArtist + " — " + item.validAlbum, from: self, with: actions)
-        
-//        present(UIAlertController.withTitle(item.validTitle, message: item.validArtist + " — " + item.validAlbum, style: .actionSheet, actions: actions + [.cancel()]), animated: true, completion: nil)
+        showAlert(title: item.validArtist + " — " + item.validAlbum, with: actions)
     }
     
     @objc func performPlayingItemActions(_ sender: UISwipeGestureRecognizer) {
@@ -832,7 +840,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         
         let remove = AlertAction.init(title: "Discard Collected", style: .destructive, handler: { notifier.post(name: .endQueueModification, object: nil) })
         
-        Transitioner.shared.showAlert(title: nil, from: self, with: remove)
+        showAlert(title: nil, with: remove)
         
 //        let alert = UniversalMethods.alertController(withTitle: nil, message: nil, preferredStyle: .actionSheet, actions: removeItems, cancel)
 //
@@ -1240,7 +1248,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             weakSelf.performSegue(withIdentifier: "toPlaylists", sender: nil)
         })
         
-        Transitioner.shared.showAlert(title: "Collected Songs", from: self, with: new, add)
+        showAlert(title: "Collected Songs", with: new, add)
         
 //        present(UIAlertController.withTitle("Collected Songs", message: nil, style: .actionSheet, actions: new, add, .cancel()), animated: true, completion: nil)
     }
@@ -1276,7 +1284,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
                 array.append(shuffleAlbums)
             }
             
-            Transitioner.shared.showAlert(title: queue.count.fullCountText(for: .song), from: self, with: array)
+            showAlert(title: queue.count.fullCountText(for: .song), with: array)
             
 //            present(UIAlertController.withTitle(queue.count.fullCountText(for: .song), message: nil, style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
             

@@ -1129,7 +1129,8 @@ extension UIViewControllerPreviewingDelegate where Self: UIViewController {
             container.visualEffectNavigationBar.backLabel.text = vc.backLabelText
             container.visualEffectNavigationBar.titleLabel.text = vc.title
             container.visualEffectNavigationBar.updateTopConstraint(for: .end(completed: true), with: nil, and: vc)
-            container.visualEffectNavigationBar.prepareRightView(for: vc.rightViewMode, initialPreparation: true)
+            container.visualEffectNavigationBar.prepareRightButton(for: vc)
+            container.visualEffectNavigationBar.prepareArtwork(for: vc)
             container.visualEffectNavigationBar.rightView.alpha = 1
         }
     }

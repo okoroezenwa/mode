@@ -44,9 +44,9 @@ class InfoCollectionReusableView: UICollectionReusableView {
     @IBOutlet var skipsTitleLabel: MELLabel!
     @IBOutlet var scrollViews: [UIScrollView]!
     
-    @objc let queueView = BorderedButtonView.with(title: "Queue...", image: #imageLiteral(resourceName: "AddSong10"), tapAction: nil)
-    @objc let insertView = BorderedButtonView.with(title: "Insert...", image: #imageLiteral(resourceName: "AddToPlaylist10"), tapAction: nil)
-    @objc let addToView = BorderedButtonView.with(title: "Add to...", image: #imageLiteral(resourceName: "AddNoBorderSmall"), tapAction: nil)
+    @objc let queueView = PillButtonView.with(title: "Queue...", image: #imageLiteral(resourceName: "AddSong10"), tapAction: nil)
+    @objc let insertView = PillButtonView.with(title: "Insert...", image: #imageLiteral(resourceName: "AddToPlaylist10"), tapAction: nil)
+    @objc let addToView = PillButtonView.with(title: "Add to...", image: #imageLiteral(resourceName: "AddNoBorderSmall"), tapAction: nil)
     
     override func awakeFromNib() {
         
@@ -57,8 +57,8 @@ class InfoCollectionReusableView: UICollectionReusableView {
         [queueView, addToView, insertView].forEach({
             
 //            $0.button.contentEdgeInsets.top = 5
-            $0.borderViewTopConstraint.constant = 14
-            $0.borderViewBottomConstraint.constant = 10
+            $0.borderViewContainerTopConstraint.constant = 14
+            $0.borderViewContainerBottomConstraint.constant = 10
             
             queueStackView.addArrangedSubview($0)
         })

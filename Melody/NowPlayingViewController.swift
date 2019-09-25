@@ -278,6 +278,19 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         let doubleTap = UITapGestureRecognizer.init(target: self, action: #selector(changeArtworkSize(_:)))
         doubleTap.numberOfTapsRequired = 2
         albumArtContainer.addGestureRecognizer(doubleTap)
+        
+        let incrementSkip = UITapGestureRecognizer.init(target: self, action: #selector(skipWithIncrement(_:)))
+        incrementSkip.numberOfTapsRequired = 2
+        incrementSkip.delegate = self
+        incrementSkip.delaysTouchesBegan = true
+        nextButton.addGestureRecognizer(incrementSkip)
+    }
+    
+    @objc func skipWithIncrement(_ gr: UITapGestureRecognizer) {
+        
+        guard let item = musicPlayer.nowPlayingItem else { return }
+
+        musicPlayer.currentPlaybackTime = item.playbackDuration
     }
     
     @IBAction func showSongActions() {
@@ -307,9 +320,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
 //        let x = alertActions(from: self)
         array.insert(info, at: 2)
         
-        Transitioner.shared.showAlert(title: activeItem?.validTitle, from: self, with: array)
-        
-//        present(UIAlertController.withTitle(nil, message: activeItem?.validTitle, style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
+        showAlert(title: activeItem?.validTitle, with: array)
     }
     
     @objc func goToQueue(_ sender: UIGestureRecognizer) {
@@ -793,7 +804,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
                     musicPlayer.play([nowPlaying], startingFrom: nowPlaying, respectingPlaybackState: true, from: nil, withTitle: nil, alertTitle: "")
                 })
                 
-                Transitioner.shared.showAlert(title: nil, from: peeker, with: clear)
+                showAlert(title: nil, with: clear)
                 
             } else {
                 
@@ -1270,5 +1281,18 @@ extension NowPlayingViewController: Detailing {
     func goToDetails(basedOn entity: Entity) -> (entities: [Entity], albumArtOverride: Bool) {
         
         return ([Entity.artist, .genre, .album, .composer, .albumArtist], true)
+    }
+}
+
+extension NowPlayingViewController: UIGestureRecognizerDelegate {
+    
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        
+        if gestureRecognizer.view == nextButton, let tapGR = gestureRecognizer as? UITapGestureRecognizer, tapGR.numberOfTapsRequired == 2 {
+            
+            return musicPlayer.nowPlayingItem != nil && allowPlayIncrementingSkip
+        }
+        
+        return true
     }
 }

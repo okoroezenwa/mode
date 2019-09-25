@@ -9,7 +9,7 @@
 import UIKit
 
 typealias AccessoryButtonAction = ((MELButton, UIViewController) -> ())
-typealias SegmentDetails = (array: [SimpleCollectionInfo], action: ((UIViewController?) -> ())?)
+typealias SegmentDetails = (array: [SimpleCollectionInfo], actions: [((UIViewController?) -> ())])
 
 class VerticalPresentationContainerViewController: UIViewController {
 
@@ -49,6 +49,7 @@ class VerticalPresentationContainerViewController: UIViewController {
     @IBOutlet var staticViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet var staticStackView: UIStackView!
     @IBOutlet var hideableShadowView: UIView!
+    @IBOutlet var middleHideableShadowView: UIView!
     
     enum Context { case sort, actions, alert } // actions referring to actionsVC
     enum RelevantView { case segmentedCollectionView, staticCollectionView, tableView }
@@ -127,6 +128,8 @@ class VerticalPresentationContainerViewController: UIViewController {
         }
     }
     
+    lazy var applyToCurrentItem = false
+    
     override var transitioningDelegate: UIViewControllerTransitioningDelegate? {
         
         get { return transitioner }
@@ -176,7 +179,7 @@ class VerticalPresentationContainerViewController: UIViewController {
         swipe.direction = .down
         view.addGestureRecognizer(swipe)
         
-        let pan = UIPanGestureRecognizer.init(target: self, action: #selector(panActivated(_:)))
+        let pan = UIPanGestureRecognizer.init(target: self, action: #selector(gestureActivated))
         effectViewsContainer.addGestureRecognizer(pan)
         
         [cancelButtonHeightConstraint, segmentedViewHeightConstraint, staticViewHeightConstraint].forEach({ $0.constant = FontManager.shared.settingCellHeight + 2 })
@@ -190,15 +193,15 @@ class VerticalPresentationContainerViewController: UIViewController {
         topView.isHidden = requiresTopView.inverted
         topBorderView.isHidden = requiresTopBorderView.inverted
         
-        if requiresStaticView, staticOptions.count == 2 {
+        if requiresStaticView {
 
-            hideableShadowView.isHidden = true
+            hideableShadowView.isHidden = staticOptions.count < 3
+            middleHideableShadowView.isHidden = staticOptions.count < 2
         }
         
         [segmentedEffectView, segmentedShadowImageView].forEach({ $0.isHidden = requiresSegmentedControl.inverted })
         
         [staticView, staticStackView].forEach({ $0.isHidden = requiresStaticView.inverted })
-//        shadowViews.forEach({ staticStackView.addArrangedSubview($0); $0.backgroundColor = .red })
         
         leftView.isHidden = leftButtonAction == nil
         rightView.isHidden = rightButtonAction == nil
@@ -222,7 +225,6 @@ class VerticalPresentationContainerViewController: UIViewController {
             
             leftButtonBorderView.bordered = true
             leftButtonBorderView.clear = true
-//            leftButtonBorderView.alphaOverride = 0.02
             leftButtonBorderView.layer.borderWidth = 1.2
         }
         
@@ -230,7 +232,6 @@ class VerticalPresentationContainerViewController: UIViewController {
             
             segmentedCollectionView.delegate = self
             segmentedCollectionView.dataSource = self
-            
             segmentedCollectionView.register(UINib.init(nibName: "GestureSelectableCell", bundle: nil), forCellWithReuseIdentifier: "cell")
         }
         
@@ -238,7 +239,6 @@ class VerticalPresentationContainerViewController: UIViewController {
             
             staticCollectionView.delegate = self
             staticCollectionView.dataSource = self
-            
             staticCollectionView.register(UINib.init(nibName: "GestureSelectableCell", bundle: nil), forCellWithReuseIdentifier: "cell")
         }
         
@@ -265,7 +265,7 @@ class VerticalPresentationContainerViewController: UIViewController {
         rightButtonAction?(sender, self)
     }
     
-    @objc func panActivated(_ sender: UIPanGestureRecognizer) {
+    @objc func gestureActivated(_ sender: UIGestureRecognizer) {
         
         if containerView.frame.contains(sender.location(in: effectViewsContainer)) {
             
@@ -282,7 +282,7 @@ class VerticalPresentationContainerViewController: UIViewController {
             
             if let child = children.first as? GestureSelectable {
                 
-                child.noSelection(withinChildViewFrame: (child is ArrangeViewController && staticCollectionView.indexPathForItem(at: sender.location(in: staticView)) != nil))
+                child.noSelection()
             }
             
             switch sender.state {
@@ -313,6 +313,8 @@ class VerticalPresentationContainerViewController: UIViewController {
                         
                         noSelection(of: .tableView)
                         noSelection(of: .segmentedCollectionView)
+                        
+                        if context == .alert, case .select = alertVC.context { return }
                         
                         guard indexPath != highlightedStaticIndexPath else { return }
                         
@@ -457,8 +459,18 @@ extension VerticalPresentationContainerViewController: UICollectionViewDataSourc
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! GestureSelectableCollectionViewCell
         
+        let deepSelectMode: Bool = {
+            
+            if collectionView == staticCollectionView, context == .alert, case .select = alertVC.context {
+                
+                return true
+            }
+            
+            return false
+        }()
+        
         let segment = (collectionView == segmentedCollectionView ? segments : staticOptions)[indexPath.item]
-        cell.prepare(with: segment.title, subtitle: segment.subtitle, image: segment.image, style: .alert)
+        cell.prepare(with: segment.title, subtitle: segment.subtitle, image: segment.image, style: .alert, switchDetails: deepSelectMode ? (applyToCurrentItem, { self.applyToCurrentItem.toggle(); print("eh") }) : nil)
         cell.useBorderView = collectionView == staticCollectionView
         cell.useEffectView = collectionView == staticCollectionView
         cell.inset = collectionView == staticCollectionView ? 0 : 10
@@ -480,6 +492,16 @@ extension VerticalPresentationContainerViewController: UICollectionViewDataSourc
             
             child.selectedStaticOption(at: indexPath.item)
         }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
+        
+        if collectionView == staticCollectionView, context == .alert, case .select = alertVC.context {
+            
+            return false
+        }
+        
+        return true
     }
 }
 
@@ -518,8 +540,8 @@ extension VerticalPresentationContainerViewController: UICollectionViewDelegateF
 
 protocol GestureSelectable {
     
-    func selectCell(_ sender: UIPanGestureRecognizer)
-    func noSelection(withinChildViewFrame: Bool)
+    func selectCell(_ sender: UIGestureRecognizer)
+    func noSelection()
 }
 
 protocol SegmentedResponder {

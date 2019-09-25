@@ -20,9 +20,7 @@ extension UIViewController {
         
         if condition {
             
-            Transitioner.shared.showAlert(title: title, subtitle: subtitle, from: self, context: .other, with: actions)
-            
-//            present(alertController, animated: true, completion: nil)
+            showAlert(title: title, subtitle: subtitle, context: .other, with: actions)
             
         } else {
             
@@ -63,9 +61,23 @@ extension UIViewController {
             
             case let x where x is AlbumItemsViewController: return .album
             
-            case let x where x is ArtistSongsViewController: return .artist(point: .songs)
+            case let x where x is ArtistSongsViewController:
+                
+                if let artistSongsVC = x as? ArtistSongsViewController, let entityVC = artistSongsVC.entityVC {
+                    
+                    return .collection(kind: entityVC.kind, point: .songs)
+                }
             
-            case let x where x is ArtistAlbumsViewController: return .artist(point: .albums)
+                return .unknown
+            
+            case let x where x is ArtistAlbumsViewController:
+            
+                if let artistAlbumsVC = x as? ArtistAlbumsViewController, let entityVC = artistAlbumsVC.entityVC {
+                    
+                    return .collection(kind: entityVC.kind, point: .songs)
+                }
+            
+                return .unknown
             
             case let x where x is SongsViewController: return .songs
             
@@ -89,5 +101,38 @@ extension UIViewController {
             
             default: return .unknown
         }
+    }
+    
+    /// Array Version
+    func showAlert(title: String?, subtitle: String? = nil, context: AlertTableViewController.Context = .other, with actions: [AlertAction], segmentDetails: SegmentDetails = ([], []), leftAction: AccessoryButtonAction? = nil, rightAction: AccessoryButtonAction? = nil, completion: (() -> ())? = nil) {
+        
+        if useSystemAlerts {
+            
+            present(UIAlertController.withTitle(title, message: subtitle, style: .actionSheet, actions: actions.map({ $0.systemAction }) + [.cancel()]), animated: true, completion: completion)
+            
+        } else {
+            
+            guard let vc = popoverStoryboard.instantiateViewController(withIdentifier: String.init(describing: VerticalPresentationContainerViewController.self)) as? VerticalPresentationContainerViewController else { return }
+            
+            vc.context = .alert
+            vc.alertVC.context = context
+            vc.alertVC.actions = actions
+            vc.alertVC.segmentActions = segmentDetails.actions
+            vc.leftButtonAction = leftAction
+            vc.rightButtonAction = rightAction
+            vc.title = title
+            vc.subtitle = subtitle
+            vc.segments = segmentDetails.array
+            vc.requiresSegmentedControl = segmentDetails.array.isEmpty.inverted
+            vc.requiresTopBorderView = true
+            
+            present(vc, animated: true, completion: completion)
+        }
+    }
+    
+    /// Variadic Version
+    func showAlert(title: String?, subtitle: String? = nil, context: AlertTableViewController.Context = .other, with actions: AlertAction..., segmentDetails: SegmentDetails = ([], []), leftAction: AccessoryButtonAction? = nil, rightAction: AccessoryButtonAction? = nil, completion: (() -> ())? = nil) {
+        
+        showAlert(title: title, subtitle: subtitle, context: context, with: actions, segmentDetails: segmentDetails, leftAction: leftAction, rightAction: rightAction, completion: completion)
     }
 }

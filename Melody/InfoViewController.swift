@@ -8,7 +8,7 @@
 
 import UIKit
 
-class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTransitionable, ArtistTransitionable, PlaylistTransitionable, GenreTransitionable, ComposerTransitionable, PreviewTransitionable, EntityVerifiable, InfoLoading, BorderButtonContaining, AlbumArtistTransitionable, FilterContaining, ArtworkModifying {
+class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTransitionable, ArtistTransitionable, PlaylistTransitionable, GenreTransitionable, ComposerTransitionable, PreviewTransitionable, EntityVerifiable, InfoLoading, PillButtonContaining, AlbumArtistTransitionable, FilterContaining, ArtworkModifying {
 
     @IBOutlet var collectionView: MELCollectionView!
     @IBOutlet var playButton: MELButton!
@@ -121,7 +121,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
     var artwork: UIImage?
     var topArtwork: UIImage?
     
-    var borderedButtons = [BorderedButtonView?]()
+    var borderedButtons = [PillButtonView?]()
     
     let width = (screenWidth - 12) / 3
     
@@ -328,7 +328,25 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
         
         } else {
             
-            if case .song = context, composerButton.superview?.bounds.contains(sender.location(in: composerButton.superview)) == true, let collections = composerQuery?.collections, collections.isEmpty.inverted {
+            if titleButton.superview?.bounds.contains(sender.location(in: titleButton.superview)) == true {
+                
+                let entity: MPMediaEntity = {
+                    
+                    switch context {
+                        
+                        case .playlist(at: let index, within: let playlists): return playlists[index]
+                        
+                        case .song(location: _, at: let index, within: let songs): return songs[index]
+                        
+                        case .album(at: let index, within: let albums): return albums[index]
+                        
+                        case .collection(kind: _, at: let index, within: let collections): return collections[index]
+                    }
+                }()
+                
+                showInLibrary(entity: entity, type: context.entity, unwinder: parent)
+            
+            } else if case .song = context, composerButton.superview?.bounds.contains(sender.location(in: composerButton.superview)) == true, let collections = composerQuery?.collections, collections.isEmpty.inverted {
                 
                 Transitioner.shared.showInfo(from: self, with: .collection(kind: .composer, at: 0, within: collections))
             
@@ -637,7 +655,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
                 musicPlayer.play(details.array.albumsShuffled, startingFrom: nil, from: self, withTitle: details.title, alertTitle: .shuffle(.albums), completion: { self.parent?.performSegue(withIdentifier: "unwind", sender: nil) })
             })
             
-            Transitioner.shared.showAlert(title: titleButton.titleLabel?.text, from: self, with: shuffle, shuffleAlbums)
+            showAlert(title: titleButton.titleLabel?.text, with: shuffle, shuffleAlbums)
             
         } else {
             

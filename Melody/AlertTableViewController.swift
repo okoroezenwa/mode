@@ -10,7 +10,7 @@ import UIKit
 
 class AlertTableViewController: UITableViewController, PreviewTransitionable {
     
-    enum Context { case show, other, queue(title: String?, kind: MPMusicPlayerController.QueueKind, context: QueueInsertController.Context) }
+    enum Context { case show, other, queue(title: String?, kind: MPMusicPlayerController.QueueKind, context: QueueInsertController.Context), select }
     
     var actions = [AlertAction]()
     var context = Context.show
@@ -28,7 +28,7 @@ class AlertTableViewController: UITableViewController, PreviewTransitionable {
         }
     }
     
-    var segmentAction: ((UIViewController?) -> ())?
+    var segmentActions = [((UIViewController?) -> ())]()
     var queueInsertController: QueueInsertController?
 
     override func viewDidLoad() {
@@ -49,6 +49,15 @@ class AlertTableViewController: UITableViewController, PreviewTransitionable {
         notifier.addObserver(self, selector: #selector(updateScrollView), name: UIApplication.didChangeStatusBarFrameNotification, object: UIApplication.shared)
         
         updateScrollView(self)
+        
+        if case .select = context {
+            
+            verticalPresentedVC?.selectedSegmentedIndexPath = .init(item: 0, section: 0)
+        
+        } else if case .other = context, verticalPresentedVC?.segments.isEmpty == false {
+            
+            verticalPresentedVC?.selectedSegmentedIndexPath = .init(item: 0, section: 0)
+        }
         
         registerForPreviewing(with: self, sourceView: tableView)
     }
@@ -113,7 +122,7 @@ extension AlertTableViewController {
                 action.handler?()
                 dismiss(animated: true, completion: nil)
             
-            case .other:
+            case .other, .select:
                 
                 if action.requiresDismissalFirst.inverted {
                     
@@ -184,14 +193,42 @@ extension AlertTableViewController: SegmentedResponder {
     
     func selectedSegment(at index: Int) {
         
-        segmentAction?(self)
-        dismiss(animated: true, completion: nil)
+        switch context {
+            
+            case .show:
+            
+                segmentActions[index](self)
+                dismiss(animated: true, completion: nil)
+            
+            case .queue:
+            
+                switch index {
+            
+                    case 0: queueInsertController?.addToQueue(.next)
+                    
+                    case 1: queueInsertController?.addToQueue(.after)
+                    
+                    case 2: queueInsertController?.addToQueue(.last)
+                    
+                    default: break
+                }
+            
+            case .select:
+                
+                segmentActions[index](self)
+                verticalPresentedVC?.selectedSegmentedIndexPath = .init(item: index, section: 0)
+            
+            case .other:
+            
+                segmentActions[index](self)
+                verticalPresentedVC?.selectedSegmentedIndexPath = .init(item: index, section: 0)
+        }
     }
 }
 
 extension AlertTableViewController: GestureSelectable {
     
-    @objc func selectCell(_ sender: UIPanGestureRecognizer) {
+    @objc func selectCell(_ sender: UIGestureRecognizer) {
         
         switch sender.state {
             
@@ -199,7 +236,7 @@ extension AlertTableViewController: GestureSelectable {
                 
                 guard let indexPath = tableView.indexPathForRow(at: sender.location(in: tableView)), actions[indexPath.row].info.inactive().inverted else {
                     
-                    noSelection(withinChildViewFrame: true)
+                    noSelection()
                     
                     return
                 }
@@ -215,11 +252,11 @@ extension AlertTableViewController: GestureSelectable {
             
                 self.tableView(tableView, didSelectRowAt: indexPath)
         
-            default: noSelection(withinChildViewFrame: true)
+            default: noSelection()
         }
     }
     
-    func noSelection(withinChildViewFrame: Bool) {
+    func noSelection() {
         
         if let indexPath = selectedIndexPath {
             
@@ -233,17 +270,24 @@ extension AlertTableViewController: StaticOptionResponder {
     
     func selectedStaticOption(at index: Int) {
         
-        guard case .queue = context else { return }
-        
-        switch index {
+        switch context {
             
-            case 0: queueInsertController?.addToQueue(.next)
+            case .queue:
             
-            case 1: queueInsertController?.addToQueue(.after)
+                switch index {
             
-            case 2: queueInsertController?.addToQueue(.last)
+                    case 0: queueInsertController?.addToQueue(.next)
+                    
+                    case 1: queueInsertController?.addToQueue(.after)
+                    
+                    case 2: queueInsertController?.addToQueue(.last)
+                    
+                    default: break
+                }
             
-            default: break
+            case .other, .show: break
+            
+            case .select: verticalPresentedVC?.selectedStaticIndexPath = nil
         }
     }
 }

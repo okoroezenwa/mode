@@ -24,7 +24,7 @@ protocol FilterContainer: LargeActivityIndicatorContaining, UISearchBarDelegate,
     var filtering: Bool { get set }
     var emptyCondition: Bool { get }
     func filter(with searchText: String)
-    func updateHeaderView()
+    func updateHeaderView(withCount count: Int)
 }
 
 extension FilterContainer where Self: UIViewController {
@@ -82,7 +82,7 @@ extension FilterContainer where Self: UIViewController {
                 
                 let actions = Array(Int64.FileSize.byte.rawValue...Int64.FileSize.terabyte.rawValue).compactMap({ Int64.FileSize(rawValue: $0) }).map({ size in AlertAction.init(title: size.suffix, style: .default, handler: { action(size) }) })
                 
-                Transitioner.shared.showAlert(title: nil, from: self, with: actions)
+                showAlert(title: nil, with: actions)
             
             default: return
         }
@@ -144,7 +144,7 @@ extension FilterContainer where Self: UIViewController {
             if filtering.inverted {
                 
                 tableView.reloadData()
-                updateHeaderView()
+                updateHeaderView(withCount: 0)
             }
             
         } catch let error {
@@ -157,15 +157,16 @@ extension FilterContainer where Self: UIViewController {
         
         if let searchVC = self as? SearchViewController {
             
-            searchVC.rightViewMode = .button(hidden: filtering ? true : recentSearches.isEmpty)
-            
+            searchVC.buttonDetails = (.clear, filtering ? true : recentSearches.isEmpty)
             searchVC.emptyStackView.isHidden = filtering ? true : !recentSearches.isEmpty
             
         } else if let filterVC = self as? FilterViewController, let parent = filterVC.parent as? PresentedContainerViewController {
+            #warning("Need to properly manage the state of the button image depending on filter operation status")
+            parent.rightButton.setImage(VisualEffectNavigationBar.RightButtonType.clear.image, for: .normal)
             
             UIView.animate(withDuration: 0.3, animations: {
                 
-                ([parent.rightButton, parent.rightBorderView] as [UIView]).forEach({ $0.alpha = self.filtering || self.recentSearches.isEmpty ? 0 : 1 })
+                ([parent.rightButton, parent.rightBorderView] as [UIView]).forEach({ $0.alpha = self.filtering || self.recentSearches.isEmpty || filterVC.tableContainer?.filteredEntities.isEmpty != false ? 0 : 1 })
             })
         }
     }
@@ -247,7 +248,7 @@ extension FilterContainer where Self: UIViewController {
             }
         })
         
-        Transitioner.shared.showAlert(title: nil, from: self, with: delete)
+        showAlert(title: nil, with: delete)
     }
     
     func showPropertyTests() {
@@ -266,9 +267,7 @@ extension FilterContainer where Self: UIViewController {
             })
         })
         
-        Transitioner.shared.showAlert(title: sender.filterProperty.title.capitalized, from: self, with: actions)
-        
-//        present(UIAlertController.withTitle(nil, message: sender.filterProperty.title.capitalized, style: .actionSheet, actions: actions + [.cancel()]), animated: true, completion: nil)
+        showAlert(title: sender.filterProperty.title.capitalized, with: actions)
     }
     
     func deleteRecentSearch(in cell: RecentSearchTableViewCell) {
@@ -282,10 +281,6 @@ extension FilterContainer where Self: UIViewController {
         
         let clear = AlertAction.init(title: "Clear", style: .destructive, handler: { self.clear(items: self.recentSearches[indexPath.row]) })
         
-        Transitioner.shared.showAlert(title: alertTitle, subtitle: search.title, from: self, with: clear)
-        
-//        let alert = UniversalMethods.alertController(withTitle: alertTitle, message: search.title, preferredStyle: .actionSheet, actions: clear, UniversalMethods.cancelAlertAction())
-//        
-//        present(alert, animated: true, completion: nil)
+        showAlert(title: alertTitle, subtitle: search.title, with: clear)
     }
 }

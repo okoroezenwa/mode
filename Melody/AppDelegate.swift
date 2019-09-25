@@ -178,7 +178,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(_ application: UIApplication) {
         
         Queue.shared.updateIndex(self)
-        musicLibrary.endGeneratingLibraryChangeNotifications()
+//        musicLibrary.endGeneratingLibraryChangeNotifications()
     }
     
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {

@@ -131,21 +131,24 @@ class LyricsViewController: UIViewController {
         
         let isFromGenius = manager.currentObject.source == LyricsManager.Location.genius.rawValue
         var actions = [AlertAction]()
+        let item = manager.item
         
         actions.append(.init(info: .init(title: isFromGenius ? "Refresh Lyrics" : "Refresh from Genius", accessoryType: .none), handler: {
             
-            self.prepareLyrics(for: self.manager.item, updateBottomView: true)
+            self.prepareLyrics(for: item, updateBottomView: true)
         }))
         
         actions.append(.init(info: .init(title: "Remove Lyrics", accessoryType: .none), context: .alert(.destructive), handler: {
+            #warning("Do more to make this work on the song it should")
+            guard item?.persistentID == self.manager.currentObject.id else { return }
             
             self.manager.currentObject.isDeleted = true
-            self.manager.storeLyrics(for: self.manager.item, via: self.manager, completion: ({ self.manager.displayMessage(.deleted, from: self.manager) }, { self.manager.displayMessage(.error, from: self.manager) }))
+            self.manager.storeLyrics(for: item, via: self.manager, completion: ({ self.manager.displayMessage(.deleted, from: self.manager) }, { self.manager.displayMessage(.error, from: self.manager) }))
         }))
         
         if isFromGenius, let lyricsURL = manager.currentObject.url, let url = URL.init(string: lyricsURL) {
             
-            actions.append(.init(info: .init(title: "Show on Genius", accessoryType: .none), handler: {
+            actions.append(.init(info: .init(title: "Show on Genius", accessoryType: .none), requiresDismissalFirst: true, handler: {
                 
                 let vc: SFSafariViewController = {
                     
@@ -164,7 +167,7 @@ class LyricsViewController: UIViewController {
             }))
         }
         
-        Transitioner.shared.showAlert(title: nil, from: self, context: .other, with: actions)
+        showAlert(title: nil, context: .other, with: actions)
     }
     
     func displayUnavailable(with message: LyricsManager.ErrorMessage) {

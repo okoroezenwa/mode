@@ -599,7 +599,7 @@ extension HeaderView: PlaylistCollectionCellDelegate {
                             }))
                         }
                         
-                        Transitioner.shared.showAlert(title: cell.nameLabel.text, from: collectionsVC, context: .other, with: actions)
+                        collectionsVC.showAlert(title: cell.nameLabel.text, context: .other, with: actions)
                         
                     } else {
                         
@@ -651,8 +651,6 @@ extension HeaderView: PlaylistCollectionCellDelegate {
             actions.insert(vc.singleItemAlertAction(for: .library, entity: .song, using: item, from: vc), at: 4)
         }
         
-        Transitioner.shared.showAlert(title: cell.nameLabel.text, from: vc, with: actions)
-        
-//        vc.present(UIAlertController.withTitle(nil, message: cell.nameLabel.text, style: .actionSheet, actions: actions + [.cancel()] ), animated: true, completion: nil)
+        vc.showAlert(title: cell.nameLabel.text, with: actions)
     }
 }

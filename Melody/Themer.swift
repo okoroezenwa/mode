@@ -56,6 +56,11 @@ class Themer {
         }
     }
     
+    static func relatedThemeColour() -> UIColor {
+    
+        return darkTheme ? .lightGray : .darkGray
+    }
+    
     static func themeColour(reversed: Bool = false, alpha: CGFloat = 1) -> UIColor {
         
         return (reversed ? (!darkTheme ? UIColor.white : .black) : (darkTheme ? .white : .black)).withAlphaComponent(alpha)

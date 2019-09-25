@@ -116,11 +116,9 @@ class Transitioner: NSObject {
         if let vc = vc as? VerticalPresentationContainerViewController {
             
             vc.segments = [.init(title: "Ascending", image: #imageLiteral(resourceName: "Ascending17")), .init(title: "Descending", image: #imageLiteral(resourceName: "Descending17"))]
-            vc.staticOptions = [.init(title: "Default"), .init(title: "Random")]
             vc.context = .sort
             vc.arrangeVC.sorter = sorter
             vc.requiresSegmentedControl = true
-            vc.requiresStaticView = true
             vc.leftButtonAction = { button, _ in vc.arrangeVC.persist(button) }
             
 //            PopoverDelegate.shared.prepare(vc: verticalPresentedVC, preferredSize: .init(width: 350, height: 169), sourceView: sourceView ?? sorter.arrangeButton, sourceRect: sourceRect ?? sorter.arrangeButton.bounds.modifiedBy(width: 0, height: 5), permittedDirections: [.up, .down])
@@ -204,7 +202,7 @@ class Transitioner: NSObject {
             
         vc.context = .alert
         vc.alertVC.context = .queue(title: title, kind: kind, context: context)
-        vc.subtitle = "Queue..."
+        vc.subtitle = "Queue"
         vc.alertVC.actions = [
             .init(info:
                 .init(title: "Unshuffled",
@@ -244,14 +242,14 @@ class Transitioner: NSObject {
     }
     
     /// Array Version
-    func showAlert(title: String?, subtitle: String? = nil, from sender: UIViewController?, context: AlertTableViewController.Context = .other, with actions: [AlertAction], segmentDetails: SegmentDetails = ([], nil), leftAction: AccessoryButtonAction? = nil, rightAction: AccessoryButtonAction? = nil, completion: (() -> ())? = nil) {
+    func showAlert(title: String?, subtitle: String? = nil, from sender: UIViewController?, context: AlertTableViewController.Context = .other, with actions: [AlertAction], segmentDetails: SegmentDetails = ([], []), leftAction: AccessoryButtonAction? = nil, rightAction: AccessoryButtonAction? = nil, completion: (() -> ())? = nil) {
         
         guard let vc = popoverStoryboard.instantiateViewController(withIdentifier: String.init(describing: VerticalPresentationContainerViewController.self)) as? VerticalPresentationContainerViewController else { return }
         
         vc.context = .alert
         vc.alertVC.context = context
         vc.alertVC.actions = actions
-        vc.alertVC.segmentAction = segmentDetails.action
+        vc.alertVC.segmentActions = segmentDetails.actions
         vc.leftButtonAction = leftAction
         vc.rightButtonAction = rightAction
         vc.title = title
@@ -264,8 +262,29 @@ class Transitioner: NSObject {
     }
     
     /// Variadic Version
-    func showAlert(title: String?, subtitle: String? = nil, from sender: UIViewController?, context: AlertTableViewController.Context = .other, with actions: AlertAction..., segmentDetails: SegmentDetails = ([], nil), leftAction: AccessoryButtonAction? = nil, rightAction: AccessoryButtonAction? = nil, completion: (() -> ())? = nil) {
+    func showAlert(title: String?, subtitle: String? = nil, from sender: UIViewController?, context: AlertTableViewController.Context = .other, with actions: AlertAction..., segmentDetails: SegmentDetails = ([], []), leftAction: AccessoryButtonAction? = nil, rightAction: AccessoryButtonAction? = nil, completion: (() -> ())? = nil) {
         
         showAlert(title: title, subtitle: subtitle, from: sender, context: context, with: actions, segmentDetails: segmentDetails, leftAction: leftAction, rightAction: rightAction, completion: completion)
+    }
+    
+    func performDeepSelection(from sender: UIViewController?, title: String?) {
+        
+        guard let vc = popoverStoryboard.instantiateViewController(withIdentifier: String.init(describing: VerticalPresentationContainerViewController.self)) as? VerticalPresentationContainerViewController else { return }
+        
+        vc.context = .alert
+        vc.alertVC.context = .select
+        vc.alertVC.actions = [.init(title: "Invert", handler: nil), .init(title: "Select", handler: nil), .init(title: "Deselect", handler: nil)]
+        vc.segments = [.init(title: "All"), .init(title: "Above"), .init(title: "Below")]
+        vc.alertVC.segmentActions = [{ _ in }, { _ in }, { _ in }]
+        vc.leftButtonAction = nil
+        vc.rightButtonAction = nil
+        vc.title = title
+        vc.subtitle = nil
+        vc.staticOptions = [.init(title: "Apply to Current Item")]
+        vc.requiresSegmentedControl = true
+        vc.requiresTopBorderView = true
+        vc.requiresStaticView = true
+        
+        sender?.present(vc, animated: true, completion: nil)
     }
 }

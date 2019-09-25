@@ -111,6 +111,21 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell {
         let tap = UITapGestureRecognizer.init(target: self, action: #selector(tapCell(_:)))
         supplemetaryScrollView.addGestureRecognizer(tap)
         
+        let editHold = UILongPressGestureRecognizer.init(target: self, action: #selector(performHold(_:)))
+        editHold.minimumPressDuration = longPressDuration
+        editButton.addGestureRecognizer(editHold)
+        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: editHold))
+        
+        let accessoryHold = UILongPressGestureRecognizer.init(target: self, action: #selector(performHold(_:)))
+        accessoryHold.minimumPressDuration = longPressDuration
+        infoButton.addGestureRecognizer(accessoryHold)
+        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: accessoryHold))
+        
+        let artworkHold = UILongPressGestureRecognizer.init(target: self, action: #selector(performHold(_:)))
+        artworkHold.minimumPressDuration = longPressDuration
+        playButton.addGestureRecognizer(artworkHold)
+        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: artworkHold))
+        
         notifier.addObserver(self, selector: #selector(modifyPlayOnly), name: .playOnlyChanged, object: nil)
         notifier.addObserver(self, selector: #selector(modifyBackground), name: .themeChanged, object: nil)
         notifier.addObserver(self, selector: #selector(modifyIndicator), name: .MPMusicPlayerControllerPlaybackStateDidChange, object: musicPlayer)
@@ -130,6 +145,47 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell {
         
         preservesSuperviewLayoutMargins = false
         contentView.preservesSuperviewLayoutMargins = false
+    }
+    
+    @objc func performHold(_ sender: UILongPressGestureRecognizer) {
+        
+        switch sender.state {
+            
+            case .began:
+                
+                enum HoldView { case artwork, edit, accessory }
+                
+                let view: HoldView = {
+                    
+                    switch sender.view {
+                        
+                        case let x where x == playButton: return .artwork
+                        
+                        case let x where x == editButton: return .edit
+                        
+                        default: return .accessory
+                    }
+                }()
+                
+                if view == .edit { guard isInDebugMode else { return } }
+                
+                switch view {
+                    
+                    case .edit: delegate?.editButtonHeld(in: self)
+                    
+                    case .accessory: delegate?.accessoryButtonHeld(in: self)
+                    
+                    case .artwork: delegate?.artworkHeld(in: self)
+                }
+            
+            case .changed, .ended:
+            
+                guard let topVC = topViewController as? VerticalPresentationContainerViewController else { return }
+            
+                topVC.gestureActivated(sender)
+            
+            default: break
+        }
     }
     
     @objc func updateSpacing() {
@@ -619,7 +675,10 @@ extension SongTableViewCell {
 protocol EntityCellDelegate: EditControlContaining {
     
     func artworkTapped(in cell: SongTableViewCell)
+    func artworkHeld(in cell: SongTableViewCell)
     func scrollViewTapped(in cell: SongTableViewCell)
     func accessoryButtonTapped(in cell: SongTableViewCell)
+    func accessoryButtonHeld(in cell: SongTableViewCell)
     func editButtonTapped(in cell: SongTableViewCell)
+    func editButtonHeld(in cell: SongTableViewCell)
 }

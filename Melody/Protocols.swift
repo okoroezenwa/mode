@@ -284,10 +284,11 @@ protocol TableViewContainer: FullySortable, InfoLoading, Filterable, SingleItemA
     
     var tableDelegate: TableDelegate { get set }
     var collectionView: UICollectionView? { get set }
-    var entities: [MPMediaEntity] { get }
+    var entities: [MPMediaEntity] { get set }
     var query: MPMediaQuery? { get }
     var filteredEntities: [MPMediaEntity] { get set }
     var highlightedEntity: MPMediaEntity? { get }
+    
     func selectCell(in tableView: UITableView, at indexPath: IndexPath, filtering: Bool)
     func getEntity(at indexPath: IndexPath, filtering: Bool) -> MPMediaEntity
 }
@@ -297,6 +298,328 @@ extension TableViewContainer {
     func setHighlightedIndex(of entity: MPMediaEntity) {
         
         highlightedIndex = entities.firstIndex(of: entity)
+    }
+    
+    func sortAllItems() {
+        
+        headerView.updateSortActivityIndicator(to: .visible)
+        
+        let mainBlock: ([MPMediaEntity], [MPMediaPlaylist], [SortSectionDetails], [PlaylistContainer]) -> () = { [weak self] array, recentsArray, details, playlistContainers in
+            
+            guard let weakSelf = self, weakSelf.operation?.isCancelled == false else {
+                
+                self?.headerView.updateSortActivityIndicator(to: .hidden)
+                
+                return
+            }
+            
+            weakSelf.entities = array
+            
+            if let collectionsVC = weakSelf as? CollectionsViewController, collectionsVC.collectionKind == .playlist {
+                
+                collectionsVC.headerView.playlists = recentsArray
+                collectionsVC.playlistsLoaded = true
+                collectionsVC.libraryVC?.setCurrentOptions()
+                
+                if showPlaylistFolders {
+                    
+                    collectionsVC.tableDelegate.playlistContainers = playlistContainers
+                }
+            }
+            
+            weakSelf.sections = details
+            weakSelf.headerView.updateSortActivityIndicator(to: .hidden)
+            
+            guard weakSelf.operation?.isCancelled == false else { return }
+            
+            if let container = weakSelf as? LibrarySectionContainer {
+                
+                container.updateTopLabels(setTitle: container.libraryVC?.container?.activeViewController?.topViewController == container.libraryVC)
+            }
+            
+            if let playlistItemsVC = weakSelf as? PlaylistItemsViewController {
+                
+                playlistItemsVC.updateEmptyLabel(withCount: array.count)
+            }
+
+            weakSelf.updateHeaderView(withCount: array.count)
+            weakSelf.prepareSupplementaryInfo(animated: true)
+            
+            if let container = weakSelf as? LibrarySectionContainer {
+                
+                var text: String {
+                    
+                    if let collectionsVC = weakSelf as? CollectionsViewController {
+                    
+                        guard collectionsVC.collectionKind != .playlist else {
+                            
+                            return "Create a new playlist or use iTunes to create other types of playlists"
+                        }
+                        
+                        return showiCloudItems ? "There are no \(collectionsVC.type.lowercased()) in your library" : "There are no offline \(collectionsVC.type.lowercased()) in your library"
+                    
+                    } else {
+                        
+                        return showiCloudItems ? "There are no songs in your library" : "There are no offline songs in your library"
+                    }
+                }
+                
+                container.libraryVC?.updateEmptyLabel(withCount: array.count, text: text)
+            }
+            
+            if weakSelf.filtering, let filterContainer = weakSelf.filterContainer, let text = filterContainer.searchBar?.text {
+                
+                filterContainer.searchBar?(filterContainer.searchBar, textDidChange: text)
+                
+            } else {
+                
+                if let container = weakSelf as? LibrarySectionContainer {
+                    
+                    if let _ = container as? SongsViewController {
+                        
+                        weakSelf.headerView.showRecents = showRecentSongs && weakSelf.sortCriteria != .dateAdded
+                    
+                    } else if let collectionsVC = container as? CollectionsViewController {
+                        
+                        weakSelf.headerView.showRecents = collectionsVC.showRecents && weakSelf.sortCriteria != .dateAdded
+                    }
+                    
+                    weakSelf.updateHeaderView(withCount: array.count)
+                }
+                
+                weakSelf.tableView.reloadData()
+                
+                if let collectionsVC = weakSelf as? CollectionsViewController, collectionsVC.collectionKind == .playlist {
+                    
+                    collectionsVC.collectionView?.isHidden = true
+                }
+                
+                if let animator = weakSelf as? CellAnimatable {
+                    
+                    if let vc = weakSelf as? UIViewController, let peekable = vc.parent as? Peekable, peekable.peeker != nil { } else {
+                        
+                        animator.animateCells(direction: .vertical, alphaOnly: weakSelf.highlightedIndex != nil)
+                    }
+                }
+                
+                if let collectionsVC = weakSelf as? CollectionsViewController, collectionsVC.collectionKind == .playlist && weakSelf.sortCriteria != .dateAdded {
+                    
+                    collectionsVC.collectionView?.reloadData()
+                    UniversalMethods.performOnMainThread({ collectionsVC.animateCollectionCells() }, afterDelay: 0.1)
+                }
+                
+                weakSelf.scrollToHighlightedRow()
+            }
+        }
+        
+        operation?.cancel()
+        operation = BlockOperation()
+        operation?.addExecutionBlock({ [weak operation, weak self] in
+            
+            guard let weakSelf = self as? TableViewContainer & UIViewController, let weakOperation = operation, !weakOperation.isCancelled, let items = weakSelf.expectedEntities/*query?.items*/, !items.isEmpty else {
+                
+                OperationQueue.main.addOperation {
+                    
+                    self?.headerView.updateSortActivityIndicator(to: .hidden)
+                    
+                    if self?.query?.items?.isEmpty == true {
+                        
+//                        self?.updateEmptyLabel(withCount: 0)
+                        self?.entities = []
+                        self?.tableView.reloadData()
+                        self?.updateHeaderView(withCount: 0)
+                    }
+                }
+                
+                return
+            }
+            
+            // for artistSongsVC
+            let isAlternateAlbumArrangement = Set([SortCriteria.albumName, .albumYear]).contains(weakSelf.sortCriteria)
+            let other = isAlternateAlbumArrangement ? (weakSelf as? ArtistSongsViewController)?.altSections(by: weakSelf.sortCriteria == .albumName ? .name : .year) : nil
+            
+            let array = weakSelf.sortedArray(from: items, alternateArray: other?.items)
+            let recentArray: [MPMediaPlaylist] = {
+                
+                guard let collectionsVC = weakSelf as? CollectionsViewController, collectionsVC.collectionKind == .playlist else { return [] }
+                
+                return collectionsVC.recentPlaylists(from: array.entities as? [MPMediaItemCollection] ?? [])
+            }()
+            
+            if let highlighter = weakSelf.parent as? HighlightedEntityContaining {
+                
+                switch weakSelf.location {
+                    
+                    case .album, .playlist, .songs, .collection(kind: _, point: .songs):
+                        
+                        if let song = highlighter.highlightedEntities?.song {
+                        
+                            weakSelf.highlightedIndex = array.entities.firstIndex(of: song)
+                        }
+                    
+                    case .collections, .collection:
+                        
+                        if let collection = highlighter.highlightedEntities?.collection {
+                        
+                            weakSelf.highlightedIndex = array.entities.firstIndex(of: collection)
+                        }
+                    
+                    default: break
+                }
+            }
+            
+            guard !weakOperation.isCancelled else {
+                
+                UniversalMethods.performInMain {
+                    
+                    self?.headerView.updateSortActivityIndicator(to: .hidden)
+                }
+                
+                return
+            }
+            
+            let details = weakSelf.sortedSections(from: array.entities, alternateSections: other?.details)
+            
+            OperationQueue.main.addOperation({ mainBlock(array.entities, recentArray, details, array.containers) })
+        })
+        
+        sortOperationQueue.addOperation(operation!)
+        
+        if let collectionsVC = self as? CollectionsViewController, collectionsVC.collectionKind == .playlist { return }
+        
+        if let actionable = self as? CollectionActionable {
+            
+            actionable.getActionableSongs()
+        }
+        
+        if let container = self as? LibrarySectionContainer {
+            
+            container.getRecents()
+        }
+    }
+    
+    var expectedEntities: [MPMediaEntity]? {
+        
+        switch sortLocation {
+            
+            case .album, .playlist, .songs: return query?.items
+            
+            case .playlistList, .collections: return query?.collections
+        }
+    }
+    
+    func sortedSections(from entities: [MPMediaEntity], alternateSections: [SortSectionDetails]?) -> [SortSectionDetails] {
+        
+        guard let vc = self as? UIViewController else { return [] }
+        
+        if let sections = alternateSections {
+            
+            return sections
+        }
+        
+        switch vc.location {
+            
+            case .album, .playlist, .songs, .collection(kind: _, point: .songs): return prepareSections(from: entities as! [MPMediaItem])
+            
+            case .collections(kind: let collectionKind):
+                
+                switch collectionKind {
+                
+                    case .playlist: return prepareSections(from: entities as! [MPMediaPlaylist])
+                    
+                    default: return prepareSections(from: entities as! [MPMediaItemCollection])
+                }
+            
+            case .collection(kind: _, point: .albums): return prepareSections(from: entities as! [MPMediaItemCollection])
+            
+            default: return []
+        }
+    }
+    
+    func sortedArray(from entities: [MPMediaEntity], alternateArray: [MPMediaEntity]?) -> (entities: [MPMediaEntity], containers: [PlaylistContainer]) {
+        
+        switch sortCriteria {
+            
+            case .random:
+                
+                if let collectionsVC = self as? CollectionsViewController, collectionsVC.collectionKind == .playlist {
+                    
+                    let playlists = collectionsVC.getPlaylists(from: entities as! [MPMediaPlaylist]).filter({ collectionsVC.condition(for: $0) }).shuffled()
+                    
+                    if showPlaylistFolders {
+                        
+                        let reduced = playlists.foldersConsidered.map({ $0.reduced })
+                        let containers = reduced.reduce([], { $0 + $1.containers })
+                        
+                        return (reduced.reduce([], { $0 + $1.dataSource }), containers)
+                    }
+                    
+                    return (playlists, [])
+                }
+                
+                return (entities.shuffled(), [])
+    
+            case .standard:
+                
+                if let collectionsVC = self as? CollectionsViewController, collectionsVC.collectionKind == .playlist {
+                    
+                    let playlists = collectionsVC.standardPlaylists(from: entities as! [MPMediaPlaylist]).filter({ collectionsVC.condition(for: $0) })
+                    
+                    if showPlaylistFolders {
+                        
+                        let reduced = playlists.foldersConsidered.map({ $0.reduced })
+                        let containers = reduced.reduce([], { $0 + $1.containers })
+                        
+                        return (reduced.reduce([], { $0 + $1.dataSource }), containers)
+                    }
+                    
+                    return (playlists, [])
+                }
+                
+                return (ascending ? entities : entities.reversed(), [])
+            
+            case .dateAdded where (self as? CollectionsViewController)?.collectionKind == .playlist:
+                
+                guard let collectionsVC = self as? CollectionsViewController else { return (entities, []) }
+            
+                if let recentsQuery = collectionsVC.recentsQuery {
+                    
+                    let array = collectionsVC.getPlaylists(from: recentsQuery.collections as? [MPMediaPlaylist] ?? []).filter({ collectionsVC.condition(for: $0) })
+                    
+                    let playlists = collectionsVC.ascending ? array.reversed() : array
+                    
+                    if showPlaylistFolders {
+                        
+                        let reduced = playlists.foldersConsidered.map({ $0.reduced })
+                        let containers = reduced.reduce([], { $0 + $1.containers })
+                        
+                        return (reduced.reduce([], { $0 + $1.dataSource }), containers)
+                    }
+                    
+                    return (playlists, [])
+                }
+                
+                return ((collectionsVC.getPlaylists(from: entities as! [MPMediaPlaylist]).filter({ collectionsVC.condition(for: $0) }) as NSArray).sortedArray(using: collectionsVC.sortDescriptors) as! [MPMediaPlaylist], [])
+    
+            default:
+                
+                if let collectionsVC = self as? CollectionsViewController, collectionsVC.collectionKind == .playlist {
+                    
+                    let playlists = (collectionsVC.getPlaylists(from: entities as! [MPMediaPlaylist]).filter({ collectionsVC.condition(for: $0) }) as NSArray).sortedArray(using: collectionsVC.sortDescriptors) as! [MPMediaPlaylist]
+                    
+                    if showPlaylistFolders {
+                        
+                        let reduced = playlists.foldersConsidered.map({ $0.reduced })
+                        let containers = reduced.reduce([], { $0 + $1.containers })
+                        
+                        return (reduced.reduce([], { $0 + $1.dataSource }), containers)
+                    }
+                    
+                    return (playlists, [])
+                }
+                
+                return (alternateArray ?? (entities as NSArray).sortedArray(using: sortDescriptors) as! [MPMediaEntity], [])
+        }
     }
 }
 
@@ -422,12 +745,12 @@ extension Settable {
     }
 }
 
-protocol BorderButtonContaining {
+protocol PillButtonContaining {
     
-    var borderedButtons: [BorderedButtonView?] { get set }
+    var borderedButtons: [PillButtonView?] { get set }
 }
 
-extension BorderButtonContaining {
+extension PillButtonContaining {
     
     func updateButtons() {
         
@@ -462,18 +785,18 @@ extension BorderButtonContaining {
                 
                 case .leading:
                 
-                    view.borderViewLeadingConstraint.constant = 10
-                    view.borderViewTrailingConstraint.constant = borderedButtons.count < 3 ? 5 : edgeConstraint
+                    view.borderViewContainerLeadingConstraint.constant = 10
+                    view.borderViewContainerTrailingConstraint.constant = borderedButtons.count < 3 ? 5 : edgeConstraint
                 
                 case .middle(single: let single):
                 
-                    view.borderViewLeadingConstraint.constant = single ? 10 : middleConstraint
-                    view.borderViewTrailingConstraint.constant = single ? 10 : middleConstraint
+                    view.borderViewContainerLeadingConstraint.constant = single ? 10 : middleConstraint
+                    view.borderViewContainerTrailingConstraint.constant = single ? 10 : middleConstraint
                 
                 case .trailing:
                 
-                    view.borderViewLeadingConstraint.constant = borderedButtons.count < 3 ? 5 : edgeConstraint
-                    view.borderViewTrailingConstraint.constant = 10
+                    view.borderViewContainerLeadingConstraint.constant = borderedButtons.count < 3 ? 5 : edgeConstraint
+                    view.borderViewContainerTrailingConstraint.constant = 10
             }
         }
     }
@@ -552,13 +875,13 @@ extension LocationBroadcastable {
             
             return .album
             
-        } else if let _ = self as? ArtistSongsViewController {
+        } else if let vc = self as? ArtistSongsViewController, let entityVC = vc.entityVC {
             
-            return .artist(point: .songs)
+            return .collection(kind: entityVC.kind, point: .songs)
             
-        } else if let _ = self as? ArtistAlbumsViewController {
+        } else if let vc = self as? ArtistAlbumsViewController, let entityVC = vc.entityVC {
             
-            return .artist(point: .albums)
+            return .collection(kind: entityVC.kind, point: .albums)
             
         } else if let _ = self as? SongsViewController {
             

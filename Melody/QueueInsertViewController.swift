@@ -112,6 +112,7 @@ class QueueInsertController {
     
     func addToQueue(_ sender: QueuePosition) {
         
+        alertVC?.verticalPresentedVC?.segmentedEffectView.isUserInteractionEnabled = false
         alertVC?.verticalPresentedVC?.staticView.isUserInteractionEnabled = false
         alertVC?.view.isUserInteractionEnabled = false
         
@@ -150,6 +151,7 @@ class QueueInsertController {
                 
                 self?.alertVC?.verticalPresentedVC?.staticCollectionView.deselectItem(at: .init(item: 1, section: 0), animated: false)
                 self?.alertVC?.verticalPresentedVC?.staticView.isUserInteractionEnabled = true
+                self?.alertVC?.verticalPresentedVC?.segmentedEffectView.isUserInteractionEnabled = true
                 self?.alertVC?.view.isUserInteractionEnabled = true
             })
             

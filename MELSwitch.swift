@@ -10,16 +10,22 @@ import UIKit
 
 class MELSwitchContainer: UIView {
     
-    private let mainSwitch = Switch.instance
+    enum SwitchType { case system, custom }
+    
+    private let customSwitch = Switch.instance
+    private let systemSwitch = MELSwitch.init(frame: .zero)
     var isOn = false
     var action: (() -> ())?
     @objc var leading: CGFloat = 10
     @objc var trailing: CGFloat = 10
+    var customConstraints = Set<NSLayoutConstraint>()
+    var systemConstraints = Set<NSLayoutConstraint>()
     override var isUserInteractionEnabled: Bool {
         
         didSet {
             
-            mainSwitch.isUserInteractionEnabled = isUserInteractionEnabled
+            customSwitch.isUserInteractionEnabled = isUserInteractionEnabled
+            systemSwitch.isEnabled = isUserInteractionEnabled
         }
     }
     
@@ -27,41 +33,91 @@ class MELSwitchContainer: UIView {
         
         super.awakeFromNib()
         
-        addSubview(mainSwitch)
-        centerYAnchor.constraint(equalTo: mainSwitch.centerYAnchor).isActive = true
+        customSwitch.isHidden = useSystemSwitch
+        systemSwitch.isHidden = useSystemSwitch.inverted
         
-        let leading = leadingAnchor.constraint(equalTo: mainSwitch.leadingAnchor)
-        leading.constant = -self.leading
-        leading.isActive = true
+        prepareConstraints(for: .system)
+        prepareConstraints(for: .custom)
         
-        let trailing = trailingAnchor.constraint(equalTo: mainSwitch.trailingAnchor)
-        trailing.constant = self.trailing
-        trailing.isActive = true
-        
-        mainSwitch.isOn = isOn
+        systemSwitch.isOn = isOn
+        customSwitch.isOn = isOn
         setOn(isOn, animated: false)
         
+        systemSwitch.addTarget(self, action: #selector(changeValue(_:)), for: .valueChanged)
+        notifier.addObserver(self, selector: #selector(updateSwitch), name: .useSystemSwitchChanged, object: nil)
+        
         let tap = UITapGestureRecognizer.init(target: self, action: #selector(changeValue(_:)))
+        tap.delegate = self
         addGestureRecognizer(tap)
         
         let swipeLeft = UISwipeGestureRecognizer.init(target: self, action: #selector(swipe(_:)))
         swipeLeft.direction = .left
+        swipeLeft.delegate = self
         addGestureRecognizer(swipeLeft)
         
         let swipeRight = UISwipeGestureRecognizer.init(target: self, action: #selector(swipe(_:)))
         swipeRight.direction = .right
+        swipeRight.delegate = self
         addGestureRecognizer(swipeRight)
+    }
+    
+    func prepareConstraints(for type: SwitchType) {
+        
+        let relevantSwitch: UIView = type == .system ? systemSwitch : customSwitch
+        let makeActive: Bool = {
+            
+            switch type {
+                
+                case .custom: return useSystemSwitch.inverted
+                
+                case .system: return useSystemSwitch
+            }
+        }()
+        
+        let append: (NSLayoutConstraint) -> Void = {
+            
+            switch type {
+                
+                case .system: self.systemConstraints.insert($0)
+                
+                case .custom: self.customConstraints.insert($0)
+            }
+        }
+        
+        addSubview(relevantSwitch)
+        let centre = centerYAnchor.constraint(equalTo: relevantSwitch.centerYAnchor)
+        centre.isActive = makeActive
+        append(centre)
+        
+        let leading = leadingAnchor.constraint(equalTo: relevantSwitch.leadingAnchor)
+        leading.constant = -self.leading
+        leading.isActive = makeActive
+        append(leading)
+        
+        let trailing = trailingAnchor.constraint(equalTo: relevantSwitch.trailingAnchor)
+        trailing.constant = self.trailing
+        trailing.isActive = makeActive
+        append(trailing)
+    }
+    
+    @objc func updateSwitch() {
+        
+        customConstraints.forEach({ $0.isActive = useSystemSwitch.inverted })
+        systemConstraints.forEach({ $0.isActive = useSystemSwitch })
+        systemSwitch.isHidden = useSystemSwitch.inverted
+        customSwitch.isHidden = useSystemSwitch
     }
     
     func setOn(_ isOn: Bool, animated: Bool) {
         
-        mainSwitch.knobLeadingConstraint.priority = UILayoutPriority.init(isOn ? 899 : 901)
-        mainSwitch.isOn = isOn
+        customSwitch.knobLeadingConstraint.priority = UILayoutPriority.init(isOn ? 899 : 901)
+        customSwitch.isOn = isOn
+        systemSwitch.isOn = isOn
         
         UIView.animate(withDuration: animated ? 0.7 : 0, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .allowUserInteraction, animations: {
             
-            self.mainSwitch.changeThemeColor(animated)
-            self.mainSwitch.layoutIfNeeded()
+            self.customSwitch.changeThemeColor(animated)
+            self.customSwitch.layoutIfNeeded()
             
         }, completion: nil)
         
@@ -84,6 +140,49 @@ class MELSwitchContainer: UIView {
         
         setOn(goOn, animated: true)
         action?()
+    }
+}
+
+extension MELSwitchContainer: UIGestureRecognizerDelegate {
+    
+    override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        
+        return useSystemSwitch.inverted
+    }
+}
+
+class MELSwitch: UISwitch {
+    
+    override func awakeFromNib() {
+        
+        super.awakeFromNib()
+        
+        changeThemeColor()
+        
+        notifier.addObserver(self, selector: #selector(changeThemeColor), name: .themeChanged, object: nil)
+    }
+    
+    override init(frame: CGRect) {
+        
+        super.init(frame: frame)
+        
+        translatesAutoresizingMaskIntoConstraints = false
+        
+        changeThemeColor()
+        
+        notifier.addObserver(self, selector: #selector(changeThemeColor), name: .themeChanged, object: nil)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        
+        super.init(coder: aDecoder)
+    }
+    
+    @objc func changeThemeColor() {
+        
+        thumbTintColor = Themer.themeColour()
+        onTintColor = Themer.borderViewColor(withAlphaOverride: 0.1)
+        tintColor = Themer.borderViewColor(withAlphaOverride: 0.1)//darkTheme ? .white : .black
     }
 }
 

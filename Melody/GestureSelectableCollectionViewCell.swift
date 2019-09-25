@@ -16,6 +16,9 @@ class GestureSelectableCollectionViewCell: UICollectionViewCell {
     @IBOutlet var subtitleLabel: MELLabel!
     @IBOutlet var effectView: UIVisualEffectView!
     @IBOutlet var insets: [NSLayoutConstraint]!
+    @IBOutlet var switchContainer: MELSwitchContainer!
+    @IBOutlet var edgeConstraints: [NSLayoutConstraint]!
+    @IBOutlet var centreConstraints: [NSLayoutConstraint]!
     
     var inset: CGFloat = 10 {
         
@@ -33,7 +36,7 @@ class GestureSelectableCollectionViewCell: UICollectionViewCell {
             
             guard oldValue != useBorderView else { return }
             
-            selectedBackgroundView = useBorderView ? nil : MELBorderView(override: 0.03)
+            selectedBackgroundView = useBorderView ? nil : MELBorderView(override: 0)
         }
     }
     
@@ -54,7 +57,12 @@ class GestureSelectableCollectionViewCell: UICollectionViewCell {
         
         didSet {
             
-            guard useBorderView else { return }
+            guard useBorderView else {
+                
+                selectedBorderView.isHidden = true
+                
+                return
+            }
             
             selectedBorderView.isHidden = !self.isHighlighted
         }
@@ -64,7 +72,12 @@ class GestureSelectableCollectionViewCell: UICollectionViewCell {
         
         didSet {
             
-            guard useBorderView else { return }
+            guard useBorderView else {
+                
+                selectedBorderView.isHidden = true
+                
+                return
+            }
             
             selectedBorderView.isHidden = !self.isSelected
         }
@@ -73,9 +86,12 @@ class GestureSelectableCollectionViewCell: UICollectionViewCell {
     override func awakeFromNib() {
         
         super.awakeFromNib()
+        
+        selectedBorderView.layer.setRadiusTypeIfNeeded()
+        selectedBorderView.layer.cornerRadius = 14
     }
     
-    func prepare(with title: String?, subtitle: String? = nil, image: UIImage? = nil, style: TextStyle = .body) {
+    func prepare(with title: String?, subtitle: String? = nil, image: UIImage? = nil, style: TextStyle = .body, switchDetails: (isOn: Bool, action: () -> ())? = nil) {
         
         titleLabel.text = title
         titleLabel.textStyle = style.rawValue
@@ -83,5 +99,20 @@ class GestureSelectableCollectionViewCell: UICollectionViewCell {
         subtitleLabel.isHidden = subtitle == nil
         imageView.image = image
         imageView.superview?.isHidden = image == nil
+        switchContainer.isHidden = {
+        
+            if let details = switchDetails {
+                
+                switchContainer.setOn(details.isOn, animated: false)
+                switchContainer.action = details.action
+                
+                return false
+            }
+            
+            return true
+        }()
+        
+        edgeConstraints.forEach({ $0.isActive = switchDetails != nil })
+        centreConstraints.forEach({ $0.isActive = switchDetails == nil })
     }
 }

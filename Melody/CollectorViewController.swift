@@ -8,7 +8,7 @@
 
 import UIKit
 
-class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable, EntityContainer, Peekable, SingleItemActionable, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, GenreTransitionable, ComposerTransitionable, EntityVerifiable, BorderButtonContaining, Detailing {
+class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable, EntityContainer, Peekable, SingleItemActionable, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, GenreTransitionable, ComposerTransitionable, EntityVerifiable, PillButtonContaining, Detailing {
     
     @IBOutlet var tableView: MELTableView!
     @IBOutlet var bottomView: UIView!
@@ -27,15 +27,15 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
         
         didSet {
             
-//            let lockView = BorderedButtonView.with(title: "Lock", image: #imageLiteral(resourceName: "Locked13"), action: /*#selector(addSongs)*/nil, target: self)
+//            let lockView = PillButtonView.with(title: "Lock", image: #imageLiteral(resourceName: "Locked13"), action: /*#selector(addSongs)*/nil, target: self)
 //            lockButton = lockView.button
 //            self.lockView = lockView
             
-            let clearView = BorderedButtonView.with(title: "Clear...", image: #imageLiteral(resourceName: "Discard"), tapAction: .init(action: #selector(clear), target: self))
+            let clearView = PillButtonView.with(title: "Clear...", image: #imageLiteral(resourceName: "Discard"), tapAction: .init(action: #selector(clear), target: self))
             clearButton = clearView.button
             self.clearView = clearView
             
-            let editView = BorderedButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, tapAction: .init(action: #selector(SongActionManager.toggleEditing(_:)), target: songManager))
+            let editView = PillButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, tapAction: .init(action: #selector(SongActionManager.toggleEditing(_:)), target: songManager))
             editButton = editView.button
             self.editView = editView
             
@@ -43,8 +43,8 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
                 
 //                view.button.contentEdgeInsets.top = 10
 //                view.button.contentEdgeInsets.bottom = 0
-                view.borderViewBottomConstraint.constant = 2
-                view.borderViewTopConstraint.constant = 10
+                view.borderViewContainerBottomConstraint.constant = 2
+                view.borderViewContainerTopConstraint.constant = 10
                 stackView.addArrangedSubview(view)
             }
         }
@@ -57,11 +57,11 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
 //    @objc var lockButton: MELButton!
     @objc var clearButton: MELButton!
     @objc var editButton: MELButton!
-//    @objc var lockView: BorderedButtonView!
-    @objc var clearView: BorderedButtonView!
-    @objc var editView: BorderedButtonView!
+//    @objc var lockView: PillButtonView!
+    @objc var clearView: PillButtonView!
+    @objc var editView: PillButtonView!
     
-    var borderedButtons = [BorderedButtonView?]()
+    var borderedButtons = [PillButtonView?]()
     
     var manager: QueueManager!
     @objc lazy var itemsToAdd = [MPMediaItem]()
@@ -264,7 +264,7 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
         
         let actions = applicableActions.map({ alertAction(for: $0, from: self, using: manager.queue) })// + [.cancel()]
         
-        Transitioner.shared.showAlert(title: "Add To...", from: self, with: actions)
+        showAlert(title: "Add To...", with: actions)
         
 //        present(UIAlertController.withTitle(nil, message: "Add To...", style: .actionSheet, actions: actions), animated: true, completion: nil)
     }
@@ -295,7 +295,7 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
                     musicPlayer.play(weakSelf.manager.queue.albumsShuffled, startingFrom: nil, from: weakSelf, withTitle: nil, alertTitle: .shuffle(.albums), completion: { notifier.post(name: .endQueueModification, object: nil) })
                 })
                 
-                Transitioner.shared.showAlert(title: "Collected Songs", from: self, with: shuffleSongs, shuffleAlbums)
+                showAlert(title: "Collected Songs", with: shuffleSongs, shuffleAlbums)
                 
             } else {
                 
@@ -400,7 +400,7 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
             }
         }
         
-        Transitioner.shared.showAlert(title: "Clear...", from: self, context: .other, with: array)
+        showAlert(title: "Clear...", context: .other, with: array)
     }
     
     @IBAction func removeSelected() {
@@ -609,6 +609,11 @@ extension CollectorViewController: UITableViewDelegate, UITableViewDataSource {
 
 extension CollectorViewController: EntityCellDelegate {
     
+    func editButtonHeld(in cell: SongTableViewCell) {
+        
+        Transitioner.shared.performDeepSelection(from: self, title: cell.nameLabel.text)
+    }
+    
     func editButtonTapped(in cell: SongTableViewCell) {
         
         guard let indexPath = tableView.indexPath(for: cell) else { return }
@@ -646,6 +651,11 @@ extension CollectorViewController: EntityCellDelegate {
         }
     }
     
+    func artworkHeld(in cell: SongTableViewCell) {
+        
+        
+    }
+    
     func accessoryButtonTapped(in cell: SongTableViewCell) {
         
         guard let indexPath = tableView.indexPath(for: cell) else { return }
@@ -667,9 +677,14 @@ extension CollectorViewController: EntityCellDelegate {
 //
 //        }), at: 0)
         
-        Transitioner.shared.showAlert(title: cell.nameLabel.text, from: self, with: actions)
+        showAlert(title: cell.nameLabel.text, with: actions)
+    }
+    
+    func accessoryButtonHeld(in cell: SongTableViewCell) {
         
-//        present(UIAlertController.withTitle(nil, message: cell.nameLabel.text, style: .actionSheet, actions: actions + [.cancel()] ), animated: true, completion: nil)
+        guard let indexPath = tableView.indexPath(for: cell), let action = self.tableView(tableView, editActionsForRowAt: indexPath, for: .right)?.first else { return }
+        
+        action.handler?(action, indexPath)
     }
     
     func scrollViewTapped(in cell: SongTableViewCell) {

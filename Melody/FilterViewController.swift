@@ -9,7 +9,7 @@
 import UIKit
 import CoreData
 
-class FilterViewController: UIViewController, InfoLoading, SingleItemActionable, CellAnimatable, FilterContainer, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, GenreTransitionable, ComposerTransitionable, PlaylistTransitionable, EntityVerifiable, Arrangeable, Refreshable, BorderButtonContaining {
+class FilterViewController: UIViewController, InfoLoading, SingleItemActionable, CellAnimatable, FilterContainer, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, GenreTransitionable, ComposerTransitionable, PlaylistTransitionable, EntityVerifiable, Arrangeable, Refreshable, PillButtonContaining {
     
     @IBOutlet var tableView: MELTableView!
     @IBOutlet var filterViewContainer: FilterViewContainer! {
@@ -38,16 +38,16 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         
         didSet {
             
-//            let shuffleView = BorderedButtonView.with(title: .shuffleButtonTitle, image: #imageLiteral(resourceName: "Shuffle13"), action: #selector(shuffle), target: self)
+//            let shuffleView = PillButtonView.with(title: .shuffleButtonTitle, image: #imageLiteral(resourceName: "Shuffle13"), action: #selector(shuffle), target: self)
 //            shuffleButton = shuffleView.button
 //            self.shuffleView = shuffleView
 //
-//            let arrangeBorderView = BorderedButtonView.with(title: .arrangeButtonTitle, image: #imageLiteral(resourceName: "AscendingLines"), action: #selector(showArranger), target: self)
+//            let arrangeBorderView = PillButtonView.with(title: .arrangeButtonTitle, image: #imageLiteral(resourceName: "AscendingLines"), action: #selector(showArranger), target: self)
 //            arrangeBorderView.borderView.centre(activityIndicator)
 //            arrangeButton = arrangeBorderView.button
 //            self.arrangeBorderView = arrangeBorderView
             
-            let editView = BorderedButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, tapAction: .init(action: #selector(SongActionManager.toggleEditing(_:)), target: songManager), longPressAction: .init(action: #selector(SongActionManager.showActionsForAll(_:)), target: songManager))
+            let editView = PillButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, tapAction: .init(action: #selector(SongActionManager.toggleEditing(_:)), target: songManager), longPressAction: .init(action: #selector(SongActionManager.showActionsForAll(_:)), target: songManager))
             editButton = editView.button
             self.editView = editView
             
@@ -142,23 +142,24 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         }
     }
     var shuffleButton: MELButton!
-    var shuffleView: BorderedButtonView!
-    var arrangeBorderView: BorderedButtonView!
-    var editView: BorderedButtonView!
+    var shuffleView: PillButtonView!
+    var arrangeBorderView: PillButtonView!
+    var editView: PillButtonView!
     
     var query: MPMediaQuery?
     var sortCriteria: SortCriteria {
         
-        get { return actualSortCriteria }
+        get { return staticSortCriteria }
         
         set {
             
-            sortItems()
+            staticSortCriteria = newValue
+//            sortItems()
             headerView.sortButton.setTitle(arrangementLabelText, for: .normal)
                 UIView.animate(withDuration: 0.3, animations: { self.headerView.layoutIfNeeded() })
         }
     }
-    lazy var actualSortCriteria: SortCriteria = { sorter?.sortCriteria ?? .standard }()
+    lazy var staticSortCriteria: SortCriteria = { sorter?.sortCriteria ?? .standard }()
     var applySort = true
     var ascending: Bool {
         
@@ -180,7 +181,7 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
     lazy var applicableSortCriteria: Set<SortCriteria> = { sorter?.applicableSortCriteria ?? [] }()
     lazy var sortLocation: SortLocation = { sorter?.sortLocation ?? .songs }()
     
-    var borderedButtons = [BorderedButtonView?]()
+    var borderedButtons = [PillButtonView?]()
     var applicableActions: [SongAction] { return actionable?.applicableActions ?? [] }
     var actionableSongs: [MPMediaItem] { return actionable?.actionableSongs ?? [] }
     lazy var songManager: SongActionManager = { return SongActionManager.init(actionable: self) }()
@@ -220,6 +221,13 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         let queue = OperationQueue()
         queue.name = "Filter Operation Queue"
         queue.qualityOfService = .userInitiated
+        
+        return queue
+    }()
+    @objc let sortOperationQueue: OperationQueue = {
+        
+        let queue = OperationQueue()
+        queue.name = "Sort Operation Queue"
         
         return queue
     }()
@@ -305,6 +313,11 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         }
     }
     
+    func prepareSupplementaryInfo(animated: Bool) {
+        
+        
+    }
+    
     @objc func updateEntityCountVisibility() {
         
         guard let indexPaths = tableView.indexPathsForVisibleRows else { return }
@@ -370,7 +383,7 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         updateCollectedText(animated: animated)
     }
     
-    @objc func updateHeaderView() {
+    @objc func updateHeaderView(withCount count: Int = 0) {
         
 //        shuffleButton.superview?.isHidden = count < 2
         tableView.tableHeaderView = emptyCondition ? nil : headerView
@@ -554,6 +567,16 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
                 if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
                 
                 weakSelf.updateTitleLabel()
+                
+                let parent = weakSelf.parent as? PresentedContainerViewController
+                
+                parent?.rightButton.setImage(VisualEffectNavigationBar.RightButtonType.actions.image, for: .normal)
+                
+                UIView.animate(withDuration: 0.3, animations: {
+                    
+                    parent?.rightBorderView.alpha = array.isEmpty ? 0 : 1
+                    parent?.rightButton.alpha = array.isEmpty ? 0 : 1
+                })
             })
         })
         
@@ -608,7 +631,7 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
             
             array.append(shuffleAlbums)
             
-            Transitioner.shared.showAlert(title: "Filtered Items", from: self, with: array)
+            showAlert(title: "Filtered Items", with: array)
             
 //            present(UIAlertController.withTitle(nil, message: "Filtered Items", style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
             
@@ -653,10 +676,10 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
 
 extension FilterViewController {
     
-    func sortItems() {
-        
-        
-    }
+//    func sortItems() {
+//        
+//        
+//    }
 }
 
 extension FilterViewController: UITableViewDelegate, UITableViewDataSource {
@@ -776,7 +799,7 @@ extension FilterViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
         
-        return false
+        return filtering.inverted
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
@@ -867,8 +890,8 @@ extension FilterViewController: UISearchBarDelegate {
             if tableView.isEditing {
                 
                 tableView.isEditing = false
-                editView.imageView.image = .inactiveEditImage
-                editView.label.text = .inactiveEditButtonTitle
+                editView.imageView?.image = .inactiveEditImage
+                editView.label?.text = .inactiveEditButtonTitle
             }
         }
     }

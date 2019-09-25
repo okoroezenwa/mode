@@ -122,6 +122,9 @@
 		BE50D7161FA1C5DD00D22D67 /* GradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE50D7151FA1C5DD00D22D67 /* GradientView.swift */; };
 		BE512F4F1D53C6A400775142 /* MELVolumeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE512F4E1D53C6A400775142 /* MELVolumeView.swift */; };
 		BE5191991F9398FC0001DD94 /* SectionIndexCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5191981F9398FC0001DD94 /* SectionIndexCollectionViewCell.swift */; };
+		BE51B719230945620039C790 /* BorderedButtonView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BE51B718230945620039C790 /* BorderedButtonView.xib */; };
+		BE51B71B2309476B0039C790 /* BorderedButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE51B71A2309476B0039C790 /* BorderedButtonView.swift */; };
+		BE51B71D230959800039C790 /* BorderedButtonContaining.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE51B71C230959800039C790 /* BorderedButtonContaining.swift */; };
 		BE53A9A41DD0D5F100FB3073 /* TableHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BE53A9A31DD0D5F100FB3073 /* TableHeaderView.xib */; };
 		BE53A9A61DD0D77000FB3073 /* TableHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE53A9A51DD0D77000FB3073 /* TableHeaderView.swift */; };
 		BE5439A51E87E62D0082645C /* ESTMusicIndicatorContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5439A31E87E62D0082645C /* ESTMusicIndicatorContentView.swift */; };
@@ -157,9 +160,9 @@
 		BE6D57912027079F00F0B7AA /* Fonts + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE6D57902027079F00F0B7AA /* Fonts + Extensions.swift */; };
 		BE6E33061F1E821700D17DD6 /* GesturesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE6E33051F1E821700D17DD6 /* GesturesTableViewController.swift */; };
 		BE7223B61ECE7B3500A7C071 /* InfoCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7223B51ECE7B3500A7C071 /* InfoCollectionReusableView.swift */; };
-		BE7314EE1E2635FA0050A46B /* BorderedButtonView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BE7314ED1E2635FA0050A46B /* BorderedButtonView.xib */; };
+		BE7314EE1E2635FA0050A46B /* PillButtonView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BE7314ED1E2635FA0050A46B /* PillButtonView.xib */; };
 		BE7314F01E2638A30050A46B /* EffectBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7314EF1E2638A30050A46B /* EffectBanner.swift */; };
-		BE7314F21E263FF80050A46B /* BorderedButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7314F11E263FF80050A46B /* BorderedButtonView.swift */; };
+		BE7314F21E263FF80050A46B /* PillButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7314F11E263FF80050A46B /* PillButtonView.swift */; };
 		BE73B1E31D96708C0059D084 /* SongCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = BE73B1E21D96708C0059D084 /* SongCell.xib */; };
 		BE73B1E51D96D9C30059D084 /* SongTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE73B1E41D96D9C20059D084 /* SongTableViewCell.swift */; };
 		BE7486EA1D982CA60062EB68 /* NavigationAnimationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7486E91D982CA60062EB68 /* NavigationAnimationController.swift */; };
@@ -463,6 +466,9 @@
 		BE50D7151FA1C5DD00D22D67 /* GradientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientView.swift; sourceTree = "<group>"; };
 		BE512F4E1D53C6A400775142 /* MELVolumeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MELVolumeView.swift; path = Melody/MELVolumeView.swift; sourceTree = "<group>"; };
 		BE5191981F9398FC0001DD94 /* SectionIndexCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionIndexCollectionViewCell.swift; sourceTree = "<group>"; };
+		BE51B718230945620039C790 /* BorderedButtonView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BorderedButtonView.xib; sourceTree = "<group>"; };
+		BE51B71A2309476B0039C790 /* BorderedButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderedButtonView.swift; sourceTree = "<group>"; };
+		BE51B71C230959800039C790 /* BorderedButtonContaining.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderedButtonContaining.swift; sourceTree = "<group>"; };
 		BE53A9A31DD0D5F100FB3073 /* TableHeaderView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = TableHeaderView.xib; path = Melody/TableHeaderView.xib; sourceTree = "<group>"; };
 		BE53A9A51DD0D77000FB3073 /* TableHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TableHeaderView.swift; path = Melody/TableHeaderView.swift; sourceTree = "<group>"; };
 		BE5439A31E87E62D0082645C /* ESTMusicIndicatorContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ESTMusicIndicatorContentView.swift; sourceTree = "<group>"; };
@@ -499,9 +505,9 @@
 		BE6D57902027079F00F0B7AA /* Fonts + Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Fonts + Extensions.swift"; sourceTree = "<group>"; };
 		BE6E33051F1E821700D17DD6 /* GesturesTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GesturesTableViewController.swift; sourceTree = "<group>"; };
 		BE7223B51ECE7B3500A7C071 /* InfoCollectionReusableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InfoCollectionReusableView.swift; sourceTree = "<group>"; };
-		BE7314ED1E2635FA0050A46B /* BorderedButtonView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BorderedButtonView.xib; sourceTree = "<group>"; };
+		BE7314ED1E2635FA0050A46B /* PillButtonView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PillButtonView.xib; sourceTree = "<group>"; };
 		BE7314EF1E2638A30050A46B /* EffectBanner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EffectBanner.swift; sourceTree = "<group>"; };
-		BE7314F11E263FF80050A46B /* BorderedButtonView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BorderedButtonView.swift; sourceTree = "<group>"; };
+		BE7314F11E263FF80050A46B /* PillButtonView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PillButtonView.swift; sourceTree = "<group>"; };
 		BE73B1E21D96708C0059D084 /* SongCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = SongCell.xib; path = Melody/SongCell.xib; sourceTree = "<group>"; };
 		BE73B1E41D96D9C20059D084 /* SongTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongTableViewCell.swift; sourceTree = "<group>"; };
 		BE7486E91D982CA60062EB68 /* NavigationAnimationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationAnimationController.swift; sourceTree = "<group>"; };
@@ -989,7 +995,8 @@
 				BE5BC87D1E18E7A4003889F9 /* NoAccessView.swift */,
 				BE53A9A51DD0D77000FB3073 /* TableHeaderView.swift */,
 				BE21DAFD1F229EDF00441BF6 /* TableFooterView.swift */,
-				BE7314F11E263FF80050A46B /* BorderedButtonView.swift */,
+				BE7314F11E263FF80050A46B /* PillButtonView.swift */,
+				BE51B71A2309476B0039C790 /* BorderedButtonView.swift */,
 				BE7314EF1E2638A30050A46B /* EffectBanner.swift */,
 				BEF426831F4DF1F700DA9BF8 /* InvertIgnoringImageView.swift */,
 				BEF426861F4DF2D900DA9BF8 /* InvertIgnoringView.swift */,
@@ -1093,6 +1100,7 @@
 		BE5574691E7D025F00E870A5 /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
+				BE51B71C230959800039C790 /* BorderedButtonContaining.swift */,
 				BE11E52B1D7970FD0086A570 /* Protocols.swift */,
 				BE55746A1E7D027000E870A5 /* Arrangeable.swift */,
 				BE55746C1E7D02EF00E870A5 /* InfoLoader.swift */,
@@ -1168,7 +1176,8 @@
 				BECDEBFF1EF024BE0037892B /* RateShareView.xib */,
 				BE1C349C1E672DF000561D28 /* ScrollHeaderSubview.xib */,
 				BE25606B1E74428E00858C02 /* HeaderView.xib */,
-				BE7314ED1E2635FA0050A46B /* BorderedButtonView.xib */,
+				BE7314ED1E2635FA0050A46B /* PillButtonView.xib */,
+				BE51B718230945620039C790 /* BorderedButtonView.xib */,
 				BE53A9A31DD0D5F100FB3073 /* TableHeaderView.xib */,
 				BE56D13D1DD4C96D00BBF64B /* PlaylistCollectionCell.xib */,
 				BE73B1E21D96708C0059D084 /* SongCell.xib */,
@@ -1487,7 +1496,7 @@
 				BE573CEE1E669D0E0021DCBD /* Presented.storyboard in Resources */,
 				BE0F5C2E1D2D663F00C9E8A1 /* Assets.xcassets in Resources */,
 				BEC04C041D30257B0095D856 /* MyriadPro-It.otf in Resources */,
-				BE7314EE1E2635FA0050A46B /* BorderedButtonView.xib in Resources */,
+				BE7314EE1E2635FA0050A46B /* PillButtonView.xib in Resources */,
 				BEC04C071D30257B0095D856 /* MyriadPro-Regular.otf in Resources */,
 				BEC933D31F6D9B1300FB5984 /* SwipeInfo.plist in Resources */,
 				BEB3AC701DD881AD00682854 /* SmallPlaylistCollectionCell.xib in Resources */,
@@ -1512,6 +1521,7 @@
 				BEC0B1672021D506008CBEB5 /* Light App Icon Wide@2x.png in Resources */,
 				BEC0B1542021D46D008CBEB5 /* Dark App Icon Wide@3x.png in Resources */,
 				BECDEC001EF024BE0037892B /* RateShareView.xib in Resources */,
+				BE51B719230945620039C790 /* BorderedButtonView.xib in Resources */,
 				BEC0B1552021D46D008CBEB5 /* Dark App Icon Wide@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1727,10 +1737,12 @@
 				BEC933D81F6D9B2100FB5984 /* SwipeActionTransitioning.swift in Sources */,
 				BEAEF61C1D5DB09D00156271 /* CollectorViewController.swift in Sources */,
 				BEE7F64A1E637C1F005927C7 /* UIImageEffects.m in Sources */,
+				BE51B71D230959800039C790 /* BorderedButtonContaining.swift in Sources */,
 				BEF426841F4DF1F700DA9BF8 /* InvertIgnoringImageView.swift in Sources */,
 				BEC933D61F6D9B1C00FB5984 /* SwipeActionButton.swift in Sources */,
 				BE3F63211DCE2E71009173AB /* PlaylistCollectionViewCell.swift in Sources */,
 				BEF691CE1EA66AA500EA7B3A /* MELScrollView.swift in Sources */,
+				BE51B71B2309476B0039C790 /* BorderedButtonView.swift in Sources */,
 				BE25606E1E74463800858C02 /* HeaderView.swift in Sources */,
 				BE6432C41E280A9100C640F2 /* ActionsViewController.swift in Sources */,
 				BE512F4F1D53C6A400775142 /* MELVolumeView.swift in Sources */,
@@ -1804,7 +1816,7 @@
 				BE22BED91F1FA8CF00075207 /* ThemeViewController.swift in Sources */,
 				BEDC53AB1EBCE06D00566424 /* CellSecondaryDetailsSettingViewController.swift in Sources */,
 				BE2189251EF2CB4700B40CEE /* Refreshable.swift in Sources */,
-				BE7314F21E263FF80050A46B /* BorderedButtonView.swift in Sources */,
+				BE7314F21E263FF80050A46B /* PillButtonView.swift in Sources */,
 				BEC933D21F6D9B0800FB5984 /* SwipeExtensions.swift in Sources */,
 				BE2A692B1F1E2A0600DEE878 /* ThemeTableViewController.swift in Sources */,
 				BE6A9CB81D7F989B00FA4CB9 /* SongsViewController.swift in Sources */,
@@ -2020,7 +2032,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				sharedBuildNumber = 15777;
+				sharedBuildNumber = 16005;
 				sharedVersionNumber = 1.2;
 			};
 			name = Debug;
@@ -2072,7 +2084,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				VALIDATE_PRODUCT = YES;
-				sharedBuildNumber = 15777;
+				sharedBuildNumber = 16005;
 				sharedVersionNumber = 1.2;
 			};
 			name = Release;

@@ -92,7 +92,7 @@ class TableDelegate: NSObject, Detailing {
         
         guard let container = container, container.alphaNumericCritieria.contains(container.sortCriteria) else { return }
         
-        container.sortItems()
+        container.sortAllItems()
     }
     
     @objc func items(at indexPath: IndexPath, filtering: Bool = false) -> [MPMediaItem] {
@@ -339,11 +339,6 @@ extension TableDelegate: UITableViewDelegate, UITableViewDataSource {
             case .random: return indexPath.row
             
             case .standard:
-            
-//                if let vc = container as? ArtistSongsViewController, let entityVC = vc.entityVC, Set([AlbumBasedCollectionKind.artist, .albumArtist]).contains(entityVC.kind) {
-//
-//                    return container!.sections[indexPath.section].startingPoint + indexPath.row
-//                }
                 
                 switch querySectionsType {
                     
@@ -448,11 +443,6 @@ extension TableDelegate {
                 
                 case .standard:
                     
-//                    if let vc = container as? ArtistSongsViewController, let entityVC = vc.entityVC, Set([AlbumBasedCollectionKind.artist, .albumArtist]).contains(entityVC.kind) {
-//
-//                        return container!.sections.count
-//                    }
-                    
                     switch querySectionsType {
                         
                         case .collections: return container!.query?.collectionSections?.count ?? 1
@@ -489,11 +479,6 @@ extension TableDelegate {
             switch container!.sortCriteria {
                 
                 case .standard:
-                    
-//                    if let vc = container as? ArtistSongsViewController, let entityVC = vc.entityVC, Set([AlbumBasedCollectionKind.artist, .albumArtist]).contains(entityVC.kind) {
-//
-//                        return container!.sections[section].count
-//                    }
                     
                     switch querySectionsType {
                         
@@ -558,10 +543,10 @@ extension TableDelegate {
                         
                         case .artistSongs:
                             
-//                            if let vc = container as? ArtistSongsViewController, let entityVC = vc.entityVC, Set([AlbumBasedCollectionKind.artist, .albumArtist]).contains(entityVC.kind) {
-//
-//                                return song.albumTrackNumber//container!.sections[indexPath.section].startingPoint + indexPath.row + 1
-//                            }
+                            if let vc = container as? ArtistSongsViewController, Set([SortCriteria.albumName, .albumYear]).contains(vc.sortCriteria) {
+
+                                return song.albumTrackNumber
+                            }
                             
                             return querySectionsType == .items && container!.sortCriteria == .standard ? (container!.query?.itemSections?[indexPath.section].range.location ?? 0) + indexPath.row + 1 : container!.sections[indexPath.section].startingPoint + indexPath.row + 1
                         
@@ -875,11 +860,6 @@ extension TableDelegate {
                 
                 let text: String? = {
                     
-//                        if let vc = container as? ArtistSongsViewController, let entityVC = vc.entityVC, Set([AlbumBasedCollectionKind.artist, .albumArtist]).contains(entityVC.kind) {
-//
-//                            return container?.sections[section].title//.capitalized
-//                        }
-                    
                     switch location {
                         
                         case .album: return container?.sections[section].title//.capitalized
@@ -940,11 +920,6 @@ extension TableDelegate {
             switch container!.sortCriteria {
                 
                 case .standard:
-                    
-//                    if let vc = container as? ArtistSongsViewController, let entityVC = vc.entityVC, Set([AlbumBasedCollectionKind.artist, .albumArtist]).contains(entityVC.kind) {
-//
-//                        return vc.sections.map({ $0.indexTitle })
-//                    }
                     
                     let details: (array: [String]?, isCorrectOrder: Bool) = {
                         
@@ -1048,6 +1023,11 @@ extension TableDelegate {
 
 extension TableDelegate: EntityCellDelegate {
     
+    func editButtonHeld(in cell: SongTableViewCell) {
+        
+        Transitioner.shared.performDeepSelection(from: container as? UIViewController, title: cell.nameLabel.text)
+    }
+    
     func editButtonTapped(in cell: SongTableViewCell) {
         
         scrollViewTapped(in: cell)
@@ -1081,9 +1061,14 @@ extension TableDelegate: EntityCellDelegate {
             actions.insert(actionable.singleItemAlertAction(for: .library, entity: .song, using: item, from: vc), at: 3)
         }
         
-        Transitioner.shared.showAlert(title: cell.nameLabel.text, from: vc, with: actions)
+        vc.showAlert(title: cell.nameLabel.text, with: actions)
+    }
+    
+    func accessoryButtonHeld(in cell: SongTableViewCell) {
         
-//        vc.present(UIAlertController.withTitle(nil, message: cell.nameLabel.text, style: .actionSheet, actions: actions + [.cancel()] ), animated: true, completion: nil)
+        guard let tableView = container?.tableView, let indexPath = tableView.indexPath(for: cell), let action = self.tableView(tableView, editActionsForRowAt: indexPath, for: .right)?.first else { return }
+        
+        action.handler?(action, indexPath)
     }
     
     func scrollViewTapped(in cell: SongTableViewCell) {
@@ -1166,7 +1151,7 @@ extension TableDelegate: EntityCellDelegate {
                     }))
                 }
                 
-                Transitioner.shared.showAlert(title: cell.nameLabel.text, from: container.filterContainer ?? container as? UIViewController, context: .other, with: actions)
+                (container.filterContainer ?? container as? UIViewController)?.showAlert(title: cell.nameLabel.text, context: .other, with: actions)
                 
             } else {
                 
@@ -1178,6 +1163,13 @@ extension TableDelegate: EntityCellDelegate {
                 })
             }
         }
+    }
+    
+    func artworkHeld(in cell: SongTableViewCell) {
+        
+        guard musicPlayer.nowPlayingItem != nil, let indexPath = container?.tableView.indexPath(for: cell) else { return }
+        
+        getActionDetails(from: SongAction.queue(name: cell.nameLabel.text, query: query(at: indexPath, filtering: container?.filterContainer != nil)), indexPath: indexPath, vc: container?.filterContainer ?? container as? UIViewController, useAlternateTitle: true)?.handler()
     }
 }
 

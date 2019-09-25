@@ -220,7 +220,7 @@ class FilterView: UIView {
         
         guard let indexPath = collectionView.indexPathForItem(at: gr.location(in: collectionView)) else {
             
-            Transitioner.shared.showAlert(title: nil, from: topViewController, with: settings)
+            topViewController?.showAlert(title: nil, with: settings)
             
             return
         }
@@ -290,7 +290,7 @@ class FilterView: UIView {
             }
         })
         
-        Transitioner.shared.showAlert(title: property?.title ?? "Other", from: topViewController, with: hide, move, settings)
+        topViewController?.showAlert(title: property?.title ?? "Other", with: hide, move, settings)
     }
     
     class func with(context: FilterViewContext) -> FilterView {
@@ -451,15 +451,11 @@ class FilterView: UIView {
             
             case .filter(filter: _, container: let filterContainer) where filterContainer is FilterViewController:
                 
-                Transitioner.shared.showAlert(title: container.queue.count.fullCountText(for: .song), from: filterContainer, with: collectorActions)
-                
-//                filterContainer?.present(UIAlertController.withTitle(container.queue.count.fullCountText(for: .song), message: nil, style: .actionSheet, actions: collectorActions), animated: true, completion: nil)
+                filterContainer?.showAlert(title: container.queue.count.fullCountText(for: .song), with: collectorActions)
             
             default:
                 
-                Transitioner.shared.showAlert(title: container.queue.count.fullCountText(for: .song), from: container, with: collectorActions)
-                
-//                container.present(UIAlertController.withTitle(container.queue.count.fullCountText(for: .song), message: nil, style: .actionSheet, actions: collectorActions), animated: true, completion: nil)
+                container.showAlert(title: container.queue.count.fullCountText(for: .song), with: collectorActions)
         }
     }
     
@@ -765,9 +761,7 @@ extension FilterView: UICollectionViewDelegate, UICollectionViewDataSource {
                 return AlertAction.init(title: property.title, style: .default, accessoryType: .check({ isCurrentProperty }), handler: { [weak self] in self?.selectCell(at: indexPath, usingOtherArray: true, arrayIndex: index) })
             })
             
-            Transitioner.shared.showAlert(title: nil, from: topViewController, with: actions)
-            
-//            topViewController?.present(UIAlertController.withTitle(nil, message: nil, style: .actionSheet, actions: actions + [.cancel()]), animated: true, completion: nil)
+            topViewController?.showAlert(title: nil, with: actions)
             
             collectionView.deselectItem(at: indexPath, animated: true)
             

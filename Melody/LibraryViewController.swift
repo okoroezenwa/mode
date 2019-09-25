@@ -136,7 +136,16 @@ class LibraryViewController: UIViewController, Contained, OptionsContaining, Nav
         
         set { }
     }
-    var rightViewMode: VisualEffectNavigationBar.RightViewMode = .none
+    var artworkDetails: NavigationBarArtworkDetails?
+    var firstButtonUpdateUsed = false
+    var buttonDetails: NavigationBarButtonDetails = (.actions, true) {
+        
+        didSet {
+            
+            container?.visualEffectNavigationBar.prepareRightButton(for: self, animated: firstButtonUpdateUsed)
+            firstButtonUpdateUsed = true
+        }
+    }
     var inset: CGFloat { return VisualEffectNavigationBar.Location.main.total }
     lazy var preferredTitle: String? = title
 
@@ -452,5 +461,7 @@ extension LibraryViewController {
 
 protocol LibrarySectionContainer {
     
+    var libraryVC: LibraryViewController? { get }
     func updateTopLabels(setTitle: Bool)
+    func getRecents()
 }

@@ -60,7 +60,14 @@ extension SongActionable {
             return (collectionTitle ?? "") + actionableSongs.count.fullCountText(for: .song)
         }()
         
-        Transitioner.shared.showAlert(title: title, from: vc, with: actions)
+        let infoAccessory: () -> AccessoryButtonAction? = { [weak vc] in
+            
+            guard let vc = vc, let entityVC = vc.parent as? EntityItemsViewController else { return nil }
+            
+            return { _, presenter in presenter.dismiss(animated: true, completion: { entityVC.showOptions() }) }
+        }
+        
+        vc.showAlert(title: title, with: actions, segmentDetails: (isInDebugMode && (vc is InfoViewController).inverted) ? ([.init(title: "All"), .init(title: "Selected")], [{ _ in }, { _ in }]) : ([], []), rightAction: infoAccessory())
         
 //        let alert = UIAlertController.withTitle(nil, message: title, style: .actionSheet, actions: actions)
 //        vc.present(alert, animated: true, completion: nil)
@@ -303,7 +310,7 @@ class SongActionManager: NSObject {
                     collectionActionable.actionableActivityIndicator.startAnimating()
                     collectionActionable.shouldFillActionableSongs = true
                     collectionActionable.showActionsAfterFilling = true
-                    (collectionActionable.editButton.superview as? BorderedButtonView)?.stackView.alpha = 0
+                    (collectionActionable.editButton.superview as? PillButtonView)?.stackView?.alpha = 0
                     
                     if collectionActionable.actionableSongs.isEmpty {
                         
@@ -375,9 +382,9 @@ class SongActionManager: NSObject {
             
             if isEditing {
                 
-                if sender is UILongPressGestureRecognizer || sender is UISwipeGestureRecognizer || sender is UIAlertAction || (sender as? String) == "end" || ((container is CollectorViewController || container is NewPlaylistViewController || (container is FilterViewController && (container as? FilterViewController)?.filtering == false)) && (sender is UIButton || sender is UITapGestureRecognizer)) || sender is SwipeAction || sender is Notification {
-                    
-                    if let superview = actionable.editButton.superview as? BorderedButtonView {
+//                if sender is UILongPressGestureRecognizer || sender is UISwipeGestureRecognizer || sender is UIAlertAction || (sender as? String) == "end" || ((container is CollectorViewController || container is NewPlaylistViewController || (container is FilterViewController && (container as? FilterViewController)?.filtering == false)) && (sender is UIButton || sender is UITapGestureRecognizer)) || sender is SwipeAction || sender is Notification {
+                
+                    if let superview = actionable.editButton.superview as? PillButtonView {
                         
                         superview.animateChange(title: .inactiveEditButtonTitle, image: .inactiveEditImage)
                     
@@ -406,7 +413,7 @@ class SongActionManager: NSObject {
                             })
                             
                         }, completion: { _ in snapshot.removeFromSuperview() })
-                    }
+//                    }
                 }
             }
             
@@ -420,14 +427,14 @@ class SongActionManager: NSObject {
                     
                     filterVC.handleLeftSwipe(sender)
                 
-                } else if let collectionActionable = actionable as? CollectionActionable {
+                /*} else if let collectionActionable = actionable as? CollectionActionable {
                     
                     if collectionActionable.actionableSongs.isEmpty || collectionActionable.actionableOperation?.isExecuting == true {
                         
                         collectionActionable.actionableActivityIndicator.startAnimating()
                         collectionActionable.shouldFillActionableSongs = true
                         collectionActionable.showActionsAfterFilling = true
-                        (collectionActionable.editButton.superview as? BorderedButtonView)?.stackView.alpha = 0
+                        (collectionActionable.editButton.superview as? PillButtonView)?.stackView?.alpha = 0
                         collectionActionable.editButton.superview?.isUserInteractionEnabled = false
                         
                         if collectionActionable.actionableSongs.isEmpty {
@@ -440,11 +447,11 @@ class SongActionManager: NSObject {
                         return
                     }
                     
-                    showActionsForAll(sender)
+                    container.handleLeftSwipe(actionable.editButton as Any)//showActionsForAll(sender)
                     
-                } else {
+                */} else {
                     
-                    showActionsForAll(sender)
+                    container.handleLeftSwipe(actionable.editButton as Any)//showActionsForAll(sender)
                 }
                 
             } else {
@@ -456,14 +463,14 @@ class SongActionManager: NSObject {
             
             if !isEditing {
                 
-                let details: (title: String, image: UIImage) = container is CollectorViewController || container is NewPlaylistViewController || (container is FilterViewController && (container as? FilterViewController)?.filtering == false) ? ("Done", .doneImage) : (.activeEditButtonTitle, .moreEditImage)
+                let details: (title: String, image: UIImage) = /*container is CollectorViewController || container is NewPlaylistViewController || (container is FilterViewController && (container as? FilterViewController)?.filtering == false) ?*/ ("Done", .doneImage)// : (.activeEditButtonTitle, .moreEditImage)
                 
                 if let vc = container as? NewPlaylistViewController {
                     
                     vc.nameSearchBar.resignFirstResponder()
                 }
                 
-                if let superview = actionable.editButton.superview as? BorderedButtonView {
+                if let superview = actionable.editButton.superview as? PillButtonView {
                     
                     superview.animateChange(title: details.title, image: details.image)
                 
@@ -809,7 +816,7 @@ extension SingleItemActionable {
             
             case .show(title: let title, context: let context, canDisplayInLibrary: let canDisplay):
             
-                return (action: action, title: "Go To...", style: .default, {
+                return (action: action, title: useSystemAlerts ? "Show..." : "Go To...", style: .default, {
                     
                     guard let details: (entities: [Entity], albumArtOverride: Bool) = {
                         
@@ -907,12 +914,20 @@ extension SingleItemActionable {
                         }))
                     })
                     
-                    Transitioner.shared.showAlert(title: item.title(for: entity, basedOn: entity),
-                                                  subtitle: "Go to...",
-                                                  from: vc,
+                    if useSystemAlerts {
+                        
+                        let details = self.singleItemActionDetails(for: .info(context: context), entity: entity, using: item, from: vc, useAlternateTitle: true)
+                        
+                        actions.insert(.init(title: details.title, handler: details.handler), at: 0)
+                        
+                        actions.append(.init(title: "Show in \(2.countText(for: entity, compilationOverride: song.isCompilation, capitalised: true))", handler: { verifiable.showInLibrary(entity: item, type: entity, unwinder: vc) }))
+                    }
+                    
+                    vc.showAlert(title: item.title(for: entity, basedOn: entity),
+                                                  subtitle: useSystemAlerts ? "Show..." : "Go to...",
                                                   context: .show,
                                                   with: actions,
-                                                  segmentDetails: (canDisplay ? [.init(title: "Show in \(2.countText(for: entity, compilationOverride: song.isCompilation, capitalised: true))")] : [], canDisplay ? { alertVC in verifiable.showInLibrary(entity: item, type: entity, unwinder: alertVC) } : nil),
+                                                  segmentDetails: (canDisplay ? [.init(title: "Show in \(2.countText(for: entity, compilationOverride: song.isCompilation, capitalised: true))")] : [], canDisplay ? [{ alertVC in verifiable.showInLibrary(entity: item, type: entity, unwinder: alertVC) }] : []),
                                                   rightAction: { [weak self] _, presenter in
                         
                         presenter.dismiss(animated: true, completion: {
@@ -941,7 +956,7 @@ extension SingleItemActionable {
                         })
                     })
                     
-                    Transitioner.shared.showAlert(title: song.validTitle, subtitle: "Rate...", from: vc, with: actions)
+                    vc.showAlert(title: song.validTitle, subtitle: "Rate...", with: actions)
                 })
             
             case .likedState:
@@ -983,7 +998,7 @@ extension SingleItemActionable {
                     guard let container = vc as? FilterContaining & FilterContextDiscoverable else { return }
                     
                     container.filterContainer?.saveRecentSearch(withTitle: container.filterContainer?.searchBar?.text, resignFirstResponder: false)
-                    container.filterContainer?.searchBar.resignFirstResponder
+                    _ = container.filterContainer?.searchBar.resignFirstResponder
                     container.filterContainer?.dismiss(animated: true, completion: nil)
                     container.revealEntity(indexPath)
                 })

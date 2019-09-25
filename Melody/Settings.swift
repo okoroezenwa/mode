@@ -172,6 +172,44 @@ var showNowPlayingUpdateAlert: Bool {
     set { prefs.set(newValue, forKey: .showNowPlayingUpdateAlert) }
 }
 
+var navBarArtworkMode: VisualEffectNavigationBar.ArtworkMode {
+    
+    get { return VisualEffectNavigationBar.ArtworkMode(rawValue: prefs.integer(forKey: .navBarArtworkMode)) ?? .small }
+    
+    set { prefs.set(newValue.rawValue, forKey: .navBarArtworkMode) }
+}
+
+var allowPlayIncrementingSkip: Bool {
+    
+    get { return prefs.bool(forKey: .allowPlayIncrementingSkip) }
+    
+    set { prefs.set(newValue, forKey: .allowPlayIncrementingSkip) }
+}
+
+var navBarConstant: TopBarOffset {
+    
+    get { return VisualEffectNavigationBar.ArtworkMode(rawValue: prefs.integer(forKey: .navBarConstant)) ?? .large }
+    
+    set { prefs.set(newValue.rawValue, forKey: .navBarConstant) }
+}
+
+var useSystemSwitch: Bool {
+    
+    get { return prefs.bool(forKey: .useSystemSwitch) }
+    
+    set {
+        
+        prefs.set(newValue, forKey: .useSystemSwitch)
+        notifier.post(name: .useSystemSwitchChanged, object: nil)
+    }
+}
+
+var useSystemAlerts: Bool {
+    
+    get { return prefs.bool(forKey: .useSystemAlerts) }
+    
+    set { prefs.set(newValue, forKey: .useSystemAlerts) }
+}
 
 class Settings {
     
@@ -316,7 +354,7 @@ class Settings {
             .useBlackColorBackground: false,
             .hiddenFilterProperties: [Int](),
             .hiddenLibrarySections: [Int](),
-            "barConstant": 2,//isInDebugMode ? 2 : 0,
+            .navBarConstant: TopBarOffset.large.rawValue,
             .activeFont: Font.system.rawValue,
             .barBlurBehaviour: BarBlurBehavour.all.rawValue/*,
             .visibleInfoItems: InfoSection.allCases.map({ $0.rawValue })*/,
@@ -324,7 +362,11 @@ class Settings {
             .showLastFMLoginAlert: true,
             .showScrobbleAlert: false,
             .showLoveAlert: true,
-            .showNowPlayingUpdateAlert: false
+            .showNowPlayingUpdateAlert: false,
+            .navBarArtworkMode: VisualEffectNavigationBar.ArtworkMode.small.rawValue,
+            .allowPlayIncrementingSkip: isInDebugMode,
+            .useSystemSwitch: true,
+            .useSystemAlerts: false
         ])
         
         sharedDefaults.register(defaults: [
@@ -601,6 +643,11 @@ extension String {
     static let showScrobbleAlert = "showScrobbleAlert"
     static let showLoveAlert = "showLoveAlert"
     static let showNowPlayingUpdateAlert = "showNowPlayingUpdateAlert"
+    static let navBarArtworkMode = "navBarArtworkMode"
+    static let allowPlayIncrementingSkip = "allowPlayIncrementingSkip"
+    static let navBarConstant = "barConstant"
+    static let useSystemSwitch = "useSystemSwitch"
+    static let useSystemAlerts = "useSystemAlerts"
 }
 
 // MARK: - Notification Settings Constants
@@ -663,6 +710,9 @@ extension NSNotification.Name {
     static let lineHeightsCalculated = Notification.Name.init("lineHeightsCalculated")
     static let headerHeightCalculated = Notification.Name.init("headerHeightCalculated")
     static let visibleInfoItemsChanged = nameByAppending(to: .visibleInfoItems)
+    static let navBarArtworkModeChanged = nameByAppending(to: .navBarArtworkMode)
+    static let navBarConstantChanged = nameByAppending(to: .navBarConstant)
+    static let useSystemSwitchChanged = nameByAppending(to: .useSystemSwitch)
     
     static func nameByAppending(to text: String) -> Notification.Name {
         

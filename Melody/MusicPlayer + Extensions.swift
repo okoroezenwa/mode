@@ -168,7 +168,7 @@ public extension MPMusicPlayerController {
         
         if let vc = vc, useAlert {
             
-            Transitioner.shared.showAlert(title: title, subtitle: subtitle, from: vc, context: .other, with: .init(info: .init(title: alertTitle, accessoryType: .none), requiresDismissalFirst: true, handler: play))
+            vc.showAlert(title: title, subtitle: subtitle, context: .other, with: .init(info: .init(title: alertTitle, accessoryType: .none), requiresDismissalFirst: true, handler: play))
             
 //            let interrupt = UIAlertAction.init(title: alertTitle, style: .default, handler: { _ in
 //

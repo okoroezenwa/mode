@@ -50,6 +50,7 @@ class SettingsTableViewController: UITableViewController {
         .init(4, 7): .init(title: "Numbers Below Letters", accessoryType: .onOff(isOn: { numbersBelowLetters }, action: { [weak self] in self?.toggleNumbersBelow() })),
         .init(4, 8): .init(title: "Show Info Buttons", accessoryType: .onOff(isOn: { showInfoButtons }, action: { [weak self] in self?.toggleInfoButtons() })),
         .init(4, 9): .init(title: "Last.fm", accessoryType: .chevron),
+        .init(4, 10): .init(title: "Use System Alerts", accessoryType: .onOff(isOn: { useSystemAlerts }, action: { useSystemAlerts.toggle() })),
         .init(5, 0): .init(title: "Never", accessoryType: .check({ screenLockPreventionMode == InsomniaMode.disabled.rawValue })),
         .init(5, 1): .init(title: "Always", accessoryType: .check({ screenLockPreventionMode == InsomniaMode.always.rawValue })),
         .init(5, 2): .init(title: "While Charging", accessoryType: .check({ screenLockPreventionMode == InsomniaMode.whenCharging.rawValue })),
@@ -232,7 +233,7 @@ class SettingsTableViewController: UITableViewController {
             }
         })
         
-        Transitioner.shared.showAlert(title: nil, from: self, with: reset)
+        showAlert(title: nil, with: reset)
         
 //        present(UniversalMethods.alertController(withTitle: nil, message: nil, preferredStyle: .actionSheet, actions: reset, UniversalMethods.cancelAlertAction()), animated: true, completion: nil)
     }
@@ -269,7 +270,7 @@ class SettingsTableViewController: UITableViewController {
             
             case 3: return 2
             
-            case 4: return 10
+            case 4: return 11
             
             case 5: return 3
             

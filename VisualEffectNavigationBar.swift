@@ -8,7 +8,7 @@
 
 import UIKit
 
-typealias NavigatableDetails = (title: String?, backLabelText: String?)
+typealias TopBarOffset = VisualEffectNavigationBar.ArtworkMode
 
 var barConstant: Int { return prefs.integer(forKey: "barConstant") }
 
@@ -20,8 +20,8 @@ class VisualEffectNavigationBar: MELVisualEffectView {
     @IBOutlet var artworkContainer: InvertIgnoringView!
     @IBOutlet var artworkImageView: InvertIgnoringImageView!
     @IBOutlet var clearButtonView: UIView!
-    @IBOutlet var entityImageView: MELImageView!
-    @IBOutlet var entityImageViewContainer: UIView!
+    @IBOutlet var entityImageView: InvertIgnoringImageView!
+    @IBOutlet var entityImageViewContainer: InvertIgnoringView!
     @IBOutlet var backView: UIView!
     @IBOutlet var backBorderView: UIView!
     @IBOutlet var titleScrollView: MELScrollView!
@@ -29,7 +29,6 @@ class VisualEffectNavigationBar: MELVisualEffectView {
     @IBOutlet var artworkView: UIView!
     @IBOutlet var rightButton: UIButton!
     @IBOutlet var rightView: UIView!
-    @IBOutlet var rightViewWidthConstraint: NSLayoutConstraint!
     @IBOutlet var stackViewTrailingConstraint: NSLayoutConstraint!
     @IBOutlet var clearBorderView: MELBorderView!
     @IBOutlet var titleLabelTopConstraint: NSLayoutConstraint!
@@ -39,11 +38,53 @@ class VisualEffectNavigationBar: MELVisualEffectView {
     @IBOutlet var backStackViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet var backBorderViewContainer: UIView!
     @IBOutlet var backBorderViewContainerBottomConstraint: NSLayoutConstraint!
+    @IBOutlet var containerView: UIView!
+    @IBOutlet var rightViewWidthConstraint: NSLayoutConstraint!
     
     var stackViewTopConstraint: NSLayoutConstraint!
     
+    enum ArtworkMode: Int, CaseIterable {
+        
+        case none, small, large
+        
+        var title: String {
+            
+            switch self {
+                
+                case .none: return "None"
+                
+                case .small: return "Small"
+                
+                case .large: return "Large"
+            }
+        }
+    }
     enum AnimationSection { case preparation, firstHalf, secondHalf, end(completed: Bool) }
-    enum RightViewMode { case none, button(hidden: Bool), artwork(UIImage?, details: RadiusDetails) }
+    enum RightViewMode { case none, button(image: UIImage, hidden: Bool), artwork(UIImage?, details: RadiusDetails) }
+    enum RightButtonType {
+        
+        case actions, clear
+        
+        var bottomOffset: CGFloat {
+            
+            switch self {
+                
+                case .clear: return 22
+                
+                case .actions: return 26
+            }
+        }
+        
+        var image: UIImage {
+            
+            switch self {
+                
+                case .actions: return #imageLiteral(resourceName: "More13")
+                
+                case .clear: return #imageLiteral(resourceName: "Discard")
+            }
+        }
+    }
     
     enum Location {
         
@@ -76,14 +117,8 @@ class VisualEffectNavigationBar: MELVisualEffectView {
         var total: CGFloat { return inset + constant }
     }
     
-    var titleLabelSnapshot: UIView? { didSet { oldValue?.removeFromSuperview() } }
-    var backLabelSnapshot: UIView? { didSet { oldValue?.removeFromSuperview() } }
-    var backBorderViewSnapshot: UIView? { didSet { oldValue?.removeFromSuperview() } }
-    var rightViewSnapshot: UIView? { didSet { oldValue?.removeFromSuperview() } }
-    var rightButtonSnapshot: UIView? { didSet { oldValue?.removeFromSuperview() } }
-    
-    var isAnimatingTitles = false
-    var isAnimatingRightView = false
+    var snapshot: UIView? { didSet { oldValue?.removeFromSuperview() } }
+    var isAnimating = false
     
     var containerVC: ContainerViewController? { return appDelegate.window?.rootViewController as? ContainerViewController }
     
@@ -97,15 +132,21 @@ class VisualEffectNavigationBar: MELVisualEffectView {
         let tap = UITapGestureRecognizer.init(target: self, action: #selector(dismiss))
         titleScrollView.addGestureRecognizer(tap)
         
-        contentView.bringSubviewToFront(rightButton)
+        containerView.bringSubviewToFront(rightButton)
         updateSpacing(self)
         
         notifier.addObserver(self, selector: #selector(updateSpacing), name: .lineHeightsCalculated, object: nil)
+        
+        let hold = UILongPressGestureRecognizer.init(target: self, action: #selector(showOptions(_:)))
+        hold.minimumPressDuration = longPressDuration
+        rightButton.addGestureRecognizer(hold)
+        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: hold))
         
         if isInDebugMode {
             
             let gr = UILongPressGestureRecognizer.init(target: self, action: #selector(viewTemporarySettings))
             gr.minimumPressDuration = 0.3
+            gr.require(toFail: hold)
             addGestureRecognizer(gr)
         }
     }
@@ -133,12 +174,10 @@ class VisualEffectNavigationBar: MELVisualEffectView {
         
         if sender is Notification, let entityVC = self.containerVC?.activeViewController?.topViewController as? EntityItemsViewController {
             
-            prepareRightView(for: entityVC.rightViewMode)
+            prepareArtwork(for: entityVC)
         }
         
         layoutIfNeeded()
-        
-        entityImageView.layer.cornerRadius = 4//entityImageView.frame.height / 2
     }
     
     @objc func viewTemporarySettings(_ sender: UILongPressGestureRecognizer) {
@@ -146,10 +185,27 @@ class VisualEffectNavigationBar: MELVisualEffectView {
         guard sender.state == .began else { return }
         
         let font = AlertAction.init(title: "Change Font", style: .default, requiresDismissalFirst: true, handler: { [weak self] in self?.changeFont() })
+        let artwork = AlertAction.init(title: "Change Artwork Type", style: .default, requiresDismissalFirst: true, handler: { [weak self] in self?.changeArtwork() })
         let constant = AlertAction.init(title: "Change Bar Constant", style: .default, requiresDismissalFirst: true, handler: { [weak self] in self?.updateBarConstant(0) })
         let blur = AlertAction.init(title: "Change Bar Blur Behaviour", style: .default, requiresDismissalFirst: true, handler: { [weak self] in self?.changeBarBlurBehaviour() })
         
-        Transitioner.shared.showAlert(title: nil, from: topViewController, with: font, constant, blur)
+        topViewController?.showAlert(title: nil, with: font, constant, artwork, blur)
+    }
+    
+    func changeArtwork() {
+        
+        let actions = TopBarOffset.allCases.map({ mode in
+            
+            AlertAction.init(title: mode.title, style: .default, accessoryType: .check({ mode == navBarArtworkMode }), handler: { [weak self] in
+                
+                guard let weakSelf = self else { return }
+                
+                prefs.set(mode.rawValue, forKey: .navBarArtworkMode)
+                weakSelf.prepareArtwork(for: weakSelf.containerVC?.activeViewController?.topViewController as? Navigatable)
+            })
+        })
+        
+        topViewController?.showAlert(title: nil, with: actions)
     }
     
     func changeFont() {
@@ -163,25 +219,25 @@ class VisualEffectNavigationBar: MELVisualEffectView {
             })
         })
         
-        Transitioner.shared.showAlert(title: nil, from: topViewController, with: actions)
+        topViewController?.showAlert(title: nil, with: actions)
     }
     
     func updateBarConstant(_ sender: Any) {
         
         if let _ = sender as? Int {
             
-            let actions = [("None", 0), ("Small", 1), ("Large", 2)].map({ tuple in
+            let actions = TopBarOffset.allCases.map({ offset in
                 
-                AlertAction.init(title: tuple.0, style: .default, accessoryType: .check({ prefs.integer(forKey: "barConstant") == tuple.1 }), handler: { [weak self] in
+                AlertAction.init(title: offset.title, style: .default, accessoryType: .check({ offset == navBarConstant }), handler: { [weak self] in
                 
                     guard let weakSelf = self else { return }
                     
-                    prefs.set(tuple.1, forKey: "barConstant")
+                    prefs.set(offset.rawValue, forKey: .navBarConstant)
                     weakSelf.updateBarConstant(weakSelf)
                 })
             })
             
-            Transitioner.shared.showAlert(title: nil, from: topViewController, with: actions)
+            topViewController?.showAlert(title: nil, with: actions)
             
         } else {
             
@@ -218,7 +274,7 @@ class VisualEffectNavigationBar: MELVisualEffectView {
             })
         })
         
-        Transitioner.shared.showAlert(title: nil, from: topViewController, with: actions)
+        topViewController?.showAlert(title: nil, with: actions)
     }
     
     func location(from navigatable: Navigatable?) -> Location {
@@ -237,9 +293,97 @@ class VisualEffectNavigationBar: MELVisualEffectView {
         
         updateTopConstraint(for: section, with: initialVC, and: finalVC)
         
-        animateTitleLabel(direction: direction, section: section, with: (initialVC?.title, initialVC?.backLabelText), and: (finalVC?.title, finalVC?.backLabelText), preferVerticalTransition: preferVerticalTransition)
-        
-        animateRightView(direction: direction, section: section, with: initialVC, and: finalVC, preferVerticalTransition: preferVerticalTransition)
+        switch section {
+            
+            case .preparation:
+            
+                isAnimating = true
+            
+                if let snapshot = containerView.snapshotView(afterScreenUpdates: false) {
+                    
+                    snapshot.frame = containerView.frame
+                    contentView.addSubview(snapshot)
+                    self.snapshot = snapshot
+                    
+                    let transform = CGAffineTransform.init(translationX: preferVerticalTransition ? 0 : (direction == .forward ? horizontalTranslation : -horizontalTranslation), y: preferVerticalTransition ? verticalTranslation : 0)
+                    
+                    containerView.alpha = 0
+                    containerView.transform = transform
+                    prepareTitles(for: finalVC)
+                    prepareArtwork(for: finalVC)
+                    prepareRightButton(for: finalVC)
+                    
+                    backBorderView.alpha = finalVC?.backLabelText == nil ? 0 : 1
+                    
+                    if Location.main.total - Location.entity.total == 0 {
+
+                        backView.isHidden = false
+                    }
+                    
+                    layoutIfNeeded()
+                }
+            
+            case .firstHalf:
+                
+                if finalVC?.backLabelText != nil {
+                    
+                    backView.isHidden = false
+                }
+            
+                snapshot?.alpha = 0
+            
+                let transform = CGAffineTransform.init(translationX: preferVerticalTransition ? 0 : (direction == .forward ? -horizontalTranslation : horizontalTranslation), y: preferVerticalTransition ? verticalTranslation : 0)
+
+                if preferVerticalTransition.inverted, Location.main.total - Location.entity.total != 0 {
+
+                    if initialVC?.backLabelText != nil && finalVC?.backLabelText == nil {
+
+                        snapshot?.transform = transform.translatedBy(x: 0, y: (Location.main.total - Location.entity.total) / 2)
+
+                    } else if finalVC?.backLabelText != nil && initialVC?.backLabelText == nil {
+
+                        snapshot?.transform = transform.translatedBy(x: 0, y: abs(Location.main.total - Location.entity.total) / 2)
+
+                    } else {
+
+                        snapshot?.transform = transform
+                    }
+
+                } else {
+
+                    snapshot?.transform = transform
+                }
+            
+            case .secondHalf:
+            
+                if finalVC?.backLabelText == nil, Location.main.total - Location.entity.total != 0 {
+                    
+                    backView.isHidden = true
+                }
+                
+                if finalVC?.backLabelText != nil {
+                    
+                    backBorderView.alpha = 1
+                }
+            
+                containerView.alpha = 1
+                containerView.transform = .identity
+            
+            case .end(completed: let completed):
+            
+                backView.isHidden = completed ? finalVC?.backLabelText == nil : initialVC?.backLabelText == nil
+                backBorderView.alpha = completed ? (finalVC?.backLabelText == nil ? 0 : 1) : (initialVC?.backLabelText == nil ? 0 : 1)
+                prepareTitles(for: completed ? finalVC : initialVC)
+                prepareArtwork(for: completed ? finalVC : initialVC)
+                prepareRightButton(for: completed ? finalVC : initialVC)
+                containerView.transform = .identity
+                containerView.alpha = 1
+                snapshot?.removeFromSuperview()
+                snapshot = nil
+                gradientView.updateGradient()
+                
+                isAnimating = false
+        }
     }
     
     func updateTopConstraint(for section: AnimationSection, with initialVC: Navigatable?, and finalVC: Navigatable?) {
@@ -264,297 +408,60 @@ class VisualEffectNavigationBar: MELVisualEffectView {
         }
     }
     
-    func prepareRightView(for mode: RightViewMode, initialPreparation: Bool = false) {
+    func prepareTitles(for navigatable: Navigatable?) {
         
-        switch mode {
+        titleLabel.text = navigatable?.title
+        backLabel.text = navigatable?.backLabelText
+    }
+    
+    func prepareArtwork(for navigatable: Navigatable?) {
+        
+        guard navBarArtworkMode != .none else {
             
-            case .none:
-                
-                rightButton.setImage(nil, for: .normal)
-                
-                if initialPreparation {
-                
-                    rightView.alpha = 0
-                    rightButton.alpha = 0
-                }
-                
-                rightViewWidthConstraint.constant = 0
-                rightViewWidthConstraint.priority = .init(901)
-
-            case .artwork(let image, details: let details):
-                
-                rightButton.setImage(nil, for: .normal)
-                rightButton.alpha = 1
-                
-                clearButtonView.isHidden = true
-                artworkView.isHidden = false
-                artworkImageView.image = image
+            artworkView.isHidden = true
+            entityImageViewContainer.superview?.isHidden = true
             
-                artworkImageView.layer.setRadiusTypeIfNeeded(to: details.useContinuousCorners)
-                artworkImageView.layer.cornerRadius = details.radius
-                
-                UniversalMethods.addShadow(to: artworkContainer, radius: 8, opacity: 0.35, shouldRasterise: true)
-                
-                rightViewWidthConstraint.priority = .init(899)
-
-            case .button(hidden: let hidden):
-                
-                rightButton.setImage(#imageLiteral(resourceName: "Discard"), for: .normal)
-                
-                artworkView.isHidden = true
-                clearButtonView.isHidden = false
-                
-                if initialPreparation {
-                    
-                    rightButton.alpha = hidden ? 0 : 1
-                    clearButtonView.alpha = hidden ? 0 : 1
-                }
-            
-                rightViewWidthConstraint.constant = hidden ? 0 : 44
-                rightViewWidthConstraint.priority = .init(901)
+            return
+        }
+        
+        guard let navigatable = navigatable, let view = navBarArtworkMode == .large ? artworkView : entityImageViewContainer.superview, let altView = navBarArtworkMode == .small ? artworkView : entityImageViewContainer.superview, let container = navBarArtworkMode == .large ? artworkContainer : entityImageViewContainer, let imageView = navBarArtworkMode == .large ? artworkImageView : entityImageView else { return }
+        
+        altView.isHidden = true
+        view.isHidden = navigatable.artworkDetails == nil
+        
+        if let artworkDetails = navigatable.artworkDetails {
+                          
+            imageView.image = artworkDetails.image
+            imageView.layer.setRadiusTypeIfNeeded(to: artworkDetails.details.useContinuousCorners)
+            imageView.layer.cornerRadius = artworkDetails.details.radius
+        }
+        
+        if container.layer.shadowOpacity < 0.1 {
+        
+            UniversalMethods.addShadow(to: container, radius: 4, opacity: 0.3, shouldRasterise: true)
         }
     }
     
-    func animateRightView(direction: AnimationDirection, section: AnimationSection, with initialVC: Navigatable?, and finalVC: Navigatable?, preferVerticalTransition: Bool = false) {
+    func prepareRightButton(for navigatable: Navigatable?, animated: Bool = false) {
         
-        guard let initialMode = initialVC?.rightViewMode, let finalMode = finalVC?.rightViewMode else { return }
+        guard let navigatable = navigatable else { return }
         
-        switch section {
-            
-            case .preparation:
-                
-                isAnimatingRightView = true
-            
-                if let snapshot = rightView.snapshotView(afterScreenUpdates: false), let buttonSnapshot = rightButton.snapshotView(afterScreenUpdates: false) {
-                    
-                    snapshot.frame = contentView.convert(rightView.frame, from: rightView.superview)
-                    contentView.addSubview(snapshot)
-                    rightViewSnapshot = snapshot
-                    
-                    if case .none = initialMode {
-                        
-                        rightViewSnapshot?.alpha = 0
-                    }
-                    
-                    buttonSnapshot.frame = rightButton.frame
-                    contentView.addSubview(buttonSnapshot)
-                    rightButtonSnapshot = buttonSnapshot
-                    
-                    rightView.alpha = 0
-                    rightButton.alpha = 0
-
-                    prepareRightView(for: finalMode)
-                    
-                    let transform = CGAffineTransform.init(translationX: preferVerticalTransition ? 0 : (direction == .forward ? horizontalTranslation : -horizontalTranslation), y: preferVerticalTransition ? verticalTranslation : 0)
-                    
-                    if preferVerticalTransition.inverted, case .none = initialMode, case .artwork = finalMode, Location.main.total - Location.entity.total != 0 {
-                        
-                        let scale = location(from: initialVC).inset/location(from: finalVC).inset
-                    
-                        rightView.transform = transform.scaledBy(x: scale, y: scale).translatedBy(x: 0, y: (Location.main.total - Location.entity.total) / 2)
-                    
-                    } else {
-                        
-                        rightView.transform = transform
-                    }
-                    
-                    rightButton.transform = transform
-                    
-                    layoutIfNeeded()
-                }
-            
-            case .firstHalf:
-            
-                rightViewSnapshot?.alpha = 0
-                rightButtonSnapshot?.alpha = 0
-                let transform = CGAffineTransform.init(translationX: preferVerticalTransition ? 0 : (direction == .forward ? -horizontalTranslation : horizontalTranslation), y: preferVerticalTransition ? verticalTranslation : 0)
-                
-                if preferVerticalTransition.inverted, Location.main.total - Location.entity.total != 0 {
-                    
-                    switch (initialMode, finalMode) {
-                        
-                        case (.artwork, .none), (.artwork, .button):
-                        
-                            let scale = location(from: finalVC).inset/location(from: initialVC).inset
-                            
-                            rightViewSnapshot?.transform = transform.scaledBy(x: scale, y: scale).translatedBy(x: 0, y: (Location.main.total - Location.entity.total) / 2)
-                        
-                        default: rightViewSnapshot?.transform = transform
-                    }
-                    
-                } else {
-                    
-                    rightViewSnapshot?.transform = transform
-                }
-            
-                rightButtonSnapshot?.transform = transform
-            
-            case .secondHalf:
-                
-                rightView.transform = .identity
-                rightButton.transform = .identity
-                
-                rightView.alpha = {
-                    
-                    switch finalMode {
-                        
-                        case .none: return 0
-                        
-                        case .button, .artwork: return 1
-                    }
-                }()
-                
-                rightButton.alpha = {
-                    
-                    switch finalMode {
-                        
-                        case .none, .artwork: return 0
-                        
-                        case .button(hidden: let hidden): return hidden ? 0 : 1
-                    }
-                }()
-            
-                clearBorderView.alpha = {
-                    
-                    switch finalMode {
-                        
-                        case .none, .artwork: return 0
-                        
-                        case .button(hidden: let hidden): return hidden ? 0 : 1
-                    }
-                }()
-            
-            case .end(completed: let completed):
-            
-                prepareRightView(for: completed ? finalMode : initialMode, initialPreparation: true)
-                rightView.alpha = 1
-                rightView.transform = .identity
-                rightButton.transform = .identity
-                rightViewSnapshot?.removeFromSuperview()
-                rightViewSnapshot = nil
-                rightButtonSnapshot?.removeFromSuperview()
-                rightButtonSnapshot = nil
-            
-                isAnimatingRightView = false
-        }
-    }
-    
-    func animateTitleLabel(direction: AnimationDirection, section: AnimationSection, with initialDetails: NavigatableDetails, and finalDetails: NavigatableDetails, preferVerticalTransition: Bool = false) {
+        rightButton.contentEdgeInsets.bottom = navigatable.buttonDetails.type.bottomOffset
+        rightButton.setImage(navigatable.buttonDetails.type.image, for: .normal)
         
-        switch section {
-            
-            case .preparation:
+        rightViewWidthConstraint.constant = navigatable.buttonDetails.hidden ? 0 : 44
+        
+        if animated {
+        
+            UIView.animate(withDuration: 0.3, animations: {
                 
-                isAnimatingTitles = true
+                self.containerView.layoutIfNeeded()
+                self.rightButton.alpha = navigatable.buttonDetails.hidden ? 0 : 1
+            })
             
-                if let snapshot = titleLabel.snapshotView(afterScreenUpdates: false), let backSnapshot = backLabel.snapshotView(afterScreenUpdates: false), let borderSnapshot = backBorderView.snapshotView(afterScreenUpdates: false) {
-                    
-                    snapshot.frame = contentView.convert(titleLabel.frame, from: titleLabel.superview)
-                    contentView.addSubview(snapshot)
-                    titleLabelSnapshot = snapshot
-                    
-                    let transform = CGAffineTransform.init(translationX: preferVerticalTransition ? 0 : (direction == .forward ? horizontalTranslation : -horizontalTranslation), y: preferVerticalTransition ? verticalTranslation : 0)
-                    
-                    titleLabel.alpha = 0
-                    titleLabel.text = finalDetails.title
-                    titleLabel.transform = transform
-                    
-                    backSnapshot.frame = contentView.convert(backLabel.frame, from: backLabel.superview)
-                    contentView.addSubview(backSnapshot)
-                    backLabelSnapshot = backSnapshot
-                    
-                    backLabel.alpha = 0
-                    backLabel.text = finalDetails.backLabelText
-                    backLabel.transform = transform
-                    
-                    borderSnapshot.frame = contentView.convert(backBorderView.frame, from: backBorderView.superview)
-                    borderSnapshot.alpha = initialDetails.backLabelText == nil ? 0 : 1
-                    contentView.addSubview(borderSnapshot)
-                    backBorderViewSnapshot = borderSnapshot
-                    
-                    backBorderView.alpha = 0
-                    backBorderView.transform = transform
-                    
-                    if Location.main.total - Location.entity.total == 0 {
-                        
-                        backView.isHidden = false
-                    }
-                }
+        } else {
             
-            case .firstHalf:
-                
-                backLabelSnapshot?.alpha = 0
-                backBorderViewSnapshot?.alpha = 0
-                backLabelSnapshot?.transform = .init(translationX: preferVerticalTransition ? 0 : (direction == .forward ? -horizontalTranslation : horizontalTranslation), y: preferVerticalTransition ? verticalTranslation : 0)
-                backBorderViewSnapshot?.transform = .init(translationX: preferVerticalTransition ? 0 : (direction == .forward ? -horizontalTranslation : horizontalTranslation), y: preferVerticalTransition ? verticalTranslation : 0)
-                
-                if finalDetails.backLabelText != nil {
-                    
-                    backView.isHidden = false
-                }
-            
-                titleLabelSnapshot?.alpha = 0
-                
-                let transform = CGAffineTransform.init(translationX: preferVerticalTransition ? 0 : (direction == .forward ? -horizontalTranslation : horizontalTranslation), y: preferVerticalTransition ? verticalTranslation : 0)
-                
-                if preferVerticalTransition.inverted, Location.main.total - Location.entity.total != 0 {
-                    
-                    if initialDetails.backLabelText != nil && finalDetails.backLabelText == nil {
-                    
-                        titleLabelSnapshot?.transform = transform.translatedBy(x: 0, y: (Location.main.total - Location.entity.total) / 2)
-                    
-                    } else if finalDetails.backLabelText != nil && initialDetails.backLabelText == nil {
-                        
-                        titleLabelSnapshot?.transform = transform.translatedBy(x: 0, y: abs(Location.main.total - Location.entity.total) / 2)
-                    
-                    } else {
-                        
-                        titleLabelSnapshot?.transform = transform
-                    }
-                    
-                } else {
-                    
-                    titleLabelSnapshot?.transform = transform
-                }
-            
-            case .secondHalf:
-                
-                if finalDetails.backLabelText == nil, Location.main.total - Location.entity.total != 0 {
-                    
-                    backView.isHidden = true
-                }
-                
-                if finalDetails.backLabelText != nil {
-                    
-                    backLabel.alpha = 1
-                    backLabel.transform = .identity
-                    backBorderView.alpha = 1
-                    backBorderView.transform = .identity
-                }
-            
-                titleLabel.alpha = 1
-                titleLabel.transform = .identity
-            
-            case .end(completed: let completed):
-                
-                backView.isHidden = completed ? finalDetails.backLabelText == nil : initialDetails.backLabelText == nil
-                backLabel.text = completed ? finalDetails.backLabelText : initialDetails.backLabelText
-                backLabel.transform = .identity
-                backLabel.alpha = 1
-                backBorderView.transform = .identity
-                backBorderView.alpha = completed ? (finalDetails.backLabelText == nil ? 0 : 1) : (initialDetails.backLabelText == nil ? 0 : 1)
-                backBorderViewSnapshot?.removeFromSuperview()
-                backBorderViewSnapshot = nil
-                backLabelSnapshot?.removeFromSuperview()
-                backLabelSnapshot = nil
-                titleLabel.text = completed ? finalDetails.title : initialDetails.title
-                titleLabel.transform = .identity
-                titleLabel.alpha = 1
-                titleLabelSnapshot?.removeFromSuperview()
-                titleLabelSnapshot = nil
-                gradientView.updateGradient()
-            
-                isAnimatingTitles = false
+            rightButton.alpha = navigatable.buttonDetails.hidden ? 0 : 1
         }
     }
     
@@ -563,15 +470,48 @@ class VisualEffectNavigationBar: MELVisualEffectView {
         _ = containerVC?.activeViewController?.popViewController(animated: true)
     }
     
-    @IBAction func showOptions() {
+    @IBAction func showActions() {
+        
+        if let navigatable = containerVC?.activeViewController?.topViewController as? Navigatable, let child = navigatable.activeChildViewController as? SongActionable {
+            
+            if let collectionActionable = child as? CollectionActionable, collectionActionable.actionableSongs.isEmpty || collectionActionable.actionableOperation?.isExecuting == true {
+                
+                collectionActionable.actionableActivityIndicator.startAnimating()
+                collectionActionable.shouldFillActionableSongs = true
+                collectionActionable.showActionsAfterFilling = true
+                (collectionActionable.editButton.superview as? PillButtonView)?.stackView?.alpha = 0
+                collectionActionable.editButton.superview?.isUserInteractionEnabled = false
+                
+                if collectionActionable.actionableSongs.isEmpty {
+                    
+                    if let operation = collectionActionable.actionableOperation, operation.isExecuting { return }
+                    
+                    collectionActionable.getActionableSongs()
+                }
+                
+            } else {
+                
+                child.songManager.showActionsForAll(child)
+            }
+        }
+        
+        if let entityVC = containerVC?.activeViewController?.topViewController as? EntityItemsViewController, let child = entityVC.children.first as? SongActionable {
+            
+            child.songManager.showActionsForAll(child)
+            
+        } else if let searchVC = containerVC?.activeViewController?.topViewController as? SearchViewController, searchVC.filtering.inverted, searchVC.recentSearches.isEmpty.inverted {
+            
+            searchVC.deleteRecentSearches()
+        }
+    }
+    
+    @objc func showOptions(_ sender: UILongPressGestureRecognizer) {
+        
+        guard sender.state == .began else { return }
         
         if let entityVC = containerVC?.activeViewController?.topViewController as? EntityItemsViewController {
         
             entityVC.showOptions()
-        
-        } else if let searchVC = containerVC?.activeViewController?.topViewController as? SearchViewController, searchVC.filtering.inverted, searchVC.recentSearches.isEmpty.inverted {
-            
-            searchVC.deleteRecentSearches()
         }
     }
 }
@@ -583,14 +523,15 @@ protocol Navigatable: ArtworkModifying {
     var preferredTitle: String? { get set }
     var inset: CGFloat { get }
     var activeChildViewController: UIViewController? { get set }
-    var rightViewMode: VisualEffectNavigationBar.RightViewMode { get set }
+    var artworkDetails: NavigationBarArtworkDetails? { get set }
+    var buttonDetails: NavigationBarButtonDetails { get set }
 }
 
 extension Navigatable {
     
     var temporary: TemporaryNavigatable {
         
-        return .init(title: title, backLabelText: backLabelText, preferredTitle: preferredTitle, inset: inset, activeChildViewController: activeChildViewController, rightViewMode: rightViewMode, artwork: artwork)
+        return .init(navigatable: self)
     }
 }
 
@@ -599,6 +540,9 @@ protocol NavigatableContained {
     var navigatable: Navigatable? { get }
 }
 
+typealias NavigationBarArtworkDetails = (image: UIImage?, details: RadiusDetails)
+typealias NavigationBarButtonDetails = (type: VisualEffectNavigationBar.RightButtonType, hidden: Bool)
+
 class TemporaryNavigatable: Navigatable {
     
     var title: String?
@@ -606,17 +550,19 @@ class TemporaryNavigatable: Navigatable {
     var preferredTitle: String?
     var inset: CGFloat
     weak var activeChildViewController: UIViewController?
-    var rightViewMode: VisualEffectNavigationBar.RightViewMode
     weak var artwork: UIImage?
+    var artworkDetails: NavigationBarArtworkDetails?
+    var buttonDetails: NavigationBarButtonDetails
     
-    init(title: String?, backLabelText: String?, preferredTitle: String?, inset: CGFloat, activeChildViewController: UIViewController?, rightViewMode: VisualEffectNavigationBar.RightViewMode, artwork: UIImage?) {
+    init(navigatable: Navigatable) {
         
-        self.title = title
-        self.backLabelText = backLabelText
-        self.preferredTitle = preferredTitle
-        self.inset = inset
-        self.activeChildViewController = activeChildViewController
-        self.rightViewMode = rightViewMode
-        self.artwork = artwork
+        self.title = navigatable.title
+        self.backLabelText = navigatable.backLabelText
+        self.preferredTitle = navigatable.preferredTitle
+        self.inset = navigatable.inset
+        self.activeChildViewController = navigatable.activeChildViewController
+        self.artwork = navigatable.artwork
+        self.artworkDetails = navigatable.artworkDetails
+        self.buttonDetails = navigatable.buttonDetails
     }
 }

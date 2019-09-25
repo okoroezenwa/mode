@@ -50,7 +50,7 @@ class SavedLyricsViewController: UIViewController {
                 Song.delete(self.songs.filter({ set.contains($0).inverted }), completion: { self.resetLyrics() }) }))
         }
         
-        Transitioner.shared.showAlert(title: "Delete...", from: self, with: actions)
+        showAlert(title: "Delete...", with: actions)
         
 //        present(UIAlertController.withTitle("Delete...", message: nil, style: .actionSheet, actions: actions + [.cancel()]), animated: true, completion: nil)
     }

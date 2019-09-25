@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 import StoreKit
 
-class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, AlbumTransitionable, AlbumArtistTransitionable, GenreTransitionable, ComposerTransitionable, ArtistTransitionable, InfoLoading, QueryUpdateable, CellAnimatable, SingleItemActionable, BorderButtonContaining, Refreshable, EntityVerifiable, TopScrollable, EntityContainer {
+class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, AlbumTransitionable, AlbumArtistTransitionable, GenreTransitionable, ComposerTransitionable, ArtistTransitionable, InfoLoading, QueryUpdateable, CellAnimatable, SingleItemActionable, PillButtonContaining, Refreshable, EntityVerifiable, TopScrollable, EntityContainer {
 
     @IBOutlet var tableView: MELTableView!
     @IBOutlet var emptyStackView: UIStackView!
@@ -41,11 +41,11 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
         
         didSet {
             
-            let shuffleView = BorderedButtonView.with(title: .shuffleButtonTitle, image: #imageLiteral(resourceName: "Shuffle13"), tapAction: .init(action: #selector(shuffle), target: self))
+            let shuffleView = PillButtonView.with(title: .shuffleButtonTitle, image: #imageLiteral(resourceName: "Shuffle13"), tapAction: .init(action: #selector(shuffle), target: self))
             shuffleButton = shuffleView.button
             self.shuffleView = shuffleView
             
-            let filterView = BorderedButtonView.with(title: "Filter", image: #imageLiteral(resourceName: "Filter13"), tapClosure: { [weak self] _ in
+            let filterView = PillButtonView.with(title: "Filter", image: #imageLiteral(resourceName: "Filter13"), tapClosure: { [weak self] _ in
                 
                 guard let weakSelf = self else { return }
                 
@@ -53,7 +53,7 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
             })
             self.filterView = filterView
             
-            let editView = BorderedButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, tapAction: .init(action: #selector(SongActionManager.toggleEditing(_:)), target: songManager), longPressAction: .init(action: #selector(SongActionManager.showActionsForAll(_:)), target: songManager))
+            let editView = PillButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, tapAction: .init(action: #selector(SongActionManager.toggleEditing(_:)), target: songManager), longPressAction: .init(action: #selector(SongActionManager.showActionsForAll(_:)), target: songManager))
             editButton = editView.button
             self.editView = editView
             
@@ -96,17 +96,17 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
             
             let allHold = UILongPressGestureRecognizer.init(target: songManager, action: #selector(SongActionManager.showActionsForAll(_:)))
             allHold.minimumPressDuration = longPressDuration
-            (editButton.superview as? BorderedButtonView)?.addGestureRecognizer(allHold)
+            (editButton.superview as? PillButtonView)?.addGestureRecognizer(allHold)
             LongPressManager.shared.gestureRecognisers.append(Weak.init(value: allHold))
         }
     }
     @objc var shuffleButton: MELButton!
 //    @objc var likedStateButton: MELButton!
-    @objc var shuffleView: BorderedButtonView!
-    @objc var filterView: BorderedButtonView!
-    @objc var editView: BorderedButtonView!
+    @objc var shuffleView: PillButtonView!
+    @objc var filterView: PillButtonView!
+    @objc var editView: PillButtonView!
     
-    var borderedButtons = [BorderedButtonView?]()
+    var borderedButtons = [PillButtonView?]()
     var sectionIndexViewController: SectionIndexViewController?
     var navigatable: Navigatable? { return entityVC }
     let requiresLargerTrailingConstraint = false
@@ -122,8 +122,13 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
     @objc weak var entityVC: EntityItemsViewController? { return parent as? EntityItemsViewController }
     
     @objc lazy var tableDelegate: TableDelegate = { TableDelegate.init(container: self, location: .playlist) }()
-    @objc var entities: [MPMediaEntity] { return songs }
-    @objc var query: MPMediaQuery? { return albumQuery }
+    @objc var entities: [MPMediaEntity] {
+        
+        get { return songs }
+        
+        set { songs = newValue as? [MPMediaItem] ?? [] }
+    }
+    @objc var query: MPMediaQuery? { return playlistQuery } // used to be albumQuery
     @objc lazy var filteredEntities = [MPMediaEntity]()
     @objc var highlightedEntity: MPMediaEntity? { return entityVC?.highlightedEntities?.song }
     var filterContainer: (UIViewController & FilterContainer)?
@@ -148,7 +153,7 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
                 
                 if applySort {
                     
-                    sortItems()
+                    sortAllItems()
                 }
                 
                 if let playlist = playlist {
@@ -189,22 +194,38 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
             filterContainer.searchBar?(filterContainer.searchBar, textDidChange: text)
         }
     }
-    var sortCriteria = SortCriteria.standard {
+    var staticSortCriteria: SortCriteria = .standard
+    var sortCriteria: SortCriteria {
         
-        didSet {
+        get { return staticSortCriteria }
+        
+        set {
             
-            if let _ = tableView {
+            if let _ = tableView, let id = playlist?.persistentID {
                 
-                sortItems()
+                staticSortCriteria = newValue
+                sortAllItems()
+                
                 headerView.sortButton.setTitle(arrangementLabelText, for: .normal)
                 UIView.animate(withDuration: 0.3, animations: { self.headerView.layoutIfNeeded() })
-                
-                if let playlist = playlist {
-                    
-                    UniversalMethods.saveSortableItem(withPersistentID: playlist.persistentID, order: ascending, sortCriteria: sortCriteria, kind: SortableKind.playlist)
-                }
+                UniversalMethods.saveSortableItem(withPersistentID: id, order: ascending, sortCriteria: staticSortCriteria, kind: .playlist)
             }
         }
+        
+//        didSet {
+//
+//            if let _ = tableView {
+//
+//                sortAllItems()
+//                headerView.sortButton.setTitle(arrangementLabelText, for: .normal)
+//                UIView.animate(withDuration: 0.3, animations: { self.headerView.layoutIfNeeded() })
+//
+//                if let playlist = playlist {
+//
+//                    UniversalMethods.saveSortableItem(withPersistentID: playlist.persistentID, order: ascending, sortCriteria: sortCriteria, kind: SortableKind.playlist)
+//                }
+//            }
+//        }
     }
     var sortLocation: SortLocation = .playlist
     let applicableSortCriteria: Set<SortCriteria> = [.duration, .title, .artist, .album, .plays, .year, .lastPlayed, .genre, .rating, .dateAdded, .fileSize]
@@ -277,7 +298,7 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
         updateHeaderView(withCount: (playlistQuery?.items ?? []).count)
         
         updateEmptyLabel(withCount: (playlistQuery?.items ?? []).count)
-        sortItems()
+        sortAllItems()
         
         prepareGestures()
     }
@@ -745,7 +766,7 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
                 weakSelf.entityVC?.query = query
             }
             
-            weakSelf.sortItems()
+            weakSelf.sortAllItems()
             
         }) as! NSObject)
         
@@ -807,7 +828,7 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
         
         prepareSupplementaryInfo()
 //        prepareTopArtwork()
-        sortItems()
+        sortAllItems()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -840,7 +861,7 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
             banner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
             banner.show(view, duration: 1.5)
             
-            sortItems()
+            sortAllItems()
         }
         
         if wasFiltering {
@@ -914,9 +935,7 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
             
             let shuffleAlbums = AlertAction.init(title: .shuffle(.albums), style: .default, requiresDismissalFirst: true, handler: { musicPlayer.play(songs.albumsShuffled, startingFrom: nil, from: self, withTitle: self.playlist?.name ??? "Untitled Playlist", alertTitle: .shuffle(.albums)) })
             
-            Transitioner.shared.showAlert(title: entityVC?.title, from: self, with: shuffle, shuffleAlbums)
-            
-//            present(UIAlertController.withTitle(nil, message: entityVC?.title, style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
+            showAlert(title: entityVC?.title, with: shuffle, shuffleAlbums)
             
         } else {
             
@@ -964,7 +983,7 @@ extension PlaylistItemsViewController: TableViewContainer {
 
 extension PlaylistItemsViewController: FullySortable {
     
-    @objc func sortItems() {
+    /*@objc func sortItems() {
         
         headerView.updateSortActivityIndicator(to: .visible)
         
@@ -1053,7 +1072,7 @@ extension PlaylistItemsViewController: FullySortable {
         })
         
         sortOperationQueue.addOperation(operation!)
-    }
+    }*/
 }
 
 extension PlaylistItemsViewController: UIGestureRecognizerDelegate {

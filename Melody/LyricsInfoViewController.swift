@@ -344,7 +344,7 @@ extension LyricsInfoViewController: UITableViewDelegate, UITableViewDataSource {
                     tableView.reloadRows(at: [indexPath], with: .none)
                 })
                 
-                Transitioner.shared.showAlert(title: nil, from: self, with: edit, revert)
+                showAlert(title: nil, with: edit, revert)
             }
         }
         

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="MyriadPro-Regular.otf">
+            <string>MyriadPro-Regular</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="484-MF-sXp" customClass="PillButtonView" customModule="Mode" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="200" height="48"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zkE-h5-Hbz" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                    <rect key="frame" x="0.0" y="0.0" width="200" height="48"/>
+                    <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
+                    <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                    <inset key="contentEdgeInsets" minX="0.0" minY="10" maxX="0.0" maxY="0.0"/>
+                    <inset key="titleEdgeInsets" minX="5" minY="0.0" maxX="0.0" maxY="0.0"/>
+                    <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="5" maxY="2"/>
+                    <state key="normal" title="Sort" image="AscendingLines"/>
+                </button>
+                <view clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qa6-6m-8pD" customClass="BorderedButtonViewContainer" customModule="Mode" customModuleProvider="target">
+                    <rect key="frame" x="8" y="10" width="184" height="38"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                </view>
+            </subviews>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="zkE-h5-Hbz" secondAttribute="bottom" id="03d-TB-kAv"/>
+                <constraint firstAttribute="bottom" secondItem="qa6-6m-8pD" secondAttribute="bottom" priority="900" id="8cG-IX-PMq"/>
+                <constraint firstItem="zkE-h5-Hbz" firstAttribute="leading" secondItem="484-MF-sXp" secondAttribute="leading" id="GAC-6H-I7b"/>
+                <constraint firstItem="zkE-h5-Hbz" firstAttribute="top" secondItem="484-MF-sXp" secondAttribute="top" id="IA8-I5-sET"/>
+                <constraint firstItem="qa6-6m-8pD" firstAttribute="top" secondItem="484-MF-sXp" secondAttribute="top" priority="900" constant="10" id="Jga-mN-TC7"/>
+                <constraint firstAttribute="trailing" secondItem="zkE-h5-Hbz" secondAttribute="trailing" id="bFL-gA-WOd"/>
+                <constraint firstAttribute="trailing" secondItem="qa6-6m-8pD" secondAttribute="trailing" priority="900" constant="8" id="pQZ-zJ-ETY"/>
+                <constraint firstItem="qa6-6m-8pD" firstAttribute="leading" secondItem="484-MF-sXp" secondAttribute="leading" priority="900" constant="8" id="v5B-oQ-yxZ"/>
+            </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="borderViewContainer" destination="qa6-6m-8pD" id="oZg-eQ-3CO"/>
+                <outlet property="borderViewContainerBottomConstraint" destination="8cG-IX-PMq" id="PgD-8M-UZp"/>
+                <outlet property="borderViewContainerLeadingConstraint" destination="v5B-oQ-yxZ" id="z1o-jc-QfP"/>
+                <outlet property="borderViewContainerTopConstraint" destination="Jga-mN-TC7" id="cvr-sy-tQB"/>
+                <outlet property="borderViewContainerTrailingConstraint" destination="pQZ-zJ-ETY" id="DPW-J1-82y"/>
+                <outlet property="button" destination="zkE-h5-Hbz" id="rgX-Lp-koT"/>
+            </connections>
+        </view>
+    </objects>
+    <resources>
+        <image name="AscendingLines" width="11" height="10"/>
+    </resources>
+</document>

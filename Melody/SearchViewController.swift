@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 import Foundation
 
-class SearchViewController: UIViewController, Filterable, DynamicSections, AlbumTransitionable, Contained, InfoLoading, ArtistTransitionable, GenreTransitionable, ComposerTransitionable, AlbumArtistTransitionable, PlaylistTransitionable, EntityContainer, OptionsContaining, CellAnimatable, IndexContaining, FilterContainer, SingleItemActionable, EntityVerifiable, TopScrollable, Detailing, Navigatable, ArtworkModifying, BorderButtonContaining {
+class SearchViewController: UIViewController, Filterable, DynamicSections, AlbumTransitionable, Contained, InfoLoading, ArtistTransitionable, GenreTransitionable, ComposerTransitionable, AlbumArtistTransitionable, PlaylistTransitionable, EntityContainer, OptionsContaining, CellAnimatable, IndexContaining, FilterContainer, SingleItemActionable, EntityVerifiable, TopScrollable, Detailing, Navigatable, ArtworkModifying, PillButtonContaining {
 
     @IBOutlet var tableView: MELTableView!
     @IBOutlet var emptyStackView: UIStackView!
@@ -44,7 +44,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         
         didSet {
             
-            let editView = BorderedButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, tapAction: .init(action: #selector(SongActionManager.toggleEditing(_:)), target: songManager))
+            let editView = PillButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, tapAction: .init(action: #selector(SongActionManager.toggleEditing(_:)), target: songManager))
             editButton = editView.button
             self.editView = editView
             
@@ -85,7 +85,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
     
     var preferredEditingStyle = EditingStyle.insert
     
-    lazy var borderedButtons = [BorderedButtonView?]()
+    lazy var borderedButtons = [PillButtonView?]()
     
     @objc var ignoreKeyboardForInset = true
     var sender: (UIViewController & Filterable)? {
@@ -107,7 +107,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
     let actionableSongs = [MPMediaItem]()
     lazy var songManager: SongActionManager = { SongActionManager.init(actionable: self) }()
     
-    var editView: BorderedButtonView!
+    var editView: PillButtonView!
     var editButton: MELButton! {
         
         didSet {
@@ -128,30 +128,21 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         
         set { }
     }
-    var rightViewMode: VisualEffectNavigationBar.RightViewMode = .button(hidden: true) {
+    var artworkDetails: NavigationBarArtworkDetails?
+//    var firstButtonUpdateUsed = false
+    var buttonDetails: NavigationBarButtonDetails = (.clear, true) {
         
         didSet {
             
             guard animateClearButton else {
-
+                
                 animateClearButton = true
-
+                
                 return
             }
-            
-            container?.visualEffectNavigationBar.prepareRightView(for: rightViewMode)
-            
-            UIView.animate(withDuration: 0.3, animations: {
-                
-                self.container?.view.layoutIfNeeded()
-                
-                if case .button(hidden: let hidden) = self.rightViewMode {
-                    
-                    self.container?.visualEffectNavigationBar.rightButton.alpha = hidden ? 0 : 1
-                    self.container?.visualEffectNavigationBar.clearBorderView.alpha = hidden ? 0 : 1
-                    self.container?.visualEffectNavigationBar.clearButtonView.alpha = hidden ? 0 : 1
-                }
-            })
+        
+            container?.visualEffectNavigationBar.prepareRightButton(for: self, animated: true)
+//            firstButtonUpdateUsed = true
         }
     }
     
@@ -326,7 +317,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         tableView.scrollIndicatorInsets.top = inset
     }
     
-    @objc func updateHeaderView() {
+    @objc func updateHeaderView(withCount count: Int = 0) {
         
         tableView.tableHeaderView = emptyCondition ? nil : headerView
         tableView.tableHeaderView?.frame.size.height = emptyCondition ? 0 : 48
@@ -697,8 +688,8 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         if tableView.isEditing {
         
             tableView.isEditing = false
-            editView.imageView.image = .inactiveEditImage
-            editView.label.text = .inactiveEditButtonTitle
+            editView.imageView?.image = .inactiveEditImage
+            editView.label?.text = .inactiveEditButtonTitle
         }
         
         if searchBar?.isFirstResponder == true {
@@ -1351,7 +1342,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
         
-        return false
+        return filtering.inverted
     }
 }
 
@@ -1415,8 +1406,8 @@ extension SearchViewController: UISearchBarDelegate {
             if tableView.isEditing {
                 
                 tableView.isEditing = false
-                editView.imageView.image = .inactiveEditImage
-                editView.label.text = .inactiveEditButtonTitle
+                editView.imageView?.image = .inactiveEditImage
+                editView.label?.text = .inactiveEditButtonTitle
             }
             
             onlineOverride = false
@@ -1510,6 +1501,11 @@ extension SearchViewController: OnlineOverridable {
 
 extension SearchViewController: EntityCellDelegate {
     
+    func editButtonHeld(in cell: SongTableViewCell) {
+        
+        Transitioner.shared.performDeepSelection(from: self, title: cell.nameLabel.text)
+    }
+    
     func artworkTapped(in cell: SongTableViewCell) {
         
         guard let indexPath = tableView.indexPath(for: cell) else { return }
@@ -1563,7 +1559,7 @@ extension SearchViewController: EntityCellDelegate {
                     array.append(shuffleAlbums)
                 }
                 
-                Transitioner.shared.showAlert(title: cell.nameLabel.text, from: self, with: array)
+                showAlert(title: cell.nameLabel.text, with: array)
                 
 //                present(UIAlertController.withTitle(cell.nameLabel.text, message: nil, style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
                 
@@ -1572,6 +1568,13 @@ extension SearchViewController: EntityCellDelegate {
                 musicPlayer.play(songs, startingFrom: nil, from: self, withTitle: cell.nameLabel.text, alertTitle: "Play", completion: { self.saveRecentSearch(withTitle: self.searchBar?.text, resignFirstResponder: false) })
             }
         }
+    }
+    
+    func artworkHeld(in cell: SongTableViewCell) {
+        
+        guard musicPlayer.nowPlayingItem != nil, let indexPath = tableView.indexPath(for: cell) else { return }
+        
+        getActionDetails(from: .queue(name: cell.nameLabel.text, query: nil), indexPath: indexPath, actionable: self, vc: self, entityType: .song, entity: getEntity(at: indexPath)!)?.handler()
     }
     
     func editButtonTapped(in cell: SongTableViewCell) {
@@ -1607,9 +1610,14 @@ extension SearchViewController: EntityCellDelegate {
             actions.insert(singleItemAlertAction(for: .library, entity: .song, using: item, from: self), at: 3)
         }
         
-        Transitioner.shared.showAlert(title: cell.nameLabel.text, from: self, with: actions)
+        showAlert(title: cell.nameLabel.text, with: actions)
+    }
+    
+    func accessoryButtonHeld(in cell: SongTableViewCell) {
         
-//        present(UIAlertController.withTitle(nil, message: cell.nameLabel.text, style: .actionSheet, actions: actions + [.cancel()] ), animated: true, completion: nil)
+        guard let indexPath = tableView.indexPath(for: cell), let action = self.tableView(tableView, editActionsForRowAt: indexPath, for: .right)?.first else { return }
+        
+        action.handler?(action, indexPath)
     }
     
     func scrollViewTapped(in cell: SongTableViewCell) {

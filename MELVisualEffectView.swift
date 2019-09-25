@@ -65,8 +65,7 @@ class MELVisualEffectView: UIVisualEffectView {
         } else {
             
             effect = Themer.vibrancyContainingEffect
-//            backgroundColor = .clear
-            /*contentView.*/backgroundColor = darkTheme ? (light ? UIColor.white.withAlphaComponent(0.1) : UIColor.darkGray.withAlphaComponent(darkAlphaOverride)) : UIColor.white.withAlphaComponent((verticallyPresented ? 0.6 : 0.4) - alphaOverride)
+            backgroundColor = darkTheme ? (light ? UIColor.white.withAlphaComponent(0.1) : UIColor.darkGray.withAlphaComponent(darkAlphaOverride)) : UIColor.white.withAlphaComponent((verticallyPresented ? 0.6 : 0.4) - alphaOverride)
         }
     }
 }

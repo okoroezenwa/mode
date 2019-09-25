@@ -379,7 +379,7 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="256" height="54"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Folders" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eVQ-0E-aLa" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                <rect key="frame" x="38" y="0.0" width="51.5" height="54"/>
+                                                                <rect key="frame" x="38" y="0.0" width="57" height="54"/>
                                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                                 <nil key="textColor"/>
                                                                 <nil key="highlightedColor"/>
@@ -428,7 +428,7 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="256" height="54"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Bold Text" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0bz-HI-DRh" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                <rect key="frame" x="38" y="0.0" width="65" height="54"/>
+                                                                <rect key="frame" x="38" y="0.0" width="71.5" height="54"/>
                                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                                 <nil key="textColor"/>
                                                                 <nil key="highlightedColor"/>
@@ -489,7 +489,7 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="256" height="54"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Empty Playlists" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="huI-x5-W7N" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                <rect key="frame" x="38" y="0.0" width="106" height="54"/>
+                                                                <rect key="frame" x="38" y="0.0" width="116" height="54"/>
                                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                                 <nil key="textColor"/>
                                                                 <nil key="highlightedColor"/>
@@ -550,7 +550,7 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="256" height="54"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Prevent Duplicates" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8nn-XC-lcQ" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                <rect key="frame" x="38" y="0.0" width="133" height="54"/>
+                                                                <rect key="frame" x="38" y="0.0" width="143" height="54"/>
                                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                                 <nil key="textColor"/>
                                                                 <nil key="highlightedColor"/>
@@ -611,7 +611,7 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="256" height="54"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Mix Status Bar" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="emV-Ry-1hK" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                <rect key="frame" x="38" y="0.0" width="100" height="54"/>
+                                                                <rect key="frame" x="38" y="0.0" width="112.5" height="54"/>
                                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                                 <nil key="textColor"/>
                                                                 <nil key="highlightedColor"/>
@@ -691,7 +691,7 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="256" height="54"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Show Unadded Songs" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0ey-L3-Uk8" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                <rect key="frame" x="38" y="0.0" width="156.5" height="54"/>
+                                                                <rect key="frame" x="38" y="0.0" width="171.5" height="54"/>
                                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                                 <nil key="textColor"/>
                                                                 <nil key="highlightedColor"/>
@@ -786,7 +786,7 @@
                                                                         </userDefinedRuntimeAttributes>
                                                                     </view>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Playlists" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HoM-UR-gLw" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                        <rect key="frame" x="0.0" y="33" width="80" height="12"/>
+                                                                        <rect key="frame" x="0.0" y="32" width="80" height="14"/>
                                                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="12"/>
                                                                         <nil key="textColor"/>
                                                                         <nil key="highlightedColor"/>
@@ -846,7 +846,7 @@
                                                                         </userDefinedRuntimeAttributes>
                                                                     </view>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Songs" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="isp-9x-giC" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                        <rect key="frame" x="0.0" y="33" width="80" height="12"/>
+                                                                        <rect key="frame" x="0.0" y="32" width="80" height="14"/>
                                                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="12"/>
                                                                         <nil key="textColor"/>
                                                                         <nil key="highlightedColor"/>
@@ -906,7 +906,7 @@
                                                                         </userDefinedRuntimeAttributes>
                                                                     </view>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Artists" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fhz-eP-BUJ" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                        <rect key="frame" x="0.0" y="33" width="80" height="12"/>
+                                                                        <rect key="frame" x="0.0" y="32" width="80" height="14"/>
                                                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="12"/>
                                                                         <nil key="textColor"/>
                                                                         <nil key="highlightedColor"/>
@@ -966,7 +966,7 @@
                                                                         </userDefinedRuntimeAttributes>
                                                                     </view>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Albums" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fRu-g2-9oy" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                        <rect key="frame" x="0.0" y="33" width="80" height="12"/>
+                                                                        <rect key="frame" x="0.0" y="32" width="80" height="14"/>
                                                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="12"/>
                                                                         <nil key="textColor"/>
                                                                         <nil key="highlightedColor"/>
@@ -1047,7 +1047,7 @@
                                                                                 </userDefinedRuntimeAttributes>
                                                                             </view>
                                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Genres" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ogD-3o-Tdf" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                                <rect key="frame" x="0.0" y="33" width="80" height="12"/>
+                                                                                <rect key="frame" x="0.0" y="32" width="80" height="14"/>
                                                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="12"/>
                                                                                 <nil key="textColor"/>
                                                                                 <nil key="highlightedColor"/>
@@ -1107,7 +1107,7 @@
                                                                                 </userDefinedRuntimeAttributes>
                                                                             </view>
                                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Compilations" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="A2j-ke-x7Y" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                                <rect key="frame" x="0.0" y="33" width="80" height="12"/>
+                                                                                <rect key="frame" x="0.0" y="32" width="80" height="14"/>
                                                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="12"/>
                                                                                 <nil key="textColor"/>
                                                                                 <nil key="highlightedColor"/>
@@ -1167,7 +1167,7 @@
                                                                                 </userDefinedRuntimeAttributes>
                                                                             </view>
                                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Composers" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Drb-XU-efZ" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                                <rect key="frame" x="0.0" y="33" width="80" height="12"/>
+                                                                                <rect key="frame" x="0.0" y="32" width="80" height="14"/>
                                                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="12"/>
                                                                                 <nil key="textColor"/>
                                                                                 <nil key="highlightedColor"/>
@@ -1789,8 +1789,22 @@
                                             </userDefinedRuntimeAttribute>
                                         </userDefinedRuntimeAttributes>
                                     </imageView>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="A5y-Il-DGQ" customClass="ShadowImageView" customModule="Mode" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="296.5" width="462" height="117"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="radius">
+                                                <integer key="value" value="15"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="length">
+                                                <integer key="value" value="30"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="blur">
+                                                <integer key="value" value="30"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                    </imageView>
                                     <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="6" translatesAutoresizingMaskIntoConstraints="NO" id="XAJ-2d-IuL">
-                                        <rect key="frame" x="30" y="326.5" width="402" height="57"/>
+                                        <rect key="frame" x="30" y="389.5" width="402" height="57"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="c5w-Jr-SqJ">
                                                 <rect key="frame" x="0.0" y="0.0" width="130" height="57"/>
@@ -1875,20 +1889,6 @@
                                             </view>
                                         </subviews>
                                     </stackView>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="A5y-Il-DGQ" customClass="ShadowImageView" customModule="Mode" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="359.5" width="462" height="117"/>
-                                        <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="number" keyPath="radius">
-                                                <integer key="value" value="15"/>
-                                            </userDefinedRuntimeAttribute>
-                                            <userDefinedRuntimeAttribute type="number" keyPath="length">
-                                                <integer key="value" value="30"/>
-                                            </userDefinedRuntimeAttribute>
-                                            <userDefinedRuntimeAttribute type="number" keyPath="blur">
-                                                <integer key="value" value="30"/>
-                                            </userDefinedRuntimeAttribute>
-                                        </userDefinedRuntimeAttributes>
-                                    </imageView>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="1UQ-1n-K2n" customClass="ShadowImageView" customModule="Mode" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="422.5" width="462" height="117"/>
                                         <userDefinedRuntimeAttributes>
@@ -1929,7 +1929,7 @@
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="NDr-fh-HMf">
-                                                            <rect key="frame" x="0.0" y="0.0" width="402" height="120"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="402" height="119.5"/>
                                                             <subviews>
                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lCq-Em-K9b">
                                                                     <rect key="frame" x="0.0" y="0.0" width="402" height="53"/>
@@ -2037,10 +2037,10 @@
                                                                     </constraints>
                                                                 </view>
                                                                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="te1-d1-nwb">
-                                                                    <rect key="frame" x="0.0" y="53" width="402" height="66.5"/>
+                                                                    <rect key="frame" x="0.0" y="53" width="402" height="66"/>
                                                                     <subviews>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="999" text="Title" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Smp-rv-80U" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="0.0" width="382" height="23.5"/>
+                                                                            <rect key="frame" x="10" y="0.0" width="382" height="23"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
@@ -2053,7 +2053,7 @@
                                                                             </userDefinedRuntimeAttributes>
                                                                         </label>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="998" text="Subtitle" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qmd-cS-Hye" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="31.5" width="382" height="17"/>
+                                                                            <rect key="frame" x="10" y="31" width="382" height="17"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
@@ -2069,7 +2069,7 @@
                                                                     <edgeInsets key="layoutMargins" top="0.0" left="10" bottom="18" right="10"/>
                                                                 </stackView>
                                                                 <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d7g-8E-Uhg" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="119.5" width="402" height="0.5"/>
+                                                                    <rect key="frame" x="0.0" y="119" width="402" height="0.5"/>
                                                                     <color key="backgroundColor" white="0.0" alpha="0.050000000000000003" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="height" priority="900" constant="0.5" id="S9c-tA-2zF"/>
@@ -2086,7 +2086,7 @@
                                                             </subviews>
                                                         </stackView>
                                                         <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lfP-04-gL9">
-                                                            <rect key="frame" x="0.0" y="120" width="402" height="171"/>
+                                                            <rect key="frame" x="0.0" y="119.5" width="402" height="171"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="171" identifier="containerHeightConstraint" id="s0I-h5-x1a"/>
                                                             </constraints>
@@ -2108,35 +2108,12 @@
                                                         <integer key="value" value="15"/>
                                                     </userDefinedRuntimeAttribute>
                                                     <userDefinedRuntimeAttribute type="number" keyPath="darkAlphaOverride">
-                                                        <integer key="value" value="0"/>
+                                                        <real key="value" value="0.050000000000000003"/>
                                                     </userDefinedRuntimeAttribute>
                                                 </userDefinedRuntimeAttributes>
                                             </visualEffectView>
-                                            <view opaque="NO" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IOC-9d-orW">
-                                                <rect key="frame" x="0.0" y="296.5" width="402" height="57"/>
-                                                <subviews>
-                                                    <collectionView multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="FL4-oe-zPv">
-                                                        <rect key="frame" x="0.0" y="0.0" width="402" height="57"/>
-                                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                        <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="6" minimumInteritemSpacing="6" id="tGU-Z4-PQZ">
-                                                            <size key="itemSize" width="50" height="50"/>
-                                                            <size key="headerReferenceSize" width="0.0" height="0.0"/>
-                                                            <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                                                            <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                                        </collectionViewFlowLayout>
-                                                        <cells/>
-                                                    </collectionView>
-                                                </subviews>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" priority="900" constant="57" id="BWn-An-fot"/>
-                                                    <constraint firstAttribute="bottom" secondItem="FL4-oe-zPv" secondAttribute="bottom" id="bAy-6m-RKW"/>
-                                                    <constraint firstItem="FL4-oe-zPv" firstAttribute="top" secondItem="IOC-9d-orW" secondAttribute="top" id="cIK-zr-UfJ"/>
-                                                    <constraint firstItem="FL4-oe-zPv" firstAttribute="leading" secondItem="IOC-9d-orW" secondAttribute="leading" id="mIn-ZX-olT"/>
-                                                    <constraint firstAttribute="trailing" secondItem="FL4-oe-zPv" secondAttribute="trailing" id="nbr-tt-FrV"/>
-                                                </constraints>
-                                            </view>
                                             <visualEffectView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eU3-iM-fV6" customClass="MELVisualEffectView" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="359.5" width="402" height="57"/>
+                                                <rect key="frame" x="0.0" y="296.5" width="402" height="57"/>
                                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="U3a-tM-C0H">
                                                     <rect key="frame" x="0.0" y="0.0" width="402" height="57"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -2169,13 +2146,37 @@
                                                         <integer key="value" value="15"/>
                                                     </userDefinedRuntimeAttribute>
                                                     <userDefinedRuntimeAttribute type="number" keyPath="darkAlphaOverride">
-                                                        <integer key="value" value="0"/>
+                                                        <real key="value" value="0.050000000000000003"/>
                                                     </userDefinedRuntimeAttribute>
                                                     <userDefinedRuntimeAttribute type="number" keyPath="alphaOverride">
                                                         <real key="value" value="-0.050000000000000003"/>
                                                     </userDefinedRuntimeAttribute>
                                                 </userDefinedRuntimeAttributes>
                                             </visualEffectView>
+                                            <view multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IOC-9d-orW">
+                                                <rect key="frame" x="0.0" y="359.5" width="402" height="57"/>
+                                                <subviews>
+                                                    <collectionView multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="FL4-oe-zPv">
+                                                        <rect key="frame" x="0.0" y="0.0" width="402" height="57"/>
+                                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                        <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="6" minimumInteritemSpacing="6" id="tGU-Z4-PQZ">
+                                                            <size key="itemSize" width="50" height="50"/>
+                                                            <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                                            <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                                            <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                                        </collectionViewFlowLayout>
+                                                        <cells/>
+                                                    </collectionView>
+                                                </subviews>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" priority="900" constant="57" id="BWn-An-fot"/>
+                                                    <constraint firstAttribute="bottom" secondItem="FL4-oe-zPv" secondAttribute="bottom" id="bAy-6m-RKW"/>
+                                                    <constraint firstItem="FL4-oe-zPv" firstAttribute="top" secondItem="IOC-9d-orW" secondAttribute="top" id="cIK-zr-UfJ"/>
+                                                    <constraint firstItem="FL4-oe-zPv" firstAttribute="leading" secondItem="IOC-9d-orW" secondAttribute="leading" id="mIn-ZX-olT"/>
+                                                    <constraint firstAttribute="trailing" secondItem="FL4-oe-zPv" secondAttribute="trailing" id="nbr-tt-FrV"/>
+                                                </constraints>
+                                            </view>
                                             <visualEffectView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wcB-l2-L9N" customClass="MELVisualEffectView" customModule="Mode" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="422.5" width="402" height="57"/>
                                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="2nt-oM-MnI">
@@ -2210,7 +2211,7 @@
                                                         <integer key="value" value="15"/>
                                                     </userDefinedRuntimeAttribute>
                                                     <userDefinedRuntimeAttribute type="number" keyPath="darkAlphaOverride">
-                                                        <integer key="value" value="0"/>
+                                                        <real key="value" value="0.050000000000000003"/>
                                                     </userDefinedRuntimeAttribute>
                                                     <userDefinedRuntimeAttribute type="number" keyPath="alphaOverride">
                                                         <real key="value" value="-0.25"/>
@@ -2262,6 +2263,7 @@
                         <outlet property="leftButton" destination="aTR-T0-gaI" id="2KT-Vu-oG3"/>
                         <outlet property="leftButtonBorderView" destination="HOZ-NA-3xU" id="ydt-mB-Q0G"/>
                         <outlet property="leftView" destination="hke-JB-hi4" id="0y6-9U-ACr"/>
+                        <outlet property="middleHideableShadowView" destination="cII-fl-wP1" id="0DB-fd-62O"/>
                         <outlet property="rightButton" destination="smY-jw-Zu6" id="acl-cW-9aM"/>
                         <outlet property="rightButtonBorderView" destination="HmW-5j-qrm" id="0pL-l2-0pc"/>
                         <outlet property="rightView" destination="KGj-DJ-75V" id="m1y-NW-ws4"/>

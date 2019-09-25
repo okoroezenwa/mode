@@ -12,13 +12,18 @@ protocol Arrangeable: NSObjectProtocol, TableViewContaining {
     
     var query: MPMediaQuery? { get }
     var sortCriteria: SortCriteria { get set }
+    var staticSortCriteria: SortCriteria { get set }
     var ascending: Bool { get set }
     var applicableSortCriteria: Set<SortCriteria> { get }
     var arrangeButton: MELButton! { get set }
     var sortLocation: SortLocation { get }
     var applySort: Bool { get set }
+    var headerView: HeaderView { get set }
+    var sortOperationQueue: OperationQueue { get }
     
-    func sortItems()
+//    func sortItems()
+    func updateHeaderView(withCount count: Int)
+    func prepareSupplementaryInfo(animated: Bool)
 }
 
 protocol FullySortable: Arrangeable {
@@ -35,7 +40,7 @@ extension FullySortable {
     
     var alphaNumericCritieria: Set<SortCriteria> {
         
-        return [.title, .artist, .album, .genre]
+        return [.title, .artist, .album, .genre, .albumName, .albumYear]
     }
     
     func scrollToHighlightedRow() {
@@ -58,42 +63,34 @@ extension FullySortable {
                 
                 switch sortLocation {
                     
-                case .songs:
+                    case .songs:
+                        
+                        if let itemSections = query?.itemSections, let detail = itemSections.enumerated().first(where: { $0.element.range.location + $0.element.range.length > index }) {
+                            
+                            return IndexPath.init(row: index - detail.element.range.location, section: detail.offset)
+                        }
+                        
+                        return IndexPath.init(row: index, section: 0)
                     
-                    if let _ = self as? ArtistSongsViewController {
+                    case .playlist: return IndexPath.init(row: index, section: 0)
+                    
+                    case .playlistList, .album:
                         
                         if let detail = sections.enumerated().first(where: { $0.element.startingPoint + $0.element.count > index }) {
                             
                             return IndexPath.init(row: index - detail.element.startingPoint, section: detail.offset)
                         }
-                    }
-                    
-                    if let itemSections = query?.itemSections, let detail = itemSections.enumerated().first(where: { $0.element.range.location + $0.element.range.length > index }) {
                         
-                        return IndexPath.init(row: index - detail.element.range.location, section: detail.offset)
-                    }
+                        return IndexPath.init(row: index, section: 0)
                     
-                    return IndexPath.init(row: index, section: 0)
-                    
-                case .playlist: return IndexPath.init(row: index, section: 0)
-                    
-                case .playlistList, .album:
-                    
-                    if let detail = sections.enumerated().first(where: { $0.element.startingPoint + $0.element.count > index }) {
+                    case .collections:
                         
-                        return IndexPath.init(row: index - detail.element.startingPoint, section: detail.offset)
-                    }
-                    
-                    return IndexPath.init(row: index, section: 0)
-                    
-                case .collections:
-                    
-                    if let itemSections = query?.collectionSections, let detail = itemSections.enumerated().first(where: { $0.element.range.location + $0.element.range.length > index }) {
+                        if let itemSections = query?.collectionSections, let detail = itemSections.enumerated().first(where: { $0.element.range.location + $0.element.range.length > index }) {
+                            
+                            return IndexPath.init(row: index - detail.element.range.location, section: detail.offset)
+                        }
                         
-                        return IndexPath.init(row: index - detail.element.range.location, section: detail.offset)
-                    }
-                    
-                    return IndexPath.init(row: index, section: 0)
+                        return IndexPath.init(row: index, section: 0)
                 }
                 
             case .random: return IndexPath.init(row: index, section: 0)
@@ -190,7 +187,11 @@ extension Arrangeable {
                 
             case .random: return "Random Order"
                 
-            case .album: return "Album Title"
+            case .album: return "Album Index"
+            
+            case .albumName: return "Album Name"
+            
+            case .albumYear: return "Album by Year"
                 
             case .artist: return "Artist Name"
                 
@@ -205,6 +206,11 @@ extension Arrangeable {
     }
     
     func descriptor(for criteria: SortCriteria, secondary: Bool = false) -> NSSortDescriptor {
+        
+        return descriptor(for: criteria, at: sortLocation, secondary: secondary)
+    }
+    
+    func descriptor(for criteria: SortCriteria, at sortLocation: SortLocation, secondary: Bool = false) -> NSSortDescriptor {
         
         let localAscending = secondary ? true : self.ascending
         
@@ -307,7 +313,7 @@ extension Arrangeable {
                     case .playlistList: return .init()
                 }
                 
-            case .random: return .init()
+            case .random, .albumName, .albumYear: return .init()
             
             case .fileSize:
                 
@@ -326,15 +332,27 @@ extension Arrangeable {
     
     func descriptors(for criteria: SortCriteria..., treatFirstAsSecondary: Bool = false) -> [NSSortDescriptor] {
         
+        return descriptors(for: criteria, at: sortLocation, treatFirstAsSecondary: treatFirstAsSecondary)
+    }
+    
+    /// Array version
+    func descriptors(for criteria: [SortCriteria], at location: SortLocation, treatFirstAsSecondary: Bool = false) -> [NSSortDescriptor] {
+        
         var descriptors = [NSSortDescriptor]()
         let first = criteria.first
         
         for criterion in criteria {
             
-            descriptors.append(descriptor(for: criterion, secondary: criterion != first || treatFirstAsSecondary))
+            descriptors.append(descriptor(for: criterion, at: location, secondary: criterion != first || treatFirstAsSecondary))
         }
         
         return descriptors
+    }
+    
+    /// Variadic version
+    func descriptors(for criteria: SortCriteria..., at location: SortLocation, treatFirstAsSecondary: Bool = false) -> [NSSortDescriptor] {
+        
+        return descriptors(for: criteria, at: location, treatFirstAsSecondary: treatFirstAsSecondary)
     }
     
     /// Sort descriptors for each sort category.
@@ -437,6 +455,11 @@ extension Arrangeable {
     }
     
     func prepareSections(from collections: [MPMediaItemCollection]) -> [SortSectionDetails] {
+        
+        return prepareSections(for: sortCriteria, from: collections)
+    }
+    
+    func prepareSections(for sortCriteria: SortCriteria, from collections: [MPMediaItemCollection]) -> [SortSectionDetails] {
         
         switch sortCriteria {
             
@@ -858,7 +881,7 @@ extension Arrangeable {
                     default: return []
                 }
             
-            case .random, .songCount, .albumCount: return []
+            case .random, .songCount, .albumCount, .albumYear, .albumName: return []
                 
             case .plays:
                 

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer, SingleItemActionable, BorderButtonContaining {
+class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer, SingleItemActionable, PillButtonContaining {
 
     @IBOutlet var tableView: MELTableView!
     @IBOutlet var bottomView: UIView!
@@ -16,15 +16,15 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
         
         didSet {
             
-            let addView = BorderedButtonView.with(title: "Add", image: #imageLiteral(resourceName: "AddNoBorderSmall"), tapAction: .init(action: #selector(addSongs), target: self))
+            let addView = PillButtonView.with(title: "Add", image: #imageLiteral(resourceName: "AddNoBorderSmall"), tapAction: .init(action: #selector(addSongs), target: self))
             addButton = addView.button
             self.addView = addView
             
-            let clearView = BorderedButtonView.with(title: "Clear...", image: #imageLiteral(resourceName: "Discard"), tapAction: .init(action: #selector(clear), target: self))
+            let clearView = PillButtonView.with(title: "Clear...", image: #imageLiteral(resourceName: "Discard"), tapAction: .init(action: #selector(clear), target: self))
             clearButton = clearView.button
             self.clearView = clearView
             
-            let editView = BorderedButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, tapAction: .init(action: #selector(SongActionManager.toggleEditing(_:)), target: songManager))
+            let editView = PillButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, tapAction: .init(action: #selector(SongActionManager.toggleEditing(_:)), target: songManager))
             editButton = editView.button
             self.editView = editView
             
@@ -32,8 +32,8 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
                 
 //                view.button.contentEdgeInsets.top = 10
 //                view.button.contentEdgeInsets.bottom = 0
-                view.borderViewBottomConstraint.constant = 2
-                view.borderViewTopConstraint.constant = 10
+                view.imageViewBottomConstraint?.constant = 2
+                view.borderViewContainerTopConstraint.constant = 10
 //                view.borderView.layer.cornerRadius = 8
                 stackView.addArrangedSubview(view)
             }
@@ -46,11 +46,11 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
     @objc var clearButton: MELButton!
     @objc var editButton: MELButton!
     
-    @objc var addView: BorderedButtonView!
-    @objc var clearView: BorderedButtonView!
-    @objc var editView: BorderedButtonView!
+    @objc var addView: PillButtonView!
+    @objc var clearView: PillButtonView!
+    @objc var editView: PillButtonView!
     
-    var borderedButtons = [BorderedButtonView?]()
+    var borderedButtons = [PillButtonView?]()
     
     var preferredEditingStyle = EditingStyle.select
     
@@ -449,7 +449,7 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
             }
         }
         
-        Transitioner.shared.showAlert(title: "Clear...", from: self, with: array)
+        showAlert(title: "Clear...", with: array)
         
 //        present(UIAlertController.withTitle("Clear...", message: nil, style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
     }
@@ -642,6 +642,11 @@ extension NewPlaylistViewController: UISearchBarDelegate {
 
 extension NewPlaylistViewController: EntityCellDelegate {
     
+    func editButtonHeld(in cell: SongTableViewCell) {
+        
+        Transitioner.shared.performDeepSelection(from: self, title: cell.nameLabel.text)
+    }
+    
     func editButtonTapped(in cell: SongTableViewCell) {
         
         guard let indexPath = tableView.indexPath(for: cell) else { return }
@@ -665,7 +670,17 @@ extension NewPlaylistViewController: EntityCellDelegate {
         cell.setHighlighted(false, animated: true)
     }
     
+    func artworkHeld(in cell: SongTableViewCell) {
+        
+        
+    }
+    
     func accessoryButtonTapped(in cell: SongTableViewCell) {
+        
+        
+    }
+    
+    func accessoryButtonHeld(in cell: SongTableViewCell) {
         
         
     }

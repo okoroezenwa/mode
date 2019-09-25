@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, InfoLoading, AlbumTransitionable, GenreTransitionable, ArtistTransitionable, AlbumArtistTransitionable, ComposerTransitionable, QueryUpdateable, CellAnimatable, SingleItemActionable, BorderButtonContaining, Refreshable, IndexContaining, EntityVerifiable, TopScrollable, EntityContainer {
+class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, InfoLoading, AlbumTransitionable, GenreTransitionable, ArtistTransitionable, AlbumArtistTransitionable, ComposerTransitionable, QueryUpdateable, CellAnimatable, SingleItemActionable, PillButtonContaining, Refreshable, IndexContaining, EntityVerifiable, TopScrollable, EntityContainer {
     
     @IBOutlet var tableView: MELTableView!
     
@@ -32,11 +32,11 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
         
         didSet {
             
-            let shuffleView = BorderedButtonView.with(title: .shuffleButtonTitle, image: #imageLiteral(resourceName: "Shuffle13"), tapAction: .init(action: #selector(shuffle), target: self))
+            let shuffleView = PillButtonView.with(title: .shuffleButtonTitle, image: #imageLiteral(resourceName: "Shuffle13"), tapAction: .init(action: #selector(shuffle), target: self))
             shuffleButton = shuffleView.button
             self.shuffleView = shuffleView
             
-            let filterView = BorderedButtonView.with(title: "Filter", image: #imageLiteral(resourceName: "Filter13"), tapClosure: { [weak self] _ in
+            let filterView = PillButtonView.with(title: "Filter", image: #imageLiteral(resourceName: "Filter13"), tapClosure: { [weak self] _ in
                 
                 guard let weakSelf = self else { return }
                 
@@ -44,7 +44,7 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
             })
             self.filterView = filterView
             
-            let editView = BorderedButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, tapAction: .init(action: #selector(SongActionManager.toggleEditing(_:)), target: songManager), longPressAction: .init(action: #selector(SongActionManager.showActionsForAll(_:)), target: songManager))
+            let editView = PillButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, tapAction: .init(action: #selector(SongActionManager.toggleEditing(_:)), target: songManager), longPressAction: .init(action: #selector(SongActionManager.showActionsForAll(_:)), target: songManager))
             editButton = editView.button
             self.editView = editView
             
@@ -92,11 +92,11 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
     @objc var playsLabel: MELLabel!
     @objc var sizeLabel: MELLabel!
     
-    @objc var shuffleView: BorderedButtonView!
-    @objc var filterView: BorderedButtonView!
-    @objc var editView: BorderedButtonView!
+    @objc var shuffleView: PillButtonView!
+    @objc var filterView: PillButtonView!
+    @objc var editView: PillButtonView!
     
-    var borderedButtons = [BorderedButtonView?]()
+    var borderedButtons = [PillButtonView?]()
     var sectionIndexViewController: SectionIndexViewController?
     let requiresLargerTrailingConstraint = false
     var navigatable: Navigatable? { return entityVC }
@@ -125,7 +125,12 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
     @objc lazy var songManager: SongActionManager = { return SongActionManager.init(actionable: self) }()
     
     @objc lazy var tableDelegate: TableDelegate = { TableDelegate.init(container: self, location: .artistSongs(withinArtist: self.entityVC?.kind == .artist || self.entityVC?.kind == .albumArtist)) }()
-    @objc var entities: [MPMediaEntity] { return songs }
+    @objc var entities: [MPMediaEntity] {
+        
+        get { return songs }
+        
+        set { songs = newValue as? [MPMediaItem] ?? [] }
+    }
     @objc var query: MPMediaQuery? { return currentArtistQuery }
     @objc lazy var filteredEntities = [MPMediaEntity]()
     @objc var highlightedEntity: MPMediaEntity? { return entityVC?.highlightedEntities?.song }
@@ -158,24 +163,29 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
                 
                 if applySort {
                     
-                    sortItems()
+                    sortAllItems()
                 }
             }
         }
     }
     var sortLocation: SortLocation = .songs
     var applySort = true
-    var sortCriteria = SortCriteria.standard {
+    
+    var staticSortCriteria: SortCriteria = .standard
+    var sortCriteria: SortCriteria {
         
-        didSet {
+        get { return staticSortCriteria }
+        
+        set {
             
             if let _ = tableView, let id = entityVC?.collection?.persistentID {
                 
-                sortItems()
+                staticSortCriteria = newValue
+                sortAllItems()
                 
                 headerView.sortButton.setTitle(arrangementLabelText, for: .normal)
                 UIView.animate(withDuration: 0.3, animations: { self.headerView.layoutIfNeeded() })
-                UniversalMethods.saveSortableItem(withPersistentID: id, order: ascending, sortCriteria: sortCriteria, kind: .artistSongs)
+                UniversalMethods.saveSortableItem(withPersistentID: id, order: ascending, sortCriteria: staticSortCriteria, kind: .artistSongs)
             }
         }
     }
@@ -185,15 +195,15 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
             
             guard let entityVC = entityVC else { return [] }
             
-            let set: Set<SortCriteria> = [.duration, .artist, .album, .plays, .lastPlayed, .genre, .rating, .dateAdded, .title, .fileSize, .year]
+            let set: Set<SortCriteria> = [.duration, .artist, .album, .plays, .lastPlayed, .genre, .rating, .dateAdded, .title, .fileSize, .year, .albumName, .albumYear]
             
             switch entityVC.kind {
                 
                 case .artist, .albumArtist: return set.subtracting([.artist])
                     
-                case .genre: return set.subtracting([.genre])
+                case .genre: return set.subtracting([.genre, .albumName, .albumYear])
                 
-                case .composer: return set
+                case .composer: return set.subtracting([.albumName, .albumYear])
             }
         }
     }
@@ -279,7 +289,7 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
         adjustInsets(context: .container)
         
         prepareLifetimeObservers()
-        prepareSupplementaryInfo()
+        prepareSupplementaryInfo(animated: false)
         
         tableView.delegate = tableDelegate
         tableView.dataSource = tableDelegate
@@ -289,7 +299,7 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
         refreshControl.addTarget(refresher, action: #selector(Refresher.refresh(_:)), for: .valueChanged)
         tableView.addSubview(refreshControl)
         
-        sortItems()
+        sortAllItems()
         
         updateHeaderView(withCount: (currentArtistQuery?.items ?? []).count)
         
@@ -341,7 +351,7 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
         scrollToHighlightedRow()
     }
     
-    @objc func prepareSupplementaryInfo() {
+    @objc func prepareSupplementaryInfo(animated: Bool = true) {
         
         supplementaryOperation?.cancel()
         supplementaryOperation = BlockOperation()
@@ -541,8 +551,8 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
         }
         
         currentArtistQuery?.groupingType = .title
-        prepareSupplementaryInfo()
-        sortItems()
+//        prepareSupplementaryInfo()
+        sortAllItems()
     }
     
     @objc func updateHeaderView(withCount count: Int) {
@@ -626,7 +636,7 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
             
             array.append(shuffleAlbums)
             
-            Transitioner.shared.showAlert(title: entityVC?.title, from: self, with: array)
+            showAlert(title: entityVC?.title, with: array)
             
         } else {
             
@@ -720,7 +730,7 @@ extension ArtistSongsViewController: TableViewContainer {
 
 extension ArtistSongsViewController: FullySortable {
     
-    @objc func sortItems() {
+    /*@objc func sortItems() {
         
         guard let _ = viewIfLoaded else { return }
         
@@ -739,6 +749,7 @@ extension ArtistSongsViewController: FullySortable {
             weakSelf.sections = details
             weakSelf.headerView.updateSortActivityIndicator(to: .hidden)
             weakSelf.updateHeaderView(withCount: (weakSelf.currentArtistQuery?.items ?? []).count)
+            weakSelf.prepareSupplementaryInfo()
             
             if weakSelf.filtering, let filterContainer = weakSelf.filterContainer, let text = filterContainer.searchBar?.text {
                 
@@ -770,21 +781,20 @@ extension ArtistSongsViewController: FullySortable {
                 return
             }
             
-//            let other = weakSelf.sortCriteria == .standard && (weakSelf.entityVC?.kind == .artist || weakSelf.entityVC?.kind == .albumArtist) ? weakSelf.altSections() : (items: [], details: [])
+            let isAlternateAlbumArrangement = Set([SortCriteria.albumName, .albumYear]).contains(weakSelf.sortCriteria)
+            let other = isAlternateAlbumArrangement ? weakSelf.altSections(by: weakSelf.sortCriteria == .albumName ? .name : .year) : nil
             
             let array: [MPMediaItem] = {
                 
                     switch weakSelf.sortCriteria {
                         
-                    case .random: return entities.shuffled()
+                        case .random: return entities.shuffled()
                         
-                    case .standard:
+                        case .standard: return weakSelf.ascending ? entities : entities.reversed()
                         
-//                        if weakSelf.entityVC?.kind == .artist || weakSelf.entityVC?.kind == .albumArtist { return other.items }
+                        case .albumName, .albumYear: return other?.items ?? []
                         
-                        return weakSelf.ascending ? entities : entities.reversed()
-                        
-                    default: return (entities as NSArray).sortedArray(using: weakSelf.sortDescriptors) as! [MPMediaItem]
+                        default: return (entities as NSArray).sortedArray(using: weakSelf.sortDescriptors) as? [MPMediaItem] ?? []
                 }
             }()
             
@@ -803,27 +813,49 @@ extension ArtistSongsViewController: FullySortable {
                 return
             }
             
-            let details = /*weakSelf.sortCriteria == .standard && (weakSelf.entityVC?.kind == .artist || weakSelf.entityVC?.kind == .albumArtist) ? other.details : */weakSelf.prepareSections(from: array)
+            let details = isAlternateAlbumArrangement ? other?.details ?? [] : weakSelf.prepareSections(from: array)
             
             OperationQueue.main.addOperation({ mainBlock(array, details) })
         })
         
         sortOperationQueue.addOperation(operation!)
+    }*/
+    
+    func altSections(by alternateAlbumsView: AlbumsView) -> (items: [MPMediaItem], details: [SortSectionDetails]) {
+        
+        switch alternateAlbumsView {
+            
+            case .name:
+            
+                let query = currentArtistQuery?.copy() as? MPMediaQuery
+                query?.groupingType = .album
+                
+                let things = (ascending ? query?.collections : query?.collections?.reversed()) ?? []
+                let albums = things.map({ ($0.items.first?.albumTitle ??? .untitledAlbum)/*.lowercased()*/ })
+                let items = things.map({ $0.items }).reduce([MPMediaItem](), { $0 + $1 })
+                //        let x = albums.map({ !CharacterSet.letters.contains(String($0.characters.prefix(1)).unicodeScalars.first!) ? "#" : String($0.characters.prefix(1)).uppercased() }).map({ $0.folding(options: .diacriticInsensitive, locale: .current) })
+                let y = albums.map({ _ in "." })
+                let indices = y
+                
+                return (items: items, details: getSectionDetails(from: items.map({ $0.validAlbum }), withOrderedArray: albums, sectionTitles: albums/*.map({ $0.lowercased() })*/, indexTitles: indices))
+            
+            case .year:
+            
+                let query = currentArtistQuery?.copy() as? MPMediaQuery
+                query?.groupingType = .album
+                
+                let things = ((query?.collections ?? []) as NSArray).sortedArray(using: descriptors(for: .year, .album, at: .collections)) as! [MPMediaItemCollection]
+
+                let albums = things.map({ ($0.items.first?.albumTitle ??? .untitledAlbum)/*.lowercased()*/ })
+                let items = things.map({ $0.items }).reduce([MPMediaItem](), { $0 + $1 })
+                //        let x = albums.map({ !CharacterSet.letters.contains(String($0.characters.prefix(1)).unicodeScalars.first!) ? "#" : String($0.characters.prefix(1)).uppercased() }).map({ $0.folding(options: .diacriticInsensitive, locale: .current) })
+                let y = albums.map({ _ in "." })
+                let indices = y
+
+                return (items: items, details: getSectionDetails(from: items.map({ $0.validAlbum }), withOrderedArray: albums, sectionTitles: albums/*.map({ $0.lowercased() })*/, indexTitles: indices))
+        }
     }
     
-    func altSections() -> (items: [MPMediaItem], details: [SortSectionDetails]) {
-        
-        let query = currentArtistQuery?.copy() as? MPMediaQuery
-        query?.groupingType = .album
-        
-        let things = (ascending ? query?.collections : query?.collections?.reversed()) ?? []
-        let albums = things.map({ ($0.items.first?.albumTitle ??? .untitledAlbum)/*.lowercased()*/ })
-        let items = things.map({ $0.items }).reduce([MPMediaItem](), { $0 + $1 })
-//        let x = albums.map({ !CharacterSet.letters.contains(String($0.characters.prefix(1)).unicodeScalars.first!) ? "#" : String($0.characters.prefix(1)).uppercased() }).map({ $0.folding(options: .diacriticInsensitive, locale: .current) })
-        let y = albums.map({ _ in "." })
-        let indices = y
-        
-        return (items: items, details: getSectionDetails(from: items.map({ $0.validAlbum }), withOrderedArray: albums, sectionTitles: albums.map({ $0.lowercased() }), indexTitles: indices))
-    }
+    enum AlbumsView { case name, year }
 }
 

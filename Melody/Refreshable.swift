@@ -49,9 +49,9 @@ class Refresher: NSObject {
                 
                 let reload = AlertAction.init(title: "Refresh", style: .default, handler: { [weak self] in
                     
-                    guard let weakSelf = self, let sorter = weakSelf.refreshable as? Arrangeable else { return }
+                    guard let weakSelf = self, let sorter = weakSelf.refreshable as? TableViewContainer else { return }
                     
-                    sorter.sortItems()
+                    sorter.sortAllItems()//sortItems()
                 })
             
                 let theme = AlertAction.init(title: "\(darkTheme ? "Light" : "Dark") Theme", style: .default, handler: {
@@ -72,7 +72,7 @@ class Refresher: NSObject {
                     filter.invokeSearch()
                 })
                 
-                Transitioner.shared.showAlert(title: nil, from: vc, with: filter, reload, offline, theme, completion: { [weak self] in
+                vc.showAlert(title: nil, with: filter, reload, offline, theme, completion: { [weak self] in
                     
                     guard let weakSelf = self else { return }
                     
@@ -111,13 +111,13 @@ class Refresher: NSObject {
                     return
                 }
             
-                guard let sorter = refreshable as? Arrangeable else {
+                guard let sorter = refreshable as? TableViewContainer else {
                     
                     performRefreshAction(with: .ask)
                     return
                 }
             
-                sorter.sortItems()
+                sorter.sortAllItems()//sortItems()
             
             case .offline:
                 

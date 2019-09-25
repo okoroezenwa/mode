@@ -30,6 +30,16 @@ class SettingsTableViewCell: UITableViewCell {
     enum Context: Equatable {
         
         case setting, alert(UIAlertAction.Style)
+        
+        var alertStyle: UIAlertAction.Style {
+            
+            switch self {
+                
+                case .setting: return .default
+                
+                case .alert(let style): return style
+            }
+        }
     }
     
     weak var delegate: SettingsCellDelegate?
@@ -135,12 +145,11 @@ class SettingsTableViewCell: UITableViewCell {
                 
                 itemSwitch.setOn(isOn(), animated: animated)
                 itemSwitch.action = action
+                
                 return false
-                
-            } else {
-                
-                return true
             }
+                
+            return true
         }()
         
         checkMirrorView.isHidden = {
@@ -375,5 +384,7 @@ struct AlertAction {
 
 extension AlertAction {
     
-    static var stop = AlertAction.init(info: AlertInfo.init(title: "Stop Playback", accessoryType: .none, textAlignment: .center), context: .alert(.destructive), handler: NowPlaying.shared.stopPlayback)
+    static var stop = AlertAction.init(info: AlertInfo.init(title: "Stop Playback", accessoryType: .none, textAlignment: .center), context: .alert(.destructive), requiresDismissalFirst: true, handler: NowPlaying.shared.stopPlayback)
+    
+    var systemAction: UIAlertAction { return .init(title: info.title, style: context.alertStyle, handler: { _ in self.handler?() })}
 }

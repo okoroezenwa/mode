@@ -38,29 +38,29 @@
                                     <userDefinedRuntimeAttribute type="number" keyPath="alphaOverride">
                                         <real key="value" value="-0.050000000000000003"/>
                                     </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="darkAlphaOverride">
+                                        <real key="value" value="0.050000000000000003"/>
+                                    </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                             </visualEffectView>
                             <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="h2s-YN-xQ3" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                <rect key="frame" x="10" y="10" width="219" height="78"/>
+                                <rect key="frame" x="6" y="6" width="227" height="86"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.050000000000000003" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                        <integer key="value" value="10"/>
-                                    </userDefinedRuntimeAttribute>
                                     <userDefinedRuntimeAttribute type="boolean" keyPath="hidden" value="YES"/>
                                     <userDefinedRuntimeAttribute type="number" keyPath="alphaOverride">
-                                        <real key="value" value="0.029999999999999999"/>
+                                        <integer key="value" value="0"/>
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                             </view>
-                            <stackView opaque="NO" contentMode="scaleToFill" spacing="6" translatesAutoresizingMaskIntoConstraints="NO" id="vd3-Zl-jON">
-                                <rect key="frame" x="89.5" y="24" width="60" height="50"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="6" translatesAutoresizingMaskIntoConstraints="NO" id="vd3-Zl-jON">
+                                <rect key="frame" x="10" y="0.0" width="219" height="98"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ecG-Md-W1q">
-                                        <rect key="frame" x="0.0" y="0.0" width="17" height="50"/>
+                                        <rect key="frame" x="0.0" y="24" width="16" height="50"/>
                                         <subviews>
                                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="900" verticalHuggingPriority="251" image="Descending17" translatesAutoresizingMaskIntoConstraints="NO" id="6Rt-gR-mRZ" customClass="MELImageView" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="0.0" width="17" height="48"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="16" height="48"/>
                                                 <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             </imageView>
                                         </subviews>
@@ -72,11 +72,11 @@
                                             <constraint firstAttribute="bottom" secondItem="6Rt-gR-mRZ" secondAttribute="bottom" constant="2" id="Tfy-W9-VX2"/>
                                         </constraints>
                                     </view>
-                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="l7V-ds-RnY">
-                                        <rect key="frame" x="23" y="0.0" width="37" height="50"/>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="l7V-ds-RnY">
+                                        <rect key="frame" x="22" y="32" width="127" height="34"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Text" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fDq-yj-iaP" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="0.0" width="37" height="29.5"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="127" height="20"/>
                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="20"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
@@ -87,7 +87,7 @@
                                                 </userDefinedRuntimeAttributes>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Text" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dzp-D8-fBG" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="33.5" width="37" height="16.5"/>
+                                                <rect key="frame" x="0.0" y="20" width="127" height="14"/>
                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="14"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
@@ -101,22 +101,39 @@
                                             </label>
                                         </subviews>
                                     </stackView>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ngL-6u-cPs" customClass="MELSwitchContainer" customModule="Mode" customModuleProvider="target">
+                                        <rect key="frame" x="155" y="0.0" width="64" height="98"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="64" placeholder="YES" id="IWa-gg-GOK"/>
+                                        </constraints>
+                                    </view>
                                 </subviews>
                             </stackView>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="h2s-YN-xQ3" firstAttribute="top" secondItem="IeA-U9-BFG" secondAttribute="top" constant="10" id="BP6-12-DJs"/>
+                            <constraint firstItem="h2s-YN-xQ3" firstAttribute="top" secondItem="IeA-U9-BFG" secondAttribute="top" constant="6" id="BP6-12-DJs"/>
                             <constraint firstItem="jQG-93-n84" firstAttribute="leading" secondItem="IeA-U9-BFG" secondAttribute="leading" id="Kbv-dR-Ecl"/>
-                            <constraint firstItem="h2s-YN-xQ3" firstAttribute="leading" secondItem="IeA-U9-BFG" secondAttribute="leading" constant="10" id="Mvi-FU-Zt1"/>
+                            <constraint firstAttribute="trailing" secondItem="vd3-Zl-jON" secondAttribute="trailing" constant="10" id="LCS-0Q-uXN"/>
+                            <constraint firstItem="h2s-YN-xQ3" firstAttribute="leading" secondItem="IeA-U9-BFG" secondAttribute="leading" constant="6" id="Mvi-FU-Zt1"/>
                             <constraint firstItem="vd3-Zl-jON" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="IeA-U9-BFG" secondAttribute="leading" id="PbA-Pp-Nwg"/>
-                            <constraint firstAttribute="trailing" secondItem="h2s-YN-xQ3" secondAttribute="trailing" constant="10" id="UDD-y6-x5f"/>
+                            <constraint firstAttribute="trailing" secondItem="h2s-YN-xQ3" secondAttribute="trailing" constant="6" id="UDD-y6-x5f"/>
                             <constraint firstItem="jQG-93-n84" firstAttribute="top" secondItem="IeA-U9-BFG" secondAttribute="top" id="WVs-Cm-CK5"/>
                             <constraint firstItem="vd3-Zl-jON" firstAttribute="centerY" secondItem="IeA-U9-BFG" secondAttribute="centerY" id="YDX-tQ-hCC"/>
                             <constraint firstItem="vd3-Zl-jON" firstAttribute="centerX" secondItem="IeA-U9-BFG" secondAttribute="centerX" id="YUa-S6-6pu"/>
                             <constraint firstAttribute="trailing" secondItem="jQG-93-n84" secondAttribute="trailing" id="dXB-FU-gZ8"/>
+                            <constraint firstItem="vd3-Zl-jON" firstAttribute="top" secondItem="IeA-U9-BFG" secondAttribute="top" id="kXe-b0-Joc"/>
                             <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="vd3-Zl-jON" secondAttribute="trailing" id="kqM-O3-aLm"/>
+                            <constraint firstAttribute="bottom" secondItem="vd3-Zl-jON" secondAttribute="bottom" id="qmP-aq-SXn"/>
                             <constraint firstAttribute="bottom" secondItem="jQG-93-n84" secondAttribute="bottom" id="sPl-QF-4v7"/>
-                            <constraint firstAttribute="bottom" secondItem="h2s-YN-xQ3" secondAttribute="bottom" constant="10" id="ykS-Cd-qEK"/>
+                            <constraint firstItem="vd3-Zl-jON" firstAttribute="leading" secondItem="IeA-U9-BFG" secondAttribute="leading" constant="10" id="vDR-vy-N3y">
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="constant">
+                                        <integer key="value" value="20"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </constraint>
+                            <constraint firstAttribute="bottom" secondItem="h2s-YN-xQ3" secondAttribute="bottom" constant="6" id="ykS-Cd-qEK"/>
                         </constraints>
                     </view>
                 </subviews>
@@ -134,16 +151,21 @@
                 <outlet property="imageView" destination="6Rt-gR-mRZ" id="SbS-FI-vdg"/>
                 <outlet property="selectedBorderView" destination="h2s-YN-xQ3" id="Cdz-am-AxL"/>
                 <outlet property="subtitleLabel" destination="dzp-D8-fBG" id="LM0-80-zBo"/>
+                <outlet property="switchContainer" destination="ngL-6u-cPs" id="8Fd-0k-uRP"/>
                 <outlet property="titleLabel" destination="fDq-yj-iaP" id="Nhj-PT-V9H"/>
                 <outletCollection property="insets" destination="BP6-12-DJs" collectionClass="NSMutableArray" id="Pnd-Q5-FNm"/>
                 <outletCollection property="insets" destination="Mvi-FU-Zt1" collectionClass="NSMutableArray" id="fsF-SS-e3k"/>
                 <outletCollection property="insets" destination="UDD-y6-x5f" collectionClass="NSMutableArray" id="acc-Aa-OFx"/>
                 <outletCollection property="insets" destination="ykS-Cd-qEK" collectionClass="NSMutableArray" id="fdN-gd-xtU"/>
+                <outletCollection property="edgeConstraints" destination="vDR-vy-N3y" collectionClass="NSMutableArray" id="g28-M9-seg"/>
+                <outletCollection property="edgeConstraints" destination="LCS-0Q-uXN" collectionClass="NSMutableArray" id="DsA-B6-JyL"/>
+                <outletCollection property="centreConstraints" destination="YUa-S6-6pu" collectionClass="NSMutableArray" id="cuz-33-YWv"/>
+                <outletCollection property="centreConstraints" destination="YDX-tQ-hCC" collectionClass="NSMutableArray" id="vjD-pD-QPQ"/>
             </connections>
             <point key="canvasLocation" x="104.8" y="167.31634182908547"/>
         </collectionViewCell>
     </objects>
     <resources>
-        <image name="Descending17" width="17" height="16"/>
+        <image name="Descending17" width="16" height="16"/>
     </resources>
 </document>

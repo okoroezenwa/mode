@@ -26,7 +26,7 @@ class SimplePresentationAnimationController: NSObject, UIViewControllerAnimatedT
             
             case .horizontal: return 0.4
             
-            case .vertical: return direction == .forward ? 0.5 : 0.4
+            case .vertical: return direction == .forward ? 0.45 : 0.35
         }
     }
     
@@ -104,7 +104,7 @@ class SimplePresentationAnimationController: NSObject, UIViewControllerAnimatedT
             }
         }
         
-        UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: orientation == .vertical ? 1 : 0.8, initialSpringVelocity: 0, options: [.curveEaseOut, .allowUserInteraction], animations: animations, completion: { _ in
+        UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: orientation == .vertical ? 1 : 0.8, initialSpringVelocity: 0, options: [.curveLinear, .allowUserInteraction], animations: animations, completion: { _ in
             
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
             

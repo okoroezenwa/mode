@@ -69,7 +69,7 @@ enum PlaylistType: Int { case folder, smart, genius, manual, appleMusic }
 
 enum TabBarTapBehaviour: Int { case nothing, scrollToTop, returnToStart, returnThenScroll }
 
-enum Location { case playlist, album, artist(point: EntityItemsViewController.StartPoint), songs, collections(kind: CollectionsKind), fullPlayer, miniPlayer, collector, queue, search, info, newPlaylist, filter, unknown }
+enum Location { case playlist, album, collection(kind: AlbumBasedCollectionKind, point: EntityItemsViewController.StartPoint), songs, collections(kind: CollectionsKind), fullPlayer, miniPlayer, collector, queue, search, info, newPlaylist, filter, unknown }
 
 enum EditingStyle { case insert, select/*, both*/ }
 
@@ -751,7 +751,7 @@ enum SongAction {
             
             case .insert: return #imageLiteral(resourceName: "AddToPlaylist17")
             
-            case .show: return #imageLiteral(resourceName: "goTo17")
+            case .show: return #imageLiteral(resourceName: "GoTo17NoBorder")
             
             case .info: return #imageLiteral(resourceName: "InfoNoBorder17")
             
@@ -983,7 +983,7 @@ enum InfoSection: String, CaseIterable {
 
 enum SortCriteria: Int, CaseIterable {
     
-    case standard, title, artist, album, duration, plays, lastPlayed, rating, genre, dateAdded, year, random, songCount, albumCount, fileSize
+    case standard, title, artist, album, duration, plays, lastPlayed, rating, genre, dateAdded, year, random, songCount, albumCount, fileSize, albumName, albumYear
     
     func title(from location: Location) -> String {
         
@@ -993,14 +993,14 @@ enum SortCriteria: Int, CaseIterable {
             
                 switch location {
                     
-                case .album, .artist(point: .songs), .songs, .playlist, .collections(kind: .artist), .collections(kind: .genre), .collections(kind: .composer), .collections(kind: .playlist): return "Name"
+                case .album, .collection(kind: _, point: .songs), .songs, .playlist, .collections(kind: .artist), .collections(kind: .genre), .collections(kind: .composer), .collections(kind: .playlist): return "Name"
                     
-                    case .collections(kind: .album), .collections(kind: .compilation), .artist(point: .albums): return "Title"
+                    case .collections(kind: .album), .collections(kind: .compilation), .collection(_, point: .albums): return "Title"
                     
                     default: return ""
                 }
             
-            case .album: return "Album"
+            case .album, .albumYear, .albumName: return "Album"
             
             case .artist: return "Artist"
             
@@ -1028,5 +1028,31 @@ enum SortCriteria: Int, CaseIterable {
             
             case .year: return "Year"
         }
+    }
+    
+    func subtitle(from location: Location) -> String {
+        
+        switch location {
+            
+            case .collection(kind: let kind, point: .songs) where Set([AlbumBasedCollectionKind.artist, .albumArtist]).contains(kind):
+            
+                switch self {
+            
+                    case .album: return "by Index"
+                    
+                    case .albumName: return "by Name"
+                    
+                    case .albumYear: return "by Year"
+                    
+                    default: return ""
+                }
+            
+            default: return ""
+        }
+    }
+    
+    static func sortResult(between first: SortCriteria, and second: SortCriteria, at location: Location) -> Bool {
+        
+        return (first.title(from: location) + first.subtitle(from: location)) < (second.title(from: location) + second.subtitle(from: location))
     }
 }
