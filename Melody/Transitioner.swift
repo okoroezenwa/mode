@@ -119,7 +119,7 @@ class Transitioner: NSObject {
             vc.context = .sort
             vc.arrangeVC.sorter = sorter
             vc.requiresSegmentedControl = true
-            vc.leftButtonAction = { button, _ in vc.arrangeVC.persist(button) }
+            vc.leftButtonAction = { [weak vc] button, _ in vc?.arrangeVC.persist(button) }
             
 //            PopoverDelegate.shared.prepare(vc: verticalPresentedVC, preferredSize: .init(width: 350, height: 169), sourceView: sourceView ?? sorter.arrangeButton, sourceRect: sourceRect ?? sorter.arrangeButton.bounds.modifiedBy(width: 0, height: 5), permittedDirections: [.up, .down])
             
@@ -242,7 +242,7 @@ class Transitioner: NSObject {
     }
     
     /// Array Version
-    func showAlert(title: String?, subtitle: String? = nil, from sender: UIViewController?, context: AlertTableViewController.Context = .other, with actions: [AlertAction], segmentDetails: SegmentDetails = ([], []), leftAction: AccessoryButtonAction? = nil, rightAction: AccessoryButtonAction? = nil, completion: (() -> ())? = nil) {
+    func showAlert(title: String?, subtitle: String? = nil, from sender: UIViewController?, context: AlertTableViewController.Context = .other, with actions: [AlertAction], segmentDetails: SegmentDetails = ([], []), leftAction: AccessoryButtonAction? = nil, rightAction: AccessoryButtonAction? = nil, showMenuParameters parameters: [ShowMenuParameters] = [], completion: (() -> ())? = nil) {
         
         guard let vc = popoverStoryboard.instantiateViewController(withIdentifier: String.init(describing: VerticalPresentationContainerViewController.self)) as? VerticalPresentationContainerViewController else { return }
         
@@ -250,6 +250,7 @@ class Transitioner: NSObject {
         vc.alertVC.context = context
         vc.alertVC.actions = actions
         vc.alertVC.segmentActions = segmentDetails.actions
+        vc.alertVC.showMenuParameters = parameters
         vc.leftButtonAction = leftAction
         vc.rightButtonAction = rightAction
         vc.title = title
@@ -262,9 +263,9 @@ class Transitioner: NSObject {
     }
     
     /// Variadic Version
-    func showAlert(title: String?, subtitle: String? = nil, from sender: UIViewController?, context: AlertTableViewController.Context = .other, with actions: AlertAction..., segmentDetails: SegmentDetails = ([], []), leftAction: AccessoryButtonAction? = nil, rightAction: AccessoryButtonAction? = nil, completion: (() -> ())? = nil) {
+    func showAlert(title: String?, subtitle: String? = nil, from sender: UIViewController?, context: AlertTableViewController.Context = .other, with actions: AlertAction..., segmentDetails: SegmentDetails = ([], []), leftAction: AccessoryButtonAction? = nil, rightAction: AccessoryButtonAction? = nil, showMenuParameters parameters: [ShowMenuParameters] = [], completion: (() -> ())? = nil) {
         
-        showAlert(title: title, subtitle: subtitle, from: sender, context: context, with: actions, segmentDetails: segmentDetails, leftAction: leftAction, rightAction: rightAction, completion: completion)
+        showAlert(title: title, subtitle: subtitle, from: sender, context: context, with: actions, segmentDetails: segmentDetails, leftAction: leftAction, rightAction: rightAction, showMenuParameters: parameters, completion: completion)
     }
     
     func performDeepSelection(from sender: UIViewController?, title: String?) {

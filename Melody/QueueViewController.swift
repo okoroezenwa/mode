@@ -76,6 +76,12 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
     @objc var userScrolled = false
     @objc var needsDismissal = false
     @objc var allowPresentation = true // used for presenting actions when controlling music player
+    lazy var limit: Int = {
+        
+        if #available(iOS 12, *) { return 99 }
+        
+        return 499
+    }()
     
     @objc weak var peeker: UIViewController? {
         
@@ -205,7 +211,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             swipeLeft.direction = .left
             tableView.addGestureRecognizer(swipeLeft)
             
-            let hold = UILongPressGestureRecognizer.init(target: self, action: #selector(showOptions(_:)))
+            let hold = UILongPressGestureRecognizer.init(target: self, action: #selector(performHold(_:)))
             hold.minimumPressDuration = longPressDuration
             hold.delegate = self
             tableView.addGestureRecognizer(hold)
@@ -274,6 +280,33 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
 //                weakSelf.updateLoadingViews(hidden: true)
 //            }
 //        })
+    }
+    
+    @objc func performHold(_ sender: UILongPressGestureRecognizer) {
+        
+        switch sender.state {
+            
+            case .began:
+            
+                guard let indexPath = tableView.indexPathForRow(at: sender.location(in: tableView)), let cell = tableView.cellForRow(at: indexPath) as? SongTableViewCell, let item = getSong(from: indexPath) else { return }
+                
+                var actions = [SongAction.collect, .info(context: context(from: indexPath)), .queue(name: cell.nameLabel.text, query: nil), .newPlaylist, .addTo].map({ singleItemAlertAction(for: $0, entity: .song, using: item, from: self) })
+                
+                if item.existsInLibrary.inverted {
+                    
+                    actions.insert(singleItemAlertAction(for: .library, entity: .song, using: item, from: self), at: 3)
+                }
+                
+                showAlert(title: cell.nameLabel.text, with: actions)
+            
+            case .changed, .ended:
+            
+                guard let top = topViewController as? VerticalPresentationContainerViewController else { return }
+            
+                top.gestureActivated(sender)
+            
+            default: break
+        }
     }
     
     @objc func showOptions(_ sender: Any) {
@@ -871,6 +904,8 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             
             if let indexPaths = tableView.indexPathsForSelectedRows, indexPaths.isEmpty.inverted {
                 
+                if #available(iOS 11.3, *), !useSystemPlayer, forceOldStyleQueue.inverted { return [] }
+                
                 return [clearSelected, clearUnselected]
             }
             
@@ -1000,10 +1035,10 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
 
         if firstScroll {
 
-            if queue.isEmpty { return }
+            if #available(iOS 11.3, *), !useSystemPlayer, forceOldStyleQueue.inverted, queue.isEmpty { return }
 
             tableView.scrollToRow(at: IndexPath.init(row: 0, section: presented ? 2 : 1), at: .top, animated: false)
-            tableView.tableHeaderView?.isHidden = false
+//            tableView.tableHeaderView?.isHidden = false
 
             if peeker == nil, let parent = parent as? PresentedContainerViewController, parent.altAnimator?.interactor.interactionInProgress != true {
 
@@ -1121,21 +1156,43 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             return queue.count
         }
         
-        if section == 0 {
+        if #available(iOS 11.3, *), useSystemPlayer || forceOldStyleQueue {
             
-            guard let index = Queue.shared.indexToUse else { return 1 }
+            if section == 0 {
+                
+                guard let index = Queue.shared.indexToUse else { return 1 }
+                
+                return index == 0 ? 1 : min(index, limit)
+                
+            } else if section == 1 {
+                
+                return presented ? 1 : 2
+                
+            } else if section == 2 {
+                
+                guard let index = Queue.shared.indexToUse else { return 1 }
+                
+                return (queueCount - (index + 1)) == 0 ? 1 : min(limit, queueCount - (index + 1))
+            }
             
-            return index == 0 ? 1 : index
-            
-        } else if section == 1 {
-            
-            return presented ? 1 : 2
-            
-        } else if section == 2 {
-            
-            guard let index = Queue.shared.indexToUse else { return 1 }
-            
-            return (queueCount - (index + 1)) == 0 ? 1 : queueCount - (index + 1)
+        } else {
+        
+            if section == 0 {
+                
+                guard let index = Queue.shared.indexToUse else { return 1 }
+                
+                return index == 0 ? 1 : index
+                
+            } else if section == 1 {
+                
+                return presented ? 1 : 2
+                
+            } else if section == 2 {
+                
+                guard let index = Queue.shared.indexToUse else { return 1 }
+                
+                return (queueCount - (index + 1)) == 0 ? 1 : queueCount - (index + 1)
+            }
         }
         
         return 0
@@ -1157,6 +1214,11 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                 return standardCell(at: indexPath)
                 
             } else {
+                
+                if #available(iOS 11.3, *), useSystemPlayer || forceOldStyleQueue, index > limit {
+                    
+                    return songCell(at: indexPath, with: getSong(from: .init(row: index - (limit - indexPath.row), section: 0)))
+                }
                 
                 return songCell(at: indexPath, with: getSong(from: indexPath))
             }
@@ -1467,7 +1529,17 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                 
                 if queueIsBeingEdited { return indexPath.row + 1 }
                 
-                return indexPath.section == 0 ? indexPath.row + 1 : index + 1 + indexPath.row + 1
+                let numberToUse: Int = {
+                    
+                    if #available(iOS 11.3, *), useSystemPlayer || forceOldStyleQueue, index > limit {
+                        
+                        return index - (limit - indexPath.row) + 1
+                    }
+                    
+                    return indexPath.row + 1
+                }()
+                
+                return indexPath.section == 0 ? numberToUse : index + 1 + indexPath.row + 1
             }()
             
             cell.prepare(with: song, songNumber: songNumber, hideOptionsView: presented ? true : !showInfoButtons)
@@ -1558,12 +1630,19 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
     
     func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
         
+        if #available(iOS 13, *) {
+            
+            return true
+        }
+        
         return false
     }
     
     func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
         
-        guard/* !useSystemPlayer,*/ let _ = Queue.shared.indexToUse else { return false }
+        guard let _ = Queue.shared.indexToUse else { return false }
+        
+        if #available(iOS 11.3, *), useSystemPlayer || forceOldStyleQueue { return false }
         
         if queueIsBeingEdited { return true }
         
@@ -1831,7 +1910,17 @@ extension QueueViewController: Attributor {
             
             if let index = Queue.shared.indexToUse {
                 
-                string = (section == 0 ? index : queueCount - (index + 1)).formatted
+                let numberToUse: Int = {
+                    
+                    if #available(iOS 11.3, *), useSystemPlayer || forceOldStyleQueue {
+                        
+                        return section == 0 ? min(limit, index) : min(limit, queueCount - (index + 1))
+                    }
+                    
+                    return section == 0 ? index : queueCount - (index + 1)
+                }()
+                
+                string = numberToUse.formatted
                 
             } else {
                 

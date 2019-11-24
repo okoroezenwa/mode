@@ -597,9 +597,9 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         let albumCount = query?.collections?.count ?? 0
         let songCount = query?.items?.count ?? 0
         
-        let songs = AlertAction.init(title: "Songs (\(songCount.formatted))", style: .default, accessoryType: .check({ [weak self] in self?.activeChildViewController == self?.artistSongsViewController }), handler: { [weak self] in self?.activeChildViewController = self?.artistSongsViewController })
+        let songs = AlertAction.init(title: "Songs", subtitle: songCount.fullCountText(for: .song), style: .default, accessoryType: .check({ [weak self] in self?.activeChildViewController == self?.artistSongsViewController }), image: Entity.song.images.size22, handler: { [weak self] in self?.activeChildViewController = self?.artistSongsViewController })
         
-        let albums = AlertAction.init(title: "Albums (\(albumCount.formatted))", style: .default, accessoryType: .check({ [weak self] in self?.activeChildViewController == self?.artistAlbumsViewController }), handler: { [weak self] in self?.activeChildViewController = self?.artistAlbumsViewController })
+        let albums = AlertAction.init(title: "Albums", subtitle: albumCount.fullCountText(for: .album), style: .default, accessoryType: .check({ [weak self] in self?.activeChildViewController == self?.artistAlbumsViewController }), image: Entity.album.images.size22, handler: { [weak self] in self?.activeChildViewController = self?.artistAlbumsViewController })
         
         showAlert(title: title, with: songs, albums)
     }

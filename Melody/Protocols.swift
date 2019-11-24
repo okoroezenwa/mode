@@ -412,11 +412,14 @@ extension TableViewContainer {
             }
         }
         
+        let parent = (self as? UIViewController)?.parent
+        let items = expectedEntities
+        
         operation?.cancel()
         operation = BlockOperation()
-        operation?.addExecutionBlock({ [weak operation, weak self] in
+        operation?.addExecutionBlock({ [weak operation, weak self, weak parent] in
             
-            guard let weakSelf = self as? TableViewContainer & UIViewController, let weakOperation = operation, !weakOperation.isCancelled, let items = weakSelf.expectedEntities/*query?.items*/, !items.isEmpty else {
+            guard let weakSelf = self as? TableViewContainer & UIViewController, let weakOperation = operation, !weakOperation.isCancelled, let items = items/*query?.items*/, !items.isEmpty else {
                 
                 OperationQueue.main.addOperation {
                     
@@ -446,7 +449,7 @@ extension TableViewContainer {
                 return collectionsVC.recentPlaylists(from: array.entities as? [MPMediaItemCollection] ?? [])
             }()
             
-            if let highlighter = weakSelf.parent as? HighlightedEntityContaining {
+            if let highlighter = parent as? HighlightedEntityContaining {
                 
                 switch weakSelf.location {
                     
@@ -466,7 +469,7 @@ extension TableViewContainer {
                     
                     default: break
                 }
-            }
+            } else {  }
             
             guard !weakOperation.isCancelled else {
                 

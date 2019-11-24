@@ -24,10 +24,29 @@ class RateShareView: UIView {
             setRating()
             prepareLikedView()
             determineOverrides()
+            itemsToShare = nil
         }
     }
     var canLikeEntity = true
     weak var container: UIViewController?
+    var itemsToShare: [Any]? {
+        
+        didSet {
+            
+            guard let items = itemsToShare else { return }
+            
+            shareItems(items)
+        }
+    }
+    
+    lazy var imageOperationQueue: OperationQueue = {
+            
+        let queue = OperationQueue()
+        queue.name = "Image Operation Queue"
+        
+        return queue
+    }()
+    var operation: BlockOperation?
     
     override func awakeFromNib() {
         
@@ -189,28 +208,9 @@ class RateShareView: UIView {
         })
     }
     
-    @IBAction func share() {
+    func shareItems(_ items: [Any]) {
         
-        var images: [UIImage] {
-            
-            if let nowPlayingVC = container as? NowPlayingViewController {
-                
-                return [UIImage.from(nowPlayingVC.view)].compactMap({ $0 })
-            }
-            
-            if let item = entity as? MPMediaItem {
-                
-                return [item.actualArtwork?.image(at: item.artwork?.bounds.size ?? .zero)].compactMap({ $0 })
-                
-            } else if let collection = entity as? MPMediaItemCollection {
-                
-                return collection.items.compactMap({ $0.actualArtwork?.image(at: $0.artwork?.bounds.size ?? .zero) })
-            }
-            
-            return []
-        }
-        
-        let activity = UIActivityViewController.init(activityItems: images.compactMap({ $0 }), applicationActivities: nil)
+        let activity = UIActivityViewController.init(activityItems: items.compactMap({ $0 }), applicationActivities: nil)
         
         if let actionsVC = topViewController as? ActionsViewController {
             
@@ -219,6 +219,63 @@ class RateShareView: UIView {
         } else {
             
             topViewController?.show(activity, sender: nil)
+        }
+    }
+    
+    @IBAction func share() {
+        
+        if let items = itemsToShare {
+            
+            shareItems(items)
+            
+            return
+        }
+        
+        if let nowPlayingVC = container as? NowPlayingViewController {
+            
+            let song = nowPlayingVC.activeItem
+            let songName = song?.validTitle ?? .untitledSong
+            let artist = song?.validArtist ?? .unknownArtist
+            
+            itemsToShare = [songName + " – " + artist, UIImage.from(nowPlayingVC.view) as Any]
+            
+        } else if let item = entity as? MPMediaItem {
+            
+            let songName = item.validTitle
+            let artist = item.validArtist
+            
+            itemsToShare = [songName + " – " + artist, item.actualArtwork?.image(at: item.artwork?.bounds.size ?? .zero) as Any]
+            
+        } else if let collection = entity as? MPMediaItemCollection {
+            
+            if collection.items.count > 100 {
+                
+                let vc = UIAlertController.withTitle("Preparing Images...", message: nil, style: .alert, actions: UIAlertAction.cancel(withTitle: "Cancel", handler: { _ in self.operation?.cancel() }))
+                
+                topViewController?.present(vc, animated: true, completion: nil)
+                
+                operation?.cancel()
+                operation = BlockOperation()
+                operation?.addExecutionBlock { [weak operation] in
+                    
+                    guard operation?.isCancelled != true else { return }
+
+                    let images = collection.items.compactMap({ $0.actualArtwork?.image(at: $0.artwork?.bounds.size ?? .zero) })
+                    
+                    OperationQueue.main.addOperation { [weak self] in
+                        
+                        guard operation?.isCancelled != true else { return }
+                            
+                        vc.dismiss(animated: true, completion: { self?.itemsToShare = images })
+                    }
+                }
+                
+                imageOperationQueue.addOperation(operation!)
+            
+            } else {
+                
+                itemsToShare = collection.items.compactMap({ $0.actualArtwork?.image(at: $0.artwork?.bounds.size ?? .zero) })
+            }
         }
     }
     

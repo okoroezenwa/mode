@@ -947,7 +947,12 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
             lyricsViewVisibility == .hidden
             else { return darkTheme ? .lightContent : .default }
 
-        return activeItem?.artwork?.image(at: CGSize.init(width: 20, height: 20))?.crop(within: CGRect.init(x: 5, y: 0, width: 20, height: (UIApplication.shared.statusBarFrame.height / UIScreen.main.bounds.width) * 10))?.statusBarStyle() ?? .default
+        return activeItem?.artwork?.image(at: CGSize.init(width: 20, height: 20))?.crop(within: CGRect.init(x: 5, y: 0, width: 20, height: (UIApplication.shared.statusBarFrame.height / UIScreen.main.bounds.width) * 10))?.statusBarStyle() ?? {
+            
+            if #available(iOS 13, *) { return .darkContent }
+            
+            return .default
+        }()
     }
     
     @objc func preparePlaybackGestures() {

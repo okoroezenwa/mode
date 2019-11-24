@@ -225,6 +225,7 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, I
     @objc weak var entityVC: EntityItemsViewController? { return parent as? EntityItemsViewController }
     @objc var artist: MPMediaItemCollection? { return currentArtistQuery?.collections?.first }
     @objc var currentArtistQuery: MPMediaQuery?
+    var entityKind: AlbumBasedCollectionKind?
     
     @objc var currentItem: MPMediaItem?
     @objc var currentAlbum: MPMediaItemCollection?
@@ -318,6 +319,8 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, I
         currentArtistQuery = entityVC?.query?.copy() as? MPMediaQuery
         currentArtistQuery?.groupingType = .album
         
+        entityKind = entityVC?.kind
+        
         updateTopInset()
         adjustInsets(context: .container)
         
@@ -388,18 +391,20 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, I
     
     @objc func prepareSupplementaryInfo(animated: Bool = true) {
         
+        guard let entityVC = entityVC, let collection: MPMediaItemCollection = {
+        
+            let query = currentArtistQuery?.copy() as? MPMediaQuery
+            query?.groupingType = entityVC.kind.grouping
+            
+            return query?.collections?.first
+        
+        }(), let _ = viewIfLoaded else { return }
+        
         supplementaryOperation?.cancel()
         supplementaryOperation = BlockOperation()
         supplementaryOperation?.addExecutionBlock({ [weak self] in
             
-            guard let weakSelf = self, let _ = weakSelf.viewIfLoaded, let entityVC = weakSelf.entityVC, let collection: MPMediaItemCollection = {
-                
-                let query = weakSelf.currentArtistQuery?.copy() as? MPMediaQuery
-                query?.groupingType = entityVC.kind.grouping
-                
-                return query?.collections?.first
-                
-                }() else { return }
+            guard let weakSelf = self else { return }
             
             let duration = collection.totalDuration.stringRepresentation(as: .short)
             let created = collection.recentlyAdded.timeIntervalSinceNow.shortStringRepresentation

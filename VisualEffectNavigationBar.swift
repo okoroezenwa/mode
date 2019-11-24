@@ -495,11 +495,11 @@ class VisualEffectNavigationBar: MELVisualEffectView {
             }
         }
         
-        if let entityVC = containerVC?.activeViewController?.topViewController as? EntityItemsViewController, let child = entityVC.children.first as? SongActionable {
+        /*if let entityVC = containerVC?.activeViewController?.topViewController as? EntityItemsViewController, let child = entityVC.children.first as? SongActionable {
             
             child.songManager.showActionsForAll(child)
             
-        } else if let searchVC = containerVC?.activeViewController?.topViewController as? SearchViewController, searchVC.filtering.inverted, searchVC.recentSearches.isEmpty.inverted {
+        }*/ else if let searchVC = containerVC?.activeViewController?.topViewController as? SearchViewController, searchVC.filtering.inverted, searchVC.recentSearches.isEmpty.inverted {
             
             searchVC.deleteRecentSearches()
         }

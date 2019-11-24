@@ -319,13 +319,15 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
             UIView.animate(withDuration: 0.3, animations: { self.headerView.layoutIfNeeded() })
         }
         
+        guard let items = playlistQuery?.items, let dateCreated = playlist?.dateCreated else { return }
+        
         supplementaryOperation?.cancel()
         supplementaryOperation = BlockOperation()
         supplementaryOperation?.addExecutionBlock({ [weak self] in
             
-            guard let weakSelf = self, let items = weakSelf.playlistQuery?.items else { return }
+            guard let weakSelf = self else { return }
             
-            let dateCreated = weakSelf.playlist?.dateCreated.timeIntervalSinceNow.shortStringRepresentation
+            let dateCreated = dateCreated.timeIntervalSinceNow.shortStringRepresentation
             let totalDuration = items.totalDuration.stringRepresentation(as: .short)
             let totalSize = FileSize.init(actualSize: items.totalSize).actualSize.fileSizeRepresentation
             let plays = items.totalPlays
@@ -1123,6 +1125,8 @@ extension PlaylistItemsViewController: MPMediaPickerControllerDelegate {
                 notifier.post(name: .songsAddedToPlaylists, object: nil, userInfo: [String.addedPlaylists: [playlist.persistentID], String.addedSongs: mediaItemCollection.items])
             }
         })
+        
+        mediaPicker.dismiss(animated: true, completion: nil)
     }
     
     func mediaPickerDidCancel(_ mediaPicker: MPMediaPickerController) {

@@ -1938,6 +1938,8 @@ extension InfoViewController: MPMediaPickerControllerDelegate {
                 weakSelf.parent?.performSegue(withIdentifier: "unwind", sender: nil)
             }
         })
+        
+        mediaPicker.dismiss(animated: true, completion: nil)
     }
     
     func mediaPickerDidCancel(_ mediaPicker: MPMediaPickerController) {

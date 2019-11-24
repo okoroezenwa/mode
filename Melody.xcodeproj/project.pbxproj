@@ -42,6 +42,18 @@
 		BE1396921F31BE8F007D8BE7 /* WidgetCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1396911F31BE8E007D8BE7 /* WidgetCollectionViewCell.swift */; };
 		BE1396941F31BF74007D8BE7 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1396931F31BF74007D8BE7 /* Extensions.swift */; };
 		BE1396961F31C08A007D8BE7 /* Globals.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1396951F31C08A007D8BE7 /* Globals.swift */; };
+		BE14559B237FF4B90016CAE8 /* Dark Rainbow App Icon Medium@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE145595237FF4B60016CAE8 /* Dark Rainbow App Icon Medium@2x.png */; };
+		BE14559C237FF4B90016CAE8 /* Dark Rainbow App Icon Medium@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE145596237FF4B70016CAE8 /* Dark Rainbow App Icon Medium@3x.png */; };
+		BE14559D237FF4B90016CAE8 /* Dark Rainbow App Icon Thin@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE145597237FF4B70016CAE8 /* Dark Rainbow App Icon Thin@3x.png */; };
+		BE14559E237FF4B90016CAE8 /* Dark Rainbow App Icon Thin@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE145598237FF4B80016CAE8 /* Dark Rainbow App Icon Thin@2x.png */; };
+		BE14559F237FF4B90016CAE8 /* Dark Rainbow App Icon Wide@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE145599237FF4B80016CAE8 /* Dark Rainbow App Icon Wide@2x.png */; };
+		BE1455A0237FF4B90016CAE8 /* Dark Rainbow App Icon Wide@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE14559A237FF4B90016CAE8 /* Dark Rainbow App Icon Wide@3x.png */; };
+		BE1455A7237FF4C80016CAE8 /* Light Rainbow App Icon Thin@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE1455A1237FF4C40016CAE8 /* Light Rainbow App Icon Thin@3x.png */; };
+		BE1455A8237FF4C80016CAE8 /* Light Rainbow App Icon Wide@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE1455A2237FF4C50016CAE8 /* Light Rainbow App Icon Wide@3x.png */; };
+		BE1455A9237FF4C80016CAE8 /* Light Rainbow App Icon Medium@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE1455A3237FF4C60016CAE8 /* Light Rainbow App Icon Medium@3x.png */; };
+		BE1455AA237FF4C80016CAE8 /* Light Rainbow App Icon Wide@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE1455A4237FF4C70016CAE8 /* Light Rainbow App Icon Wide@2x.png */; };
+		BE1455AB237FF4C80016CAE8 /* Light Rainbow App Icon Medium@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE1455A5237FF4C70016CAE8 /* Light Rainbow App Icon Medium@2x.png */; };
+		BE1455AC237FF4C80016CAE8 /* Light Rainbow App Icon Thin@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE1455A6237FF4C80016CAE8 /* Light Rainbow App Icon Thin@2x.png */; };
 		BE14BB311EF3BF4E008BDA7B /* MELRefreshControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE14BB301EF3BF4D008BDA7B /* MELRefreshControl.swift */; };
 		BE156F821E4F7A0800B48DB2 /* SongDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE156F811E4F7A0800B48DB2 /* SongDelegate.swift */; };
 		BE15AA1F1E869B100053D10B /* Notification + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE15AA1E1E869B100053D10B /* Notification + Extensions.swift */; };
@@ -170,6 +182,12 @@
 		BE7A19BB1ECB470200825303 /* MusicPlayer + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7A19BA1ECB470200825303 /* MusicPlayer + Extensions.swift */; };
 		BE7A66941E6253120091A216 /* MELLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7A66931E6253120091A216 /* MELLabel.swift */; };
 		BE7A66961E62C91E0091A216 /* MELSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7A66951E62C91E0091A216 /* MELSlider.swift */; };
+		BE7B39002380001D00CB7A86 /* Dark Trans App Icon Wide@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE7B38FA2380001C00CB7A86 /* Dark Trans App Icon Wide@2x.png */; };
+		BE7B39012380001D00CB7A86 /* Dark Trans App Icon Wide@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE7B38FB2380001C00CB7A86 /* Dark Trans App Icon Wide@3x.png */; };
+		BE7B39022380001D00CB7A86 /* Dark Trans App Icon Thin@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE7B38FC2380001C00CB7A86 /* Dark Trans App Icon Thin@2x.png */; };
+		BE7B39032380001D00CB7A86 /* Dark Trans App Icon Medium@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE7B38FD2380001C00CB7A86 /* Dark Trans App Icon Medium@2x.png */; };
+		BE7B39042380001D00CB7A86 /* Dark Trans App Icon Medium@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE7B38FE2380001D00CB7A86 /* Dark Trans App Icon Medium@3x.png */; };
+		BE7B39052380001D00CB7A86 /* Dark Trans App Icon Thin@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE7B38FF2380001D00CB7A86 /* Dark Trans App Icon Thin@3x.png */; };
 		BE7B424120DABD0800EB7CD5 /* SettingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7B424020DABD0800EB7CD5 /* SettingsTableViewCell.swift */; };
 		BE7C425F1E84499600974EF2 /* String + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7C425E1E84499600974EF2 /* String + Extensions.swift */; };
 		BE7C42611E846D3300974EF2 /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7C42601E846D3200974EF2 /* Queue.swift */; };
@@ -382,6 +400,18 @@
 		BE1396911F31BE8E007D8BE7 /* WidgetCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WidgetCollectionViewCell.swift; sourceTree = "<group>"; };
 		BE1396931F31BF74007D8BE7 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		BE1396951F31C08A007D8BE7 /* Globals.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Globals.swift; sourceTree = "<group>"; };
+		BE145595237FF4B60016CAE8 /* Dark Rainbow App Icon Medium@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Dark Rainbow App Icon Medium@2x.png"; sourceTree = "<group>"; };
+		BE145596237FF4B70016CAE8 /* Dark Rainbow App Icon Medium@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Dark Rainbow App Icon Medium@3x.png"; sourceTree = "<group>"; };
+		BE145597237FF4B70016CAE8 /* Dark Rainbow App Icon Thin@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Dark Rainbow App Icon Thin@3x.png"; sourceTree = "<group>"; };
+		BE145598237FF4B80016CAE8 /* Dark Rainbow App Icon Thin@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Dark Rainbow App Icon Thin@2x.png"; sourceTree = "<group>"; };
+		BE145599237FF4B80016CAE8 /* Dark Rainbow App Icon Wide@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Dark Rainbow App Icon Wide@2x.png"; sourceTree = "<group>"; };
+		BE14559A237FF4B90016CAE8 /* Dark Rainbow App Icon Wide@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Dark Rainbow App Icon Wide@3x.png"; sourceTree = "<group>"; };
+		BE1455A1237FF4C40016CAE8 /* Light Rainbow App Icon Thin@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Light Rainbow App Icon Thin@3x.png"; sourceTree = "<group>"; };
+		BE1455A2237FF4C50016CAE8 /* Light Rainbow App Icon Wide@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Light Rainbow App Icon Wide@3x.png"; sourceTree = "<group>"; };
+		BE1455A3237FF4C60016CAE8 /* Light Rainbow App Icon Medium@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Light Rainbow App Icon Medium@3x.png"; sourceTree = "<group>"; };
+		BE1455A4237FF4C70016CAE8 /* Light Rainbow App Icon Wide@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Light Rainbow App Icon Wide@2x.png"; sourceTree = "<group>"; };
+		BE1455A5237FF4C70016CAE8 /* Light Rainbow App Icon Medium@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Light Rainbow App Icon Medium@2x.png"; sourceTree = "<group>"; };
+		BE1455A6237FF4C80016CAE8 /* Light Rainbow App Icon Thin@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Light Rainbow App Icon Thin@2x.png"; sourceTree = "<group>"; };
 		BE145FAB1D53C40E004AE0CC /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		BE14BB301EF3BF4D008BDA7B /* MELRefreshControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MELRefreshControl.swift; sourceTree = "<group>"; };
 		BE156F811E4F7A0800B48DB2 /* SongDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongDelegate.swift; sourceTree = "<group>"; };
@@ -515,6 +545,12 @@
 		BE7A19BA1ECB470200825303 /* MusicPlayer + Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MusicPlayer + Extensions.swift"; sourceTree = "<group>"; };
 		BE7A66931E6253120091A216 /* MELLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MELLabel.swift; sourceTree = "<group>"; };
 		BE7A66951E62C91E0091A216 /* MELSlider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MELSlider.swift; sourceTree = "<group>"; };
+		BE7B38FA2380001C00CB7A86 /* Dark Trans App Icon Wide@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Dark Trans App Icon Wide@2x.png"; sourceTree = "<group>"; };
+		BE7B38FB2380001C00CB7A86 /* Dark Trans App Icon Wide@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Dark Trans App Icon Wide@3x.png"; sourceTree = "<group>"; };
+		BE7B38FC2380001C00CB7A86 /* Dark Trans App Icon Thin@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Dark Trans App Icon Thin@2x.png"; sourceTree = "<group>"; };
+		BE7B38FD2380001C00CB7A86 /* Dark Trans App Icon Medium@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Dark Trans App Icon Medium@2x.png"; sourceTree = "<group>"; };
+		BE7B38FE2380001D00CB7A86 /* Dark Trans App Icon Medium@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Dark Trans App Icon Medium@3x.png"; sourceTree = "<group>"; };
+		BE7B38FF2380001D00CB7A86 /* Dark Trans App Icon Thin@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Dark Trans App Icon Thin@3x.png"; sourceTree = "<group>"; };
 		BE7B424020DABD0800EB7CD5 /* SettingsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTableViewCell.swift; sourceTree = "<group>"; };
 		BE7C425E1E84499600974EF2 /* String + Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String + Extensions.swift"; sourceTree = "<group>"; };
 		BE7C42601E846D3200974EF2 /* Queue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Queue.swift; sourceTree = "<group>"; };
@@ -756,6 +792,32 @@
 				BE0F5C481D2D663F00C9E8A1 /* Info.plist */,
 			);
 			path = MelodyUITests;
+			sourceTree = "<group>";
+		};
+		BE145567237D7CD20016CAE8 /* Light Rainbow */ = {
+			isa = PBXGroup;
+			children = (
+				BE1455A5237FF4C70016CAE8 /* Light Rainbow App Icon Medium@2x.png */,
+				BE1455A3237FF4C60016CAE8 /* Light Rainbow App Icon Medium@3x.png */,
+				BE1455A6237FF4C80016CAE8 /* Light Rainbow App Icon Thin@2x.png */,
+				BE1455A1237FF4C40016CAE8 /* Light Rainbow App Icon Thin@3x.png */,
+				BE1455A4237FF4C70016CAE8 /* Light Rainbow App Icon Wide@2x.png */,
+				BE1455A2237FF4C50016CAE8 /* Light Rainbow App Icon Wide@3x.png */,
+			);
+			path = "Light Rainbow";
+			sourceTree = "<group>";
+		};
+		BE145568237D7CE40016CAE8 /* Dark Rainbow */ = {
+			isa = PBXGroup;
+			children = (
+				BE145595237FF4B60016CAE8 /* Dark Rainbow App Icon Medium@2x.png */,
+				BE145596237FF4B70016CAE8 /* Dark Rainbow App Icon Medium@3x.png */,
+				BE145598237FF4B80016CAE8 /* Dark Rainbow App Icon Thin@2x.png */,
+				BE145597237FF4B70016CAE8 /* Dark Rainbow App Icon Thin@3x.png */,
+				BE145599237FF4B80016CAE8 /* Dark Rainbow App Icon Wide@2x.png */,
+				BE14559A237FF4B90016CAE8 /* Dark Rainbow App Icon Wide@3x.png */,
+			);
+			path = "Dark Rainbow";
 			sourceTree = "<group>";
 		};
 		BE145FAA1D53C40E004AE0CC /* Frameworks */ = {
@@ -1152,6 +1214,19 @@
 			path = ..;
 			sourceTree = "<group>";
 		};
+		BE7B38ED237FFF2F00CB7A86 /* Dark Trans */ = {
+			isa = PBXGroup;
+			children = (
+				BE7B38FD2380001C00CB7A86 /* Dark Trans App Icon Medium@2x.png */,
+				BE7B38FE2380001D00CB7A86 /* Dark Trans App Icon Medium@3x.png */,
+				BE7B38FC2380001C00CB7A86 /* Dark Trans App Icon Thin@2x.png */,
+				BE7B38FF2380001D00CB7A86 /* Dark Trans App Icon Thin@3x.png */,
+				BE7B38FA2380001C00CB7A86 /* Dark Trans App Icon Wide@2x.png */,
+				BE7B38FB2380001C00CB7A86 /* Dark Trans App Icon Wide@3x.png */,
+			);
+			path = "Dark Trans";
+			sourceTree = "<group>";
+		};
 		BE7B88DE1D305FFF00DC18BD /* Animation Controllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -1253,6 +1328,9 @@
 		BEF6EDA0201B05EB007B7010 /* Icons */ = {
 			isa = PBXGroup;
 			children = (
+				BE7B38ED237FFF2F00CB7A86 /* Dark Trans */,
+				BE145567237D7CD20016CAE8 /* Light Rainbow */,
+				BE145568237D7CE40016CAE8 /* Dark Rainbow */,
 				BEC0B15F2021D4D4008CBEB5 /* Light */,
 				BEC0B15E2021D4C8008CBEB5 /* Dark */,
 			);
@@ -1470,17 +1548,21 @@
 				BEC0B16A2021D506008CBEB5 /* Light App Icon Medium@2x.png in Resources */,
 				BE573CF31E669E0B0021DCBD /* Popovers.storyboard in Resources */,
 				BEC0B1662021D506008CBEB5 /* Light App Icon Medium@3x.png in Resources */,
+				BE14559E237FF4B90016CAE8 /* Dark Rainbow App Icon Thin@2x.png in Resources */,
 				BE9EA2D21DBF9AC5001F8C85 /* NoAccessView.xib in Resources */,
 				BEDB79A82191BC870013F9A9 /* InfoLyricsCell.xib in Resources */,
 				BE1C349D1E672DF100561D28 /* ScrollHeaderSubview.xib in Resources */,
 				BEC0B1692021D506008CBEB5 /* Light App Icon Thin@2x.png in Resources */,
+				BE1455A8237FF4C80016CAE8 /* Light Rainbow App Icon Wide@3x.png in Resources */,
 				BE28088A1FC97F3200D3AB1C /* PropertyCollectionViewCell.xib in Resources */,
 				BE34C96D21A9C40A00236BAE /* GestureSelectableCell.xib in Resources */,
 				BEC0B1592021D47E008CBEB5 /* Dark App Icon Medium@2x.png in Resources */,
 				BE73B1E31D96708C0059D084 /* SongCell.xib in Resources */,
+				BE14559F237FF4B90016CAE8 /* Dark Rainbow App Icon Wide@2x.png in Resources */,
 				BEC0B16B2021D506008CBEB5 /* Light App Icon Thin@3x.png in Resources */,
 				BEBC4E321FB2DAE200F18E06 /* InputView.xib in Resources */,
 				BE37EDF922E5E14200AF1F6F /* LoginDetailsCell.xib in Resources */,
+				BE7B39032380001D00CB7A86 /* Dark Trans App Icon Medium@2x.png in Resources */,
 				BEC04C081D30257B0095D856 /* MyriadPro-Semibold.otf in Resources */,
 				BE21DB001F229EF600441BF6 /* TableFooterView.xib in Resources */,
 				BE5BB4FF22E3176500F03322 /* LastFMTableViewController.storyboard in Resources */,
@@ -1492,14 +1574,21 @@
 				BE56D13E1DD4C96D00BBF64B /* PlaylistCollectionCell.xib in Resources */,
 				BEA9E5692118A5F000D3095D /* LyricsViewController.storyboard in Resources */,
 				BE573CF11E669D8E0021DCBD /* EntityChildren.storyboard in Resources */,
+				BE14559D237FF4B90016CAE8 /* Dark Rainbow App Icon Thin@3x.png in Resources */,
+				BE7B39042380001D00CB7A86 /* Dark Trans App Icon Medium@3x.png in Resources */,
 				BE53A9A41DD0D5F100FB3073 /* TableHeaderView.xib in Resources */,
+				BE7B39022380001D00CB7A86 /* Dark Trans App Icon Thin@2x.png in Resources */,
+				BE7B39002380001D00CB7A86 /* Dark Trans App Icon Wide@2x.png in Resources */,
 				BE573CEE1E669D0E0021DCBD /* Presented.storyboard in Resources */,
 				BE0F5C2E1D2D663F00C9E8A1 /* Assets.xcassets in Resources */,
+				BE1455A9237FF4C80016CAE8 /* Light Rainbow App Icon Medium@3x.png in Resources */,
+				BE7B39012380001D00CB7A86 /* Dark Trans App Icon Wide@3x.png in Resources */,
 				BEC04C041D30257B0095D856 /* MyriadPro-It.otf in Resources */,
 				BE7314EE1E2635FA0050A46B /* PillButtonView.xib in Resources */,
 				BEC04C071D30257B0095D856 /* MyriadPro-Regular.otf in Resources */,
 				BEC933D31F6D9B1300FB5984 /* SwipeInfo.plist in Resources */,
 				BEB3AC701DD881AD00682854 /* SmallPlaylistCollectionCell.xib in Resources */,
+				BE1455AC237FF4C80016CAE8 /* Light Rainbow App Icon Thin@2x.png in Resources */,
 				BE573CF71E669E970021DCBD /* Settings.storyboard in Resources */,
 				BEFB93CC2124421900590993 /* PlaybackCell.xib in Resources */,
 				BE573CF91E669F300021DCBD /* Tips.storyboard in Resources */,
@@ -1510,12 +1599,19 @@
 				BEC0B15D2021D4A0008CBEB5 /* Dark App Icon Thin@3x.png in Resources */,
 				BEC0B1682021D506008CBEB5 /* Light App Icon Wide@3x.png in Resources */,
 				BE2808881FC973A500D3AB1C /* FilterView.xib in Resources */,
+				BE7B39052380001D00CB7A86 /* Dark Trans App Icon Thin@3x.png in Resources */,
 				BEFF5565212740A7006CBAEE /* MyriadPro-Bold.otf in Resources */,
 				BE573D011E66A1290021DCBD /* MainChildren.storyboard in Resources */,
+				BE1455A7237FF4C80016CAE8 /* Light Rainbow App Icon Thin@3x.png in Resources */,
 				BEC04C051D30257B0095D856 /* MyriadPro-Light.otf in Resources */,
+				BE1455AA237FF4C80016CAE8 /* Light Rainbow App Icon Wide@2x.png in Resources */,
+				BE14559C237FF4B90016CAE8 /* Dark Rainbow App Icon Medium@3x.png in Resources */,
 				BE10508D211AFFB000F5DC78 /* LyricsInfoViewController.storyboard in Resources */,
 				BE573CFC1E669FD20021DCBD /* NowPlaying.storyboard in Resources */,
+				BE14559B237FF4B90016CAE8 /* Dark Rainbow App Icon Medium@2x.png in Resources */,
+				BE1455A0237FF4B90016CAE8 /* Dark Rainbow App Icon Wide@3x.png in Resources */,
 				BE42A620213523070094DD0C /* SwipeView.xib in Resources */,
+				BE1455AB237FF4C80016CAE8 /* Light Rainbow App Icon Medium@2x.png in Resources */,
 				BE573CFF1E66A0F30021DCBD /* PresentedChildren.storyboard in Resources */,
 				BE0F5C2C1D2D663F00C9E8A1 /* Main.storyboard in Resources */,
 				BEC0B1672021D506008CBEB5 /* Light App Icon Wide@2x.png in Resources */,
@@ -1942,7 +2038,7 @@
 				INFOPLIST_FILE = ModeWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.okoroezenwa.modeplayer.dev.Widget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.okoroezenwa.modeplayer.stable.Widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1969,7 +2065,7 @@
 				INFOPLIST_FILE = ModeWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.okoroezenwa.modeplayer.dev.Widget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.okoroezenwa.modeplayer.stable.Widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2105,7 +2201,7 @@
 				INFOPLIST_FILE = Melody/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_SWIFT_FLAGS = "-DDEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = com.okoroezenwa.modeplayer.dev;
+				PRODUCT_BUNDLE_IDENTIFIER = com.okoroezenwa.modeplayer.stable;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2132,7 +2228,7 @@
 				INFOPLIST_FILE = Melody/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_SWIFT_FLAGS = "-DRELEASE";
-				PRODUCT_BUNDLE_IDENTIFIER = com.okoroezenwa.modeplayer.dev;
+				PRODUCT_BUNDLE_IDENTIFIER = com.okoroezenwa.modeplayer.stable;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";

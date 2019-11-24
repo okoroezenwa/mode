@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import NotificationCenter
 
 class QueueTableViewController: UITableViewController {
     
@@ -36,9 +37,13 @@ class QueueTableViewController: UITableViewController {
     
     let firstSectionFooter: String = {
         
-        if #available(iOS 11, *) {
+        if #available(iOS 12.2, *) {
             
-            return "Using Mode's queue is not advised in iOS 11 due to multiple bugs"
+            return "The Today widget is unavailable when using Mode's queue."
+            
+        } else if #available(iOS 11, *) {
+            
+            return "Using Mode's queue is not advised due to multiple bugs."
         }
         
         return "Using the Music app's queue will result in a worse experience when editing or adding to the queue."
@@ -63,6 +68,9 @@ class QueueTableViewController: UITableViewController {
             sharedDefaults.set(newPreference, forKey: .systemPlayer)
             sharedDefaults.set(true, forKey: .quitWidget)
             sharedDefaults.synchronize()
+            
+            #warning("Update for Mode App Store release")
+            NCWidgetController().setHasContent(newPreference, forWidgetWithBundleIdentifier: (Bundle.main.bundleIdentifier ?? ModeBuild.stable.rawValue) + ".Widget")
             
             fatalError()
         })

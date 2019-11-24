@@ -838,8 +838,12 @@ extension SingleItemActionable {
                     }(), let song: MPMediaItem = (item as? MPMediaItemCollection)?.items.first ?? item as? MPMediaItem, let verifiable = vc as? EntityVerifiable else { return }
                     
                     var actions = [AlertAction]()
+                    var parameters = [ShowMenuParameters]()
                     
                     details.entities.filter({ verifiable.verifyLibraryStatus(of: song, itemProperty: $0, animated: false, updateButton: false) == .present }).enumerated().forEach({ index, verifiedEntity in
+                        
+                        let collection = verifiedEntity.collection(from: item)
+                        parameters.append((collection, verifiedEntity))
                         
                         actions.append(
                             .init(info: .init(title: "\(entity == verifiedEntity ? "This " : "")" + verifiedEntity.title(albumArtistOverride: details.albumArtOverride).capitalized,
@@ -876,7 +880,7 @@ extension SingleItemActionable {
                                 
                             }, accessoryAction: { [weak item, weak self] _, presenter in
                                     
-                                    guard let item = item, let collection = verifiedEntity.collection(from: item), let context = verifiedEntity.singleCollectionInfoContext(for: collection) else { return }
+                                    guard let item = item, let collection = collection, let context = verifiedEntity.singleCollectionInfoContext(for: collection) else { return }
                                     
                                     presenter.dismiss(animated: true, completion: {
                                         
@@ -920,21 +924,19 @@ extension SingleItemActionable {
                         
                         actions.insert(.init(title: details.title, handler: details.handler), at: 0)
                         
-                        actions.append(.init(title: "Show in \(2.countText(for: entity, compilationOverride: song.isCompilation, capitalised: true))", handler: { verifiable.showInLibrary(entity: item, type: entity, unwinder: vc) }))
+                        #warning("Add support for Show in Library using a UIAlertController or UIContextMenuInteraction")
+//                        actions.append(.init(title: "Show in \(2.countText(for: entity, compilationOverride: song.isCompilation, capitalised: true))", handler: { verifiable.showInLibrary(entity: item, type: entity, unwinder: vc) }))
                     }
                     
-                    vc.showAlert(title: item.title(for: entity, basedOn: entity),
-                                                  subtitle: useSystemAlerts ? "Show..." : "Go to...",
-                                                  context: .show,
-                                                  with: actions,
-                                                  segmentDetails: (canDisplay ? [.init(title: "Show in \(2.countText(for: entity, compilationOverride: song.isCompilation, capitalised: true))")] : [], canDisplay ? [{ alertVC in verifiable.showInLibrary(entity: item, type: entity, unwinder: alertVC) }] : []),
-                                                  rightAction: { [weak self] _, presenter in
-                        
-                        presenter.dismiss(animated: true, completion: {
-                            
-                            self?.singleItemActionDetails(for: .info(context: context), entity: entity, using: item, from: vc, useAlternateTitle: alternateTitle).handler()
-                        })
-                    })
+                    vc.showAlert(
+                        title: item.title(for: entity, basedOn: entity),
+                        subtitle: useSystemAlerts ? "Show..." : "Go to...",
+                        context: .show,
+                        with: actions,
+                        segmentDetails: (canDisplay ? [.init(title: "Show in \(2.countText(for: entity, compilationOverride: song.isCompilation, capitalised: true))")] : [], canDisplay ? [{ alertVC in verifiable.showInLibrary(entity: item, type: entity, unwinder: alertVC) }] : []),
+                        rightAction: { [weak self] _, presenter in presenter.dismiss(animated: true, completion: { self?.singleItemActionDetails(for: .info(context: context), entity: entity, using: item, from: vc, useAlternateTitle: alternateTitle).handler() }) },
+                        showMenuParameters: parameters
+                    )
                 })
             
             case .rate:

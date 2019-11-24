@@ -531,6 +531,8 @@ extension NewPlaylistViewController: MPMediaPickerControllerDelegate {
             
             (parent as? PresentedContainerViewController)?.prepare(animated: false)
         }
+        
+        mediaPicker.dismiss(animated: true, completion: nil)
     }
 }
 

@@ -468,7 +468,12 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         
-        return darkTheme ? .lightContent : .default
+        return darkTheme ? .lightContent : {
+            
+            if #available(iOS 13, *) { return .darkContent }
+            
+            return .default
+        }()
     }
     
     @objc func prepare(animated: Bool, updateConstraintsAndButtons: Bool = false) {

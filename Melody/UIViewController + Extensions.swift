@@ -63,18 +63,18 @@ extension UIViewController {
             
             case let x where x is ArtistSongsViewController:
                 
-                if let artistSongsVC = x as? ArtistSongsViewController, let entityVC = artistSongsVC.entityVC {
+                if let artistSongsVC = x as? ArtistSongsViewController, let kind = artistSongsVC.entityKind {
                     
-                    return .collection(kind: entityVC.kind, point: .songs)
+                    return .collection(kind: kind, point: .songs)
                 }
             
                 return .unknown
             
             case let x where x is ArtistAlbumsViewController:
             
-                if let artistAlbumsVC = x as? ArtistAlbumsViewController, let entityVC = artistAlbumsVC.entityVC {
+                if let artistAlbumsVC = x as? ArtistAlbumsViewController, let kind = artistAlbumsVC.entityKind {
                     
-                    return .collection(kind: entityVC.kind, point: .songs)
+                    return .collection(kind: kind, point: .albums)
                 }
             
                 return .unknown
@@ -104,7 +104,7 @@ extension UIViewController {
     }
     
     /// Array Version
-    func showAlert(title: String?, subtitle: String? = nil, context: AlertTableViewController.Context = .other, with actions: [AlertAction], segmentDetails: SegmentDetails = ([], []), leftAction: AccessoryButtonAction? = nil, rightAction: AccessoryButtonAction? = nil, completion: (() -> ())? = nil) {
+    func showAlert(title: String?, subtitle: String? = nil, context: AlertTableViewController.Context = .other, with actions: [AlertAction], segmentDetails: SegmentDetails = ([], []), leftAction: AccessoryButtonAction? = nil, rightAction: AccessoryButtonAction? = nil, showMenuParameters parameters: [ShowMenuParameters] = [], completion: (() -> ())? = nil) {
         
         if useSystemAlerts {
             
@@ -118,6 +118,7 @@ extension UIViewController {
             vc.alertVC.context = context
             vc.alertVC.actions = actions
             vc.alertVC.segmentActions = segmentDetails.actions
+            vc.alertVC.showMenuParameters = parameters
             vc.leftButtonAction = leftAction
             vc.rightButtonAction = rightAction
             vc.title = title
@@ -131,8 +132,8 @@ extension UIViewController {
     }
     
     /// Variadic Version
-    func showAlert(title: String?, subtitle: String? = nil, context: AlertTableViewController.Context = .other, with actions: AlertAction..., segmentDetails: SegmentDetails = ([], []), leftAction: AccessoryButtonAction? = nil, rightAction: AccessoryButtonAction? = nil, completion: (() -> ())? = nil) {
+    func showAlert(title: String?, subtitle: String? = nil, context: AlertTableViewController.Context = .other, with actions: AlertAction..., segmentDetails: SegmentDetails = ([], []), leftAction: AccessoryButtonAction? = nil, rightAction: AccessoryButtonAction? = nil, showMenuParameters parameters: [ShowMenuParameters] = [], completion: (() -> ())? = nil) {
         
-        showAlert(title: title, subtitle: subtitle, context: context, with: actions, segmentDetails: segmentDetails, leftAction: leftAction, rightAction: rightAction, completion: completion)
+        showAlert(title: title, subtitle: subtitle, context: context, with: actions, segmentDetails: segmentDetails, leftAction: leftAction, rightAction: rightAction, showMenuParameters: parameters, completion: completion)
     }
 }

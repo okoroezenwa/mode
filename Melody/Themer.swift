@@ -21,6 +21,18 @@ class Themer {
         [Notification.Name.brightnessConstraintChanged, .timeConstraintChanged, .toTimeConstraintChanged, .fromTimeConstraintChanged, .brightnessValueChanged, .anyConditionChanged].forEach({ notifier.addObserver(self, selector: #selector(updateTheme), name: $0, object: nil) })
     }
     
+    func darkThemeExpected(basedOn theme: Theme) -> Bool {
+        
+        if #available(iOS 13, *), theme == .system, let style = appDelegate.window?.rootViewController?.traitCollection.userInterfaceStyle {
+
+            return style == .dark
+
+        } else {
+
+            return theme == .dark
+        }
+    }
+    
     @objc func updateTheme() {
         
         guard !manualNightMode, (brightnessConstraintEnabled || timeConstraintEnabled) else { return }
@@ -33,6 +45,28 @@ class Themer {
                 
                 UIView.transition(with: view, duration: 0.3, options: .transitionCrossDissolve, animations: { notifier.post(name: .themeChanged, object: nil) }, completion: nil)
             }
+        }
+    }
+    
+    func changeTheme(to theme: Theme, changePreference: Bool) {
+        
+        if changePreference {
+                
+            prefs.set(theme.rawValue, forKey: .theme)
+//            prefs.set(!darkTheme, forKey: .manualNightMode)
+//            prefs.set(!darkTheme, forKey: .darkTheme)
+        }
+        
+        let icon = Icon.iconName(type: iconType, width: iconLineWidth, theme: iconTheme).rawValue.nilIfEmpty
+        
+        if #available(iOS 10.3, *), UIApplication.shared.supportsAlternateIcons, iconTheme == .match, icon != UIApplication.shared.alternateIconName {
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: { UIApplication.shared.setAlternateIconName(icon, completionHandler: { error in if let error = error { print(error) } }) })
+        }
+        
+        if let view = appDelegate.window?.rootViewController?.view {
+            
+            UIView.transition(with: view, duration: 0.3, options: .transitionCrossDissolve, animations: { notifier.post(name: .themeChanged, object: nil) }, completion: nil)
         }
     }
     

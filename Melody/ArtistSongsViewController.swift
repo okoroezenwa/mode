@@ -144,6 +144,7 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
     @objc weak var entityVC: EntityItemsViewController? { return parent as? EntityItemsViewController }
     @objc var artist: MPMediaItemCollection? { return currentArtistQuery?.collections?.first }
     @objc var currentArtistQuery: MPMediaQuery?
+    var entityKind: AlbumBasedCollectionKind?
     
     @objc var currentItem: MPMediaItem?
     @objc var currentAlbum: MPMediaItemCollection?
@@ -285,6 +286,8 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
         currentArtistQuery = entityVC?.query?.copy() as? MPMediaQuery
         currentArtistQuery?.groupingType = .title
         
+        entityKind = entityVC?.kind
+        
         updateTopInset()
         adjustInsets(context: .container)
         
@@ -353,14 +356,16 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
     
     @objc func prepareSupplementaryInfo(animated: Bool = true) {
         
+        guard let _ = viewIfLoaded, let grouping = entityVC?.kind.grouping else { return }
+        
         supplementaryOperation?.cancel()
         supplementaryOperation = BlockOperation()
         supplementaryOperation?.addExecutionBlock({ [weak self] in
             
-            guard let weakSelf = self, let _ = weakSelf.viewIfLoaded, let entityVC = weakSelf.entityVC, let collection: MPMediaItemCollection = {
+            guard let weakSelf = self, let collection: MPMediaItemCollection = {
                 
                 let query = weakSelf.currentArtistQuery?.copy() as? MPMediaQuery
-                query?.groupingType = entityVC.kind.grouping
+                query?.groupingType = grouping
                 
                 return query?.collections?.first
             
@@ -831,13 +836,13 @@ extension ArtistSongsViewController: FullySortable {
                 query?.groupingType = .album
                 
                 let things = (ascending ? query?.collections : query?.collections?.reversed()) ?? []
-                let albums = things.map({ ($0.items.first?.albumTitle ??? .untitledAlbum)/*.lowercased()*/ })
+                let albums = things.map({ ($0.items.first?.albumTitle ??? .untitledAlbum) })
                 let items = things.map({ $0.items }).reduce([MPMediaItem](), { $0 + $1 })
                 //        let x = albums.map({ !CharacterSet.letters.contains(String($0.characters.prefix(1)).unicodeScalars.first!) ? "#" : String($0.characters.prefix(1)).uppercased() }).map({ $0.folding(options: .diacriticInsensitive, locale: .current) })
                 let y = albums.map({ _ in "." })
                 let indices = y
                 
-                return (items: items, details: getSectionDetails(from: items.map({ $0.validAlbum }), withOrderedArray: albums, sectionTitles: albums/*.map({ $0.lowercased() })*/, indexTitles: indices))
+                return (items: items, details: getSectionDetails(from: items.map({ $0.validAlbum }), withOrderedArray: albums, sectionTitles: albums, indexTitles: indices))
             
             case .year:
             
@@ -852,7 +857,7 @@ extension ArtistSongsViewController: FullySortable {
                 let y = albums.map({ _ in "." })
                 let indices = y
 
-                return (items: items, details: getSectionDetails(from: items.map({ $0.validAlbum }), withOrderedArray: albums, sectionTitles: albums/*.map({ $0.lowercased() })*/, indexTitles: indices))
+                return (items: items, details: getSectionDetails(from: items.map({ $0.validAlbum }), withOrderedArray: albums, sectionTitles: albums, indexTitles: indices))
         }
     }
     

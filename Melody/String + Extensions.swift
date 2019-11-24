@@ -130,6 +130,11 @@ public extension String {
         return self != right ? self : nil
     }
     
+    func localised(comment: String = "") -> String {
+        
+        return NSLocalizedString(self, comment: comment)
+    }
+    
     var diacritic: String {
         
         if !CharacterSet.letters.contains(String(self.prefix(1)).unicodeScalars.first!) {

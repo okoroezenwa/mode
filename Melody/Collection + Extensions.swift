@@ -151,6 +151,11 @@ extension MPMediaItemCollection {
         
         return image
     }
+    
+    func representativeArtwork(for entityType: Entity, size: CGSize) -> UIImage? {
+        
+        (showiCloudItems ? representativeItem : items.first(where: { !$0.isCloudItem && $0.actualArtwork != nil }))?.actualArtwork?.image(at: size)
+    }
 }
 
 extension MPMediaItemCollection: Settable { }

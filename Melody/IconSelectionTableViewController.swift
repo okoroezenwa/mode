@@ -12,17 +12,21 @@ class IconSelectionTableViewController: UITableViewController {
     
     var sections: SectionDictionary = [
         
-        0: ("line width", nil),
-        1: ("theme", nil)
+        0: ("style", nil),
+        1: ("line width", nil),
+        2: ("background", nil)
     ]
     var settings: SettingsDictionary = [
         
-        .init(0, 0): .init(title: "Thin", accessoryType: .check({ iconLineWidth == .thin })),
-        .init(0, 1): .init(title: "Medium", accessoryType: .check({ iconLineWidth == .medium })),
-        .init(0, 2): .init(title: "Wide", accessoryType: .check({ iconLineWidth == .wide })),
-        .init(1, 0): .init(title: "Dark", accessoryType: .check({ iconTheme == .dark })),
-        .init(1, 1): .init(title: "Light", accessoryType: .check({ iconTheme == .light })),
-        .init(1, 2): .init(title: "Match Current Theme", accessoryType: .check({ iconTheme == .match }))
+        .init(0, 0): .init(title: "Static", accessoryType: .check({ iconType == .regular })),
+        .init(0, 1): .init(title: "Colourful", accessoryType: .check({ iconType == .rainbow })),
+        .init(0, 2): .init(title: "Alternating", accessoryType: .check({ iconType == .trans })),
+        .init(1, 0): .init(title: "Thin", accessoryType: .check({ iconLineWidth == .thin })),
+        .init(1, 1): .init(title: "Medium", accessoryType: .check({ iconLineWidth == .medium })),
+        .init(1, 2): .init(title: "Wide", accessoryType: .check({ iconLineWidth == .wide })),
+        .init(2, 0): .init(title: "Dark", accessoryType: .check({ iconTheme == .dark }), inactive: { iconType == .trans }),
+        .init(2, 1): .init(title: "Light", accessoryType: .check({ iconTheme == .light }), inactive: { iconType == .trans }),
+        .init(2, 2): .init(title: "Match Current Theme", accessoryType: .check({ iconTheme == .match }), inactive: { iconType == .trans })
     ]
     
     override func viewDidLoad() {
@@ -39,11 +43,11 @@ class IconSelectionTableViewController: UITableViewController {
     
     func updateIconIfNeeded() {
         
-        let icon = Icon.iconName(width: iconLineWidth, theme: iconTheme)
+        let icon = Icon.iconName(type: iconType, width: iconLineWidth, theme: iconTheme).rawValue.nilIfEmpty
         
-        guard #available(iOS 10.3, *), UIApplication.shared.supportsAlternateIcons, (icon.rawValue.isEmpty ? nil : icon.rawValue) != UIApplication.shared.alternateIconName else { return }
+        guard #available(iOS 10.3, *), UIApplication.shared.supportsAlternateIcons, icon != UIApplication.shared.alternateIconName else { return }
         
-        UIApplication.shared.setAlternateIconName(icon.rawValue.isEmpty ? nil : icon.rawValue, completionHandler: { _ in })
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.01, execute: { UIApplication.shared.setAlternateIconName(icon, completionHandler: { error in if let error = error { print(error) } }) })
     }
 
     // MARK: - Table view data source
@@ -55,7 +59,7 @@ class IconSelectionTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return 3
+        return settings.filter({ $0.key.section == section }).count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -72,16 +76,43 @@ class IconSelectionTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        let value = indexPath.section == 0 ? iconLineWidth.rawValue : iconTheme.rawValue
+        let value: Int = {
+            
+            switch indexPath.section {
+                
+                case 0: return iconType.rawValue
+            
+                case 1: return iconLineWidth.rawValue
+                
+                case 2: return iconTheme.rawValue
+                
+                default: fatalError("No other section should be here")
+            }
+        }()
         
         if indexPath.row != value, let oldCell = tableView.cellForRow(at: IndexPath.init(row: value, section: indexPath.section)) as? SettingsTableViewCell, let newCell = tableView.cellForRow(at: indexPath) as? SettingsTableViewCell, let oldSetting = settings[IndexPath.init(row: value, section: indexPath.section).settingsSection], let newSetting = settings[indexPath.settingsSection] {
             
-            prefs.set(indexPath.row, forKey: indexPath.section == 0 ? .iconLineWidth : .iconTheme)
+            prefs.set(indexPath.row, forKey: {
+                
+                switch indexPath.section {
+                    
+                    case 0: return .iconType
+                
+                    case 1: return .iconLineWidth
+                    
+                    case 2: return .iconTheme
+                    
+                    default: fatalError("No other section should be here")
+                }
+            
+            }())
             
             oldCell.prepare(with: oldSetting)
             newCell.prepare(with: newSetting)
             
             updateIconIfNeeded()
+            
+            if indexPath.section == 0 { tableView.reloadSections(.init(integer: 2), with: .none) }
         }
         
         tableView.deselectRow(at: indexPath, animated: true)
@@ -92,6 +123,7 @@ class IconSelectionTableViewController: UITableViewController {
         let header = tableView.sectionHeader
         
         header?.label.text = sections[section]?.header
+        header?.label.lightOverride = section == 2 && iconType == .trans
         
         return header
     }
@@ -102,7 +134,7 @@ class IconSelectionTableViewController: UITableViewController {
             
             case 0: return .textHeaderHeight + 20
             
-            case 1: return .textHeaderHeight + 8
+            case 1, 2: return .textHeaderHeight + 8
             
             default: return 0.00001
         }
@@ -116,5 +148,10 @@ class IconSelectionTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
         return 54
+    }
+    
+    override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+        
+        return settings[SettingSection.from(indexPath)]?.inactive() == false
     }
 }

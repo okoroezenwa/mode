@@ -23,7 +23,7 @@ class ArtworkManager: NSObject { // Handles adaptive artwork
     weak var nowPlayingVC: ArtworkModifierContaining?
     weak var currentlyPeeking: Peekable?
     
-    var activeContainer: ArtworkModifierContaining? { return nowPlayingVC ?? container }
+    var activeContainer: ArtworkModifierContaining? { return ((nowPlayingVC as? NowPlayingViewController)?.activeItem == nil ? nil : nowPlayingVC) ?? container } // fixes the issue where stopping a song from the nowPlayingVC causes the artwork to change to a basic colour even when an entity is in front.
     
     @objc func updateArtwork(_ notification: Notification) {
         

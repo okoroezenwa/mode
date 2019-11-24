@@ -15,6 +15,12 @@ class TableDelegate: NSObject, Detailing {
     
     let location: Location
     weak var container: TableViewContainer?
+    var tableView: MELTableView! {
+    
+        get { container?.tableView }
+        
+        set { }
+    }
     
     lazy var playlistContainers = [PlaylistContainer]()
     lazy var collapsedPlaylistChildren = [Int64: [PlaylistContainer]]()
@@ -870,9 +876,9 @@ extension TableDelegate {
                     }
                 }()
             
-                header.label.text = text?.lowercased().appending(sectionCountVisible ? " (\(tableView.numberOfRows(inSection: section)))" : "")
+                header.label.text = text?/*.lowercased()*/.appending(sectionCountVisible ? " (\(tableView.numberOfRows(inSection: section)))" : "")
             
-            default: header.label.text = container?.sections[section].title.lowercased().appending(sectionCountVisible ? " (\(tableView.numberOfRows(inSection: section).formatted))" : "")//.capitalized
+            default: header.label.text = container?.sections[section].title/*.lowercased()*/.appending(sectionCountVisible ? " (\(tableView.numberOfRows(inSection: section).formatted))" : "")//.capitalized
         }
         
         header.label.attributes = sectionCountVisible ? [Attributes.init(kind: .title, range: (header.label.text ?? "").nsRange(of: tableView.numberOfRows(inSection: section).formatted, options: .backwards))] : nil
@@ -1262,6 +1268,7 @@ extension TableDelegate: SwipeTableViewCellDelegate {
 
 extension TableDelegate {
     
+    // MARK: - SearchVC
     static func editActions(for searchViewController: SearchViewController, orientation: SwipeActionsOrientation, using entity: MPMediaEntity?, at indexPath: IndexPath) -> [SwipeAction]? {
         
         switch orientation {
@@ -1309,6 +1316,7 @@ extension TableDelegate {
         }
     }
     
+    // MARK: - QueueVC
     static func editActions(for queueViewController: QueueViewController, orientation: SwipeActionsOrientation, using item: MPMediaItem?, at indexPath: IndexPath) -> [SwipeAction]? {
         
         guard !queueViewController.presented else { return nil }
@@ -1338,7 +1346,13 @@ extension TableDelegate {
             
                 var array = [SwipeAction]()
                 
-                if indexPath.section != 1 {
+                if indexPath.section != 1, {
+                    
+                    if #available(iOS 11.3, *) { return false }
+                    
+                    return true
+                    
+                }() {
                     
                     let delete = SwipeAction.init(style: .default, title: "delete", handler: { _, indexPath in
                         
@@ -1354,7 +1368,7 @@ extension TableDelegate {
                     
                     let details = queueViewController.getActionDetails(from: .show(title: cell.nameLabel.text, context: queueViewController.context(from: indexPath), canDisplayInLibrary: true), indexPath: indexPath, actionable: queueViewController, vc: queueViewController, entityType: .song, entity: queueViewController.getSong(from: indexPath)!, useAlternateTitle: true)
                 
-                    let goTo = SwipeAction.init(style: .default, title: "show...", handler: { _, indexPath in details?.handler() }, image: details?.action.icon)
+                    let goTo = SwipeAction.init(style: .default, title: details?.title.lowercased(), handler: { _, indexPath in details?.handler() }, image: details?.action.icon)
                     
                     array.append(goTo)
                 }
@@ -1368,6 +1382,7 @@ extension TableDelegate {
         }
     }
     
+    // MARK: - CollectorVC
     static func editActions(for collectorItemsViewController: CollectorViewController, orientation: SwipeActionsOrientation, using item: MPMediaItem?, at indexPath: IndexPath) -> [SwipeAction]? {
         
         switch orientation {
@@ -1420,6 +1435,7 @@ extension TableDelegate {
         }
     }
     
+    // MARK: - NewPlaylistVC
     static func editActions(for newPlaylistViewController: NewPlaylistViewController, orientation: SwipeActionsOrientation, using item: MPMediaItem?, at indexPath: IndexPath) -> [SwipeAction]? {
         
         switch orientation {

@@ -312,7 +312,7 @@
                                     <button opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="753" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fW2-Wa-dJ5" customClass="MELButton" customModule="Mode" customModuleProvider="target">
                                         <rect key="frame" x="446" y="0.0" width="62" height="106"/>
                                         <inset key="contentEdgeInsets" minX="18" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                        <state key="normal" image="RightArrowHandle13"/>
+                                        <state key="normal" image="More13"/>
                                         <connections>
                                             <action selector="accessoryButtonTapped" destination="UyG-mT-1aC" eventType="touchUpInside" id="tgw-ae-bJP"/>
                                         </connections>
@@ -380,7 +380,7 @@
     <resources>
         <image name="AddNoBorderSmall" width="10" height="10"/>
         <image name="Cloud10" width="17" height="12"/>
+        <image name="More13" width="13" height="3"/>
         <image name="NoSong75" width="75" height="75"/>
-        <image name="RightArrowHandle13" width="13" height="12"/>
     </resources>
 </document>

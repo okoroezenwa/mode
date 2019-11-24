@@ -450,11 +450,11 @@ class ActionsViewController: UIViewController {
         let shouldDismiss = !(sender is Notification)
         let changeIconIfNeeded: (() -> ()) = {
             
-            let icon = Icon.iconName(width: iconLineWidth, theme: iconTheme).rawValue.nilIfEmpty
+            let icon = Icon.iconName(type: iconType, width: iconLineWidth, theme: iconTheme).rawValue.nilIfEmpty
             
             if #available(iOS 10.3, *), UIApplication.shared.supportsAlternateIcons, iconTheme == .match, icon != UIApplication.shared.alternateIconName {
                 
-                UIApplication.shared.setAlternateIconName(icon, completionHandler: { _ in })
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: { UIApplication.shared.setAlternateIconName(icon, completionHandler: { error in if let error = error { print(error) } }) })
             }
         }
         

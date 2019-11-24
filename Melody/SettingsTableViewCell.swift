@@ -26,6 +26,7 @@ class SettingsTableViewCell: UITableViewCell {
     @IBOutlet var leadingImageViewLeadingConstraint: NSLayoutConstraint!
     @IBOutlet var topBorderView: MELBorderView!
     @IBOutlet var bottomBorderView: MELBorderView!
+    @IBOutlet var tertiaryLabelTrailingConstraint: NSLayoutConstraint!
     
     enum Context: Equatable {
         
@@ -127,8 +128,14 @@ class SettingsTableViewCell: UITableViewCell {
         subtitleLabel.isHidden = setting.subtitle == nil
         tertiaryLabel.text = setting.tertiaryDetail
         tertiaryLabel.superview?.isHidden = isAlert || setting.tertiaryDetail == nil
+        tertiaryLabelTrailingConstraint.constant = {
+            
+            if case .none = setting.accessoryType { return 10 }
+            
+            return 0
+        }()
         leadingImageView.image = setting.image
-        leadingImageView.superview?.isHidden = setting.image == nil
+        leadingImageView.superview?.superview?.isHidden = setting.image == nil
         chevron.superview?.isHidden = {
             
             if case .chevron = setting.accessoryType {
@@ -371,9 +378,9 @@ struct AlertAction {
         self.previewAction = previewAction
     }
     
-    init(title: String, style: UIAlertAction.Style = .default, accessoryType type: Setting.AccessoryType = .none, requiresDismissalFirst: Bool = false, handler: (() -> ())?, accessoryAction: ((MELButton, UIViewController) -> ())? = nil, previewAction: ((UIViewController) -> UIViewController?)? = nil) {
+    init(title: String, subtitle: String? = nil, style: UIAlertAction.Style = .default, accessoryType type: Setting.AccessoryType = .none, tertiaryText: String? = nil, image: UIImage? = nil, requiresDismissalFirst: Bool = false, handler: (() -> ())?, accessoryAction: ((MELButton, UIViewController) -> ())? = nil, previewAction: ((UIViewController) -> UIViewController?)? = nil) {
         
-        self.info = AlertInfo.init(title: title, accessoryType: type)
+        self.info = AlertInfo.init(title: title, subtitle: subtitle, image: image, tertiaryDetail: tertiaryText, accessoryType: type)
         self.context = .alert(style)
         self.requiresDismissalFirst = requiresDismissalFirst
         self.handler = handler

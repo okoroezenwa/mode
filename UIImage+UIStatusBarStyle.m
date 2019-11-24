@@ -36,7 +36,14 @@
         imageIsLight = percievedLuminance < 0.5;
     }
     
-    return imageIsLight ? UIStatusBarStyleDefault : UIStatusBarStyleLightContent;
+    if (@available(iOS 13.0, *)) {
+        
+        return imageIsLight ? UIStatusBarStyleDarkContent : UIStatusBarStyleLightContent;
+        
+    } else {
+        
+        return imageIsLight ? UIStatusBarStyleDefault : UIStatusBarStyleLightContent;
+    }
 }
 
 @end

@@ -8,6 +8,9 @@
 
 import UIKit
 
+typealias ShowMenuParameters = (collection: MPMediaItemCollection?, entityType: Entity)
+typealias ShowMenuImageInfo = (image: UIImage?, entityType: Entity)
+
 class AlertTableViewController: UITableViewController, PreviewTransitionable {
     
     enum Context { case show, other, queue(title: String?, kind: MPMusicPlayerController.QueueKind, context: QueueInsertController.Context), select }
@@ -27,6 +30,16 @@ class AlertTableViewController: UITableViewController, PreviewTransitionable {
             tableView.deselectRow(at: indexPath, animated: false)
         }
     }
+    var showMenuParameters = [ShowMenuParameters]() {
+        
+        didSet {
+            
+            guard showMenuParameters.isEmpty.inverted else { return }
+            
+            imageInfo = showMenuParameters.map({ ($0.collection?.customArtwork(for: $0.entityType)?.scaled(to: .init(width: 38, height: 38), by: 2) ?? $0.collection?.representativeArtwork(for: $0.entityType, size: .init(width: 38, height: 38)) ?? $0.collection?.emptyArtwork(for: $0.entityType), $0.entityType) })
+        }
+    }
+    lazy var imageInfo = [ShowMenuImageInfo]()
     
     var segmentActions = [((UIViewController?) -> ())]()
     var queueInsertController: QueueInsertController?
@@ -104,6 +117,22 @@ extension AlertTableViewController {
         if case .show = context {
             
             cell.delegate = self
+            
+            if useArtworkInShowMenu {
+            
+                let info = imageInfo[indexPath.row]
+                
+                cell.leadingImageViewWidthConstraint.constant = 38
+                cell.leadingImageViewLeadingConstraint.constant = 8
+                cell.labelsStackView.layoutMargins.left = 8
+                cell.leadingImageView.image = info.image
+                (listsCornerRadius ?? cornerRadius).updateCornerRadius(on: cell.leadingImageView.layer, width: 38, entityType: info.entityType, globalRadiusType: cornerRadius)
+                
+                if let superview = cell.leadingImageView.superview, superview.layer.shadowOpacity < 0.1 {
+                    
+                    UniversalMethods.addShadow(to: superview, radius: 4, opacity: 0.35, shouldRasterise: true)
+                }
+            }
         }
         
         return cell

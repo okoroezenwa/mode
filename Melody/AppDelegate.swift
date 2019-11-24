@@ -52,6 +52,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     @objc var backgroundTimer: Timer?
     @objc lazy var noAccessView = Bundle.main.loadNibNamed("NoAccessView", owner: nil, options: nil)?.first as? UIView
     @objc var player: AVPlayer?
+    var shortcutItem: UIApplicationShortcutItem?
     let screenLocker = Insomnia.init(mode: InsomniaMode(rawValue: screenLockPreventionMode) ?? .disabled)
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
@@ -59,6 +60,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         musicLibrary.beginGeneratingLibraryChangeNotifications()
         musicPlayer.beginGeneratingPlaybackNotifications()
         window?.tintColor = .black
+        
+        prefs.removeObject(forKey: .activeFont)
         
         if #available(iOS 11, *) {
             
@@ -75,6 +78,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self?.setLibraryTimerIfNeeded()
         })
         
+        if #available(iOS 13, *) {
+        
+            notifier.addObserver(forName: .themeChanged, object: nil, queue: nil, using: { [weak self] _ in
+                
+                self?.window?.overrideUserInterfaceStyle = {
+                
+                    switch appTheme {
+                        
+                        case .system: return .unspecified
+                        
+                        case .light: return .light
+                        
+                        case .dark: return .dark
+                    }
+                }()
+            })
+        }
+        
         performLaunchChecks()
         Settings.registerDefaults()
 //        Queue.shared.verifyQueue()
@@ -83,13 +104,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if showPlaylistFolders {
             
             prefs.set(false, forKey: .showPlaylistFolders)
-        }
-        
-        #warning("Fix this need to reset the font")
-        if prefs.integer(forKey: .activeFont) != Font.myriadPro.rawValue {
-            
-            prefs.set(Font.myriadPro.rawValue, forKey: .activeFont)
-            notifier.post(name: .activeFontChanged, object: nil)
         }
         
         if #available(iOS 10.3, *), !useSystemPlayer {
@@ -125,6 +139,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             Scrobbler.shared.setNowPlayingTo(item)
             
         }, { }))
+        
+        if let item = launchOptions?[.shortcutItem] as? UIApplicationShortcutItem {
+            
+            shortcutItem = item
+        }
+        
+//        let query = MPMediaQuery.init(filterPredicates: [MPMediaPropertyPredicate.init(value: "Problematic Matches", forProperty: MPMediaPlaylistPropertyName, comparisonType: .equalTo)]).grouped(by: .playlist)
+//        let otherQuery = MPMediaQuery.init(filterPredicates: [MPMediaPropertyPredicate.init(value: "Liked 37", forProperty: MPMediaPlaylistPropertyName, comparisonType: .equalTo)]).grouped(by: .playlist)
+//        
+//        if let playlist = query.collections?.first as? MPMediaPlaylist, playlist.items.isEmpty.inverted, playlist.responds(to: NSSelectorFromString("removeFirstItem")), let items = otherQuery.collections?.first?.items {
+//            
+//            playlist.items.forEach({ _ in playlist.perform(NSSelectorFromString("removeFirstItem")) })
+//            
+//            playlist.add(items, completionHandler: { error in
+//                
+//                DispatchQueue.main.async { UniversalMethods.banner(withTitle: error == nil ? "Songs Added" : "Songs Not Added").show(for: 2) }
+//            })
+//        }
         
         return true
     }
@@ -181,9 +213,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        musicLibrary.endGeneratingLibraryChangeNotifications()
     }
     
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        
+        if let item = shortcutItem {
+            
+            _ = handleQuickActions(with: item)
+        }
+    }
+    
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
         
-        completionHandler(handleQuickActions(with: shortcutItem))
+        self.shortcutItem = shortcutItem
+        
+//        completionHandler(handleQuickActions(with: shortcutItem))
     }
     
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
@@ -323,7 +365,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     @objc func handleQuickActions(with shortcutItem: UIApplicationShortcutItem) -> Bool {
         
-        guard let type = shortcutItem.type.components(separatedBy: ".").last, let shortcutType = HomeScreenAction.init(rawValue: type) else { return false }
+        guard let type = shortcutItem.type.components(separatedBy: ".").last, let shortcutType = HomeScreenAction.init(rawValue: type) else {
+            
+            self.shortcutItem = nil
+            
+            return false
+        }
+        
+        self.shortcutItem = nil
         
         return perform(shortcutType)
     }

@@ -175,15 +175,11 @@ class ThemeTableViewController: UITableViewController {
         prefs.set(!darkTheme, forKey: .manualNightMode)
         prefs.set(!darkTheme, forKey: .darkTheme)
         
-        let icon = Icon.iconName(width: iconLineWidth, theme: iconTheme).rawValue.nilIfEmpty
+        let icon = Icon.iconName(type: iconType, width: iconLineWidth, theme: iconTheme).rawValue.nilIfEmpty
         
         if #available(iOS 10.3, *), UIApplication.shared.supportsAlternateIcons, iconTheme == .match, icon != UIApplication.shared.alternateIconName {
             
-            UniversalMethods.performOnMainThread({
-                
-                UIApplication.shared.setAlternateIconName(icon, completionHandler: { _ in })
-                
-            }, afterDelay: 0.2)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: { UIApplication.shared.setAlternateIconName(icon, completionHandler: { error in if let error = error { print(error) } }) })
         }
         
         tableView.beginUpdates()

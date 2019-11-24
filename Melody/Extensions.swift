@@ -852,6 +852,24 @@ extension MPMediaEntity {
                 }
         }
     }
+    
+    func emptyArtwork(for entityType: Entity) -> UIImage {
+        
+        switch entityType {
+            
+            case .song: return #imageLiteral(resourceName: "NoSong75")
+            
+            case .album: return (self as? MPMediaItemCollection)?.representativeItem?.isCompilation == true ? #imageLiteral(resourceName: "NoAlbum75") : #imageLiteral(resourceName: "NoCompilation75")
+            
+            case .artist, .albumArtist: return #imageLiteral(resourceName: "NoArtist75")
+            
+            case .composer: return #imageLiteral(resourceName: "NoComposer75")
+            
+            case .genre: return #imageLiteral(resourceName: "NoGenre75")
+            
+            case .playlist: return #imageLiteral(resourceName: "NoPlaylist75")
+        }
+    }
 }
 
 // MARK: - CGFloat

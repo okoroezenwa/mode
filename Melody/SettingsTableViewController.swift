@@ -27,7 +27,7 @@ class SettingsTableViewController: UITableViewController {
         
         .init(0, 0): .init(title: "Rate and Review", accessoryType: .none, textAlignment: .center, borderVisibility: .both),
         .init(1, 0): .init(title: "Offline Mode", accessoryType: .onOff(isOn: { showiCloudItems.inverted }, action: { [weak self] in self?.toggleCloud() })),
-        .init(1, 1): .init(title: "Night Mode", accessoryType: .onOff(isOn: { darkTheme }, action: { [weak self] in self?.toggleNightMode() })),
+        .init(1, 1): .init(title: "Theme", tertiaryDetail: appTheme.title, accessoryType: .none/*.onOff(isOn: { darkTheme }, action: { SettingsTableViewController.toggleTheme() })*/),
         .init(1, 2): .init(title: "Library Refresh", accessoryType: .chevron),
         .init(1, 3): .init(title: "Tab Bar", accessoryType: .chevron),
         .init(1, 4): .init(title: "Gestures", accessoryType: .chevron),
@@ -51,6 +51,7 @@ class SettingsTableViewController: UITableViewController {
         .init(4, 8): .init(title: "Show Info Buttons", accessoryType: .onOff(isOn: { showInfoButtons }, action: { [weak self] in self?.toggleInfoButtons() })),
         .init(4, 9): .init(title: "Last.fm", accessoryType: .chevron),
         .init(4, 10): .init(title: "Use System Alerts", accessoryType: .onOff(isOn: { useSystemAlerts }, action: { useSystemAlerts.toggle() })),
+        .init(4, 11): .init(title: "Use Artwork In Show Menu", accessoryType: .onOff(isOn: { useArtworkInShowMenu }, action: { useArtworkInShowMenu.toggle() })),
         .init(5, 0): .init(title: "Never", accessoryType: .check({ screenLockPreventionMode == InsomniaMode.disabled.rawValue })),
         .init(5, 1): .init(title: "Always", accessoryType: .check({ screenLockPreventionMode == InsomniaMode.always.rawValue })),
         .init(5, 2): .init(title: "While Charging", accessoryType: .check({ screenLockPreventionMode == InsomniaMode.whenCharging.rawValue })),
@@ -68,6 +69,15 @@ class SettingsTableViewController: UITableViewController {
         super.viewDidLoad()
         
         tableView.scrollIndicatorInsets.bottom = 14
+        
+        notifier.addObserver(self, selector: #selector(updateThemeCellTertiaryText), name: .themeChanged, object: nil)
+    }
+    
+    @objc func updateThemeCellTertiaryText() {
+        
+        let section = SettingSection.init(1, 1)
+        settings[section] = .init(title: "Theme", tertiaryDetail: appTheme.title, accessoryType: .none)
+        (tableView.cellForRow(at: section.indexPath) as? SettingsTableViewCell)?.tertiaryLabel.text = appTheme.title
     }
 
     override func didReceiveMemoryWarning() {
@@ -163,28 +173,6 @@ class SettingsTableViewController: UITableViewController {
         prefs.set(useOldStyleQueue.inverted, forKey: .useOldStyleQueue)
     }
     
-    func toggleNightMode() {
-        
-        prefs.set(!darkTheme, forKey: .manualNightMode)
-        prefs.set(!darkTheme, forKey: .darkTheme)
-        
-        let icon = Icon.iconName(width: iconLineWidth, theme: iconTheme).rawValue.nilIfEmpty
-        
-        if #available(iOS 10.3, *), UIApplication.shared.supportsAlternateIcons, iconTheme == .match, icon != UIApplication.shared.alternateIconName {
-            
-            UniversalMethods.performOnMainThread({
-                
-                UIApplication.shared.setAlternateIconName(icon, completionHandler: { _ in })
-                
-            }, afterDelay: 0.2)
-        }
-        
-        if let view = appDelegate.window?.rootViewController?.view {
-            
-            UIView.transition(with: view, duration: 0.3, options: .transitionCrossDissolve, animations: { notifier.post(name: .themeChanged, object: nil) }, completion: nil)
-        }
-    }
-    
     func reset() {
         
         let reset = AlertAction.init(title: "Reset All Settings", style: .destructive, handler: {
@@ -270,7 +258,7 @@ class SettingsTableViewController: UITableViewController {
             
             case 3: return 2
             
-            case 4: return 11
+            case 4: return 12
             
             case 5: return 3
             
@@ -301,28 +289,58 @@ class SettingsTableViewController: UITableViewController {
                 UIApplication.shared.openURL(url)
             }
         
-        } else if indexPath.section == 1, let presentedVC = presentedStoryboard.instantiateViewController(withIdentifier: "presentedVC") as? PresentedContainerViewController {
+        } else if indexPath.section == 1 {
             
-            switch indexPath.row {
+            if indexPath.row == 1 {
                 
-                case 2: presentedVC.context = .libraryRefresh
+                var alerts = [AlertAction
+                    .init(title: "Dark", accessoryType: .check({ appTheme == .dark }), handler: {
+                    
+                        guard appTheme != .dark else { return }
+                        
+                        Themer.shared.changeTheme(to: .dark, changePreference: true)
+                    }),
+                    .init(title: "Light", accessoryType: .check({ appTheme == .light }), handler: {
+                        
+                        guard appTheme != .light else { return }
+                        
+                        Themer.shared.changeTheme(to: .light, changePreference: true)
+                    }),
+                    .init(title: "System", accessoryType: .check({ appTheme == .system }), handler: {
+                        
+                        guard appTheme != .system else { return }
+                        
+                        Themer.shared.changeTheme(to: .system, changePreference: true)
+                    })
+                ]
                 
-                case 3: presentedVC.context = .tabBar
+                if #available(iOS 13, *) { } else { alerts.remove(at: 0) }
                 
-                case 4: presentedVC.context = .gestures
+                showAlert(title: "Theme", with: alerts)
                 
-                case 5: presentedVC.context = .artwork
+            } else if let presentedVC = presentedStoryboard.instantiateViewController(withIdentifier: "presentedVC") as? PresentedContainerViewController {
+            
+                switch indexPath.row {
+                    
+                    case 2: presentedVC.context = .libraryRefresh
+                    
+                    case 3: presentedVC.context = .tabBar
+                    
+                    case 4: presentedVC.context = .gestures
+                    
+                    case 5: presentedVC.context = .artwork
+                    
+                    case 6: presentedVC.context = .background
+                    
+                    case 7: presentedVC.context = .icon
+                    
+                    case 8: presentedVC.context = .theme
+                    
+                    default: break
+                }
                 
-                case 6: presentedVC.context = .background
-                
-                case 7: presentedVC.context = .icon
-                
-                case 8: presentedVC.context = .theme
-                
-                default: break
+                present(presentedVC, animated: true, completion: nil)
             }
-            
-            present(presentedVC, animated: true, completion: nil)
             
         } else if indexPath.section == 2, let presentedVC = presentedStoryboard.instantiateViewController(withIdentifier: "presentedVC") as? PresentedContainerViewController {
             
@@ -388,7 +406,7 @@ class SettingsTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         
-        return indexPath.section == 0 || (indexPath.section == 1 && Set([0, 1]).contains(indexPath.row).inverted) || indexPath.section == 2 || (indexPath.section == 4 && Set([3, 4, 9]).contains(indexPath.row)) || indexPath.section == 5 || indexPath.section == 6 || indexPath.section == 7 || indexPath.section == 9
+        return indexPath.section == 0 || (indexPath.section == 1 && Set([0]).contains(indexPath.row).inverted) || indexPath.section == 2 || (indexPath.section == 4 && Set([3, 4, 9]).contains(indexPath.row)) || indexPath.section == 5 || indexPath.section == 6 || indexPath.section == 7 || indexPath.section == 9
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {

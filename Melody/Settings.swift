@@ -47,7 +47,7 @@ var strictAlbumBackground: Bool { return prefs.bool(forKey: .strictAlbumBackgrou
 var artistItemsStartingPoint: Int { return prefs.integer(forKey: .artistStartingPoint) }
 var useSmallerArt: Bool { return prefs.bool(forKey: .prefersSmallerArt) }
 var showVolumeViews: Bool { return prefs.bool(forKey: .showNowPlayingVolumeView) }
-var darkTheme: Bool { return prefs.bool(forKey: .darkTheme) }
+var darkTheme: Bool { Themer.shared.darkThemeExpected(basedOn: appTheme)/*return prefs.bool(forKey: .darkTheme)*/ }
 var showExplicit: Bool { return prefs.bool(forKey: .showExplicitness) }
 var songCountVisible: Bool { return prefs.bool(forKey: .songCountVisible) }
 var playlistsView: Int { return prefs.integer(forKey: .playlistsView) }
@@ -105,6 +105,7 @@ var fullPlayerCornerRadius: CornerRadius? { return CornerRadius(rawValue: prefs.
 var filterFuzziness: Double { return prefs.double(forKey: .filterFuzziness) }
 var iconTheme: IconTheme { return IconTheme(rawValue: prefs.integer(forKey: .iconTheme)) ?? .light }
 var iconLineWidth: IconLineWidth { return IconLineWidth(rawValue: prefs.integer(forKey: .iconLineWidth)) ?? .thin }
+var iconType: IconType { return IconType(rawValue: prefs.integer(forKey: .iconType)) ?? .regular }
 var compressOnPause: Bool { return prefs.bool(forKey: .compressOnPause) }
 var avoidDoubleHeightBar: Bool { return prefs.bool(forKey: .avoidDoubleHeightBar) }
 var separationMethod: SeparationMethod { return SeparationMethod(rawValue: prefs.integer(forKey: .separationMethod)) ?? Settings.defaultSeparationMethod }
@@ -139,63 +140,63 @@ var barBlurBehaviour: BarBlurBehavour { return BarBlurBehavour(rawValue: prefs.i
 //var visibleInfoItems: [InfoSection] { return prefs.array(forKey: .visibleInfoItems)?.compactMap({ InfoSection.from($0 as? InfoSection.RawValue) }) ?? [] }
 var includeAlbumName: Bool {
     
-    get { return prefs.bool(forKey: .includeAlbumName) }
+    get { prefs.bool(forKey: .includeAlbumName) }
     
     set { prefs.set(newValue, forKey: .includeAlbumName) }
 }
 
 var showLastFMLoginAlert: Bool {
     
-    get { return prefs.bool(forKey: .showLastFMLoginAlert) }
+    get { prefs.bool(forKey: .showLastFMLoginAlert) }
     
     set { prefs.set(newValue, forKey: .showLastFMLoginAlert) }
 }
 
 var showScrobbleAlert: Bool {
     
-    get { return prefs.bool(forKey: .showScrobbleAlert) }
+    get { prefs.bool(forKey: .showScrobbleAlert) }
     
     set { prefs.set(newValue, forKey: .showScrobbleAlert) }
 }
 
 var showLoveAlert: Bool {
     
-    get { return prefs.bool(forKey: .showLoveAlert) }
+    get { prefs.bool(forKey: .showLoveAlert) }
     
     set { prefs.set(newValue, forKey: .showLoveAlert) }
 }
 
 var showNowPlayingUpdateAlert: Bool {
     
-    get { return prefs.bool(forKey: .showNowPlayingUpdateAlert) }
+    get { prefs.bool(forKey: .showNowPlayingUpdateAlert) }
     
     set { prefs.set(newValue, forKey: .showNowPlayingUpdateAlert) }
 }
 
 var navBarArtworkMode: VisualEffectNavigationBar.ArtworkMode {
     
-    get { return VisualEffectNavigationBar.ArtworkMode(rawValue: prefs.integer(forKey: .navBarArtworkMode)) ?? .small }
+    get { VisualEffectNavigationBar.ArtworkMode(rawValue: prefs.integer(forKey: .navBarArtworkMode)) ?? .small }
     
     set { prefs.set(newValue.rawValue, forKey: .navBarArtworkMode) }
 }
 
 var allowPlayIncrementingSkip: Bool {
     
-    get { return prefs.bool(forKey: .allowPlayIncrementingSkip) }
+    get { prefs.bool(forKey: .allowPlayIncrementingSkip) }
     
     set { prefs.set(newValue, forKey: .allowPlayIncrementingSkip) }
 }
 
 var navBarConstant: TopBarOffset {
     
-    get { return VisualEffectNavigationBar.ArtworkMode(rawValue: prefs.integer(forKey: .navBarConstant)) ?? .large }
+    get { VisualEffectNavigationBar.ArtworkMode(rawValue: prefs.integer(forKey: .navBarConstant)) ?? .large }
     
     set { prefs.set(newValue.rawValue, forKey: .navBarConstant) }
 }
 
 var useSystemSwitch: Bool {
     
-    get { return prefs.bool(forKey: .useSystemSwitch) }
+    get { prefs.bool(forKey: .useSystemSwitch) }
     
     set {
         
@@ -206,9 +207,27 @@ var useSystemSwitch: Bool {
 
 var useSystemAlerts: Bool {
     
-    get { return prefs.bool(forKey: .useSystemAlerts) }
+    get { prefs.bool(forKey: .useSystemAlerts) }
     
     set { prefs.set(newValue, forKey: .useSystemAlerts) }
+}
+
+var appTheme: Theme {
+    
+    get { Theme(rawValue: prefs.integer(forKey: .theme)) ?? .system }
+    
+    set {
+        
+        prefs.set(newValue.rawValue, forKey: .theme)
+        notifier.post(name: .themeChanged, object: nil)
+    }
+}
+
+var useArtworkInShowMenu: Bool {
+    
+    get { prefs.bool(forKey: .useArtworkInShowMenu) }
+    
+    set { prefs.set(newValue, forKey: .useArtworkInShowMenu) }
 }
 
 class Settings {
@@ -326,6 +345,7 @@ class Settings {
             .filterFuzziness: 0.4,
             .iconLineWidth: IconLineWidth.thin.rawValue,
             .iconTheme: IconTheme.light.rawValue,
+            .iconType: IconType.regular.rawValue,
             .compressOnPause: isInDebugMode.inverted,
             .avoidDoubleHeightBar: !isiPhoneX,
             .separationMethod: defaultSeparationMethod.rawValue,
@@ -355,7 +375,7 @@ class Settings {
             .hiddenFilterProperties: [Int](),
             .hiddenLibrarySections: [Int](),
             .navBarConstant: TopBarOffset.large.rawValue,
-            .activeFont: Font.system.rawValue,
+            .activeFont: Font.myriadPro.rawValue,//(isInDebugMode ? .myriadPro : Font.system).rawValue,
             .barBlurBehaviour: BarBlurBehavour.all.rawValue/*,
             .visibleInfoItems: InfoSection.allCases.map({ $0.rawValue })*/,
             .includeAlbumName: true,
@@ -366,7 +386,9 @@ class Settings {
             .navBarArtworkMode: VisualEffectNavigationBar.ArtworkMode.small.rawValue,
             .allowPlayIncrementingSkip: isInDebugMode,
             .useSystemSwitch: true,
-            .useSystemAlerts: false
+            .useSystemAlerts: false,
+            .theme: defaultTheme.rawValue,
+            .useArtworkInShowMenu: true
         ])
         
         sharedDefaults.register(defaults: [
@@ -505,6 +527,15 @@ class Settings {
         
         return (Calendar.current.component(.hour, from: date), Calendar.current.component(.minute, from: date))
     }
+    static var defaultTheme: Theme {
+        
+        if #available(iOS 13, *) {
+            
+            return .system
+        }
+        
+        return .light
+    }
 }
 
 // MARK: - String Settings Constants
@@ -609,6 +640,7 @@ extension String {
     static let filterFuzziness = "filterFuzziness"
     static let iconLineWidth = "iconLineWidth"
     static let iconTheme = "iconTheme"
+    static let iconType = "iconType"
     static let compressOnPause = "compressOnPause"
     static let avoidDoubleHeightBar = "avoidDoubleHeightBar"
     static let separationMethod = "separationMethod"
@@ -648,6 +680,8 @@ extension String {
     static let navBarConstant = "barConstant"
     static let useSystemSwitch = "useSystemSwitch"
     static let useSystemAlerts = "useSystemAlerts"
+    static let theme = "appTheme"
+    static let useArtworkInShowMenu = "useArtworkInShowMenu"
 }
 
 // MARK: - Notification Settings Constants

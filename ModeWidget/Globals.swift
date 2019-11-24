@@ -22,30 +22,6 @@ let musicPlayer: MPMusicPlayerController = {
 
 let formatter = Formatter.shared
 
-let colour: UIColor = {
-    
-    if #available(iOS 10, *) {
-        
-        return .black
-        
-    } else {
-        
-        return .white
-    }
-}()
-
-let alphaColour: UIColor = {
-    
-    if #available(iOS 10, *) {
-        
-        return UIColor.black.withAlphaComponent(sharedUseLighterBorders ? 0.05 : 0.08)
-        
-    } else {
-        
-        return UIColor.white.withAlphaComponent(sharedUseLighterBorders ? 0.05 : 0.08)
-    }
-}()
-
 //let itemWidth: CGFloat = {
 //    
 //    if #available(iOS 10, *) {

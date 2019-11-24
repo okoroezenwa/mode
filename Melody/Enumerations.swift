@@ -54,6 +54,8 @@ enum ScreenLockPreventionKind: Int { case never, whenCharging, always }
 
 enum FilterPickerViewOptions: String { case iCloud, device, yes = "true", no = "false", available, unavailable, liked, disliked, neutral }
 
+enum IconType: Int { case regular, rainbow, trans }
+
 enum IconLineWidth: Int { case thin, medium, wide }
 
 enum IconTheme: Int { case dark, light, match }
@@ -275,10 +277,17 @@ enum Entity: Int {
             case .playlist: return MPMediaQuery.init(filterPredicates: [.for(.playlist, using: entity.persistentID)]).cloud.grouped(by: .playlist).collections?.first
             
             default:
-            
-                guard let item = entity as? MPMediaItem else { return nil }
-            
-                return MPMediaQuery.init(filterPredicates: [.for(self, using: self.persistentID(from: item))]).cloud.grouped(by: self.grouping).collections?.first
+                
+                if let collection = entity as? MPMediaItemCollection {
+                    
+                    return MPMediaQuery.init(filterPredicates: [.for(self, using: collection.persistentID)]).cloud.grouped(by: self.grouping).collections?.first
+                
+                } else if let item = entity as? MPMediaItem {
+                    
+                    return MPMediaQuery.init(filterPredicates: [.for(self, using: self.persistentID(from: item))]).cloud.grouped(by: self.grouping).collections?.first
+                }
+                
+                return nil
         }
     }
     
@@ -577,11 +586,20 @@ enum Icon: String {
     case lightThin = ""
     case lightMedium = "Light App Icon Medium"
     case lightWide = "Light App Icon Wide"
+    case lightThinRainbow = "Light Rainbow App Icon Thin"
+    case lightMediumRainbow = "Light Rainbow App Icon Medium"
+    case lightWideRainbow = "Light Rainbow App Icon Wide"
     case darkThin = "Dark App Icon Thin"
     case darkMedium = "Dark App Icon Medium"
     case darkWide = "Dark App Icon Wide"
+    case darkThinRainbow = "Dark Rainbow App Icon Thin"
+    case darkMediumRainbow = "Dark Rainbow App Icon Medium"
+    case darkWideRainbow = "Dark Rainbow App Icon Wide"
+    case darkThinTrans = "Dark Trans App Icon Thin"
+    case darkMediumTrans = "Dark Trans App Icon Medium"
+    case darkWideTrans = "Dark Trans App Icon Wide"
     
-    static func iconName(width: IconLineWidth, theme: IconTheme) -> Icon {
+    static func iconName(type: IconType, width: IconLineWidth, theme: IconTheme) -> Icon {
         
         switch width {
             
@@ -589,33 +607,114 @@ enum Icon: String {
             
                 switch theme {
                     
-                    case .light: return .lightThin
+                    case .light:
                     
-                    case .dark: return .darkThin
+                        switch type {
+                            
+                            case .regular: return .lightThin
+                            
+                            case .rainbow: return .lightThinRainbow
+                            
+                            case .trans: return .darkThinTrans
+                        }
                     
-                    case .match: return darkTheme ? .darkThin : .lightThin
+                    case .dark:
+                        
+                        switch type {
+                            
+                            case .regular: return .darkThin
+                            
+                            case .rainbow: return .darkThinRainbow
+                            
+                            case .trans: return .darkThinTrans
+                        }
+                    
+                    case .match:
+                    
+                        switch type {
+                            
+                            case .regular: return darkTheme ? .darkThin : .lightThin
+                            
+                            case .rainbow: return darkTheme ? .darkThinRainbow : .lightThinRainbow
+                            
+                            case .trans: return darkThinTrans
+                        }
                 }
             
             case .medium:
             
                 switch theme {
                     
-                    case .light: return .lightMedium
+                    case .light:
                     
-                    case .dark: return .darkMedium
+                        switch type {
+                            
+                            case .regular: return .lightMedium
+                            
+                            case .rainbow: return .lightMediumRainbow
+                            
+                            case .trans: return .darkMediumTrans
+                        }
                     
-                    case .match: return darkTheme ? .darkMedium : .lightMedium
+                    case .dark:
+                        
+                        switch type {
+                            
+                            case .regular: return .darkMedium
+                            
+                            case .rainbow: return .darkMediumRainbow
+                            
+                            case .trans: return .darkMediumTrans
+                        }
+                    
+                    case .match:
+                    
+                        switch type {
+                            
+                            case .regular: return darkTheme ? .darkMedium : .lightMedium
+                            
+                            case .rainbow: return darkTheme ? .darkMediumRainbow : .lightMediumRainbow
+                            
+                            case .trans: return darkMediumTrans
+                        }
                 }
             
             case .wide:
             
                 switch theme {
                     
-                    case .light: return .lightWide
+                    case .light:
                     
-                    case .dark: return .darkWide
+                        switch type {
+                            
+                            case .regular: return .lightWide
+                            
+                            case .rainbow: return .lightWideRainbow
+                            
+                            case .trans: return .darkWideTrans
+                        }
                     
-                    case .match: return darkTheme ? .darkWide : .lightWide
+                    case .dark:
+                        
+                        switch type {
+                            
+                            case .regular: return .darkWide
+                            
+                            case .rainbow: return .darkWideRainbow
+                            
+                            case .trans: return .darkWideTrans
+                        }
+                    
+                    case .match:
+                    
+                        switch type {
+                            
+                            case .regular: return darkTheme ? .darkWide : .lightWide
+                            
+                            case .rainbow: return darkTheme ? .darkWideRainbow : .lightWideRainbow
+                            
+                            case .trans: return darkWideTrans
+                        }
                 }
         }
     }
@@ -959,7 +1058,7 @@ enum BarBlurBehavour: Int, CaseIterable {
 
 enum InfoSection: String, CaseIterable {
     
-    case genre, composer, albumArtist, type, duration, plays, added, updated, placement, bpm, skips, grouping, comments, copyright
+    case genre, composer, albumArtist, playlistType, duration, plays, added, updated, placement, bpm, skips, grouping, comments, copyright
     
     static func applicableSections(for entityType: Entity) -> Set<InfoSection> {
         
@@ -967,13 +1066,13 @@ enum InfoSection: String, CaseIterable {
             
             switch entityType {
                 
-                case .album: return [.composer, .type, .albumArtist, .updated, .placement, .bpm, .grouping, .comments]
+                case .album: return [.composer, .playlistType, .albumArtist, .updated, .placement, .bpm, .grouping, .comments]
                 
-                case .artist, .albumArtist, .genre, .composer: return [.genre, .composer, .type, .albumArtist, .updated, .placement, .bpm, .grouping, .comments, .copyright]
+                case .artist, .albumArtist, .genre, .composer: return [.genre, .composer, .playlistType, .albumArtist, .updated, .placement, .bpm, .grouping, .comments, .copyright]
                 
                 case .playlist: return [.genre, .composer, .albumArtist, .placement, .bpm, .grouping, .comments, .copyright]
                 
-                case .song: return [.type, .updated]
+                case .song: return [.playlistType, .updated]
             }
         }
         
@@ -1054,5 +1153,22 @@ enum SortCriteria: Int, CaseIterable {
     static func sortResult(between first: SortCriteria, and second: SortCriteria, at location: Location) -> Bool {
         
         return (first.title(from: location) + first.subtitle(from: location)) < (second.title(from: location) + second.subtitle(from: location))
+    }
+}
+
+enum Theme: Int {
+    
+    case system, light, dark
+    
+    var title: String {
+        
+        switch self {
+            
+            case .system: return "System"
+            
+            case .light: return "Light"
+            
+            case .dark: return "Dark"
+        }
     }
 }

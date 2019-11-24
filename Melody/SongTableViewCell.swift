@@ -153,7 +153,7 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell {
             
             case .began:
                 
-                enum HoldView { case artwork, edit, accessory }
+                enum HoldView: String { case artwork, edit, accessory }
                 
                 let view: HoldView = {
                     
@@ -161,9 +161,9 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell {
                         
                         case let x where x == playButton: return .artwork
                         
-                        case let x where x == editButton: return .edit
+                        case let x where x == infoButton: return .accessory
                         
-                        default: return .accessory
+                        default: return .edit
                     }
                 }()
                 
@@ -177,6 +177,8 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell {
                     
                     case .artwork: delegate?.artworkHeld(in: self)
                 }
+            
+                UniversalMethods.banner(withTitle: view.rawValue).show(for: 1)
             
             case .changed, .ended:
             
@@ -385,7 +387,9 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell {
     override func setEditing(_ editing: Bool, animated: Bool) {
 
         super.setEditing(editing, animated: animated)
-
+        
+        if #available(iOS 13, *), preferredEditingStyle == .select { return }
+        
         mainViewInnerViewLeadingConstraint.constant = editing ? 0 : 10
 
         UIView.animate(withDuration: animated ? 0.3 : 0, animations: {
@@ -403,19 +407,50 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell {
     override func addSubview(_ view: UIView) {
 
         if view.className.contains("ReorderControl") {
+            
+            if #available(iOS 13, *) { } else {
+                
+                view.subviews.forEach({ $0.removeFromSuperview() })
 
-            view.subviews.forEach({ $0.removeFromSuperview() })
+                let imageView = MELImageView.init(image: #imageLiteral(resourceName: "ReorderControl"))
 
-            let imageView = MELImageView.init(image: #imageLiteral(resourceName: "ReorderControl"))
-            imageView.translatesAutoresizingMaskIntoConstraints = false
-            view.centre(imageView, withOffsets: .init(x: 0, y: 1))
+                imageView.translatesAutoresizingMaskIntoConstraints = false
+                view.centre(imageView, withOffsets: .init(x: 0, y: 1))
+            }
         
         } else if view.className.contains("EditControl") {
             
-            view.isHidden = true
+            if #available(iOS 13, *) {
+                
+                view.isUserInteractionEnabled = true
+            
+                let editHold = UILongPressGestureRecognizer.init(target: self, action: #selector(performHold(_:)))
+                editHold.minimumPressDuration = longPressDuration
+                view.addGestureRecognizer(editHold)
+                LongPressManager.shared.gestureRecognisers.append(Weak.init(value: editHold))
+                
+                let tap = UITapGestureRecognizer.init(target: self, action: #selector(editTap))
+                view.addGestureRecognizer(tap)
+                
+            } else {
+                
+                view.isHidden = true
+            }
         }
 
         super.addSubview(view)
+    }
+    
+    @objc func editTap() {
+        
+        if isSelected, let indexPath = delegate?.tableView.indexPath(for: self) {
+            
+            delegate?.tableView.deselectRow(at: indexPath, animated: false)
+            
+        } else {
+            
+            delegate?.tableView.selectRow(at: delegate?.tableView.indexPath(for: self), animated: false, scrollPosition: .none)
+        }
     }
     
     @objc func modifySecondaryScrollView(withSong song: MPMediaItem) {
@@ -674,6 +709,7 @@ extension SongTableViewCell {
 
 protocol EntityCellDelegate: EditControlContaining {
     
+    var tableView: MELTableView! { get set }
     func artworkTapped(in cell: SongTableViewCell)
     func artworkHeld(in cell: SongTableViewCell)
     func scrollViewTapped(in cell: SongTableViewCell)

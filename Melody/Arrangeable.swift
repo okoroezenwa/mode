@@ -36,7 +36,7 @@ protocol FullySortable: Arrangeable {
 
 extension FullySortable {
     
-    var duration: TimeInterval { return 1.15 }
+    var duration: TimeInterval { 1.5 }
     
     var alphaNumericCritieria: Set<SortCriteria> {
         
@@ -120,9 +120,7 @@ extension FullySortable {
                     
                     case .album, .songs, .playlist: parent.highlightedEntities?.song = nil
                         
-                    case .collections: parent.highlightedEntities?.collection = nil
-                        
-                    default: break
+                    case .collections, .playlistList: parent.highlightedEntities?.collection = nil
                 }
             }
         }

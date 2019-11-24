@@ -39,6 +39,60 @@
 				<key>UIPrerenderedIcon</key>
 				<true/>
 			</dict>
+			<key>Dark Rainbow App Icon Medium</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>Dark Rainbow App Icon Medium</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<true/>
+			</dict>
+			<key>Dark Rainbow App Icon Thin</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>Dark Rainbow App Icon Thin</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<true/>
+			</dict>
+			<key>Dark Rainbow App Icon Wide</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>Dark Rainbow App Icon Wide</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<true/>
+			</dict>
+			<key>Dark Trans App Icon Medium</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>Dark Trans App Icon Medium</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<true/>
+			</dict>
+			<key>Dark Trans App Icon Thin</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>Dark Trans App Icon Thin</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<true/>
+			</dict>
+			<key>Dark Trans App Icon Wide</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>Dark Trans App Icon Wide</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<true/>
+			</dict>
 			<key>Light App Icon Medium</key>
 			<dict>
 				<key>CFBundleIconFiles</key>
@@ -53,6 +107,33 @@
 				<key>CFBundleIconFiles</key>
 				<array>
 					<string>Light App Icon Wide</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<true/>
+			</dict>
+			<key>Light Rainbow App Icon Medium</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>Light Rainbow App Icon Medium</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<true/>
+			</dict>
+			<key>Light Rainbow App Icon Thin</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>Light Rainbow App Icon Thin</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<true/>
+			</dict>
+			<key>Light Rainbow App Icon Wide</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>Light Rainbow App Icon Wide</string>
 				</array>
 				<key>UIPrerenderedIcon</key>
 				<true/>
@@ -96,11 +177,11 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppleMusicUsageDescription</key>
-	<string>Mode would like to display and play your music library.</string>
+	<string>Mode needs permission to display and play your music library.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Mode needs to save artwork to your photo library.</string>
+	<string>Mode needs permission to save artwork to your photo library.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Mode needs to save artwork to your photo library.</string>
+	<string>Mode needs permission to save artwork to your photo library.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>MyriadPro-Semibold.otf</string>
@@ -112,32 +193,32 @@
 	<key>UIApplicationShortcutItems</key>
 	<array>
 		<dict>
-			<key>UIApplicationShortcutItemIconFile</key>
-			<string>SearchBold</string>
+			<key>UIApplicationShortcutItemIconType</key>
+			<string>UIApplicationShortcutIconTypeSearch</string>
 			<key>UIApplicationShortcutItemTitle</key>
-			<string>Search</string>
+			<string>Search Library</string>
 			<key>UIApplicationShortcutItemType</key>
 			<string>$(PRODUCT_BUNDLE_IDENTIFIER).SearchLibrary</string>
 		</dict>
 		<dict>
-			<key>UIApplicationShortcutItemIconFile</key>
-			<string>ShuffleBold</string>
+			<key>UIApplicationShortcutItemIconType</key>
+			<string>UIApplicationShortcutIconTypeShuffle</string>
 			<key>UIApplicationShortcutItemTitle</key>
 			<string>Shuffle Albums</string>
 			<key>UIApplicationShortcutItemType</key>
 			<string>$(PRODUCT_BUNDLE_IDENTIFIER).ShuffleAllAlbums</string>
 		</dict>
 		<dict>
-			<key>UIApplicationShortcutItemIconFile</key>
-			<string>ShuffleBold</string>
+			<key>UIApplicationShortcutItemIconType</key>
+			<string>UIApplicationShortcutIconTypeShuffle</string>
 			<key>UIApplicationShortcutItemTitle</key>
 			<string>Shuffle Songs</string>
 			<key>UIApplicationShortcutItemType</key>
 			<string>$(PRODUCT_BUNDLE_IDENTIFIER).ShuffleAllSongs</string>
 		</dict>
 		<dict>
-			<key>UIApplicationShortcutItemIconFile</key>
-			<string>PlayFilled</string>
+			<key>UIApplicationShortcutItemIconType</key>
+			<string>UIApplicationShortcutIconTypePlay</string>
 			<key>UIApplicationShortcutItemTitle</key>
 			<string>Play All</string>
 			<key>UIApplicationShortcutItemType</key>

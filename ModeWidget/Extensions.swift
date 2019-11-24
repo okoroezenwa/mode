@@ -26,7 +26,7 @@ extension MPMusicPlayerController {
 extension UIView {
     
     @objc func addShadow(radius: CGFloat = 2,
-                         colour: UIColor = colour,
+                         colour: UIColor = .black,
                          xOffset: CGFloat = 0,
                          yOffset: CGFloat = 0,
                          opacity: Float = 0.5,

@@ -72,12 +72,46 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         return nil
     }
     
+    var colour: UIColor {
+        
+        if #available(iOS 13, *) {
+            
+            return self.traitCollection.userInterfaceStyle == .dark ? .white : .black
+        
+        } else if #available(iOS 10, *) {
+
+            return .black
+
+        } else {
+
+            return .white
+        }
+    }
+    
+    var alphaColour: UIColor {
+        
+        if #available(iOS 13, *) {
+            
+            return (self.traitCollection.userInterfaceStyle == .dark ? UIColor.white : .black).withAlphaComponent(sharedUseLighterBorders ? 0.05 : 0.08)
+        
+        } else if #available(iOS 10, *) {
+
+            return UIColor.black.withAlphaComponent(sharedUseLighterBorders ? 0.05 : 0.08)
+
+        } else {
+
+            return UIColor.white.withAlphaComponent(sharedUseLighterBorders ? 0.05 : 0.08)
+        }
+    }
+    
     override func viewDidLoad() {
         
         super.viewDidLoad()
         
+        NCWidgetController().setHasContent(sharedUseSystemPlayer, forWidgetWithBundleIdentifier: Bundle.main.bundleIdentifier ?? (ModeBuild.release.rawValue + ".Widget"))
+        
         updateMaxSizes()
-        nothingPlayingLabel.textColor = colour
+        updateNowPlayingLabel()
         
         guard musicPlayer.nowPlayingItem != nil else {
             
@@ -97,15 +131,11 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         
         NotificationCenter.default.addObserver(self, selector: #selector(update), name: .MPMusicPlayerControllerPlaybackStateDidChange, object: musicPlayer)
         
-        [label, elapsedTimeLabel].forEach({ $0?.textColor = colour })
-        ([likedStateButton, shuffleButton, repeatButton] + buttons as [UIButton?]).forEach({ $0?.tintColor = colour })
-        [shuffleBorderView, likedBorderView, repeatBorderView, infoBorderView].forEach({ $0?.backgroundColor = alphaColour })
-        [altLabel, timeLabel, nextLabel].forEach({ $0?.textColor = colour.withAlphaComponent(0.6) })
+        prepareViewColours()
         
         prepareRepeatView()
         prepareShuffleView()
         updateLocationButtons()
-        
         updateCornersAndShadows()
         
         update(self)
@@ -116,6 +146,30 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         let gr = UILongPressGestureRecognizer.init(target: self, action: #selector(open(_:)))
         gr.minimumPressDuration = 0.3
         playButton.addGestureRecognizer(gr)
+    }
+    
+    func prepareViewColours() {
+        
+        [label, elapsedTimeLabel].forEach({ $0?.textColor = colour })
+        ([likedStateButton, shuffleButton, repeatButton] + buttons as [UIButton?]).forEach({ $0?.tintColor = colour })
+        [shuffleBorderView, likedBorderView, repeatBorderView, infoBorderView].forEach({ $0?.backgroundColor = alphaColour })
+        [altLabel, timeLabel, nextLabel].forEach({ $0?.textColor = colour.withAlphaComponent(0.6) })
+    }
+    
+    func updateNowPlayingLabel() {
+        
+        nothingPlayingLabel.textColor = colour
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        
+        if #available(iOS 13, *), previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle {
+            
+            prepareViewColours()
+            updateLocationButtons()
+            updateQueueLabel()
+            updateNowPlayingLabel()
+        }
     }
     
     func updateMaxSizes() {
@@ -183,7 +237,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         
         guard updateShadow else { return }
         
-        artworkContainer?.addShadow(radius: 8, opacity: 0, shouldRasterise: true)
+        artworkContainer?.addShadow(radius: 8, opacity: 0.25, shouldRasterise: true) // opacity was 0 for some reason on 17/11/2019
     }
     
     @IBAction func openInfo() {
@@ -505,7 +559,7 @@ extension TodayViewController: UICollectionViewDelegate, UICollectionViewDataSou
         
         let count = queueLocation == .upNext ? musicPlayer.queueCount() - (musicPlayer.nowPlayingItemIndex + 1) : musicPlayer.nowPlayingItemIndex
         
-        return min(5, count)
+        return min(10, count)
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

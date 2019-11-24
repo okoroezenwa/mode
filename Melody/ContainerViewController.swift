@@ -91,7 +91,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
     
     enum CollectorActions { case play, queue, shuffleSongs, shuffleAlbums, existingPlaylist, newPlaylist, clear }
     
-    let visualEffectNavigationBar = Bundle.main.loadNibNamed("VisualEffectNavigationBar", owner: nil, options: nil)?.first as! VisualEffectNavigationBar
+    lazy var visualEffectNavigationBar = Bundle.main.loadNibNamed("VisualEffectNavigationBar", owner: nil, options: nil)?.first as! VisualEffectNavigationBar
     lazy var effectViewTopEffectViewConstraint: NSLayoutConstraint = {
         
         let constraint = effectView.topAnchor.constraint(equalTo: visualEffectNavigationBar.bottomAnchor)
@@ -188,7 +188,12 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         return vc
     }()
     
-    override var preferredStatusBarStyle: UIStatusBarStyle { return darkTheme ? .lightContent : .default }
+    override var preferredStatusBarStyle: UIStatusBarStyle { return darkTheme ? .lightContent : {
+        
+        if #available(iOS 13, *) { return .darkContent }
+        
+        return .default
+    }() }
     
     @objc var activeViewController: UINavigationController? {
         
@@ -501,6 +506,16 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             
             stackView.insertArrangedSubview(superview, at: useMicroPlayer ? 2 : 1)
         })
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        
+        super.traitCollectionDidChange(previousTraitCollection)
+        
+        if #available(iOS 13, *), appTheme == .system, traitCollection.userInterfaceStyle != previousTraitCollection?.userInterfaceStyle {
+            
+            Themer.shared.changeTheme(to: .system, changePreference: false)
+        }
     }
     
     func prepareAltAlbumArt() {
