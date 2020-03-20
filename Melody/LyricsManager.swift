@@ -130,7 +130,19 @@ class LyricsManager: NSObject {
                     return
             }
             
-            var request = URLRequest.init(url: URL.init(string: base + "/search")!)
+            var text: String {
+                
+                let string = "/search"
+                
+                if #available(iOS 13, *) {
+                    
+                    return string + "?q=" + ((title + " " + artist).withRFC3986Encoding ?? "")
+                }
+                
+                return string
+            }
+            
+            var request = URLRequest.init(url: URL.init(string: base + text)!)
             request.httpMethod = "GET"
             request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -140,8 +152,11 @@ class LyricsManager: NSObject {
             container.currentObject.titleTerm = title
             container.currentObject.artistTerm = artist
             
-            let parameters = ["q": title + " " + artist]
-            request.httpBody = try? JSONSerialization.data(withJSONObject: parameters, options: [])
+            if #available(iOS 13, *) { } else {
+                
+                let parameters = ["q": title + " " + artist]
+                request.httpBody = try? JSONSerialization.data(withJSONObject: parameters, options: [])
+            }
             
             let task = URLSession.shared.dataTask(with: request, completionHandler: { data, response, error in
                 
@@ -282,7 +297,7 @@ class LyricsManager: NSObject {
             
             guard operation?.isCancelled == false else { return }
             
-            if let text = try elements.first()?.text().components(separatedBy: "\\n\\n")[1].replacingOccurrences(of: "\\n ", with: "\n").replacingOccurrences(of: "More on Genius", with: "\\") {
+            if let text = try elements.first()?.text().components(separatedBy: "\\n\\n").value(at: 1)?.replacingOccurrences(of: "\\n ", with: "\n").replacingOccurrences(of: "More on Genius", with: "\\") {
                 
                 guard container.currentObject.id == item?.persistentID else {
                     
@@ -454,4 +469,15 @@ protocol LyricsObjectContainer: class {
     var hits: [Hit] { get set }
     var item: MPMediaItem? { get set }
     var operationActive: Bool { get set }
+}
+
+extension String {
+    
+  var withRFC3986Encoding: String? {
+    
+    let unreserved = "-._~/?"
+    var allowed = CharacterSet.alphanumerics// NSMutableCharacterSet.alphanumericCharacterSet()
+    allowed.insert(charactersIn: unreserved)//.addCharactersInString(unreserved)
+    return addingPercentEncoding(withAllowedCharacters: allowed)//stringByAddingPercentEncodingWithAllowedCharacters(allowed)
+  }
 }

@@ -11,19 +11,13 @@ import UIKit
 class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, GenreTransitionable, PlaylistTransitionable, ComposerTransitionable, FilterContextDiscoverable, CellAnimatable, EntityContainer, PillButtonContaining, Refreshable, QueryUpdateable, IndexContaining, LibrarySectionContainer, EntityVerifiable, TopScrollable {
     
     @IBOutlet var tableView: MELTableView!
+    @IBOutlet var lastUsedCollectionView: UICollectionView!
+    @IBOutlet var lastUsedEmptyLabel: MELLabel!
     @IBOutlet var bottomViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet var gradientViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet var bottomView: UIView!
     @IBOutlet var addButton: MELButton!
-    @IBOutlet var actionsButton: MELButton!  {
-        
-        didSet {
-            
-            let gr = UILongPressGestureRecognizer.init(target: self, action: #selector(showSettings(with:)))
-            gr.minimumPressDuration = longPressDuration
-            actionsButton.addGestureRecognizer(gr)
-            LongPressManager.shared.gestureRecognisers.append(Weak.init(value: gr))
-        }
-    }
+    @IBOutlet var historyButton: MELButton!
     
     enum PlaylistSection: Int { case recent, smart, genius, regular }
     
@@ -232,6 +226,8 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
     @objc var artistQuery: MPMediaQuery?
     @objc var albumArtistQuery: MPMediaQuery?
     @objc var playlistQuery: MPMediaQuery?
+    
+    lazy var lastUsedController = LastUsedController.init(with: self)
     
     var collectionKind = CollectionsKind.artist
     @objc weak var libraryVC: LibraryViewController? { return parent as? LibraryViewController }
@@ -452,14 +448,18 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
             
         } else /*if let presentedVC = libraryVC?.parent as? PresentedContainerViewController*/ {
             
+            notifier.addObserver(self, selector: #selector(updateCell(_:)), name: .playlistSelected, object: nil)
+            
             bottomView.isHidden = false
-            bottomViewHeightConstraint.constant = 44
             tableView.allowsMultipleSelection = true
+            bottomViewHeightConstraint.isActive = false
+            
+            updateBottomView()
         }
         
         prepareLifetimeObservers()
             
-        updateTopLabels(setTitle: true)
+        updateTopLabels(setTitle: libraryVC?.shouldSetTitles == true)
         
         tableView.delegate = tableDelegate
         tableView.dataSource = tableDelegate
@@ -480,6 +480,17 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
         prepareGestures()
         
         registerForPreviewing(with: self, sourceView: tableView)
+    }
+    
+    func updateBottomView() {
+        
+        let showHistory = showPlaylistHistory
+        
+        gradientViewHeightConstraint.constant = showHistory ? 48 : 0
+        historyButton.setTitle("History: \(showHistory ? "On" : "Off")", for: .normal)
+        updateCollectionView(to: showHistory ? .visible : .hidden)
+        tableView.contentInset.bottom = showHistory ? 93 : 45
+        tableView.scrollIndicatorInsets.bottom = showHistory ? 93 : 45
     }
     
     func updateTopInset() {
@@ -531,11 +542,18 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
             let swipeLeft = UISwipeGestureRecognizer.init(target: songManager, action: #selector(SongActionManager.toggleEditing(_:)))
             swipeLeft.direction = .left
             tableView.addGestureRecognizer(swipeLeft)
+        
+        } else {
             
-            let hold = UILongPressGestureRecognizer.init(target: tableDelegate, action: #selector(TableDelegate.showOptions(_:)))
+            let hold = UILongPressGestureRecognizer.init(target: self, action: #selector(clearHistory(_:)))
             hold.minimumPressDuration = longPressDuration
-            tableView.addGestureRecognizer(hold)
+            historyButton.addGestureRecognizer(hold)
             LongPressManager.shared.gestureRecognisers.append(Weak.init(value: hold))
+            
+            let cellHold = UILongPressGestureRecognizer.init(target: self, action: #selector(removeFromHistory(_:)))
+            cellHold.minimumPressDuration = longPressDuration
+            lastUsedCollectionView.addGestureRecognizer(cellHold)
+            LongPressManager.shared.gestureRecognisers.append(Weak.init(value: cellHold))
         }
     }
     
@@ -607,23 +625,80 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
         showAlert(title: "Recently...", with: added, updated)
     }
     
-    @IBAction func showOptions() {
+    @IBAction func updateHistoryView() {
         
-        guard let vc: UIViewController = {
-            
-            let vc = popoverStoryboard.instantiateViewController(withIdentifier: "actionsVC")
-            vc.modalPresentationStyle = .popover
-            
-            return Transitioner.shared.transition(to: vc, using: .init(fromVC: self, configuration: .library, count: collections.count), sourceView: actionsButton)
-            
-            }() else { return }
+        showPlaylistHistory.toggle()
         
-        present(vc, animated: true, completion: nil)
+        updateBottomView()
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            
+            self.view.layoutIfNeeded()
+            self.updateCollectionView(to: showPlaylistHistory ? .visible : .hidden)
+        })
     }
     
-    @IBAction func filterButtonTapped() {
+    func updateCollectionView(to state: VisibilityState) {
         
-        invokeSearch()
+        lastUsedCollectionView.alpha = lastUsedController.playlists.isEmpty.inverted && state == .visible ? 1 : 0
+        lastUsedEmptyLabel.alpha = lastUsedController.playlists.isEmpty && state == .visible ? 1 : 0
+    }
+    
+    @objc func clearHistory(_ sender: UILongPressGestureRecognizer) {
+        
+        guard lastUsedController.playlists.isEmpty.inverted else { return }
+        
+        switch sender.state {
+            
+            case .began: showAlert(title: nil, with: AlertAction.init(title: "Clear History", style: .destructive, handler: {
+                
+                playlistHistoryDetails = ([], .reset)
+                self.lastUsedController.playlists = []
+                
+                UIView.animate(withDuration: 0.3, animations: {
+                    
+                    self.updateCollectionView(to: showPlaylistHistory ? .visible : .hidden)
+                
+                }, completion: { _ in self.lastUsedCollectionView.reloadData() })
+            }))
+            
+            case .changed, .ended:
+            
+                guard let top = topViewController as? VerticalPresentationContainerViewController else { return }
+                
+                top.gestureActivated(sender)
+            
+            default: break
+        }
+    }
+    
+    @objc func removeFromHistory(_ sender: UILongPressGestureRecognizer) {
+        
+        switch sender.state {
+            
+            case .began:
+                
+                guard let indexPath = lastUsedCollectionView.indexPathForItem(at: sender.location(in: lastUsedCollectionView)) else { return }
+                
+                let playlist = lastUsedController.playlists[indexPath.item]
+                
+                showAlert(title: playlist.validName, with: AlertAction.init(title: "Remove", style: .destructive, handler: {
+                
+                    playlistHistoryDetails = ([playlist.persistentID], .remove)
+                    self.lastUsedController.playlists.remove(at: indexPath.item)
+                    self.lastUsedCollectionView.reloadData()
+                    
+                    UIView.animate(withDuration: 0.3, animations: { self.updateCollectionView(to: showPlaylistHistory ? .visible : .hidden) })
+                }))
+            
+            case .changed, .ended:
+            
+                guard let top = topViewController as? VerticalPresentationContainerViewController else { return }
+                
+                top.gestureActivated(sender)
+            
+            default: break
+        }
     }
 
     @objc func showOptions(_ sender: Any) {
@@ -1068,13 +1143,23 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
     
     func condition(for playlist: MPMediaPlaylist) -> Bool {
         
+        let presentedCondition: Bool = {
+            
+            if presented {
+                
+                return playlist.playlistAttributes != .genius && playlist.playlistAttributes != .smart && playlist.isFolder.inverted
+            }
+            
+            return true
+        }()
+        
         switch self.presentedPlaylistsView ?? self.currentPlaylistsView {
             
-            case .all: return true
+            case .all: return presentedCondition
             
-            case .appleMusic: return playlist.isAppleMusic
+            case .appleMusic: return playlist.isAppleMusic && presentedCondition
             
-            case .user: return !playlist.isAppleMusic
+            case .user: return !playlist.isAppleMusic && presentedCondition
         }
     }
     
@@ -1231,7 +1316,7 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
         
         switch id {
             
-            case "toAlbum", "toArtist", "toPlaylist": Transitioner.shared.transition(to: collectionKind.entity, vc: segue.destination, from: libraryVC, sender: sender, filter: self)
+            case "toAlbum", "toArtist", "toPlaylist": Transitioner.shared.transition(to: collectionKind.entityType, vc: segue.destination, from: libraryVC, sender: sender, filter: self)
             
             case "toArranger": Transitioner.shared.transition(to: segue.destination, from: self)
             
@@ -1286,8 +1371,6 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
         }
         
         showAlert(title: "All " ?+ self.libraryVC?.preferredTitle, with: array)
-        
-//        present(UIAlertController.withTitle(nil, message: "All " ?+ self.libraryVC?.preferredTitle, style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
     }
     
     @objc func getCollection(inSection section: Int, row: Int, filtering: Bool = false) -> MPMediaItemCollection {
@@ -1451,9 +1534,17 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
             }) })
         }
         
-        let add = [AlertAction.init(title: duplicates.count > 0 ? "Add With \(duplicateText.capitalized)" : "Add \((manager?.queue ?? itemsToAdd).count.fullCountText(for: .song, capitalised: true))", style: .default, handler: { addSongs(true) })]
+        let add = [AlertAction.init(title: duplicates.count > 0 ? "Add With \(duplicateText.capitalized)" : "Add \((manager?.queue ?? itemsToAdd).count.fullCountText(for: .song, capitalised: true))", style: .default, handler: {
+            
+            playlistHistoryDetails = (self.selectedPlaylists.map({ $0.persistentID }), .insert)
+            addSongs(true)
+        })]
         
-        let noDuplicates = duplicates.isEmpty ? [] : [AlertAction.init(title: "Add Without \(duplicateText.capitalized)", style: .default, handler: { addSongs(false) })]
+        let noDuplicates = duplicates.isEmpty ? [] : [AlertAction.init(title: "Add Without \(duplicateText.capitalized)", style: .default, handler: {
+            
+            playlistHistoryDetails = (self.selectedPlaylists.map({ $0.persistentID }), .insert)
+            addSongs(false)
+        })]
         
 //        let review = duplicates.isEmpty ? [] : [UIAlertAction.init(title: "Review Duplicates", style: .default, handler: nil)]
         
@@ -1550,6 +1641,28 @@ extension CollectionsViewController: TableViewContainer {
         return getCollection(from: indexPath, filtering: filtering)
     }
     
+    @objc func updateCell(_ sender: Notification) {
+        
+        guard let location = sender.userInfo?["location"] as? PlaylistModificationLocation, location != .main, let type = sender.userInfo?["type"] as? CellSelectionType, let playlist = sender.userInfo?["playlist"] as? MPMediaPlaylist else { return }
+        
+        switch type {
+            
+            case .select:
+            
+                if let selectedIndexPath = tableView.indexPathsForVisibleRows?.first(where: { getCollection(from: $0) == playlist }), let cell = tableView.cellForRow(at: selectedIndexPath), cell.isSelected.inverted {
+
+                    tableView.selectRow(at: selectedIndexPath, animated: false, scrollPosition: .none)
+                }
+            
+            case .deselect:
+            
+                if let selectedIndexPath = tableView.indexPathsForVisibleRows?.first(where: { getCollection(from: $0) == playlist }), let indexPaths = tableView.indexPathsForSelectedRows, Set(indexPaths).contains(selectedIndexPath) {
+                    
+                    tableView.deselectRow(at: selectedIndexPath, animated: false)
+                }
+        }
+    }
+    
     @objc func selectCell(in tableView: UITableView, at indexPath: IndexPath, filtering: Bool) {
         
         if let playlist = getCollection(inSection: indexPath.section, row: indexPath.row, filtering: filtering) as? MPMediaPlaylist, playlist.isFolder {
@@ -1578,13 +1691,9 @@ extension CollectionsViewController: TableViewContainer {
             if selectedPlaylists.firstIndex(of: playlist) == nil/*, let presentedVC = libraryVC?.parent as? PresentedContainerViewController*/ {
                 
                 selectedPlaylists.append(playlist)
-                
                 addButton.setTitle("Add (\(selectedPlaylists.count.formatted))", for: .normal)
                 
-                if let selectedIndexPath = collectionView?.indexPathsForVisibleItems.first(where: { headerView.playlists.value(at: $0.row) == playlist }), let cell = collectionView?.cellForItem(at: selectedIndexPath), cell.isSelected.inverted {
-                    
-                    collectionView?.selectItem(at: selectedIndexPath, animated: false, scrollPosition: [])
-                }
+                notifier.post(name: .playlistSelected, object: nil, userInfo: ["playlist": playlist, "type": CellSelectionType.select, "location": filterContainer != nil ? .filter : PlaylistModificationLocation.main])
                 
                 if filterContainer != nil, let selectedIndexPath = self.tableView.indexPathsForVisibleRows?.first(where: { getCollection(from: $0, filtering: false) == playlist }) {
                     
@@ -1621,10 +1730,7 @@ extension CollectionsViewController: TableViewContainer {
         selectedPlaylists.remove(at: index)
         addButton.setTitle("Add (\(selectedPlaylists.count.formatted))", for: .normal)
         
-        if let selectedIndexPath = collectionView?.indexPathsForVisibleItems.first(where: { headerView.playlists.value(at: $0.row) == playlist }), let indexPaths = collectionView?.indexPathsForSelectedItems, Set(indexPaths).contains(selectedIndexPath) {
-            
-            collectionView?.deselectItem(at: selectedIndexPath, animated: false)
-        }
+        notifier.post(name: .playlistSelected, object: nil, userInfo: ["playlist": playlist, "type": CellSelectionType.deselect, "location": PlaylistModificationLocation.main])
         
         if filterContainer != nil, let selectedIndexPath = self.tableView.indexPathsForVisibleRows?.first(where: { getCollection(from: $0, filtering: false) == playlist }) {
             
@@ -2149,7 +2255,7 @@ extension CollectionsViewController: UIViewControllerPreviewingDelegate {
                 }
             }()
             
-            return Transitioner.shared.transition(to: collectionKind.entity, vc: vc, from: libraryVC, sender: sender[collectionIndexPath.row], preview: true, filter: self)
+            return Transitioner.shared.transition(to: collectionKind.entityType, vc: vc, from: libraryVC, sender: sender[collectionIndexPath.row], preview: true, filter: self)
             
             
         } else {
@@ -2158,7 +2264,7 @@ extension CollectionsViewController: UIViewControllerPreviewingDelegate {
             
             previewingContext.sourceRect = cell.frame
             
-            return Transitioner.shared.transition(to: collectionKind.entity, vc: vc, from: libraryVC, sender: getCollection(from: indexPath), preview: true, filter: self)
+            return Transitioner.shared.transition(to: collectionKind.entityType, vc: vc, from: libraryVC, sender: getCollection(from: indexPath), preview: true, filter: self)
         }
     }
     

@@ -75,6 +75,8 @@ enum Location { case playlist, album, collection(kind: AlbumBasedCollectionKind,
 
 enum EditingStyle { case insert, select/*, both*/ }
 
+enum CellState { case untouched, highlighted, selected }
+
 // MARK: - Well-Defined
 
 enum GestureDuration: Int {
@@ -98,7 +100,7 @@ enum AlbumBasedCollectionKind {
     
     case artist, genre, composer, albumArtist
     
-    var entity: Entity {
+    var entityType: EntityType {
         
         switch self {
             
@@ -112,7 +114,7 @@ enum AlbumBasedCollectionKind {
         }
     }
     
-    var grouping: MPMediaGrouping { return entity.grouping }
+    var grouping: MPMediaGrouping { return entityType.grouping }
     
     var collectionKind: CollectionsKind {
         
@@ -129,10 +131,12 @@ enum AlbumBasedCollectionKind {
     }
 }
 
-enum Entity: Int {
+/// Describes the type of entity an operation will be performed on or with.
+enum EntityType: Int {
     
     case song, artist, album, genre, composer, playlist, albumArtist
 
+    /// The equivalent media grouping of a given entity type.
     var grouping: MPMediaGrouping {
         
         switch self {
@@ -153,6 +157,7 @@ enum Entity: Int {
         }
     }
     
+    /// The general type of container entity currently displayed by an EntityItemsViewController.
     var containerType: EntityItemsViewController.EntityContainerType {
         
         switch self {
@@ -165,6 +170,7 @@ enum Entity: Int {
         }
     }
     
+    /// The specific collection kind of a container type that can display both albums and songs.
     var albumBasedCollectionKind: AlbumBasedCollectionKind {
         
         switch self {
@@ -181,6 +187,7 @@ enum Entity: Int {
         }
     }
     
+    /// EntityType images in sizes 13, 16, 17, and 22.
     var images: (size13: UIImage, size16: UIImage, size17: UIImage, size22: UIImage) {
         
         switch self {
@@ -199,7 +206,14 @@ enum Entity: Int {
         }
     }
     
-    func title(albumArtistOverride: Bool = false) -> String {
+    /**
+     The title of the entityType being used.
+     
+     - Parameter albumArtistOverride: Whether an album artist should identify as an album artist, otherwise simply displayed as an artist.
+     
+     - Returns: The title of the entity type.
+     */
+    func title(albumArtistOverride: Bool = false, matchingPropertyName: Bool = false) -> String {
         
         switch self {
             
@@ -207,7 +221,7 @@ enum Entity: Int {
             
             case .artist: return "artist"
             
-            case .albumArtist: return albumArtistOverride ? "album artist" : "artist"
+            case .albumArtist: return albumArtistOverride ? (matchingPropertyName ? "albumArtist" : "album artist") : "artist"
             
             case .composer: return "composer"
             
@@ -215,10 +229,19 @@ enum Entity: Int {
             
             case .playlist: return "playlist"
             
-            case .song: return "title"
+            case .song: return "song"
         }
     }
     
+    /**
+    The persistentID of the entity being used.
+    
+    - Parameter song: The song to use to determine the persistentID of the entity.
+     
+    - Warning: Should not be used for playlists as their persistentIDs cannot be obtained from songs.
+    
+    - Returns: The persistentID of the entity.
+    */
     func persistentID(from song: MPMediaItem) -> MPMediaEntityPersistentID {
         
         switch self {
@@ -239,6 +262,13 @@ enum Entity: Int {
         }
     }
     
+    /**
+    The librarySection of the entity being used.
+    
+    - Parameter entity: The entity to use to determine the library section in to navigate to.
+    
+    - Returns: The librarySection of the entity.
+    */
     func librarySection(from entity: MPMediaEntity) -> LibrarySection {
         
         switch self {
@@ -247,13 +277,9 @@ enum Entity: Int {
             
             case .album:
                 
-                if let item = entity as? MPMediaItem {
+                if let item = entity as? MPMediaItem ?? (entity as? MPMediaItemCollection)?.representativeItem {
                     
-                    return item.isCompilation ? .compilations : .albums
-                    
-                } else if let collection = entity as? MPMediaItemCollection, let item = collection.representativeItem {
-                    
-                    return item.isCompilation ? .compilations : .albums
+                    return item.isCompilation ? .compilations : .albums   
                 }
                 
                 return .albums
@@ -270,6 +296,15 @@ enum Entity: Int {
         }
     }
     
+    /**
+    The persistentID of the entity being used.
+    
+    - Parameter song: The MPMediaItem to use to determine the persistentID of the entity.
+     
+    - Warning: Should not be used for playlists as their persistentIDs cannot be obtained from songs.
+    
+    - Returns: The persistentID of the entity.
+    */
     func collection(from entity: MPMediaEntity) -> MPMediaItemCollection? {
         
         switch self {
@@ -280,7 +315,17 @@ enum Entity: Int {
                 
                 if let collection = entity as? MPMediaItemCollection {
                     
-                    return MPMediaQuery.init(filterPredicates: [.for(self, using: collection.persistentID)]).cloud.grouped(by: self.grouping).collections?.first
+                    let persistentID: MPMediaEntityPersistentID = {
+                        
+                        if let item = collection.representativeItem {
+                            
+                            return self.persistentID(from: item)
+                        }
+                        
+                        return collection.persistentID
+                    }()
+                    
+                    return MPMediaQuery.init(filterPredicates: [.for(self, using: /*collection.*/persistentID)]).cloud.grouped(by: self.grouping).collections?.first
                 
                 } else if let item = entity as? MPMediaItem {
                     
@@ -291,6 +336,15 @@ enum Entity: Int {
         }
     }
     
+    /**
+    The info context of the entityType.
+    
+    - Parameter collection: The collection to use to determine the info context of the entityType.
+     
+    - Warning: Should not be used for songs as this method will always return nil.
+    
+    - Returns: The info context of the entityType or nil if unable to obtain it.
+    */
     func singleCollectionInfoContext(for collection: MPMediaItemCollection) -> InfoViewController.Context? {
         
         switch self {
@@ -306,6 +360,48 @@ enum Entity: Int {
                 guard let playlist = collection as? MPMediaPlaylist else { return nil }
             
                 return .playlist(at: 0, within: [playlist])
+        }
+    }
+    
+    static func collectionEntityType(for location: Location) -> EntityType {
+        
+        switch location {
+            
+            case .album: return .album
+            
+            case .playlist: return .playlist
+            
+            case .collection(kind: let kind, point: _): return kind.entityType
+            
+            default: return .song
+        }
+    }
+    
+    static func collectionEntityDetails(for location: Location) -> (type: EntityType, startPoint: EntityItemsViewController.StartPoint) {
+        
+        switch location {
+            
+            case .album: return (.album, .songs)
+            
+            case .playlist: return (.playlist, .songs)
+            
+            case .collection(kind: let kind, point: let point): return (kind.entityType, point)
+            
+            default: return (.song, .songs)
+        }
+    }
+    
+    func collectionLocation(_ startPoint: EntityItemsViewController.StartPoint) -> Location {
+        
+        switch self {
+            
+            case .playlist: return .playlist
+            
+            case .album: return .album
+            
+            case .artist, .albumArtist, .genre, .composer: return .collection(kind: self.albumBasedCollectionKind, point: startPoint)
+            
+            case .song: fatalError("Should not happen")
         }
     }
 }
@@ -330,7 +426,7 @@ enum CollectionsKind {
         }
     }
     
-    var entity: Entity {
+    var entityType: EntityType {
         
         switch self {
             
@@ -369,7 +465,7 @@ enum LibrarySection: Int, PropertyStripPresented {
     
     case songs, artists, albums, genres, composers, compilations, playlists
     
-    var entity: Entity {
+    var entityType: EntityType {
         
         switch self {
             
@@ -468,13 +564,13 @@ enum CornerRadius: Int {
         }
     }
 
-    func radius(for entity: Entity, width: CGFloat) -> CGFloat {
+    func radius(for entityType: EntityType, width: CGFloat) -> CGFloat {
         
         switch self {
             
             case .automatic:
             
-                switch entity {
+                switch entityType {
                     
                     case .song: return 0
                     
@@ -495,17 +591,17 @@ enum CornerRadius: Int {
         }
     }
     
-    func radiusDetails(for entityType: Entity, width: CGFloat, globalRadiusType: CornerRadius) -> RadiusDetails {
+    func radiusDetails(for entityType: EntityType, width: CGFloat, globalRadiusType: CornerRadius) -> RadiusDetails {
         
         switch globalRadiusType {
             
-            case .automatic: return (self.radius(for: entityType, width: width), (self == .rounded || self == .automatic && Set([Entity.artist, .albumArtist, .genre, .composer]).contains(entityType)).inverted)
+            case .automatic: return (self.radius(for: entityType, width: width), (self == .rounded || self == .automatic && Set([EntityType.artist, .albumArtist, .genre, .composer]).contains(entityType)).inverted)
         
             default: return (globalRadiusType.radius(for: entityType, width: width), globalRadiusType != .rounded)
         }
     }
     
-    func updateCornerRadius(on layer: CALayer?, width: CGFloat, entityType: Entity, globalRadiusType: CornerRadius) {
+    func updateCornerRadius(on layer: CALayer?, width: CGFloat, entityType: EntityType, globalRadiusType: CornerRadius) {
         
         let details = radiusDetails(for: entityType, width: width, globalRadiusType: globalRadiusType)
         
@@ -778,7 +874,7 @@ enum SearchCategory: Int {
         }
     }
     
-    var entity: Entity {
+    var entityType: EntityType {
         
         switch self {
             
@@ -828,7 +924,7 @@ enum LibraryRefreshInterval: Int {
 
 enum SongAction {
     
-    case collect, addTo, newPlaylist, remove, library, queue(name: String?, query: MPMediaQuery?), likedState, rate, insert(items: [MPMediaItem], completions: Completions?), show(title: String?, context: InfoViewController.Context, canDisplayInLibrary: Bool), info(context: InfoViewController.Context), reveal(indexPath: IndexPath), play(title: String?, completion: (() -> ())?), shuffle(mode: String.ShuffleSuffix, title: String?, completion: (() -> ())?)
+    case collect, addTo, newPlaylist, remove, library, queue(name: String?, query: MPMediaQuery?), likedState, rate, insert(items: [MPMediaItem], completions: Completions?), show(title: String?, context: InfoViewController.Context, canDisplayInLibrary: Bool), info(context: InfoViewController.Context), reveal(indexPath: IndexPath), play(title: String?, completion: (() -> ())?), shuffle(mode: String.ShuffleSuffix, title: String?, completion: (() -> ())?), search(unwinder: (() -> UIViewController?)?)
     
     var icon: UIImage {
         
@@ -859,6 +955,8 @@ enum SongAction {
             case .play: return #imageLiteral(resourceName: "PlayFilled17")
             
             case .shuffle: return #imageLiteral(resourceName: "Shuffle")
+            
+            case .search: return #imageLiteral(resourceName: "SearchTab")
         }
     }
     
@@ -960,83 +1058,6 @@ enum FilterViewContext: Equatable {
     }
 }
 
-enum Font: Int, CaseIterable {
-    
-    case system, myriadPro, avenirNext
-    
-    var name: String {
-        
-        switch self {
-            
-            case .system: return "System"
-            
-            case .myriadPro: return "Myriad Pro"
-            
-            case .avenirNext: return "Avenir Next"
-        }
-    }
-}
-
-enum FontWeight: Int, CaseIterable {
-    
-    case light, regular, semibold, bold
-
-    var systemWeight: UIFont.Weight {
-
-        switch self {
-
-            case .light: return .light
-
-            case .regular: return .medium
-            
-            case .semibold: return .semibold
-            
-            case .bold: return .bold
-        }
-    }
-}
-
-enum TextStyle: String, CaseIterable {
-    
-    case heading, subheading, modalHeading, sectionHeading, alert, body, secondary, nowPlayingTitle, nowPlayingSubtitle, infoTitle, infoBody, prompt, tiny, accessory, veryTiny
-    
-    func textSize() -> CGFloat {
-        
-        switch self {
-            
-            case .heading: return 34
-            
-            case .subheading: return 25
-            
-            case .modalHeading: return 22
-            
-            case .sectionHeading: return 22
-            
-            case .alert: return 20
-            
-            case .body: return 17
-            
-            case .secondary: return 14
-            
-            case .nowPlayingTitle: return 25
-            
-            case .nowPlayingSubtitle: return 22
-            
-            case .infoTitle: return 25
-            
-            case .infoBody: return 20
-            
-            case .prompt: return 15
-            
-            case .accessory: return 15
-            
-            case .tiny: return 12
-            
-            case .veryTiny: return 10
-        }
-    }
-}
-
 enum BarBlurBehavour: Int, CaseIterable {
     
     case none, top, bottom, all
@@ -1060,7 +1081,7 @@ enum InfoSection: String, CaseIterable {
     
     case genre, composer, albumArtist, playlistType, duration, plays, added, updated, placement, bpm, skips, grouping, comments, copyright
     
-    static func applicableSections(for entityType: Entity) -> Set<InfoSection> {
+    static func applicableSections(for entityType: EntityType) -> Set<InfoSection> {
         
         var set: Set<InfoSection> {
             
@@ -1092,7 +1113,7 @@ enum SortCriteria: Int, CaseIterable {
             
                 switch location {
                     
-                case .album, .collection(kind: _, point: .songs), .songs, .playlist, .collections(kind: .artist), .collections(kind: .genre), .collections(kind: .composer), .collections(kind: .playlist): return "Name"
+                    case .album, .collection(kind: _, point: .songs), .songs, .playlist, .collections(kind: .artist), .collections(kind: .genre), .collections(kind: .composer), .collections(kind: .playlist): return "Name"
                     
                     case .collections(kind: .album), .collections(kind: .compilation), .collection(_, point: .albums): return "Title"
                     
@@ -1153,6 +1174,66 @@ enum SortCriteria: Int, CaseIterable {
     static func sortResult(between first: SortCriteria, and second: SortCriteria, at location: Location) -> Bool {
         
         return (first.title(from: location) + first.subtitle(from: location)) < (second.title(from: location) + second.subtitle(from: location))
+    }
+    
+    static func applicableSortCriteria(for location: Location) -> Set<SortCriteria> {
+        
+        switch location {
+            
+            case .album: return [.duration, .artist, .album, .plays, .lastPlayed, .genre, .rating, .dateAdded, .title, .fileSize]
+            
+            case .playlist: return [.duration, .title, .artist, .album, .plays, .year, .lastPlayed, .genre, .rating, .dateAdded, .fileSize]
+            
+            case .collections(kind: let kind):
+            
+                let set: Set<SortCriteria> = [.album, .duration, .year, .genre, .artist, .plays, .dateAdded, .fileSize, .songCount, .albumCount, .title]
+                
+                switch kind {
+                    
+                    case .album: return set.subtracting([.albumCount])
+                    
+                    case .compilation: return set.subtracting([.albumCount, .artist])
+                    
+                    case .artist, .albumArtist: return set.subtracting([.year, .genre, .title, .album])
+                    
+                    case .genre, .composer: return set.subtracting([.year, .genre, .artist, .album])
+                    
+                    case .playlist: return set.subtracting([.album, .year, .genre, .artist, .albumCount])
+                }
+            
+            case .collection(kind: let kind, point: let point):
+            
+                switch point {
+                    
+                    case .songs:
+                    
+                        let set: Set<SortCriteria> = [.duration, .artist, .album, .plays, .lastPlayed, .genre, .rating, .dateAdded, .title, .fileSize, .year, .albumName, .albumYear]
+                        
+                        switch kind {
+                            
+                            case .artist, .albumArtist: return set.subtracting([.artist])
+                                
+                            case .genre: return set.subtracting([.genre, .albumName, .albumYear])
+                            
+                            case .composer: return set.subtracting([.albumName, .albumYear])
+                        }
+                    
+                    case .albums:
+                    
+                        let set: Set<SortCriteria> = [.album, .duration, .year, .genre, .artist, .plays, .dateAdded, .fileSize, .songCount]
+                        
+                        switch kind {
+                            
+                            case .artist, .albumArtist: return set.subtracting([.artist])
+                            
+                            case .genre: return set.subtracting([.genre])
+                            
+                            case .composer: return set
+                        }
+                }
+            
+            default: return []
+        }
     }
 }
 

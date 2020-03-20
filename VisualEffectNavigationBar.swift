@@ -182,14 +182,25 @@ class VisualEffectNavigationBar: MELVisualEffectView {
     
     @objc func viewTemporarySettings(_ sender: UILongPressGestureRecognizer) {
         
-        guard sender.state == .began else { return }
-        
-        let font = AlertAction.init(title: "Change Font", style: .default, requiresDismissalFirst: true, handler: { [weak self] in self?.changeFont() })
-        let artwork = AlertAction.init(title: "Change Artwork Type", style: .default, requiresDismissalFirst: true, handler: { [weak self] in self?.changeArtwork() })
-        let constant = AlertAction.init(title: "Change Bar Constant", style: .default, requiresDismissalFirst: true, handler: { [weak self] in self?.updateBarConstant(0) })
-        let blur = AlertAction.init(title: "Change Bar Blur Behaviour", style: .default, requiresDismissalFirst: true, handler: { [weak self] in self?.changeBarBlurBehaviour() })
-        
-        topViewController?.showAlert(title: nil, with: font, constant, artwork, blur)
+        switch sender.state {
+            
+            case .began:
+            
+                let font = AlertAction.init(title: "Change Font", style: .default, requiresDismissalFirst: true, handler: { [weak self] in self?.changeFont() })
+                let artwork = AlertAction.init(title: "Change Artwork Type", style: .default, requiresDismissalFirst: true, handler: { [weak self] in self?.changeArtwork() })
+                let constant = AlertAction.init(title: "Change Bar Constant", style: .default, requiresDismissalFirst: true, handler: { [weak self] in self?.updateBarConstant(0) })
+                let blur = AlertAction.init(title: "Change Bar Blur Behaviour", style: .default, requiresDismissalFirst: true, handler: { [weak self] in self?.changeBarBlurBehaviour() })
+                
+                topViewController?.showAlert(title: nil, with: font, constant, artwork, blur)
+            
+            case .changed, .ended:
+            
+                guard let top = topViewController as? VerticalPresentationContainerViewController else { return }
+            
+                top.gestureActivated(sender)
+            
+            default: break
+        }
     }
     
     func changeArtwork() {

@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
-    <device id="retina4_7" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15510"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -27,7 +25,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" alwaysBounceVertical="YES" keyboardDismissMode="interactive" dataMode="prototypes" style="grouped" separatorStyle="none" allowsSelectionDuringEditing="YES" rowHeight="44" sectionHeaderHeight="1" sectionFooterHeight="1" contentViewInsetsToSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Cne-NG-ofN" customClass="MELTableView" customModule="Mode" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <userDefinedRuntimeAttributes>
@@ -75,7 +73,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" alwaysBounceVertical="YES" keyboardDismissMode="interactive" dataMode="prototypes" style="grouped" separatorStyle="none" allowsSelectionDuringEditing="YES" rowHeight="44" sectionHeaderHeight="1" sectionFooterHeight="1" contentViewInsetsToSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EdZ-yH-ZX1" customClass="MELTableView" customModule="Mode" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="20" width="375" height="603"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <userDefinedRuntimeAttributes>
@@ -86,64 +84,128 @@
                                     <userDefinedRuntimeAttribute type="boolean" keyPath="song" value="YES"/>
                                 </userDefinedRuntimeAttributes>
                             </tableView>
+                            <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1Ff-Yl-YFy" customClass="MELVisualEffectView" customModule="Mode" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="574" width="375" height="93"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="I1l-AV-ZMn">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="93"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                </view>
+                                <blurEffect style="regular"/>
+                            </visualEffectView>
                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6xh-h1-qgj">
-                                <rect key="frame" x="0.0" y="623" width="375" height="44"/>
+                                <rect key="frame" x="0.0" y="574" width="375" height="93"/>
                                 <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="O3I-Nf-Qy8" userLabel="Top Divider View" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="375" height="1"/>
-                                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.050000000000000003" colorSpace="calibratedRGB"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" priority="900" constant="1" id="JiL-vl-K8p"/>
-                                        </constraints>
-                                    </view>
-                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="ZuA-EM-iOk">
-                                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="dcy-SC-4zv">
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="93"/>
                                         <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ovN-Tz-C5B" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="0.0" width="125" height="44"/>
-                                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                <inset key="titleEdgeInsets" minX="6" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="6" maxY="2"/>
-                                                <state key="normal" title="Add (0)" image="Check"/>
-                                                <connections>
-                                                    <action selector="addItemsToSelectedPlaylists" destination="XKQ-q3-rxA" eventType="touchUpInside" id="eMY-Kt-JR2"/>
-                                                </connections>
-                                            </button>
-                                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JQG-PG-LX1" customClass="ActionsButton" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="125" y="0.0" width="125" height="44"/>
-                                                <connections>
-                                                    <action selector="showOptions" destination="XKQ-q3-rxA" eventType="touchUpInside" id="qnc-2X-dda"/>
-                                                </connections>
-                                            </button>
-                                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OAD-Mw-VwW" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="250" y="0.0" width="125" height="44"/>
-                                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                <inset key="titleEdgeInsets" minX="6" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="6" maxY="3"/>
-                                                <state key="normal" title="Filter" image="Filter"/>
-                                                <connections>
-                                                    <action selector="filterButtonTapped" destination="XKQ-q3-rxA" eventType="touchUpInside" id="1vA-jg-eYj"/>
-                                                </connections>
-                                            </button>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="O3I-Nf-Qy8" userLabel="Top Divider View" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="0.0" width="375" height="1"/>
+                                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.050000000000000003" colorSpace="calibratedRGB"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" priority="900" constant="1" id="JiL-vl-K8p"/>
+                                                </constraints>
+                                            </view>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nk0-oY-HFk" customClass="GradientView" customModule="Mode" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="1" width="375" height="48"/>
+                                                <subviews>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Empty Playlist History" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BhG-YO-Aa0" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                                        <rect key="frame" x="0.0" y="6" width="375" height="42"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                        <nil key="textColor"/>
+                                                        <nil key="highlightedColor"/>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="boolean" keyPath="greyOverride" value="YES"/>
+                                                        </userDefinedRuntimeAttributes>
+                                                    </label>
+                                                    <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="Bad-bs-udF">
+                                                        <rect key="frame" x="0.0" y="0.0" width="375" height="48"/>
+                                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="48" id="qOQ-yZ-8uc"/>
+                                                        </constraints>
+                                                        <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="0.0" minimumInteritemSpacing="0.0" id="y2U-ZY-z09">
+                                                            <size key="itemSize" width="50" height="50"/>
+                                                            <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                                            <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                                            <inset key="sectionInset" minX="5" minY="0.0" maxX="5" maxY="0.0"/>
+                                                        </collectionViewFlowLayout>
+                                                        <cells/>
+                                                    </collectionView>
+                                                </subviews>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <constraints>
+                                                    <constraint firstItem="BhG-YO-Aa0" firstAttribute="top" secondItem="nk0-oY-HFk" secondAttribute="top" priority="900" constant="6" id="1Vx-9p-sAK"/>
+                                                    <constraint firstItem="BhG-YO-Aa0" firstAttribute="leading" secondItem="nk0-oY-HFk" secondAttribute="leading" id="JRa-CA-wbp"/>
+                                                    <constraint firstAttribute="trailing" secondItem="BhG-YO-Aa0" secondAttribute="trailing" id="MKz-pE-eKW"/>
+                                                    <constraint firstAttribute="height" priority="900" constant="48" id="Tog-Up-BC5"/>
+                                                    <constraint firstAttribute="bottom" secondItem="BhG-YO-Aa0" secondAttribute="bottom" id="W4c-me-KlW"/>
+                                                    <constraint firstItem="Bad-bs-udF" firstAttribute="leading" secondItem="nk0-oY-HFk" secondAttribute="leading" id="XF5-6l-XFm"/>
+                                                    <constraint firstItem="Bad-bs-udF" firstAttribute="top" secondItem="nk0-oY-HFk" secondAttribute="top" id="XJ0-Zo-JqQ"/>
+                                                    <constraint firstAttribute="trailing" secondItem="Bad-bs-udF" secondAttribute="trailing" id="f7f-II-pSa"/>
+                                                </constraints>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="boolean" keyPath="horizontal" value="YES"/>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="midStart">
+                                                        <real key="value" value="0.040000000000000001"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="midEnd">
+                                                        <real key="value" value="0.95999999999999996"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                </userDefinedRuntimeAttributes>
+                                            </view>
+                                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="ZuA-EM-iOk">
+                                                <rect key="frame" x="0.0" y="49" width="375" height="44"/>
+                                                <subviews>
+                                                    <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ovN-Tz-C5B" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                                        <rect key="frame" x="0.0" y="0.0" width="125" height="44"/>
+                                                        <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
+                                                        <inset key="titleEdgeInsets" minX="6" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="6" maxY="2"/>
+                                                        <state key="normal" title="Add (0)" image="Check"/>
+                                                        <connections>
+                                                            <action selector="addItemsToSelectedPlaylists" destination="XKQ-q3-rxA" eventType="touchUpInside" id="eMY-Kt-JR2"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JQG-PG-LX1" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                                        <rect key="frame" x="125" y="0.0" width="125" height="44"/>
+                                                        <inset key="titleEdgeInsets" minX="6" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="6" maxY="2"/>
+                                                        <state key="normal" title="History" image="History14"/>
+                                                        <connections>
+                                                            <action selector="updateHistoryView" destination="XKQ-q3-rxA" eventType="touchUpInside" id="xqz-29-qEV"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OAD-Mw-VwW" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                                        <rect key="frame" x="250" y="0.0" width="125" height="44"/>
+                                                        <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
+                                                        <inset key="titleEdgeInsets" minX="6" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="6" maxY="1"/>
+                                                        <state key="normal" title="Review" image="List"/>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="boolean" keyPath="lightOverride" value="YES"/>
+                                                        </userDefinedRuntimeAttributes>
+                                                    </button>
+                                                </subviews>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" priority="900" constant="44" id="R6r-vG-VGs"/>
+                                                </constraints>
+                                            </stackView>
                                         </subviews>
                                     </stackView>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="44" id="8wU-3k-4Ic">
+                                    <constraint firstAttribute="height" constant="93" id="8wU-3k-4Ic">
                                         <userDefinedRuntimeAttributes>
                                             <userDefinedRuntimeAttribute type="number" keyPath="constant">
                                                 <integer key="value" value="0"/>
                                             </userDefinedRuntimeAttribute>
                                         </userDefinedRuntimeAttributes>
                                     </constraint>
-                                    <constraint firstAttribute="trailing" secondItem="O3I-Nf-Qy8" secondAttribute="trailing" id="9fm-kR-kcp"/>
-                                    <constraint firstItem="ZuA-EM-iOk" firstAttribute="leading" secondItem="6xh-h1-qgj" secondAttribute="leading" id="SUQ-Xq-KVz"/>
-                                    <constraint firstItem="O3I-Nf-Qy8" firstAttribute="top" secondItem="6xh-h1-qgj" secondAttribute="top" id="TOO-K2-Ka8"/>
-                                    <constraint firstAttribute="trailing" secondItem="ZuA-EM-iOk" secondAttribute="trailing" id="X2B-UO-JHB"/>
-                                    <constraint firstAttribute="bottom" secondItem="ZuA-EM-iOk" secondAttribute="bottom" id="ls4-j2-O0d"/>
-                                    <constraint firstItem="O3I-Nf-Qy8" firstAttribute="leading" secondItem="6xh-h1-qgj" secondAttribute="leading" id="ysw-mU-DVk"/>
-                                    <constraint firstItem="ZuA-EM-iOk" firstAttribute="top" secondItem="6xh-h1-qgj" secondAttribute="top" id="zPs-EY-3e0"/>
+                                    <constraint firstAttribute="bottom" secondItem="dcy-SC-4zv" secondAttribute="bottom" id="axA-5z-EF9"/>
+                                    <constraint firstItem="dcy-SC-4zv" firstAttribute="top" secondItem="6xh-h1-qgj" secondAttribute="top" id="l7V-lX-o5L"/>
+                                    <constraint firstAttribute="trailing" secondItem="dcy-SC-4zv" secondAttribute="trailing" id="tDx-D5-dbo"/>
+                                    <constraint firstItem="dcy-SC-4zv" firstAttribute="leading" secondItem="6xh-h1-qgj" secondAttribute="leading" id="u5n-iB-u8T"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -151,19 +213,26 @@
                         <constraints>
                             <constraint firstItem="EdZ-yH-ZX1" firstAttribute="leading" secondItem="UDs-Td-DUe" secondAttribute="leading" id="0uV-Q6-bXS"/>
                             <constraint firstAttribute="trailing" secondItem="6xh-h1-qgj" secondAttribute="trailing" id="7Pb-Q4-8if"/>
+                            <constraint firstItem="1Ff-Yl-YFy" firstAttribute="top" secondItem="6xh-h1-qgj" secondAttribute="top" id="GkX-bN-Dym"/>
                             <constraint firstItem="6xh-h1-qgj" firstAttribute="leading" secondItem="UDs-Td-DUe" secondAttribute="leading" id="RwK-dh-JGm"/>
-                            <constraint firstItem="6xh-h1-qgj" firstAttribute="top" secondItem="EdZ-yH-ZX1" secondAttribute="bottom" id="e6D-ZE-38d"/>
+                            <constraint firstItem="1Ff-Yl-YFy" firstAttribute="leading" secondItem="6xh-h1-qgj" secondAttribute="leading" id="YB8-sc-Ei2"/>
                             <constraint firstItem="2UH-Vr-mfF" firstAttribute="top" secondItem="6xh-h1-qgj" secondAttribute="bottom" id="eTx-nc-Tt7"/>
+                            <constraint firstItem="1Ff-Yl-YFy" firstAttribute="bottom" secondItem="6xh-h1-qgj" secondAttribute="bottom" id="hJT-Ax-DxP"/>
                             <constraint firstItem="EdZ-yH-ZX1" firstAttribute="top" secondItem="7Uv-tU-AdR" secondAttribute="bottom" id="iW2-Zl-vAN"/>
                             <constraint firstAttribute="trailing" secondItem="EdZ-yH-ZX1" secondAttribute="trailing" id="pAn-9e-XSj"/>
+                            <constraint firstItem="2UH-Vr-mfF" firstAttribute="top" secondItem="EdZ-yH-ZX1" secondAttribute="bottom" id="q6l-J6-1cM"/>
+                            <constraint firstItem="1Ff-Yl-YFy" firstAttribute="trailing" secondItem="6xh-h1-qgj" secondAttribute="trailing" id="zmx-Cp-lT6"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="Pzb-Jr-kTa"/>
                     <connections>
-                        <outlet property="actionsButton" destination="JQG-PG-LX1" id="5CY-l0-14R"/>
                         <outlet property="addButton" destination="ovN-Tz-C5B" id="Et6-Ip-WAh"/>
                         <outlet property="bottomView" destination="6xh-h1-qgj" id="He5-J6-YjZ"/>
                         <outlet property="bottomViewHeightConstraint" destination="8wU-3k-4Ic" id="Hjr-9X-BPt"/>
+                        <outlet property="gradientViewHeightConstraint" destination="Tog-Up-BC5" id="DwB-PC-nLI"/>
+                        <outlet property="historyButton" destination="JQG-PG-LX1" id="mVH-XB-eqD"/>
+                        <outlet property="lastUsedCollectionView" destination="Bad-bs-udF" id="cYc-nT-FGP"/>
+                        <outlet property="lastUsedEmptyLabel" destination="BhG-YO-Aa0" id="APz-AN-mTZ"/>
                         <outlet property="tableView" destination="EdZ-yH-ZX1" id="JEO-Jn-NJf"/>
                         <segue destination="qMQ-mq-lMM" kind="show" identifier="toArtist" id="yle-mq-UFM"/>
                         <segue destination="qMQ-mq-lMM" kind="show" identifier="toAlbum" id="lAW-3v-MV2"/>
@@ -177,6 +246,7 @@
                         <segue destination="i3b-cu-1d8" kind="unwind" identifier="toGenreUnwind" unwindAction="genreUnwind:" id="YGz-Id-CaK"/>
                         <segue destination="i3b-cu-1d8" kind="unwind" identifier="toPlaylistUnwind" unwindAction="playlistUnwind:" id="IQW-Hg-oPA"/>
                         <segue destination="i3b-cu-1d8" kind="unwind" identifier="toAlbumUnwind" unwindAction="albumUnwind:" id="8eN-n7-5pE"/>
+                        <segue destination="i3b-cu-1d8" kind="unwind" identifier="toComposerUnwind" unwindAction="composerUnwind:" id="T6F-HH-8Zl"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="WaW-ob-JSb" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -203,7 +273,8 @@
     </scenes>
     <resources>
         <image name="Check" width="11" height="8"/>
-        <image name="Filter" width="13" height="15"/>
+        <image name="History14" width="14" height="14"/>
+        <image name="List" width="13" height="12"/>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="Vs4-ch-VuS"/>

@@ -113,11 +113,13 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
     @objc var actionableSongs: [MPMediaItem] { return [musicPlayer.nowPlayingItem].compactMap({ $0 }) }
     var applicableActions: [SongAction] {
         
-        var actions = [SongAction.collect, .newPlaylist, .addTo]
+        guard let song = musicPlayer.nowPlayingItem else { return [] }
         
-        if musicPlayer.nowPlayingItem?.existsInLibrary == false {
+        var actions = [SongAction.collect, .newPlaylist, .addTo, .show(title: song.validTitle, context: .song(location: .list, at: 0, within: [song]), canDisplayInLibrary: true), .search(unwinder: nil)]
+        
+        if song.existsInLibrary.inverted {
             
-            actions.insert(.library, at: 1)
+            actions.append(.library)
         }
         
         return actions
@@ -431,22 +433,27 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         
         guard let item = musicPlayer.nowPlayingItem else { return }
         
-        var actions = [SongAction.collect, .newPlaylist, .addTo].map({ singleItemAlertAction(for: $0, entity: .song, using: item, from: self) })
+        var actions = /*[SongAction.collect, .newPlaylist, .addTo, .search(unwinder: nil)]*/applicableActions.map({ singleItemAlertAction(for: $0, entityType: .song, using: item, from: self) })
         
-        actions.insert(.init(title: "Get Info", style: .default, requiresDismissalFirst: true, handler: { [weak self] in
+        actions.append(.init(title: "Get Info", style: .default, requiresDismissalFirst: true, handler: { [weak self] in
             
             guard let weakSelf = self else { return }
             
             Transitioner.shared.showInfo(from: weakSelf, with: .song(location: .list, at: 0, within: [item]))
-            
-        }), at: 1)
+        }))
         
-        if item.existsInLibrary.inverted {
-            
-            actions.insert(singleItemAlertAction(for: .library, entity: .song, using: item, from: self), at: 2)
-        }
+//        if item.existsInLibrary.inverted {
+//
+//            actions.append(singleItemAlertAction(for: .library, entityType: .song, using: item, from: self))
+//        }
         
-        showAlert(title: item.validArtist + " — " + item.validAlbum, with: actions)
+        showAlert(title: item.validTitle, subtitle: item.validArtist + " — " + item.validAlbum, with: actions, rightAction: { [weak self] button, vc in
+            
+            guard musicPlayer.nowPlayingItem != nil else { return }
+            
+            vc.dismiss(animated: true, completion: { self?.performSegue(withIdentifier: "queue", sender: nil) })
+        
+            }, images: (nil, #imageLiteral(resourceName: "Queue13")))
     }
     
     @objc func performPlayingItemActions(_ sender: UISwipeGestureRecognizer) {
@@ -761,16 +768,16 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         present(vc, animated: true, completion: nil)
     }
     
-    func goToDetails(basedOn entity: Entity) -> (entities: [Entity], albumArtOverride: Bool) {
+    func goToDetails(basedOn entity: EntityType) -> (entities: [EntityType], albumArtOverride: Bool) {
         
-        return ([Entity.artist, .genre, .album, .composer, .albumArtist], true)
+        return ([EntityType.artist, .genre, .album, .composer, .albumArtist], true)
     }
     
     @objc func goTo(_ sender: Any) {
         
         guard let song = musicPlayer.nowPlayingItem else { return }
         
-        singleItemActionDetails(for: .show(title: song.validTitle, context: .song(location: .list, at: 0, within: [song]), canDisplayInLibrary: true), entity: .song, using: song, from: self, useAlternateTitle: true).handler()
+        singleItemActionDetails(for: .show(title: song.validTitle, context: .song(location: .list, at: 0, within: [song]), canDisplayInLibrary: true), entityType: .song, using: song, from: self, useAlternateTitle: true).handler()
     }
     
     func viewController(for startPoint: StartPoint) -> UINavigationController? {
@@ -847,7 +854,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
     }
     
     @IBAction func clearItems(_ sender: Any) {
-        
+        #warning("Consider still showing the alert but allow interactivity so that space for the delete button can be used for something else")
         if let sender = sender as? UILongPressGestureRecognizer {
             
             guard sender.state == .began else { return }
@@ -856,10 +863,6 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         let remove = AlertAction.init(title: "Discard Collected", style: .destructive, handler: { notifier.post(name: .endQueueModification, object: nil) })
         
         showAlert(title: nil, with: remove)
-        
-//        let alert = UniversalMethods.alertController(withTitle: nil, message: nil, preferredStyle: .actionSheet, actions: removeItems, cancel)
-//
-//        present(alert, animated: true, completion: nil)
     }
 
     @IBAction func clearItemsImmediately(_ gr: UILongPressGestureRecognizer) {
@@ -870,32 +873,9 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         }
     }
     
-//    private func removeInactiveViewController(inactiveViewController: UIViewController?) {
-//
-//        if let inActiveVC = inactiveViewController {
-//
-//            // call before removing child view controller's view from hierarchy
-//            inActiveVC.willMove(toParent: nil)
-//
-//            UIView.animate(withDuration: 0.3, animations: {
-//
-//                inActiveVC.view.transform = CGAffineTransform.init(translationX: 0, y: 50)
-//                inActiveVC.view.alpha = 0
-//
-//            }, completion: { _ in
-//
-//                inActiveVC.view.transform = CGAffineTransform.identity
-//                inActiveVC.view.removeFromSuperview()
-//
-//                // call after removing child view controller's view from hierarchy
-//                inActiveVC.removeFromParent()
-//            })
-//        }
-//    }
-    
     func unwindToAlbum(from vc: AlbumTransitionable) {
         
-        if let entityVC = activeViewController?.topViewController as? EntityItemsViewController,
+        if let entityVC = activeViewController?.topViewController as? EntityItemsViewController, entityVC.albumItemsVCLoaded,
             let collections = vc.albumQuery?.collections,
             collections.first?.persistentID == entityVC.collection?.persistentID {
             
@@ -922,7 +902,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         activeViewController?.pushViewController(entityVC, animated: true)
     }
     
-    func unwindToArtist(with artistQuery: MPMediaQuery?, item currentItem: MPMediaItem?, album currentAlbum: MPMediaItemCollection?, kind: Entity) {
+    func unwindToArtist(with artistQuery: MPMediaQuery?, item currentItem: MPMediaItem?, album currentAlbum: MPMediaItemCollection?, kind: EntityType) {
         
         if let entityVC = activeViewController?.topViewController as? EntityItemsViewController,
             let collections = artistQuery?.collections,
@@ -932,7 +912,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             
             UIView.transition(with: imageView, duration: 0.3, options: .transitionCrossDissolve, animations: { self.imageView.image = entityVC.artworkType.image }, completion: nil)
             
-            if entityVC.activeChildViewController == entityVC.artistSongsViewController {
+            if entityVC.artistSongsVCLoaded, entityVC.activeChildViewController == entityVC.artistSongsViewController {
                 
                 let child = entityVC.artistSongsViewController
                 
@@ -941,7 +921,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
                 child.animateCells(direction: .vertical, alphaOnly: child.highlightedIndex != nil)
                 child.scrollToHighlightedRow()
                 
-            } else if entityVC.activeChildViewController == entityVC.artistAlbumsViewController {
+            } else if entityVC.artistAlbumsVCLoaded, entityVC.activeChildViewController == entityVC.artistAlbumsViewController {
                 
                 let child = entityVC.artistAlbumsViewController
                 
@@ -966,7 +946,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
     
     func unwindToPlaylist(from vc: PlaylistTransitionable) {
         
-        if let entityVC = activeViewController?.topViewController as? EntityItemsViewController,
+        if let entityVC = activeViewController?.topViewController as? EntityItemsViewController, entityVC.playlistItemsVCLoaded,
             let playlists = vc.playlistQuery?.collections as? [MPMediaPlaylist],
             playlists.first?.persistentID == entityVC.collection?.persistentID {
             
@@ -1124,9 +1104,8 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         
         presentedVC.context = context
         presentedVC.container = self
-        presentedVC.viewIfLoaded?.backgroundColor = UIColor.black.withAlphaComponent(0.2)
         
-        present(presentedVC, animated: false, completion: { presentedVC.viewIfLoaded?.backgroundColor = UIColor.black.withAlphaComponent(0.2) })
+        present(presentedVC, animated: false, completion: nil)
     }
     
     @objc func prepareEffectView(artworkPresent: Bool) {
@@ -1264,8 +1243,6 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         })
         
         showAlert(title: "Collected Songs", with: new, add)
-        
-//        present(UIAlertController.withTitle("Collected Songs", message: nil, style: .actionSheet, actions: new, add, .cancel()), animated: true, completion: nil)
     }
     
     @IBAction func playQueue(_ sender: Any) {
@@ -1300,8 +1277,6 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             }
             
             showAlert(title: queue.count.fullCountText(for: .song), with: array)
-            
-//            present(UIAlertController.withTitle(queue.count.fullCountText(for: .song), message: nil, style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
             
         } else {
             
@@ -1514,14 +1489,14 @@ extension ContainerViewController: UIViewControllerPreviewingDelegate {
         
         if collectedButton.bounds.contains(bottomEffectView.contentView.convert(location, to: collectedButton)) {
             
-            if let queueVC = presentedChilrenStoryboard.instantiateViewController(withIdentifier: "queueVC") as? CollectorViewController {
+            if let collectorVC = presentedChilrenStoryboard.instantiateViewController(withIdentifier: "queueVC") as? CollectorViewController {
                 
-                queueVC.manager = self
-                queueVC.peeker = self
-                queueVC.modifyBackgroundView(forState: .visible)
+                collectorVC.manager = self
+                collectorVC.peeker = self
+                collectorVC.modifyBackgroundView(forState: .visible)
                 previewingContext.sourceRect = collectedView.frame
                 
-                return queueVC
+                return collectorVC
             }
         
         } else if queueButtonContainsLocation {

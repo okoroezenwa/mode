@@ -79,53 +79,109 @@ extension TimerBased {
     
     func modifyRepeatButton(changingMusicPlayer: Bool) {
         
+        let duration = changingMusicPlayer ? 0.3 : 0
+        
         switch musicPlayer.repeatMode {
             
-        case .one:
-            
-            repeatView??.isHidden = changingMusicPlayer
-            repeatButton??.setImage(changingMusicPlayer ? #imageLiteral(resourceName: "Repeat") : #imageLiteral(resourceName: prefersBoldOnTap == true ? "RepeatOneBold" : "RepeatOne"), for: .normal)
-            
-            if prefersBoldOnTap == true {
+            case .one:
                 
-                repeatButton??.fontWeight = (changingMusicPlayer ? FontWeight.regular : .semibold).rawValue
-            }
-            
-            if changingMusicPlayer {
+                UIView.animate(withDuration: duration, delay: 0, options: .allowUserInteraction, animations: {
+                    
+                    if let _ = self as? UITableViewCell { } else {
+                        
+                        self.repeatButton??.reversed = changingMusicPlayer.inverted
+                        self.repeatButton??.changeThemeColor()
+                    }
+                    
+                    self.repeatView??.alpha = changingMusicPlayer ? 0 : 1
+                    
+                }, completion: nil)
                 
-                musicPlayer.repeatMode = .none
-            }
-            
-        case .all:
-            
-            repeatView??.isHidden = false
-            repeatButton??.setImage(changingMusicPlayer ? #imageLiteral(resourceName: prefersBoldOnTap == true ? "RepeatOneBold" : "RepeatOne") : #imageLiteral(resourceName: prefersBoldOnTap == true ? "RepeatBold" : "Repeat"), for: .normal)
-            
-            if prefersBoldOnTap == true {
+                if let repeatButton = repeatButton ?? nil {
+                    
+                    UIView.transition(with: repeatButton, duration: duration, options: [.transitionCrossDissolve, .allowUserInteraction], animations: {
+                        
+                        repeatButton.setImage(changingMusicPlayer ? #imageLiteral(resourceName: "Repeat") : #imageLiteral(resourceName: self.prefersBoldOnTap == true ? "RepeatOneBold" : "RepeatOne"), for: .normal)
+                        
+                        if self.prefersBoldOnTap == true {
+                            
+                            repeatButton.fontWeight = (changingMusicPlayer ? FontWeight.regular : .semibold).rawValue
+                        }
+                        
+                    }, completion: nil)
+                }
                 
-                repeatButton??.fontWeight = FontWeight.semibold.rawValue
-            }
-            
-            if changingMusicPlayer {
+                if changingMusicPlayer {
+                    
+                    musicPlayer.repeatMode = .none
+                }
                 
-                musicPlayer.repeatMode = .one
-            }
-            
-        case .none, .default:
-            
-            repeatView??.isHidden = !changingMusicPlayer
-            repeatButton??.setImage(#imageLiteral(resourceName: prefersBoldOnTap == true && changingMusicPlayer ? "RepeatBold" : "Repeat"), for: .normal)
-            
-            if prefersBoldOnTap == true {
+            case .all:
                 
-                repeatButton??.fontWeight = (changingMusicPlayer ? FontWeight.semibold : .regular).rawValue
-            }
-            
-            if changingMusicPlayer {
+                UIView.animate(withDuration: duration, delay: 0, options: .allowUserInteraction, animations: {
+                    
+                    if let _ = self as? UITableViewCell { } else {
+                        
+                        self.repeatButton??.reversed = true
+                        self.repeatButton??.changeThemeColor()
+                    }
+                    
+                    self.repeatView??.alpha = 1
+                        
+                }, completion: nil)
                 
-                musicPlayer.repeatMode = .all
-            }
-        
+                if let repeatButton = repeatButton ?? nil {
+                    
+                    UIView.transition(with: repeatButton, duration: duration, options: [.transitionCrossDissolve, .allowUserInteraction], animations: {
+                        
+                        repeatButton.setImage(changingMusicPlayer ? #imageLiteral(resourceName: self.prefersBoldOnTap == true ? "RepeatOneBold" : "RepeatOne") : #imageLiteral(resourceName: self.prefersBoldOnTap == true ? "RepeatBold" : "Repeat"), for: .normal)
+                        
+                        if self.prefersBoldOnTap == true {
+                            
+                            repeatButton.fontWeight = FontWeight.semibold.rawValue
+                        }
+                        
+                    }, completion: nil)
+                }
+                
+                if changingMusicPlayer {
+                    
+                    musicPlayer.repeatMode = .one
+                }
+                
+            case .none, .default:
+                
+                UIView.animate(withDuration: duration, delay: 0, options: .allowUserInteraction, animations: {
+                    
+                    if let _ = self as? UITableViewCell { } else {
+                        
+                        self.repeatButton??.reversed = changingMusicPlayer
+                        self.repeatButton??.changeThemeColor()
+                    }
+                    
+                    self.repeatView??.alpha = changingMusicPlayer.inverted ? 0 : 1
+                    
+                }, completion: nil)
+                
+                if let repeatButton = repeatButton ?? nil {
+                    
+                    UIView.transition(with: repeatButton, duration: duration, options: [.transitionCrossDissolve, .allowUserInteraction], animations: {
+                        
+                        repeatButton.setImage(#imageLiteral(resourceName: self.prefersBoldOnTap == true && changingMusicPlayer ? "RepeatBold" : "Repeat"), for: .normal)
+                        
+                        if self.prefersBoldOnTap == true {
+                            
+                            repeatButton.fontWeight = (changingMusicPlayer ? FontWeight.semibold : .regular).rawValue
+                        }
+                        
+                    }, completion: nil)
+                }
+                
+                if changingMusicPlayer {
+                    
+                    musicPlayer.repeatMode = .all
+                }
+            
             @unknown default: break
         }
         
@@ -137,16 +193,32 @@ extension TimerBased {
     
     func modifyShuffleState(changingMusicPlayer: Bool) {
         
+        let duration = changingMusicPlayer ? 0.3 : 0
+        
         switch musicPlayer.shuffleMode {
             
             case .default, .off:
                 
-                shuffleView??.isHidden = !changingMusicPlayer
-                
-                if prefersBoldOnTap == true {
+                UIView.animate(withDuration: duration, delay: 0, options: .allowUserInteraction, animations: {
                     
-                    shuffle??.fontWeight = (changingMusicPlayer ? FontWeight.semibold : .regular).rawValue
-                    shuffle??.setImage(#imageLiteral(resourceName: changingMusicPlayer ? "ShuffleBold" : "Shuffle"), for: .normal)
+                    if let _ = self as? UITableViewCell { } else {
+                        
+                        self.shuffle??.reversed = changingMusicPlayer
+                        self.shuffle??.changeThemeColor()
+                    }
+                    
+                    self.shuffleView??.alpha = changingMusicPlayer ? 1 : 0
+                        
+                }, completion: nil)
+                
+                if prefersBoldOnTap == true, let shuffle = shuffle ?? nil {
+                    
+                    UIView.transition(with: shuffle, duration: duration, options: [.transitionCrossDissolve, .allowUserInteraction], animations: {
+                        
+                        shuffle.fontWeight = (changingMusicPlayer ? FontWeight.semibold : .regular).rawValue
+                        shuffle.setImage(#imageLiteral(resourceName: changingMusicPlayer ? "ShuffleBold" : "Shuffle"), for: .normal)
+                        
+                    }, completion: nil)
                 }
                 
                 if changingMusicPlayer {
@@ -156,12 +228,26 @@ extension TimerBased {
             
             case .albums, .songs:
                 
-                shuffleView??.isHidden = changingMusicPlayer
-                
-                if prefersBoldOnTap == true {
+                UIView.animate(withDuration: duration, delay: 0, options: .allowUserInteraction, animations: {
                     
-                    shuffle??.fontWeight = (changingMusicPlayer ? FontWeight.regular : .semibold).rawValue
-                    shuffle??.setImage(#imageLiteral(resourceName: changingMusicPlayer ? "Shuffle" : "ShuffleBold"), for: .normal)
+                    if let _ = self as? UITableViewCell { } else {
+                        
+                        self.shuffle??.reversed = changingMusicPlayer.inverted
+                        self.shuffle??.changeThemeColor()
+                    }
+                    
+                    self.shuffleView??.alpha = changingMusicPlayer ? 0 : 1
+                    
+                }, completion: nil)
+                
+                if prefersBoldOnTap == true, let shuffle = shuffle ?? nil {
+                    
+                    UIView.transition(with: shuffle, duration: duration, options: [.transitionCrossDissolve, .allowUserInteraction], animations: {
+                        
+                        shuffle.fontWeight = (changingMusicPlayer ? FontWeight.regular : .semibold).rawValue
+                        shuffle.setImage(#imageLiteral(resourceName: changingMusicPlayer ? "Shuffle" : "ShuffleBold"), for: .normal)
+                        
+                    }, completion: nil)
                 }
                 
                 if changingMusicPlayer {

@@ -50,7 +50,9 @@ extension ChildContaining where Self: UIViewController {
     
     func changeActiveViewControllerFrom(_ vc: UIViewController?, animated: Bool = true, completion: (() -> ())? = nil) {
         
-        guard animated, let snapshot = vc?.view.snapshotView(afterScreenUpdates: false), let container = self as? ContainerViewController ?? appDelegate.window?.rootViewController as? ContainerViewController else {
+        guard let container = self as? ContainerViewController ?? appDelegate.window?.rootViewController as? ContainerViewController else { return }
+        
+        guard animated, let snapshot = vc?.view.snapshotView(afterScreenUpdates: false) else {
             
             removeInactiveViewController(inactiveViewController: vc)
             updateActiveViewController()
@@ -64,8 +66,12 @@ extension ChildContaining where Self: UIViewController {
                 containerVC.visualEffectNavigationBar.titleLabel.text = (containerVC.activeViewController?.topViewController as? Navigatable)?.title
             }
             
+            completion?()
+            
             return
         }
+        
+//        guard  else { return }
         
         snapshot.frame = containerView.frame
         view.insertSubview(snapshot, aboveSubview: containerView)

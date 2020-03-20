@@ -27,6 +27,7 @@ class SettingsTableViewCell: UITableViewCell {
     @IBOutlet var topBorderView: MELBorderView!
     @IBOutlet var bottomBorderView: MELBorderView!
     @IBOutlet var tertiaryLabelTrailingConstraint: NSLayoutConstraint!
+    @IBOutlet var accessoryButtonWidthConstraint: NSLayoutConstraint!
     
     enum Context: Equatable {
         
@@ -39,6 +40,21 @@ class SettingsTableViewCell: UITableViewCell {
                 case .setting: return .default
                 
                 case .alert(let style): return style
+            }
+        }
+    }
+    
+    enum ButtonWidthType {
+        
+        case standard, other(CGFloat)
+        
+        var rawValue: CGFloat {
+            
+            switch self {
+                
+                case .standard: return 52
+                
+                case .other(let value): return value
             }
         }
     }
@@ -87,11 +103,14 @@ class SettingsTableViewCell: UITableViewCell {
         
         if view.className.contains("ReorderControl") {
             
-            view.subviews.forEach({ $0.removeFromSuperview() })
+            if #available(iOS 13, *) { } else {
             
-            let imageView = MELImageView.init(image: #imageLiteral(resourceName: "ReorderControl"))
-            imageView.translatesAutoresizingMaskIntoConstraints = false
-            view.centre(imageView, withOffsets: .init(x: 0, y: 1))
+                view.subviews.forEach({ $0.removeFromSuperview() })
+                
+                let imageView = MELImageView.init(image: #imageLiteral(resourceName: "ReorderControl"))
+                imageView.translatesAutoresizingMaskIntoConstraints = false
+                view.centre(imageView, withOffsets: .init(x: 0, y: 1))
+            }
         }
         
         super.addSubview(view)
@@ -126,7 +145,7 @@ class SettingsTableViewCell: UITableViewCell {
         titleLabel.textAlignment = preferredAlignment
         subtitleLabel.text = setting.subtitle
         subtitleLabel.isHidden = setting.subtitle == nil
-        tertiaryLabel.text = setting.tertiaryDetail
+        updateTertiaryText(with: setting)
         tertiaryLabel.superview?.isHidden = isAlert || setting.tertiaryDetail == nil
         tertiaryLabelTrailingConstraint.constant = {
             
@@ -184,21 +203,11 @@ class SettingsTableViewCell: UITableViewCell {
         
         switch setting.accessoryType {
             
-            case .button(let type, let bordered):
-            
-                switch type {
-                    
-                    case .image(let image):
-                        
-                        accessoryButton.setImage(image, for: .normal)
-                        accessoryButton.setTitle(nil, for: .normal)
-                    
-                    case .text(let text):
-                    
-                        accessoryButton.setImage(nil, for: .normal)
-                        accessoryButton.setTitle(text, for: .normal)
-                }
-            
+            case .button(let type, let bordered, let widthType, let enabled):
+                
+                accessoryButton.isUserInteractionEnabled = enabled
+                accessoryButtonWidthConstraint.constant = widthType.rawValue
+                updateAccessoryButtonDetails(with: setting, type: type)
                 buttonBorderView.isHidden = bordered.inverted
             
             default: break
@@ -248,6 +257,27 @@ class SettingsTableViewCell: UITableViewCell {
         setInactiveIfNecessary(setting)
     }
     
+    func updateTertiaryText(with setting: Setting) {
+        
+        tertiaryLabel.text = setting.tertiaryDetail?()
+    }
+    
+    func updateAccessoryButtonDetails(with setting: Setting, type: Setting.AccessoryType.ButtonType) {
+        
+        switch type {
+            
+            case .image(let image):
+                
+                accessoryButton.setImage(image(), for: .normal)
+                accessoryButton.setTitle(nil, for: .normal)
+            
+            case .text(let text):
+            
+                accessoryButton.setImage(nil, for: .normal)
+                accessoryButton.setTitle(text, for: .normal)
+        }
+    }
+    
     func setInactiveIfNecessary(_ setting: Setting) {
         
         titleLabel.lightOverride = setting.inactive()
@@ -273,7 +303,7 @@ struct Setting {
     
     let title: String
     let subtitle: String?
-    let tertiaryDetail: String?
+    let tertiaryDetail: (() -> String?)?
     let accessoryType: Setting.AccessoryType
     let image: UIImage?
     let inactive: (() -> Bool)
@@ -284,9 +314,9 @@ struct Setting {
     
     enum AccessoryType: Equatable {
         
-        enum ButtonType { case image(UIImage), text(String) }
+        enum ButtonType { case image(() -> UIImage), text(String) }
         
-        case none, chevron, button(type: ButtonType, bordered: Bool), check(() -> (Bool)), onOff(isOn: () -> (Bool), action: (() -> ()))
+        case none, chevron, button(type: ButtonType, bordered: Bool, widthType: SettingsTableViewCell.ButtonWidthType, touchEnabled: Bool), check(() -> (Bool)), onOff(isOn: () -> (Bool), action: (() -> ()))
         
         static func ==(lhs: AccessoryType, rhs: AccessoryType) -> Bool {
             
@@ -296,15 +326,15 @@ struct Setting {
                 
                 case .chevron: if case .chevron = rhs { return true } else { return false }
                 
-                case .button(type: let type, bordered: let bordered):
+                case .button(type: let type, bordered: let bordered, _, _):
                     
-                    if case .button(let otherType, let isAlsoBordered) = rhs {
+                    if case .button(let otherType, let isAlsoBordered, _, _) = rhs {
                         
                         var bool: Bool {
                             
                             switch (type, otherType) {
                                 
-                                case (.image(let image), .image(let otherImage)): return image == otherImage
+                                case (.image(let image), .image(let otherImage)): return image() == otherImage()
                                 
                                 case (.text(let text), .text(let otherText)): return text == otherText
                                 
@@ -323,7 +353,7 @@ struct Setting {
         }
     }
     
-    init(title: String, subtitle: String? = nil, image: UIImage? = nil, tertiaryDetail: String? = nil, accessoryType: AccessoryType, textAlignment alignment: NSTextAlignment = .left, borderVisibility: BorderVisibility = .none, inactive inactiveCondition: @escaping (() -> Bool) = { false }) {
+    init(title: String, subtitle: String? = nil, image: UIImage? = nil, tertiaryDetail: (() -> String?)? = nil, accessoryType: AccessoryType, textAlignment alignment: NSTextAlignment = .left, borderVisibility: BorderVisibility = .none, inactive inactiveCondition: @escaping (() -> Bool) = { false }) {
         
         self.title = title
         self.subtitle = subtitle
@@ -366,9 +396,9 @@ struct AlertAction {
     let requiresDismissalFirst: Bool
     let handler: (() -> ())?
     let accessoryAction: ((MELButton, UIViewController) -> ())?
-    let previewAction: ((UIViewController) -> UIViewController?)?
+    let previewAction: PreviewAction?
     
-    init(info: AlertInfo, context: SettingsTableViewCell.Context = .alert(.default), requiresDismissalFirst: Bool = false, handler: (() -> ())?, accessoryAction: ((MELButton, UIViewController) -> ())? = nil, previewAction: ((UIViewController) -> UIViewController?)? = nil) {
+    init(info: AlertInfo, context: SettingsTableViewCell.Context = .alert(.default), requiresDismissalFirst: Bool = false, handler: (() -> ())?, accessoryAction: AccessoryButtonAction? = nil, previewAction: PreviewAction? = nil) {
         
         self.info = info
         self.context = context
@@ -378,7 +408,7 @@ struct AlertAction {
         self.previewAction = previewAction
     }
     
-    init(title: String, subtitle: String? = nil, style: UIAlertAction.Style = .default, accessoryType type: Setting.AccessoryType = .none, tertiaryText: String? = nil, image: UIImage? = nil, requiresDismissalFirst: Bool = false, handler: (() -> ())?, accessoryAction: ((MELButton, UIViewController) -> ())? = nil, previewAction: ((UIViewController) -> UIViewController?)? = nil) {
+    init(title: String, subtitle: String? = nil, style: UIAlertAction.Style = .default, accessoryType type: Setting.AccessoryType = .none, tertiaryText: (() -> String?)? = nil, image: UIImage? = nil, requiresDismissalFirst: Bool = false, handler: (() -> ())?, accessoryAction: AccessoryButtonAction? = nil, previewAction: PreviewAction? = nil) {
         
         self.info = AlertInfo.init(title: title, subtitle: subtitle, image: image, tertiaryDetail: tertiaryText, accessoryType: type)
         self.context = .alert(style)

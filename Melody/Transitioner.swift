@@ -14,7 +14,7 @@ class Transitioner: NSObject {
     
     private override init() { }
     
-    @discardableResult func transition(to entity: Entity,
+    @discardableResult func transition(to entityType: EntityType,
                                        vc: UIViewController,
                                        from source: UIViewController?,
                                        sender: Any?,
@@ -26,7 +26,7 @@ class Transitioner: NSObject {
         
         guard let entityVC = vc as? EntityItemsViewController, let collection = sender as? MPMediaItemCollection else { return nil }
         
-        entityVC.entityContainerType = entity.containerType
+        entityVC.entityContainerType = entityType.containerType
         entityVC.backLabelText = title ?? (source as? Navigatable)?.preferredTitle
         entityVC.collection = collection
         entityVC.highlightedEntities = (item, highlightedAlbum)
@@ -35,7 +35,7 @@ class Transitioner: NSObject {
         
         entityVC.title = {
             
-            switch entity {
+            switch entityType {
                 
                 case .playlist: return (collection as? MPMediaPlaylist)?.validName
                 
@@ -52,11 +52,11 @@ class Transitioner: NSObject {
         }()
         
         let id = collection.persistentID
-        let query = MPMediaQuery.init(filterPredicates: [.for(entity, using: id)]).cloud.grouped(by: entity == .playlist ? .playlist : .album)
+        let query = MPMediaQuery.init(filterPredicates: [.for(entityType, using: id)]).cloud.grouped(by: entityType == .playlist ? .playlist : .album)
         
         entityVC.query = query
         
-        switch entity.containerType {
+        switch entityType.containerType {
             
             case .playlist:
             
@@ -88,7 +88,7 @@ class Transitioner: NSObject {
                     entityVC.albumSortCriteria = SortCriteria(rawValue: Int(sortable.sort)) ?? .standard
                 }
             
-                entityVC.kind = entity.albumBasedCollectionKind
+                entityVC.kind = entityType.albumBasedCollectionKind
         }
         
         if preview {
@@ -106,20 +106,21 @@ class Transitioner: NSObject {
         return entityVC
     }
     
-    func transition(to entity: Entity, segue: UIStoryboardSegue, sender: Any?, highlightedItem item: MPMediaItem? = nil, highlightedAlbum: MPMediaItemCollection? = nil, preview: Bool = false) {
+    func transition(to entityType: EntityType, segue: UIStoryboardSegue, sender: Any?, highlightedItem item: MPMediaItem? = nil, highlightedAlbum: MPMediaItemCollection? = nil, preview: Bool = false) {
         
-        transition(to: entity, vc: segue.destination, from: segue.source, sender: sender, highlightedItem: item, highlightedAlbum: highlightedAlbum, preview: preview)
+        transition(to: entityType, vc: segue.destination, from: segue.source, sender: sender, highlightedItem: item, highlightedAlbum: highlightedAlbum, preview: preview)
     }
     
     @discardableResult func transition(to vc: UIViewController, from sorter: Arrangeable, sourceRect: CGRect? = nil, sourceView: UIView? = nil) -> ArrangeViewController? {
         
         if let vc = vc as? VerticalPresentationContainerViewController {
             
-            vc.segments = [.init(title: "Ascending", image: #imageLiteral(resourceName: "Ascending17")), .init(title: "Descending", image: #imageLiteral(resourceName: "Descending17"))]
+            vc.title = "Sort Categories"
+            vc.segments = [.init(title: "Ascending", image: #imageLiteral(resourceName: "Save22")), .init(title: "Descending", image: #imageLiteral(resourceName: "Upload22"))]
             vc.context = .sort
+            vc.topHeaderMode = .themedImage(name: "Order17", height: 17)
             vc.arrangeVC.sorter = sorter
-            vc.requiresSegmentedControl = true
-            vc.leftButtonAction = { [weak vc] button, _ in vc?.arrangeVC.persist(button) }
+            vc.leftButtonAction = { button, vc in (vc as? VerticalPresentationContainerViewController)?.arrangeVC.persist(button) }
             
 //            PopoverDelegate.shared.prepare(vc: verticalPresentedVC, preferredSize: .init(width: 350, height: 169), sourceView: sourceView ?? sorter.arrangeButton, sourceRect: sourceRect ?? sorter.arrangeButton.bounds.modifiedBy(width: 0, height: 5), permittedDirections: [.up, .down])
             
@@ -184,7 +185,7 @@ class Transitioner: NSObject {
         sender.present(vc, animated: true, completion: completion)
     }
     
-    func showProperties(of entity: MPMediaEntity, entityType: Entity, title: String, from sender: UIViewController) {
+    func showProperties(of entity: MPMediaEntity, entityType: EntityType, title: String, from sender: UIViewController) {
         
         guard let vc = presentedStoryboard.instantiateViewController(withIdentifier: "presentedVC") as? PresentedContainerViewController else { return }
         
@@ -202,31 +203,44 @@ class Transitioner: NSObject {
             
         vc.context = .alert
         vc.alertVC.context = .queue(title: title, kind: kind, context: context)
+        vc.topHeaderMode = .themedImage(name: "AddSong22", height: 22)
         vc.subtitle = "Queue"
-        vc.alertVC.actions = [
-            .init(info:
-                .init(title: "Unshuffled",
-                      accessoryType: .check({ vc.alertVC.queueInsertController?.activeShuffle == .some(.none) }),
-                      inactive: { vc.alertVC.queueInsertController!.applicableShuffle.rawValue < ApplicableShuffle.songs.rawValue }),
-                  context: .alert(.default),
-                  handler: { vc.alertVC.queueInsertController?.activeShuffle = .none }),
-            .init(info:
-                .init(title: "Shuffled Songs",
-                      accessoryType: .check({ vc.alertVC.queueInsertController?.activeShuffle == .songs }),
-                      inactive: { vc.alertVC.queueInsertController!.applicableShuffle.rawValue < ApplicableShuffle.songs.rawValue }),
-                  context: .alert(.default),
-                  handler: { vc.alertVC.queueInsertController?.activeShuffle = .songs }),
-            .init(info:
-                .init(title: "Shuffled Albums",
-                      accessoryType: .check({ vc.alertVC.queueInsertController?.activeShuffle == .albums }),
-                      inactive: { vc.alertVC.queueInsertController!.applicableShuffle.rawValue < ApplicableShuffle.albums.rawValue }),
-                  context: .alert(.default),
-                  handler: { vc.alertVC.queueInsertController?.activeShuffle = .albums })
-        ]
-        vc.requiresSegmentedControl = false
-        vc.requiresTopBorderView = true
-        vc.staticOptions = [.init(title: "Next", image: #imageLiteral(resourceName: "PlayNext")), .init(title: "After...", image: #imageLiteral(resourceName: "PlayAfter")), .init(title: "Last", image: #imageLiteral(resourceName: "PlayLater"))]
-        vc.requiresStaticView = true
+        vc.alertVC.actions = {
+            
+            var array = [AlertAction]()
+            
+            if vc.alertVC.queueInsertController.applicableShuffle.rawValue > ApplicableShuffle.none.rawValue {
+            
+                array.append(contentsOf: [
+                    .init(info:
+                        .init(title: "Unshuffled",
+                              accessoryType: .check({ vc.alertVC.queueInsertController.activeShuffle == .none })),
+                          context: .alert(.default),
+                          handler: { vc.alertVC.queueInsertController.activeShuffle = .none }),
+                    .init(info:
+                        .init(title: "Shuffled Songs",
+                              accessoryType: .check({ vc.alertVC.queueInsertController.activeShuffle == .songs })),
+                          context: .alert(.default),
+                          handler: { vc.alertVC.queueInsertController.activeShuffle = .songs })
+                ])
+            }
+            
+            if vc.alertVC.queueInsertController.applicableShuffle == .albums {
+                
+                array.append(
+                    .init(info:
+                        .init(title: "Shuffled Albums",
+                              accessoryType: .check({ vc.alertVC.queueInsertController.activeShuffle == .albums })),
+                          context: .alert(.default),
+                          handler: { vc.alertVC.queueInsertController.activeShuffle = .albums }
+                    )
+                )
+            }
+            
+            return array
+        }()
+        vc.requiresTopBorderView = vc.alertVC.actions.isEmpty.inverted
+        vc.segments = [.init(title: "Next", image: #imageLiteral(resourceName: "PlayNext")), .init(title: "After...", image: #imageLiteral(resourceName: "PlayAfter")), .init(title: "Last", image: #imageLiteral(resourceName: "PlayLater"))]
         
         sender.present(vc, animated: true, completion: nil)
     }
@@ -241,36 +255,9 @@ class Transitioner: NSObject {
         sender.present(vc, animated: true, completion: nil)
     }
     
-    /// Array Version
-    func showAlert(title: String?, subtitle: String? = nil, from sender: UIViewController?, context: AlertTableViewController.Context = .other, with actions: [AlertAction], segmentDetails: SegmentDetails = ([], []), leftAction: AccessoryButtonAction? = nil, rightAction: AccessoryButtonAction? = nil, showMenuParameters parameters: [ShowMenuParameters] = [], completion: (() -> ())? = nil) {
-        
-        guard let vc = popoverStoryboard.instantiateViewController(withIdentifier: String.init(describing: VerticalPresentationContainerViewController.self)) as? VerticalPresentationContainerViewController else { return }
-        
-        vc.context = .alert
-        vc.alertVC.context = context
-        vc.alertVC.actions = actions
-        vc.alertVC.segmentActions = segmentDetails.actions
-        vc.alertVC.showMenuParameters = parameters
-        vc.leftButtonAction = leftAction
-        vc.rightButtonAction = rightAction
-        vc.title = title
-        vc.subtitle = subtitle
-        vc.segments = segmentDetails.array
-        vc.requiresSegmentedControl = segmentDetails.array.isEmpty.inverted
-        vc.requiresTopBorderView = true
-        
-        sender?.present(vc, animated: true, completion: completion)
-    }
-    
-    /// Variadic Version
-    func showAlert(title: String?, subtitle: String? = nil, from sender: UIViewController?, context: AlertTableViewController.Context = .other, with actions: AlertAction..., segmentDetails: SegmentDetails = ([], []), leftAction: AccessoryButtonAction? = nil, rightAction: AccessoryButtonAction? = nil, showMenuParameters parameters: [ShowMenuParameters] = [], completion: (() -> ())? = nil) {
-        
-        showAlert(title: title, subtitle: subtitle, from: sender, context: context, with: actions, segmentDetails: segmentDetails, leftAction: leftAction, rightAction: rightAction, showMenuParameters: parameters, completion: completion)
-    }
-    
     func performDeepSelection(from sender: UIViewController?, title: String?) {
         
-        guard let vc = popoverStoryboard.instantiateViewController(withIdentifier: String.init(describing: VerticalPresentationContainerViewController.self)) as? VerticalPresentationContainerViewController else { return }
+        guard let vc = popoverStoryboard.instantiateViewController(withIdentifier: String.init(describing: VerticalPresentationContainerViewController.self)) as? VerticalPresentationContainerViewController, isInDebugMode else { return }
         
         vc.context = .alert
         vc.alertVC.context = .select
@@ -281,10 +268,7 @@ class Transitioner: NSObject {
         vc.rightButtonAction = nil
         vc.title = title
         vc.subtitle = nil
-        vc.staticOptions = [.init(title: "Apply to Current Item")]
-        vc.requiresSegmentedControl = true
         vc.requiresTopBorderView = true
-        vc.requiresStaticView = true
         
         sender?.present(vc, animated: true, completion: nil)
     }

@@ -11,30 +11,78 @@ import UIKit
 class ArrangeViewController: UIViewController {
     
     @IBOutlet var collectionView: UICollectionView!
+    
+    enum Persistence { case off, temporary, permanent }
+    
     lazy var lockButtonBorder: MELBorderView? = self.verticalPresentedVC?.leftButtonBorderView
     lazy var lockButton: MELButton? = self.verticalPresentedVC?.leftButton
+    lazy var lockBorderedView: MELBorderView? = self.verticalPresentedVC?.leftBorderedBorderView
     
+    var index = 0
     weak var sorter: Arrangeable!
+    var locationDetails: (location: Location, criteria: SortCriteria, ascending: Bool)?
     @objc var persistPopovers = false
+    var isSetting = false
+    var persistence = persistArrangeView ? Persistence.permanent : .off {
+        
+        didSet {
+            
+            switch persistence {
+                
+                case .off: persistArrangeView = false
+                
+                case .temporary: persistPopovers = true
+                
+                case .permanent:
+                
+                    persistPopovers = false
+                    persistArrangeView = true
+            }
+        }
+    }
     var verticalPresentedVC: VerticalPresentationContainerViewController? { return parent as? VerticalPresentationContainerViewController }
-    lazy var applicableCriteria = (sorter.applicableSortCriteria.union([.standard, .random])).sorted(by: { SortCriteria.sortResult(between: $0, and: $1, at: (sorter as? UIViewController)?.location ?? .unknown) })
+    lazy var applicableCriteria: [SortCriteria] = {
+        
+        let criteria = isSetting ? SortCriteria.applicableSortCriteria(for: sorterLocation) : sorter.applicableSortCriteria
+        
+        return (criteria.union([.standard, .random])).sorted(by: { SortCriteria.sortResult(between: $0, and: $1, at: sorterLocation) })
+    }()
+    lazy var sorterLocation: Location = {
+        
+        if isSetting, let details = locationDetails {
+            
+            return details.location
+        }
+        
+        return (sorter as? UIViewController)?.location ?? .unknown
+    }()
+    var ascending: Bool {
+        
+        if isSetting, let ascending = locationDetails?.ascending {
+            
+            return ascending
+        }
+        
+        return sorter.ascending
+    }
+    var criteria: SortCriteria {
+        
+        if isSetting, let criteria = locationDetails?.criteria {
+            
+            return criteria
+        }
+        
+        return sorter.sortCriteria
+    }
     let cellHeight: CGFloat = 57
     
     var highlightedIndexPath: IndexPath? {
         
         didSet {
             
-            guard highlightedIndexPath != oldValue else { return }
+            guard highlightedIndexPath != oldValue, let indexPath = oldValue, indexPath != selectedIndexPath, let cell = collectionView.cellForItem(at: indexPath) else { return }
             
-            if let indexPath = selectedIndexPath, let cell = collectionView.cellForItem(at: indexPath) as? GestureSelectableCollectionViewCell, cell.selectedBorderView.isHidden.inverted {
-                
-                collectionView.deselectItem(at: indexPath, animated: false)
-            }
-            
-            if let indexPath = oldValue {
-            
-                collectionView.deselectItem(at: indexPath, animated: false)
-            }
+            cell.isHighlighted = false
         }
     }
     
@@ -42,9 +90,9 @@ class ArrangeViewController: UIViewController {
         
         didSet {
             
-            guard selectedIndexPath != oldValue, let indexPath = selectedIndexPath else { return }
+            guard selectedIndexPath != oldValue, let indexPath = selectedIndexPath, let cell = collectionView.cellForItem(at: indexPath) else { return }
             
-            collectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+            cell.isSelected = true
         }
     }
 
@@ -53,7 +101,6 @@ class ArrangeViewController: UIViewController {
         super.viewDidLoad()
         
         verticalPresentedVC?.containerViewHeightConstraint.constant = (cellHeight * ceil(CGFloat(applicableCriteria.count) / 3))
-        verticalPresentedVC?.setTitle("Sort Categories")
         verticalPresentedVC?.view.layoutIfNeeded()
         
         collectionView.register(UINib.init(nibName: "GestureSelectableCell", bundle: nil), forCellWithReuseIdentifier: "cell")
@@ -62,20 +109,21 @@ class ArrangeViewController: UIViewController {
         notifier.addObserver(self, selector: #selector(updateScrollView), name: UIApplication.didChangeStatusBarFrameNotification, object: UIApplication.shared)
         
         updateScrollView(self)
-        
-        if let index = applicableCriteria.firstIndex(of: sorter.sortCriteria) {
     
-            selectedIndexPath = .init(item: index, section: 0)
-        }
+        selectedIndexPath = {
+            
+            if let index = applicableCriteria.firstIndex(of: criteria)  {
+                
+                return .init(item: index, section: 0)
+            }
+            
+            return nil
+            
+        }()
 
-        verticalPresentedVC?.selectedSegmentedIndexPath = IndexPath.init(item: sorter.ascending ? 0 : 1, section: 0)
-        persist(self)
+        verticalPresentedVC?.selectedCollectionIndexPath =  .init(item: ascending ? 0 : 1, section: 0)
         
-        let hold = UILongPressGestureRecognizer.init(target: self, action: #selector(persist(_:)))
-        hold.minimumPressDuration = longPressDuration
-        hold.delegate = self
-        lockButton?.addGestureRecognizer(hold)
-        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: hold))
+        persist(self)
     }
     
     /// Determines whether the collectionView should be scrollable or not based on the height of its contents.
@@ -106,7 +154,7 @@ class ArrangeViewController: UIViewController {
         if let indexPath = sender as? IndexPath {
             
             let criteria = applicableCriteria[indexPath.item]
-            let needsSortPrevention = criteria == .standard && sorter.ascending.inverted
+            let needsSortPrevention = isSetting.inverted && criteria == .standard && sorter.ascending.inverted
             
             if needsSortPrevention {
                 
@@ -117,51 +165,62 @@ class ArrangeViewController: UIViewController {
             
             } else {
                 
-                sorter.sortCriteria = criteria
+                if isSetting, let details = locationDetails {
+                    
+                    let temp = EntityType.collectionEntityDetails(for: details.location)
+                    
+                    collectionSortCategories = collectionSortCategories?.appending(key: temp.type.title(albumArtistOverride: true, matchingPropertyName: true) + temp.startPoint.title, value: criteria.rawValue)
+                    
+                    notifier.post(name: .collectionSortChanged, object: nil, userInfo: ["index": index])
+                    
+                    locationDetails = (details.location, criteria, details.ascending)
+                    
+                } else {
+                
+                    sorter.sortCriteria = criteria
+                }
             }
         }
         
-        guard persistPopovers || persistArrangeView else {
+        guard Set([.temporary, .permanent]).contains(persistence) else {
         
             dismiss(animated: true, completion: nil)
             
             return
         }
         
-        verticalPresentedVC?.selectedSegmentedIndexPath = .init(item: sorter.ascending == true ? 0 : 1, section: 0)
+        verticalPresentedVC?.selectedCollectionIndexPath = .init(item: ascending == true ? 0 : 1, section: 0)
     }
     
     @objc func persist(_ sender: Any) {
         
         let animated = !(sender is UIViewController)
         
-        if let gr = sender as? UIGestureRecognizer, gr.state == .began {
+        if sender is UIButton {
             
-            persistPopovers = !persistPopovers
-            
-            UniversalMethods.banner(withTitle: persistPopovers ? "Temporarily Locked" : "Unlocked").show(for: 0.7)
-            
-        } else if sender is UIButton {
-            
-            var setPreference = true
-            
-            if persistPopovers {
+            switch persistence {
                 
-                persistPopovers = false
-                setPreference = persistArrangeView
-            }
-            
-            if setPreference {
+                case .off: persistence = .temporary
                 
-                prefs.set(!persistArrangeView, forKey: .persistArrangeView)
+                case .temporary: persistence = .permanent
+                
+                case .permanent: persistence = .off
             }
         }
+        
+        lockButton?.reversed = persistence == .permanent
+        
+        lockButtonBorder?.updateTheme = false
+        lockButtonBorder?.clear = persistence == .off
+        lockButtonBorder?.alphaOverride = persistence == .permanent ? 1 : 0
         
         UIView.animate(withDuration: animated ? 0.3 : 0, animations: { [weak self] in
             
             guard let weakSelf = self else { return }
             
-            weakSelf.lockButtonBorder?.clear = !weakSelf.persistPopovers && !persistArrangeView
+            weakSelf.lockButton?.changeThemeColor()
+            weakSelf.lockButtonBorder?.updateTheme = true
+            weakSelf.lockBorderedView?.alpha = weakSelf.persistence == .permanent ? 0 : 1
         })
     }
     
@@ -186,8 +245,8 @@ extension ArrangeViewController: UICollectionViewDataSource, UICollectionViewDel
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! GestureSelectableCollectionViewCell
         
         let criteria = applicableCriteria[indexPath.item]
-        cell.prepare(with: criteria.title(from: (sorter as! UIViewController).location), subtitle: criteria.subtitle(from: (sorter as! UIViewController).location))
-        cell.selectedBorderView.isHidden = criteria != sorter.sortCriteria
+        cell.prepare(with: criteria.title(from: sorterLocation), subtitle: criteria.subtitle(from: sorterLocation))
+        cell.selectedBorderView.isHidden = criteria != self.criteria
         
         return cell
     }
@@ -195,12 +254,21 @@ extension ArrangeViewController: UICollectionViewDataSource, UICollectionViewDel
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         if let old = selectedIndexPath, old != indexPath {
-
-            collectionView.deselectItem(at: old, animated: false)
+            
+            selectedIndexPath = nil
+            collectionView.cellForItem(at: old)?.isSelected = false
         }
         
         selectedIndexPath = indexPath
         selectSort(indexPath)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        
+        if indexPath == selectedIndexPath {
+            
+            cell.isSelected = true
+        }
     }
 }
 
@@ -209,14 +277,6 @@ extension ArrangeViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
         return CGSize.init(width: (screenWidth - 12) / 3, height: cellHeight)
-    }
-}
-
-extension ArrangeViewController: UIGestureRecognizerDelegate {
-    
-    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        
-        return !persistArrangeView
     }
 }
 
@@ -230,10 +290,14 @@ extension ArrangeViewController: GestureSelectable {
                 
                 if let indexPath = collectionView.indexPathForItem(at: sender.location(in: collectionView)) {
                     
-                    guard indexPath != highlightedIndexPath else { return }
+                    guard indexPath != highlightedIndexPath, let cell = collectionView.cellForItem(at: indexPath) as? GestureSelectableCollectionViewCell else { return }
                     
                     highlightedIndexPath = indexPath
-                    collectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                    
+                    if indexPath != selectedIndexPath {
+                        
+                        cell.isHighlighted = true
+                    }
                 
                 } else {
                     
@@ -261,10 +325,6 @@ extension ArrangeViewController: GestureSelectable {
             
             highlightedIndexPath = nil
         }
-        
-        guard let indexPath = selectedIndexPath else { return }
-        
-        collectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
     }
 }
 
@@ -272,18 +332,42 @@ extension ArrangeViewController: SegmentedResponder {
     
     func selectedSegment(at index: Int) {
         
-        if index == 0, sorter.ascending.inverted {
+        if index == 0, ascending.inverted {
             
-            sorter.ascending = true
-            verticalPresentedVC?.selectedSegmentedIndexPath = IndexPath.init(item: 0, section: 0)
+            if isSetting, let details = locationDetails {
+                
+                let temp = EntityType.collectionEntityDetails(for: details.location)
+                
+                collectionSortOrders = collectionSortOrders?.appending(key: temp.type.title(albumArtistOverride: true, matchingPropertyName: true) + temp.startPoint.title, value: true)
+                
+                notifier.post(name: .collectionSortChanged, object: nil, userInfo: ["index": self.index])
+                
+                locationDetails = (details.location, details.criteria, true)
+                
+            } else {
+            
+                sorter.ascending = true
+            }
         
-        } else if index == 1, sorter.ascending {
+        } else if index == 1, ascending {
             
-            sorter.ascending = false
-            verticalPresentedVC?.selectedSegmentedIndexPath = IndexPath.init(item: 1, section: 0)
+            if isSetting, let details = locationDetails {
+                
+                let temp = EntityType.collectionEntityDetails(for: details.location)
+                
+                collectionSortOrders = collectionSortOrders?.appending(key: temp.type.title(albumArtistOverride: true, matchingPropertyName: true) + temp.startPoint.title, value: false)
+                
+                notifier.post(name: .collectionSortChanged, object: nil, userInfo: ["index": self.index])
+                
+                locationDetails = (details.location, details.criteria, false)
+                
+            } else {
+            
+                sorter.ascending = false
+            }
         }
         
-        guard persistPopovers.inverted, persistArrangeView.inverted else { return }
+        guard persistence == .off else { return }
         
         self.dismiss(animated: true, completion: nil)
     }

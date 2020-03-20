@@ -80,13 +80,13 @@ class Themer {
         }
     }
     
-    static func reverseTextColour(for kind: TextKind) -> UIColor {
+    static func reversedTextColour(for kind: TextKind) -> UIColor {
         
         switch kind {
             
-        case .title: return !darkTheme ? .white : .black
-            
-        case .subtitle: return !darkTheme ? UIColor.white.withAlphaComponent(0.6) : UIColor.black.withAlphaComponent(0.6)
+            case .title: return !darkTheme ? .white : .black
+                
+            case .subtitle: return !darkTheme ? UIColor.white.withAlphaComponent(0.6) : UIColor.black.withAlphaComponent(0.6)
         }
     }
     
@@ -125,9 +125,13 @@ class Themer {
         return (darkTheme ? UIColor.black : .white).withAlphaComponent(alphaOverride + (useLighterBorders ? 0.05 : 0.08))
     }
     
-    static var tempActiveColours: UIColor { return darkTheme ? .white : .black }
+    static var tempActiveColours: UIColor { darkTheme ? .white : .black }
     
-    static var tempInactiveColours: UIColor { return (darkTheme ? UIColor.white : .black).withAlphaComponent(0.3) }
+    static var tempInactiveColours: UIColor { (darkTheme ? UIColor.white : .black).withAlphaComponent(0.3) }
+    
+    static var reversedTempActiveColours: UIColor { darkTheme ? .black : .white }
+    
+    static var reversedTempInactiveColours: UIColor { (darkTheme ? UIColor.black : .white).withAlphaComponent(0.3) }
 }
 
 extension Themer {

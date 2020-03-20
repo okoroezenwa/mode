@@ -351,7 +351,7 @@ class UniversalMethods: NSObject {
                                     
                                     guard !items.isEmpty else { return false }
                                     
-                                    return items[0].persistentID == item.persistentID
+                                    return items.first?.persistentID == item.persistentID
                                 }()
                                 
                                 UniversalMethods.performInMain {

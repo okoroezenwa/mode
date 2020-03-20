@@ -84,7 +84,12 @@ var fasterNowPlayingStartup: Bool { return prefs.bool(forKey: .fasterNowPlayingS
 var useLighterBorders: Bool { return prefs.bool(forKey: .lighterBorders) }
 var tabBarScrollToTop: Bool { return prefs.bool(forKey: .tabBarScrollToTop) }
 var screenLockPreventionMode: Int { return prefs.integer(forKey: .screenLockPreventionMode) }
-var persistArrangeView: Bool { return prefs.bool(forKey: .persistArrangeView) }
+var persistArrangeView: Bool {
+    
+    get { return prefs.bool(forKey: .persistArrangeView) }
+    
+    set { prefs.set(newValue, forKey: .persistArrangeView) }
+}
 var persistActionsView: Bool { return prefs.bool(forKey: .persistActionsView) }
 var usePlaylistCustomBackground: Bool { return prefs.bool(forKey: .usePlaylistCustomBackground) }
 var useArtistCustomBackground: Bool { return prefs.bool(forKey: .useArtistCustomBackground) }
@@ -230,6 +235,51 @@ var useArtworkInShowMenu: Bool {
     set { prefs.set(newValue, forKey: .useArtworkInShowMenu) }
 }
 
+var playlistHistoryDetails: PlaylistHistoryDetails {
+    
+    get { (prefs.array(forKey: .lastUsedPlaylists) as? [MPMediaEntityPersistentID] ?? [], .get) }
+    
+    set {
+        
+        switch newValue.operation {
+            
+            case .reset: prefs.set([], forKey: .lastUsedPlaylists)
+            
+            case .insert:
+            
+                let set = Set(newValue.ids)
+                let array = playlistHistoryDetails.ids.filter({ set.contains($0).inverted })
+                
+                prefs.set(array.inserting(contentsOf: newValue.ids.reversed(), at: 0), forKey: .lastUsedPlaylists)
+            
+            case .remove: prefs.set(playlistHistoryDetails.ids.removing(contentsOf: newValue.ids), forKey: .lastUsedPlaylists)
+            
+            case .get: return
+        }
+    }
+}
+
+var showPlaylistHistory: Bool {
+    
+    get { prefs.bool(forKey: .showPlaylistHistory) }
+    
+    set { prefs.set(newValue, forKey: .showPlaylistHistory) }
+}
+
+var collectionSortCategories: [String: Int]? {
+    
+    get { prefs.dictionary(forKey: .defaultCollectionSortCategories) as? [String: Int] }
+    
+    set { prefs.set(newValue, forKey: .defaultCollectionSortCategories) }
+}
+
+var collectionSortOrders: [String: Bool]? {
+    
+    get { prefs.dictionary(forKey: .defaultCollectionSortOrders) as? [String: Bool] }
+    
+    set { prefs.set(newValue, forKey: .defaultCollectionSortOrders) }
+}
+
 class Settings {
     
     class var isInDebugMode: Bool {
@@ -246,6 +296,8 @@ class Settings {
     }
 
     class func registerDefaults() {
+        
+        let defaultSortDetails: (sorts: [String: Int], orders: [String: Bool]) = [Location.album, .playlist, .collection(kind: .artist, point: .songs), .collection(kind: .artist, point: .albums), .collection(kind: .albumArtist, point: .songs), .collection(kind: .albumArtist, point: .albums), .collection(kind: .genre, point: .songs), .collection(kind: .genre, point: .albums), .collection(kind: .composer, point: .songs), .collection(kind: .composer, point: .albums)].map({ EntityType.collectionEntityDetails(for: $0) }).map({ $0.type.title(albumArtistOverride: true, matchingPropertyName: true) + $0.startPoint.title }).reduce(([String: Int](), [String: Bool]()), { ($0.0.appending(key: $1, value: ($1.contains("rtistson") ? .albumName : SortCriteria.standard).rawValue), $0.1.appending(key: $1, value: true)) })
         
         prefs.register(defaults: [
             
@@ -375,7 +427,7 @@ class Settings {
             .hiddenFilterProperties: [Int](),
             .hiddenLibrarySections: [Int](),
             .navBarConstant: TopBarOffset.large.rawValue,
-            .activeFont: Font.myriadPro.rawValue,//(isInDebugMode ? .myriadPro : Font.system).rawValue,
+            .activeFont: Font.myriadPro.rawValue,
             .barBlurBehaviour: BarBlurBehavour.all.rawValue/*,
             .visibleInfoItems: InfoSection.allCases.map({ $0.rawValue })*/,
             .includeAlbumName: true,
@@ -388,7 +440,11 @@ class Settings {
             .useSystemSwitch: true,
             .useSystemAlerts: false,
             .theme: defaultTheme.rawValue,
-            .useArtworkInShowMenu: true
+            .useArtworkInShowMenu: true,
+            .lastUsedPlaylists: [MPMediaPlaylist](),
+            .showPlaylistHistory: false,
+            .defaultCollectionSortCategories: defaultSortDetails.sorts,
+            .defaultCollectionSortOrders: defaultSortDetails.orders
         ])
         
         sharedDefaults.register(defaults: [
@@ -682,6 +738,10 @@ extension String {
     static let useSystemAlerts = "useSystemAlerts"
     static let theme = "appTheme"
     static let useArtworkInShowMenu = "useArtworkInShowMenu"
+    static let lastUsedPlaylists = "lastUsedPlaylists"
+    static let showPlaylistHistory = "showPlaylistHistory"
+    static let defaultCollectionSortCategories = "defaultCollectionSortCategories"
+    static let defaultCollectionSortOrders = "defaultCollectionSortOrders"
 }
 
 // MARK: - Notification Settings Constants
@@ -747,6 +807,7 @@ extension NSNotification.Name {
     static let navBarArtworkModeChanged = nameByAppending(to: .navBarArtworkMode)
     static let navBarConstantChanged = nameByAppending(to: .navBarConstant)
     static let useSystemSwitchChanged = nameByAppending(to: .useSystemSwitch)
+    static let collectionSortChanged = nameByAppending(to: "collectionSort")
     
     static func nameByAppending(to text: String) -> Notification.Name {
         

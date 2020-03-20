@@ -8,6 +8,8 @@
 
 import UIKit
 
+typealias PropertyStripLocationDetails = (fromOtherArray: Bool, index: Int, indexPath: IndexPath)
+
 class FilterViewContainer: UIView {
     
     var context = FilterViewContext.library {
@@ -197,100 +199,111 @@ class FilterView: UIView {
         editLabel.isHidden = (properties.isEmpty && otherProperties.isEmpty).inverted
     }
     
-    @objc func showItemActions(_ gr: UILongPressGestureRecognizer) {
+    @objc func showItemActions(_ sender: UILongPressGestureRecognizer) {
         
-        guard gr.state == .began else { return }
-        
-        var title: String {
+        switch sender.state {
             
-            switch context {
-                
-                case .filter: return "Search Categories Settings..."
-                
-                case .library: return "Library Section Settings..."
-            }
-        }
-        
-        let settings = AlertAction.init(title: title, style: .default, requiresDismissalFirst: true, handler: { [weak self] in
+            case .began:
             
-            guard let weakSelf = self, let vc = topViewController else { return }
-            
-            Transitioner.shared.showPropertySettings(from: vc, with: weakSelf.context)
-        })
-        
-        guard let indexPath = collectionView.indexPathForItem(at: gr.location(in: collectionView)) else {
-            
-            topViewController?.showAlert(title: nil, with: settings)
-            
-            return
-        }
-        
-        let isOtherCell = indexPath.row > properties.count - 1
-        let property = isOtherCell ? nil : properties[indexPath.row]
-        
-        let move = AlertAction.init(title: isOtherCell ? "Ungroup" : "Group into \"Other\"", style: .default, handler: { [weak self] in
-            
-            guard let weakSelf = self else { return }
-            
-            if isOtherCell {
-                
-                switch weakSelf.context {
+                var title: String {
                     
-                    case .filter:
-                    
-                        var properties = filterProperties
-                        properties.append(contentsOf: otherFilterProperties)
-                    
-                        prefs.set(properties.map({ $0.rawValue }), forKey: .filterProperties)
-                        prefs.set([Int](), forKey: .otherFilterProperties)
-                    
-                    case .library:
-                    
-                        var sections = librarySections
-                        sections.append(contentsOf: otherLibrarySections)
+                    switch context {
                         
-                        prefs.set(sections.map({ $0.rawValue }), forKey: .librarySections)
-                        prefs.set([Int](), forKey: .otherLibrarySections)
+                        case .filter: return "Search Categories Settings..."
+                        
+                        case .library: return "Library Section Settings..."
+                    }
                 }
                 
-                notifier.post(name: .propertiesUpdated, object: nil, userInfo: [String.filterViewContext: weakSelf.context])
-                
-            } else {
-                
-                property?.perform(.group(index: nil), context: weakSelf.context)
-            }
-        })
-        
-        let hide = AlertAction.init(title: "Hide" + (isOtherCell ? " All" : ""), style: .destructive, handler: { [weak self] in
-            
-            guard let weakSelf = self else { return }
-            
-            if isOtherCell {
-                
-                switch weakSelf.context {
+                let settings = AlertAction.init(title: title, style: .default, requiresDismissalFirst: true, handler: { [weak self] in
                     
-                    case .filter:
-                        
-                        prefs.set(filterProperties.appending(contentsOf: otherFilterProperties).map({ $0.rawValue }), forKey: .filterProperties)
-                        prefs.set(hiddenFilterProperties.appending(contentsOf: otherFilterProperties).map({ $0.rawValue }), forKey: .hiddenFilterProperties)
-                        prefs.set([Int](), forKey: .otherFilterProperties)
+                    guard let weakSelf = self, let vc = topViewController else { return }
                     
-                    case .library:
+                    Transitioner.shared.showPropertySettings(from: vc, with: weakSelf.context)
+                })
+                
+                guard let indexPath = collectionView.indexPathForItem(at: sender.location(in: collectionView)) else {
                     
-                        prefs.set(librarySections.appending(contentsOf: otherLibrarySections).map({ $0.rawValue }), forKey: .librarySections)
-                        prefs.set(hiddenLibrarySections.appending(contentsOf: otherLibrarySections).map({ $0.rawValue }), forKey: .hiddenLibrarySections)
-                        prefs.set([Int](), forKey: .otherLibrarySections)
+                    topViewController?.showAlert(title: nil, with: settings)
+                    
+                    return
                 }
                 
-                notifier.post(name: .propertiesUpdated, object: nil, userInfo: [String.filterViewContext: weakSelf.context])
+                let isOtherCell = indexPath.row > properties.count - 1
+                let property = isOtherCell ? nil : properties[indexPath.row]
                 
-            } else {
+                let move = AlertAction.init(title: isOtherCell ? "Ungroup" : "Group into \"Other\"", style: .default, handler: { [weak self] in
+                    
+                    guard let weakSelf = self else { return }
+                    
+                    if isOtherCell {
+                        
+                        switch weakSelf.context {
+                            
+                            case .filter:
+                            
+                                var properties = filterProperties
+                                properties.append(contentsOf: otherFilterProperties)
+                            
+                                prefs.set(properties.map({ $0.rawValue }), forKey: .filterProperties)
+                                prefs.set([Int](), forKey: .otherFilterProperties)
+                            
+                            case .library:
+                            
+                                var sections = librarySections
+                                sections.append(contentsOf: otherLibrarySections)
+                                
+                                prefs.set(sections.map({ $0.rawValue }), forKey: .librarySections)
+                                prefs.set([Int](), forKey: .otherLibrarySections)
+                        }
+                        
+                        notifier.post(name: .propertiesUpdated, object: nil, userInfo: [String.filterViewContext: weakSelf.context])
+                        
+                    } else {
+                        
+                        property?.perform(.group(index: nil), context: weakSelf.context)
+                    }
+                })
                 
-                property?.perform(.hide, context: weakSelf.context)
-            }
-        })
-        
-        topViewController?.showAlert(title: property?.title ?? "Other", with: hide, move, settings)
+                let hide = AlertAction.init(title: "Hide" + (isOtherCell ? " All" : ""), style: .destructive, handler: { [weak self] in
+                    
+                    guard let weakSelf = self else { return }
+                    
+                    if isOtherCell {
+                        
+                        switch weakSelf.context {
+                            
+                            case .filter:
+                                
+                                prefs.set(filterProperties.appending(contentsOf: otherFilterProperties).map({ $0.rawValue }), forKey: .filterProperties)
+                                prefs.set(hiddenFilterProperties.appending(contentsOf: otherFilterProperties).map({ $0.rawValue }), forKey: .hiddenFilterProperties)
+                                prefs.set([Int](), forKey: .otherFilterProperties)
+                            
+                            case .library:
+                            
+                                prefs.set(librarySections.appending(contentsOf: otherLibrarySections).map({ $0.rawValue }), forKey: .librarySections)
+                                prefs.set(hiddenLibrarySections.appending(contentsOf: otherLibrarySections).map({ $0.rawValue }), forKey: .hiddenLibrarySections)
+                                prefs.set([Int](), forKey: .otherLibrarySections)
+                        }
+                        
+                        notifier.post(name: .propertiesUpdated, object: nil, userInfo: [String.filterViewContext: weakSelf.context])
+                        
+                    } else {
+                        
+                        property?.perform(.hide, context: weakSelf.context)
+                    }
+                })
+                
+                topViewController?.showAlert(title: property?.title ?? "Other", with: hide, move, settings)
+            
+            case .changed, .ended:
+            
+                guard let top = topViewController as? VerticalPresentationContainerViewController else { return }
+            
+                top.gestureActivated(sender)
+            
+            default: break
+        }
     }
     
     class func with(context: FilterViewContext) -> FilterView {
@@ -422,40 +435,53 @@ class FilterView: UIView {
         })
     }
     
-    @objc func showCollectedActions(_ gr: UILongPressGestureRecognizer) {
+    @objc func showCollectedActions(_ sender: UILongPressGestureRecognizer) {
         
-        guard let container = appDelegate.window?.rootViewController as? ContainerViewController, gr.state == .began else { return }
+        guard let container = appDelegate.window?.rootViewController as? ContainerViewController else { return }
         
-        var actions = [ContainerViewController.CollectorActions.play]
-        
-        if musicPlayer.nowPlayingItem != nil {
+        switch sender.state {
             
-            actions.append(.queue)
-        }
-        
-        if container.queue.count > 1 {
+            case .began:
             
-            actions.append(.shuffleSongs)
-            
-            if container.queue.canShuffleAlbums {
+                var actions = [ContainerViewController.CollectorActions.play]
                 
-                actions.append(.shuffleAlbums)
-            }
-        }
-        
-        actions.append(contentsOf: [.newPlaylist, .existingPlaylist, .clear])
-        
-        let collectorActions = collectorAlertActions(from: actions)// + [.cancel()]
-        
-        switch context {
-            
-            case .filter(filter: _, container: let filterContainer) where filterContainer is FilterViewController:
+                if musicPlayer.nowPlayingItem != nil {
+                    
+                    actions.append(.queue)
+                }
                 
-                filterContainer?.showAlert(title: container.queue.count.fullCountText(for: .song), with: collectorActions)
-            
-            default:
+                if container.queue.count > 1 {
+                    
+                    actions.append(.shuffleSongs)
+                    
+                    if container.queue.canShuffleAlbums {
+                        
+                        actions.append(.shuffleAlbums)
+                    }
+                }
                 
-                container.showAlert(title: container.queue.count.fullCountText(for: .song), with: collectorActions)
+                actions.append(contentsOf: [.newPlaylist, .existingPlaylist, .clear])
+                
+                let collectorActions = collectorAlertActions(from: actions)// + [.cancel()]
+                
+                switch context {
+                    
+                    case .filter(filter: _, container: let filterContainer) where filterContainer is FilterViewController:
+                        
+                        filterContainer?.showAlert(title: container.queue.count.fullCountText(for: .song), with: collectorActions)
+                    
+                    default:
+                        
+                        container.showAlert(title: container.queue.count.fullCountText(for: .song), with: collectorActions)
+                }
+            
+            case .changed, .ended:
+            
+                guard let top = topViewController as? VerticalPresentationContainerViewController else { return }
+                
+                top.gestureActivated(sender)
+            
+            default: break
         }
     }
     
@@ -463,7 +489,7 @@ class FilterView: UIView {
         
         switch context {
             
-        case .filter(filter: _, container: let container) where !withinSearchTerm: container?.showPropertyTests()
+            case .filter(filter: _, container: let container) where !withinSearchTerm: container?.showPropertyTests()
             
             default: notifier.post(name: .performSecondaryAction, object: (appDelegate.window?.rootViewController as? ContainerViewController)?.activeViewController)
         }
@@ -562,7 +588,7 @@ extension FilterView: UICollectionViewDelegate, UICollectionViewDataSource {
         }
     }
     
-    func selectCell(at indexPath: IndexPath, usingOtherArray useOtherArray: Bool, arrayIndex: Int) {
+    func selectCell(at indexPath: IndexPath, usingOtherArray useOtherArray: Bool, arrayIndex: Int, performTransitions: Bool = true) {
         
         var indexPaths = [IndexPath]()
         let relevantArray = useOtherArray ? otherProperties : properties
@@ -649,7 +675,7 @@ extension FilterView: UICollectionViewDelegate, UICollectionViewDataSource {
                 
                 guard let section = relevantArray[arrayIndex] as? LibrarySection, let oldSection = LibrarySection(rawValue: prefs.integer(forKey: .lastUsedLibrarySection)), section != oldSection else {
                     
-                    if let container = appDelegate.window?.rootViewController as? ContainerViewController, container.libraryNavigationController?.topViewController != container.libraryNavigationController?.viewControllers.first {
+                    if let container = appDelegate.window?.rootViewController as? ContainerViewController, container.libraryNavigationController?.topViewController != container.libraryNavigationController?.viewControllers.first, performTransitions {
                         
                         container.libraryNavigationController?.popToRootViewController(animated: true)
                     }
@@ -686,12 +712,15 @@ extension FilterView: UICollectionViewDelegate, UICollectionViewDataSource {
                         }
                     }
                     
-                    prefs.set(section.rawValue, forKey: .lastUsedLibrarySection)
-                    libraryVC.activeChildViewController = libraryVC.viewControllerForCurrentSection()
+                    if performTransitions {
                     
-                    if libraryVC.navigationController?.topViewController != libraryVC.navigationController?.viewControllers.first {
+                        prefs.set(section.rawValue, forKey: .lastUsedLibrarySection)
+                        libraryVC.activeChildViewController = libraryVC.viewControllerForCurrentSection()
                         
-                        libraryVC.navigationController?.popToRootViewController(animated: true)
+                        if libraryVC.navigationController?.topViewController != libraryVC.navigationController?.viewControllers.first {
+                            
+                            libraryVC.navigationController?.popToRootViewController(animated: true)
+                        }
                     }
                 }
                 
@@ -740,6 +769,34 @@ extension FilterView: UICollectionViewDelegate, UICollectionViewDataSource {
                 weakSelf.collectionView.performBatchUpdates({  }, completion: { _ in })
             })
         })
+    }
+    
+    func locationDetails(for filterProperty: Property) -> PropertyStripLocationDetails? {
+        
+        if Set(filterProperties).contains(filterProperty) {
+            
+            return filterProperties.firstIndex(of: filterProperty).map({ (false, $0, .init(item: $0, section: 0)) })
+            
+        } else if Set(otherFilterProperties).contains(filterProperty) {
+            
+            return otherFilterProperties.firstIndex(of: filterProperty).map({ (true, $0, .init(item: filterProperties.count, section: 0)) })
+        }
+        
+        return nil
+    }
+    
+    func locationDetails(for librarySection: LibrarySection) -> PropertyStripLocationDetails? {
+        
+        if Set(librarySections).contains(librarySection) {
+            
+            return librarySections.firstIndex(of: librarySection).map({ (false, $0, .init(item: $0, section: 0)) })
+            
+        } else if Set(otherLibrarySections).contains(librarySection) {
+            
+            return otherLibrarySections.firstIndex(of: librarySection).map({ (true, $0, .init(item: librarySections.count, section: 0)) })
+        }
+        
+        return nil
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {

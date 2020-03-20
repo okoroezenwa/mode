@@ -8,10 +8,13 @@
 
 import UIKit
 
-typealias AccessoryButtonAction = ((MELButton, UIViewController) -> ())
+typealias AccessoryButtonAction = (MELButton, UIViewController) -> Void
 typealias SegmentDetails = (array: [SimpleCollectionInfo], actions: [((UIViewController?) -> ())])
+typealias UnwindAction = (VerticalPresentationContainerViewController) -> Void
+typealias PreviewAction = (UIViewController) -> UIViewController?
+typealias HeaderButtonImages = (left: UIImage?, right: UIImage?)
 
-class VerticalPresentationContainerViewController: UIViewController {
+class VerticalPresentationContainerViewController: UIViewController, PreviewTransitionable {
 
     @IBOutlet var effectView: MELVisualEffectView! {
         
@@ -28,42 +31,45 @@ class VerticalPresentationContainerViewController: UIViewController {
     @IBOutlet var cancelButtonHeightConstraint: NSLayoutConstraint!
     @IBOutlet var effectViewsContainer: UIView!
     @IBOutlet var subtitleLabel: MELLabel!
-    @IBOutlet var topStackView: UIStackView!
+    @IBOutlet var topStackView: SubviewIgnoringStackView!
     @IBOutlet var labelsStackView: UIStackView!
     @IBOutlet var topView: UIView!
     @IBOutlet var topBorderView: MELBorderView!
+    @IBOutlet var topEntityImageView: InvertIgnoringImageView!
+    @IBOutlet var topThemedImageView: MELImageView!
+    @IBOutlet var topThemedImageViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet var topBarView: MELBorderView!
     @IBOutlet var segmentedViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet var segmentedEffectView: MELVisualEffectView!
     @IBOutlet var cancelEffectView: MELVisualEffectView!
     @IBOutlet var segmentedCollectionView: UICollectionView!
-    @IBOutlet var staticCollectionView: UICollectionView!
     @IBOutlet var rightButton: MELButton!
     @IBOutlet var rightButtonBorderView: MELBorderView!
     @IBOutlet var rightView: UIView!
     @IBOutlet var leftButton: MELButton!
     @IBOutlet var leftButtonBorderView: MELBorderView!
+    @IBOutlet var leftBorderedBorderView: MELBorderView!
     @IBOutlet var leftView: UIView!
     @IBOutlet var tableView: MELTableView!
+    @IBOutlet var topTableView: MELTableView!
     @IBOutlet var segmentedShadowImageView: ShadowImageView!
-    @IBOutlet var staticView: UIView!
-    @IBOutlet var staticViewHeightConstraint: NSLayoutConstraint!
-    @IBOutlet var staticStackView: UIStackView!
-    @IBOutlet var hideableShadowView: UIView!
-    @IBOutlet var middleHideableShadowView: UIView!
+    @IBOutlet var dividerContainerView: UIView!
     
     enum Context { case sort, actions, alert } // actions referring to actionsVC
-    enum RelevantView { case segmentedCollectionView, staticCollectionView, tableView }
+    enum RelevantView { case collectionView, tableView, topTableView }
+    enum TopHeaderMode { case bar, entityImage(UIImage, type: EntityType), themedImage(name: String, height: CGFloat) }
+    
+    var viewController: UIViewController?
+    var isCurrentlyTopViewController: Bool = false
     
     var context = Context.actions
+    var topHeaderMode = TopHeaderMode.bar
     let transitioner = SimplePresentationAnimationController.init(orientation: .vertical)
     var subtitle: String?
     var requiresTopView = true
-    var requiresSegmentedControl = false
+    var requiresSegmentedControl: Bool { segments.isEmpty.inverted }
     var requiresTopBorderView = false
-    var requiresStaticView = false
-    lazy var segments = [SimpleCollectionInfo]()
-    var staticOptions = [SimpleCollectionInfo]()
-    lazy var shadowViews = [UIView]()
+    var segments = [SimpleCollectionInfo]()
     lazy var cancelAction = AlertAction.init(info: AlertInfo.init(title: {
         
         switch self.context {
@@ -75,46 +81,53 @@ class VerticalPresentationContainerViewController: UIViewController {
         
     }(), accessoryType: .none), handler: nil)
     
+    var topAction: UnwindAction?
+    var topPreviewAction: PreviewAction?
     var leftButtonAction: AccessoryButtonAction?
     var rightButtonAction: AccessoryButtonAction?
     
-    var highlightedSegmentedIndexPath: IndexPath? {
+    lazy var images: HeaderButtonImages = {
+        
+        switch context {
+            
+            case .actions: return (#imageLiteral(resourceName: "Locked13"), #imageLiteral(resourceName: "Settings"))
+            
+            case .alert: return (nil, #imageLiteral(resourceName: "InfoNoBorder13"))
+            
+            case .sort: return (#imageLiteral(resourceName: "Locked13"), nil)
+        }
+    }()
+    
+    var highlightedCollectionIndexPath: IndexPath? {
         
         didSet {
             
-            guard highlightedSegmentedIndexPath != oldValue, let indexPath = oldValue else { return }
+            guard highlightedCollectionIndexPath != oldValue, let indexPath = oldValue, indexPath != selectedCollectionIndexPath, let cell = segmentedCollectionView.cellForItem(at: indexPath) else { return }
             
-            segmentedCollectionView.deselectItem(at: indexPath, animated: false)
+            cell.isHighlighted = false
         }
     }
     
-    var selectedSegmentedIndexPath: IndexPath? {
+    var selectedCollectionIndexPath: IndexPath? {
         
         didSet {
             
-            guard selectedSegmentedIndexPath != oldValue, let indexPath = selectedSegmentedIndexPath else { return }
+            guard selectedCollectionIndexPath != oldValue, let indexPath = selectedCollectionIndexPath, let cell = segmentedCollectionView.cellForItem(at: indexPath) else { return }
             
-            segmentedCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
-        }
-    }
-    
-    var highlightedStaticIndexPath: IndexPath? {
-        
-        didSet {
+            if context == .alert {
+                
+                switch alertVC.context {
+                    
+                    case .show,
+                         .queue(title: _, kind: _, context: _): cell.isHighlighted = true
+                    
+                    default: cell.isSelected = true
+                }
+                
+            } else {
             
-            guard highlightedStaticIndexPath != oldValue, let indexPath = oldValue else { return }
-            
-            staticCollectionView.deselectItem(at: indexPath, animated: false)
-        }
-    }
-    
-    var selectedStaticIndexPath: IndexPath? {
-        
-        didSet {
-            
-            guard selectedStaticIndexPath != oldValue, let indexPath = selectedStaticIndexPath else { return }
-            
-            staticCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                cell.isSelected = true
+            }
         }
     }
     
@@ -125,6 +138,16 @@ class VerticalPresentationContainerViewController: UIViewController {
             guard selectedTableIndexPath != oldValue, let indexPath = oldValue else { return }
             
             tableView.deselectRow(at: indexPath, animated: false)
+        }
+    }
+    
+    var selectedTopTableIndexPath: IndexPath? {
+        
+        didSet {
+            
+            guard selectedTopTableIndexPath != oldValue, let indexPath = oldValue else { return }
+            
+            topTableView.deselectRow(at: indexPath, animated: false)
         }
     }
     
@@ -170,77 +193,53 @@ class VerticalPresentationContainerViewController: UIViewController {
     override func viewDidLoad() {
         
         super.viewDidLoad()
+        
+        leftView.bringSubviewToFront(leftButton)
+        rightView.bringSubviewToFront(rightButton)
 
-        let gr = UITapGestureRecognizer.init(target: self, action: #selector(dismissVC))
-        gr.delegate = self
-        view.addGestureRecognizer(gr)
+        prepareGestures()
         
-        let swipe = UISwipeGestureRecognizer.init(target: self, action: #selector(dismissVC(_:)))
-        swipe.direction = .down
-        view.addGestureRecognizer(swipe)
+        [cancelButtonHeightConstraint, segmentedViewHeightConstraint].forEach({ $0.constant = FontManager.shared.settingCellHeight + 2 })
         
-        let pan = UIPanGestureRecognizer.init(target: self, action: #selector(gestureActivated))
-        effectViewsContainer.addGestureRecognizer(pan)
-        
-        [cancelButtonHeightConstraint, segmentedViewHeightConstraint, staticViewHeightConstraint].forEach({ $0.constant = FontManager.shared.settingCellHeight + 2 })
-        tableView.rowHeight = FontManager.shared.settingCellHeight + 2
-        
-        titleLabel.text = title
-        subtitleLabel.text = subtitle
-        subtitleLabel.isHidden = subtitle == nil
-        labelsStackView.layoutMargins.top = requiresTopView ? 0 : 8
-        labelsStackView.layoutMargins.bottom = context == .alert && alertVC.actions.first?.info.subtitle == nil ? 20 : 8
-        topView.isHidden = requiresTopView.inverted
-        topBorderView.isHidden = requiresTopBorderView.inverted
-        
-        if requiresStaticView {
-
-            hideableShadowView.isHidden = staticOptions.count < 3
-            middleHideableShadowView.isHidden = staticOptions.count < 2
-        }
-        
-        [segmentedEffectView, segmentedShadowImageView].forEach({ $0.isHidden = requiresSegmentedControl.inverted })
-        
-        [staticView, staticStackView].forEach({ $0.isHidden = requiresStaticView.inverted })
-        
-        leftView.isHidden = leftButtonAction == nil
-        rightView.isHidden = rightButtonAction == nil
-        
-        let images: (left: UIImage?, right: UIImage?) = {
+        if requiresSegmentedControl.inverted {
             
-            switch context {
-                
-                case .actions: return (#imageLiteral(resourceName: "Locked13"), #imageLiteral(resourceName: "Settings"))
-                
-                case .alert: return (nil, #imageLiteral(resourceName: "InfoNoBorder13"))
-                
-                case .sort: return (#imageLiteral(resourceName: "Locked13"), nil)
-            }
-        }()
+            segmentedViewHeightConstraint.constant = 0
         
-        leftButton.setImage(images.left, for: .normal)
-        rightButton.setImage(images.right, for: .normal)
-        
-        if [Context.actions, .sort].contains(context) {
-            
-            leftButtonBorderView.bordered = true
-            leftButtonBorderView.clear = true
-            leftButtonBorderView.layer.borderWidth = 1.2
-        }
-        
-        if requiresSegmentedControl {
+        } else {
             
             segmentedCollectionView.delegate = self
             segmentedCollectionView.dataSource = self
             segmentedCollectionView.register(UINib.init(nibName: "GestureSelectableCell", bundle: nil), forCellWithReuseIdentifier: "cell")
+            
+            if segments.count > 2 {
+                
+                let constant: (Int) -> CGFloat = { (self.view.frame.width - 12) / CGFloat(self.segments.count * $0) }
+                
+                (0..<segments.count - 1).enumerated().forEach({ offset, _ in
+                    
+                    let subview = MELBorderView.init(override: 0.05)
+                    subview.translatesAutoresizingMaskIntoConstraints = false
+                    subview.layer.cornerRadius = 1
+                    subview.tag = offset
+                    
+                    dividerContainerView.addSubview(subview)
+                    subview.widthAnchor.constraint(equalToConstant: 2).isActive = true
+                    subview.leadingAnchor.constraint(equalTo: dividerContainerView.leadingAnchor, constant: (UIScreen.main.scale * constant(offset + 1)) - 1).isActive = true
+                    subview.topAnchor.constraint(equalTo: dividerContainerView.topAnchor, constant: 8).isActive = true
+                    subview.bottomAnchor.constraint(equalTo: dividerContainerView.bottomAnchor, constant: -8).isActive = true
+                })
+                
+            }
         }
         
-        if requiresStaticView {
-            
-            staticCollectionView.delegate = self
-            staticCollectionView.dataSource = self
-            staticCollectionView.register(UINib.init(nibName: "GestureSelectableCell", bundle: nil), forCellWithReuseIdentifier: "cell")
-        }
+        prepareTopHeader()
+        
+        topTableView.isUserInteractionEnabled = topAction != nil
+        topTableView.isHidden = topAction == nil
+        topTableView.rowHeight = topTableView.frame.height
+        tableView.rowHeight = FontManager.shared.settingCellHeight + 2
+        
+        [segmentedEffectView, segmentedShadowImageView].forEach({ $0.isHidden = requiresSegmentedControl.inverted })
         
         activeViewController = {
             
@@ -253,6 +252,85 @@ class VerticalPresentationContainerViewController: UIViewController {
                 case .alert: return alertVC
             }
         }()
+        
+        registerForPreviewing(with: self, sourceView: topTableView)
+    }
+    
+    func updateDividerViews(with indexPath: IndexPath) {
+        
+        
+    }
+    
+    func prepareTopHeader() {
+        
+        titleLabel.text = title
+        subtitleLabel.text = subtitle
+        subtitleLabel.isHidden = subtitle == nil
+        labelsStackView.layoutMargins.top = {
+            
+            switch topHeaderMode {
+                
+                case .themedImage(name: _, height: _): return context == .alert && alertVC.actions.first?.info.subtitle == nil ? 0 : 8
+                
+                default: return requiresTopView ? 0 : 8
+            }
+        }()
+        labelsStackView.layoutMargins.bottom = context == .alert && (alertVC.actions.isEmpty.inverted && alertVC.actions.first?.info.subtitle == nil) ? 20 : 8
+        topView.isHidden = requiresTopView.inverted
+        topBorderView.isHidden = requiresTopBorderView.inverted
+        labelsStackView.isHidden = title == nil && subtitle == nil
+        
+        topStackView.frames.append(.init(origin: .zero, size: .init(width: 52, height: 53)), if: leftButtonAction != nil)
+        topStackView.frames.append(.init(x: screenWidth - 12 - 52, y: 0, width: 52, height: 53), if: rightButtonAction != nil)
+        
+        leftView.isHidden = leftButtonAction == nil
+        rightView.isHidden = rightButtonAction == nil
+        
+        leftButton.setImage(images.left, for: .normal)
+        rightButton.setImage(images.right, for: .normal)
+        
+        switch topHeaderMode {
+            
+            case .bar:
+            
+                topEntityImageView.superview?.isHidden = true
+                topThemedImageView.isHidden = true
+            
+            case .entityImage(let image, type: let type):
+            
+                topBarView.isHidden = true
+                topThemedImageView.isHidden = true
+                topEntityImageView.image = image
+                
+                (listsCornerRadius ?? cornerRadius).updateCornerRadius(on: topEntityImageView.layer, width: 30, entityType: type, globalRadiusType: cornerRadius)
+                
+                if let superview = topEntityImageView.superview {
+                    
+                    UniversalMethods.addShadow(to: superview, radius: 4, opacity: 0.35, shouldRasterise: true)
+                }
+            
+            case .themedImage(name: let name, height: let height):
+            
+                topBarView.isHidden = true
+                topEntityImageView.superview?.isHidden = true
+                
+                topThemedImageViewHeightConstraint.constant = height
+                topThemedImageView.image = #imageLiteral(resourceName: name)
+        }
+    }
+    
+    func prepareGestures() {
+        
+        let gr = UITapGestureRecognizer.init(target: self, action: #selector(dismissVC))
+        gr.delegate = self
+        view.addGestureRecognizer(gr)
+        
+        let swipe = UISwipeGestureRecognizer.init(target: self, action: #selector(dismissVC(_:)))
+        swipe.direction = .down
+        view.addGestureRecognizer(swipe)
+        
+        let pan = UIPanGestureRecognizer.init(target: self, action: #selector(gestureActivated))
+        effectViewsContainer.addGestureRecognizer(pan)
     }
     
     @IBAction func leftButtonTapped(_ sender: MELButton) {
@@ -270,8 +348,8 @@ class VerticalPresentationContainerViewController: UIViewController {
         if containerView.frame.contains(sender.location(in: effectViewsContainer)) {
             
             noSelection(of: .tableView)
-            noSelection(of: .segmentedCollectionView)
-            noSelection(of: .staticCollectionView, allowStaticViewSelection: false)
+            noSelection(of: .collectionView)
+            noSelection(of: .topTableView)
             
             if let child = children.first as? GestureSelectable {
             
@@ -291,83 +369,93 @@ class VerticalPresentationContainerViewController: UIViewController {
                     
                     if let indexPath = tableView.indexPathForRow(at: sender.location(in: cancelEffectView)) {
                         
-                        noSelection(of: .segmentedCollectionView)
-                        noSelection(of: .staticCollectionView)
+                        noSelection(of: .collectionView)
+                        noSelection(of: .topTableView)
                         
                         guard indexPath != selectedTableIndexPath else { return }
                         
                         selectedTableIndexPath = indexPath
                         tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
                         
+                    } else if let indexPath = topTableView.indexPathForRow(at: sender.location(in: effectView)), leftView.convert(leftButton.frame, to: topView).contains(sender.location(in: effectView)).inverted, rightView.convert(rightButton.frame, to: topView).contains(sender.location(in: effectView)).inverted {
+                        
+                        noSelection(of: .collectionView)
+                        noSelection(of: .tableView)
+                        
+                        guard indexPath != selectedTopTableIndexPath else { return }
+                        
+                        selectedTopTableIndexPath = indexPath
+                        topTableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
+                        
                     } else if let indexPath = segmentedCollectionView.indexPathForItem(at: sender.location(in: segmentedEffectView)) {
                         
                         noSelection(of: .tableView)
-                        noSelection(of: .staticCollectionView)
+                        noSelection(of: .topTableView)
                         
-                        guard indexPath != highlightedSegmentedIndexPath else { return }
+                        guard indexPath != highlightedCollectionIndexPath, let cell = segmentedCollectionView.cellForItem(at: indexPath) as? GestureSelectableCollectionViewCell else { return }
                         
-                        highlightedSegmentedIndexPath = indexPath
-                        segmentedCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                        highlightedCollectionIndexPath = indexPath
+                        
+                        if indexPath != selectedCollectionIndexPath {
+
+                            cell.isHighlighted = true
+                        }
                     
-                    } else if let indexPath = staticCollectionView.indexPathForItem(at: sender.location(in: staticView)) {
-                        
-                        noSelection(of: .tableView)
-                        noSelection(of: .segmentedCollectionView)
-                        
-                        if context == .alert, case .select = alertVC.context { return }
-                        
-                        guard indexPath != highlightedStaticIndexPath else { return }
-                        
-                        highlightedStaticIndexPath = indexPath
-                        staticCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
-                        
                     } else {
                         
                         noSelection(of: .tableView)
-                        noSelection(of: .segmentedCollectionView)
-                        noSelection(of: .staticCollectionView)
+                        noSelection(of: .collectionView)
+                        noSelection(of: .topTableView)
                     }
 
                 case .ended:
-                
-                    if let indexPath = tableView.indexPathForRow(at: sender.location(in: cancelEffectView)) {
+                    
+                    if leftView.convert(leftButton.frame, to: topView).contains(sender.location(in: effectView)), let action = leftButtonAction {
                         
-                        noSelection(of: .segmentedCollectionView)
-                        noSelection(of: .staticCollectionView)
+                        action(leftButton, self)
+                        
+                    } else if rightView.convert(rightButton.frame, to: topView).contains(sender.location(in: effectView)), let action = rightButtonAction {
+                        
+                        action(rightButton, self)
+                        
+                    } else if let indexPath = topTableView.indexPathForRow(at: sender.location(in: effectView)) {
+                        
+                        noSelection(of: .collectionView)
+                        noSelection(of: .tableView)
+                        
+                        tableView(topTableView, didSelectRowAt: indexPath)
+                        
+                    } else if let indexPath = tableView.indexPathForRow(at: sender.location(in: cancelEffectView)) {
+                        
+                        noSelection(of: .collectionView)
+                        noSelection(of: .topTableView)
                         
                         tableView(tableView, didSelectRowAt: indexPath)
                         
                     } else if let indexPath = segmentedCollectionView.indexPathForItem(at: sender.location(in: segmentedEffectView)) {
                         
                         noSelection(of: .tableView)
-                        noSelection(of: .staticCollectionView)
+                        noSelection(of: .topTableView)
                         
                         collectionView(segmentedCollectionView, didSelectItemAt: indexPath)
                     
-                    } else if let indexPath = staticCollectionView.indexPathForItem(at: sender.location(in: staticView)) {
-                        
-                        noSelection(of: .tableView)
-                        noSelection(of: .segmentedCollectionView)
-                        
-                        collectionView(staticCollectionView, didSelectItemAt: indexPath)
-                        
                     } else {
                         
                         noSelection(of: .tableView)
-                        noSelection(of: .segmentedCollectionView)
-                        noSelection(of: .staticCollectionView)
+                        noSelection(of: .collectionView)
+                        noSelection(of: .topTableView)
                     }
 
                 default:
                     
                     noSelection(of: .tableView)
-                    noSelection(of: .segmentedCollectionView)
-                    noSelection(of: .staticCollectionView)
+                    noSelection(of: .collectionView)
+                    noSelection(of: .topTableView)
             }
         }
     }
     
-    func noSelection(of view: RelevantView, allowStaticViewSelection: Bool = true) {
+    func noSelection(of view: RelevantView) {
         
         switch view {
             
@@ -378,33 +466,18 @@ class VerticalPresentationContainerViewController: UIViewController {
                     selectedTableIndexPath = nil
                 }
             
-            case .segmentedCollectionView:
+            case .collectionView:
             
-                if let _ = highlightedSegmentedIndexPath {
+                if let _ = highlightedCollectionIndexPath {
                     
-                    highlightedSegmentedIndexPath = nil
+                    highlightedCollectionIndexPath = nil
                 }
             
-                guard let indexPath = selectedSegmentedIndexPath else { return }
-                
-                segmentedCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+            case .topTableView:
             
-            case .staticCollectionView:
-            
-                if let _ = highlightedStaticIndexPath {
+                if let _ = selectedTopTableIndexPath {
                     
-                    highlightedStaticIndexPath = nil
-                }
-                
-                guard let indexPath = selectedStaticIndexPath else { return }
-                
-                if allowStaticViewSelection {
-                
-                    staticCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
-            
-                } else {
-                    
-                    staticCollectionView.deselectItem(at: indexPath, animated: false)
+                    selectedTopTableIndexPath = nil
                 }
         }
     }
@@ -452,56 +525,63 @@ extension VerticalPresentationContainerViewController: UICollectionViewDataSourc
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
-        return (collectionView == segmentedCollectionView ? segments : staticOptions).count
+        segments.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! GestureSelectableCollectionViewCell
         
-        let deepSelectMode: Bool = {
-            
-            if collectionView == staticCollectionView, context == .alert, case .select = alertVC.context {
-                
-                return true
-            }
-            
-            return false
-        }()
-        
-        let segment = (collectionView == segmentedCollectionView ? segments : staticOptions)[indexPath.item]
-        cell.prepare(with: segment.title, subtitle: segment.subtitle, image: segment.image, style: .alert, switchDetails: deepSelectMode ? (applyToCurrentItem, { self.applyToCurrentItem.toggle(); print("eh") }) : nil)
-        cell.useBorderView = collectionView == staticCollectionView
-        cell.useEffectView = collectionView == staticCollectionView
-        cell.inset = collectionView == staticCollectionView ? 0 : 10
+        let segment = segments[indexPath.item]
+        cell.prepare(with: segment.title, subtitle: segment.subtitle, image: segment.image, style: .alert)
+        cell.useBorderView = false
+        cell.useEffectView = false
+        cell.inset = 10
         
         return cell
     }
     
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
         
-        if collectionView == segmentedCollectionView {
+        if context == .alert {
             
-            guard let child = children.first as? SegmentedResponder else { return }
-            
-            child.selectedSegment(at: indexPath.item)
-            
-        } else {
-            
-            guard let child = children.first as? StaticOptionResponder else { return }
-            
-            child.selectedStaticOption(at: indexPath.item)
-        }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
-        
-        if collectionView == staticCollectionView, context == .alert, case .select = alertVC.context {
-            
-            return false
+            switch alertVC.context {
+                
+                case .show,
+                     .queue(title: _, kind: _, context: _):
+                
+                    self.collectionView(collectionView, didSelectItemAt: indexPath)
+                    
+                    return false
+                
+                default: break
+            }
         }
         
         return true
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        if let old = selectedCollectionIndexPath, old != indexPath {
+            
+            selectedCollectionIndexPath = nil
+            collectionView.cellForItem(at: old)?.isSelected = false
+        }
+        
+        selectedCollectionIndexPath = indexPath
+        
+        guard let child = children.first as? SegmentedResponder else { return }
+        
+        child.selectedSegment(at: indexPath.item)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        
+        if indexPath == selectedCollectionIndexPath {
+            
+            cell.isSelected = true
+        }
     }
 }
 
@@ -514,6 +594,13 @@ extension VerticalPresentationContainerViewController: UITableViewDataSource, UI
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
+        if tableView == topTableView {
+            
+            let cell = tableView.regularCell(for: indexPath)
+            
+            return cell
+        }
+        
         let cell = tableView.settingCell(for: indexPath)
         
         cell.prepare(with: cancelAction)
@@ -522,6 +609,13 @@ extension VerticalPresentationContainerViewController: UITableViewDataSource, UI
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        if tableView == topTableView {
+            
+            topAction?(self)
+            
+            return
+        }
             
         dismiss(animated: true, completion: nil)
     }
@@ -531,10 +625,26 @@ extension VerticalPresentationContainerViewController: UICollectionViewDelegateF
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        let constant = collectionView == staticCollectionView ? 6 * (staticOptions.count - 1) : 0
-        let preferredArray = collectionView == staticCollectionView ? staticOptions : segments
+        return CGSize.init(width: (screenWidth - 12) / CGFloat(max(1, segments.count)), height: FontManager.shared.settingCellHeight + 2)
+    }
+}
+
+extension VerticalPresentationContainerViewController: UIViewControllerPreviewingDelegate {
+    
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
         
-        return CGSize.init(width: (screenWidth - 12 - CGFloat(constant)) / CGFloat(max(1, preferredArray.count)), height: FontManager.shared.settingCellHeight + 2)
+        guard let action = topPreviewAction else { return nil }
+    
+        return action(self)
+    }
+    
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
+        
+        performCommitActions(on: viewControllerToCommit)
+        
+        viewController = viewControllerToCommit
+        
+        performSegue(withIdentifier: "preview", sender: nil)
     }
 }
 
@@ -547,11 +657,6 @@ protocol GestureSelectable {
 protocol SegmentedResponder {
     
     func selectedSegment(at index: Int)
-}
-
-protocol StaticOptionResponder {
-    
-    func selectedStaticOption(at index: Int)
 }
 
 struct SimpleCollectionInfo {
@@ -567,9 +672,18 @@ struct SimpleCollectionInfo {
         self.image = image
     }
 }
-//
-//struct CancelContainingPresentationControllerBehaviours: OptionSet {
-//
-//    let rawValue: Int
-//    typealias RawValue = Int
-//}
+
+class SubviewIgnoringStackView: UIStackView {
+    
+    var frames = [CGRect]()
+    
+    override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+        
+        if let _ = frames.first(where: { $0.contains(point) }) {
+            
+            return true
+        }
+        
+        return false
+    }
+}

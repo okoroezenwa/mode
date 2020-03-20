@@ -118,7 +118,7 @@ class TextViewController: UIViewController {
         
         if newPlaylistVC?.wasFirstResponder == true {
             
-            newPlaylistVC?.nameSearchBar.becomeFirstResponder()
+            newPlaylistVC?.nameTextField.becomeFirstResponder()
             newPlaylistVC?.wasFirstResponder = false
         }
     }

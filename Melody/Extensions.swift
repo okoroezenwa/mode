@@ -44,9 +44,9 @@ extension MPMediaPredicate {
         return MPMediaPropertyPredicate.init(value: NSNumber.init(value: false), forProperty: "isEditable", comparisonType: .equalTo)
     }
     
-    private class func property(for entity: Entity) -> String {
+    private class func property(for entityType: EntityType) -> String {
         
-        switch entity {
+        switch entityType {
             
             case .artist: return MPMediaItemPropertyArtistPersistentID
                 
@@ -64,9 +64,9 @@ extension MPMediaPredicate {
         }
     }
     
-    private class func nameProperty(for entity: Entity) -> String {
+    private class func nameProperty(for entityType: EntityType) -> String {
         
-        switch entity {
+        switch entityType {
             
             case .artist: return MPMediaItemPropertyArtist
             
@@ -84,19 +84,19 @@ extension MPMediaPredicate {
         }
     }
     
-    static func `for`(_ entity: Entity, using mediaEntity: MPMediaEntity) -> MPMediaPropertyPredicate {
+    static func `for`(_ entityType: EntityType, using mediaEntity: MPMediaEntity) -> MPMediaPropertyPredicate {
         
-        return MPMediaPropertyPredicate.init(value: NSNumber.init(value: mediaEntity.persistentID), forProperty: property(for: entity), comparisonType: .equalTo)
+        return MPMediaPropertyPredicate.init(value: NSNumber.init(value: mediaEntity.persistentID), forProperty: property(for: entityType), comparisonType: .equalTo)
     }
     
-    static func `for`(_ entity: Entity, using id: MPMediaEntityPersistentID) -> MPMediaPropertyPredicate {
+    static func `for`(_ entityType: EntityType, using id: MPMediaEntityPersistentID) -> MPMediaPropertyPredicate {
         
-        return MPMediaPropertyPredicate.init(value: NSNumber.init(value: id), forProperty: property(for: entity), comparisonType: .equalTo)
+        return MPMediaPropertyPredicate.init(value: NSNumber.init(value: id), forProperty: property(for: entityType), comparisonType: .equalTo)
     }
     
-    static func `for`(_ entity: Entity, using name: String) -> MPMediaPropertyPredicate {
+    static func `for`(_ entityType: EntityType, using name: String) -> MPMediaPropertyPredicate {
         
-        return MPMediaPropertyPredicate.init(value: name, forProperty: nameProperty(for: entity), comparisonType: .equalTo)
+        return MPMediaPropertyPredicate.init(value: name, forProperty: nameProperty(for: entityType), comparisonType: .equalTo)
     }
 }
 
@@ -201,6 +201,11 @@ extension NSString {
             default: return compare(second, options: [])
         }
     }
+}
+
+extension String {
+    
+    var size: CGFloat { return (self as NSString).size(withAttributes: [.font: UIFont.font(ofWeight: .regular, size: 17)]).width }
 }
 
 // MARK: - CGRect
@@ -796,7 +801,7 @@ extension MPMediaQuery {
 // MARK: - MPMediaEntity
 extension MPMediaEntity {
     
-    func title(for entityType: Entity, basedOn mainEntityType: Entity) -> String? {
+    func title(for entityType: EntityType, basedOn mainEntityType: EntityType) -> String? {
         
         switch mainEntityType {
             
@@ -853,7 +858,7 @@ extension MPMediaEntity {
         }
     }
     
-    func emptyArtwork(for entityType: Entity) -> UIImage {
+    func emptyArtwork(for entityType: EntityType) -> UIImage {
         
         switch entityType {
             
@@ -969,7 +974,7 @@ extension Int {
     
     var formatted: String { return appDelegate.formatter.numberFormatter.string(from: NSNumber.init(value: self)) ?? "\(self)" }
     
-    func countText(for entity: Entity, compilationOverride: Bool = false, capitalised: Bool = false) -> String {
+    func countText(for entity: EntityType, compilationOverride: Bool = false, capitalised: Bool = false) -> String {
         
         let text: String = {
             
@@ -992,9 +997,9 @@ extension Int {
         return (capitalised ? text.capitalized : text) + (self == 1 ? "" : "s")
     }
     
-    func fullCountText(for entity: Entity, filteredCount: Int? = nil, compilationOverride: Bool = false, capitalised: Bool = false, withInsert insert: String = "") -> String {
+    func fullCountText(for entityType: EntityType, filteredCount: Int? = nil, compilationOverride: Bool = false, capitalised: Bool = false, withInsert insert: String = "") -> String {
         
-        return (filteredCount?.formatted ?+ " of ") + formatted + " " + insert + countText(for: entity, compilationOverride: compilationOverride, capitalised: capitalised)
+        return (filteredCount?.formatted ?+ " of ") + formatted + " " + insert + countText(for: entityType, compilationOverride: compilationOverride, capitalised: capitalised)
     }
     
     var plays: String {
@@ -1013,6 +1018,17 @@ extension Array {
         guard condition else { return nil }
         
         return self
+    }
+}
+
+extension Dictionary {
+    
+    func appending(key: Key, value: Value) -> [Key: Value] {
+        
+        var dict = self
+        dict[key] = value
+        
+        return dict
     }
 }
 

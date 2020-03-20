@@ -64,7 +64,7 @@ class MELSearchBar: UISearchBar {
     
     @objc func changeThemeColor() {
         
-        setImage(#imageLiteral(resourceName: "SearchThick"), for: .search, state: .normal)
+        setImage(#imageLiteral(resourceName: "Search13"), for: .search, state: .normal)
         
         tintColor = darkTheme ? .white : .black
         updateKeyboard(with: inputView)

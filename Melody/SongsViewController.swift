@@ -253,7 +253,7 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
         updateTopInset()
         adjustInsets(context: .container)
         
-        updateTopLabels(setTitle: true)
+        updateTopLabels(setTitle: libraryVC?.shouldSetTitles == true)
         
         prepareLifetimeObservers()
 
@@ -320,11 +320,6 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
         let swipeLeft = UISwipeGestureRecognizer.init(target: songManager, action: #selector(SongActionManager.toggleEditing(_:)))
         swipeLeft.direction = .left
         tableView.addGestureRecognizer(swipeLeft)
-        
-        let hold = UILongPressGestureRecognizer.init(target: tableDelegate, action: #selector(TableDelegate.showOptions(_:)))
-        hold.minimumPressDuration = longPressDuration
-        tableView.addGestureRecognizer(hold)
-        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: hold))
     }
     
     @objc func revealEntity(_ sender: Any) {

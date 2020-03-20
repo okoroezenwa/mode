@@ -8,49 +8,14 @@
 
 import UIKit
 
-class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer, SingleItemActionable, PillButtonContaining {
+class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer, SingleItemActionable {
 
     @IBOutlet var tableView: MELTableView!
     @IBOutlet var bottomView: UIView!
-    @IBOutlet var stackView: UIStackView! {
-        
-        didSet {
-            
-            let addView = PillButtonView.with(title: "Add", image: #imageLiteral(resourceName: "AddNoBorderSmall"), tapAction: .init(action: #selector(addSongs), target: self))
-            addButton = addView.button
-            self.addView = addView
-            
-            let clearView = PillButtonView.with(title: "Clear...", image: #imageLiteral(resourceName: "Discard"), tapAction: .init(action: #selector(clear), target: self))
-            clearButton = clearView.button
-            self.clearView = clearView
-            
-            let editView = PillButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, tapAction: .init(action: #selector(SongActionManager.toggleEditing(_:)), target: songManager))
-            editButton = editView.button
-            self.editView = editView
-            
-            for view in [addView, clearView, editView] {
-                
-//                view.button.contentEdgeInsets.top = 10
-//                view.button.contentEdgeInsets.bottom = 0
-                view.imageViewBottomConstraint?.constant = 2
-                view.borderViewContainerTopConstraint.constant = 10
-//                view.borderView.layer.cornerRadius = 8
-                stackView.addArrangedSubview(view)
-            }
-        }
-    }
-    @IBOutlet var nameSearchBar: MELSearchBar!
+    @IBOutlet var editView: UIView!
+    @IBOutlet var editButton: MELButton!
+    @IBOutlet var nameTextField: MELTextField!
     @IBOutlet var bottomViewBottomConstraint: NSLayoutConstraint!
-    
-    @objc var addButton: MELButton!
-    @objc var clearButton: MELButton!
-    @objc var editButton: MELButton!
-    
-    @objc var addView: PillButtonView!
-    @objc var clearView: PillButtonView!
-    @objc var editView: PillButtonView!
-    
-    var borderedButtons = [PillButtonView?]()
     
     var preferredEditingStyle = EditingStyle.select
     
@@ -103,7 +68,7 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
         
         view.layoutIfNeeded()
         
-        updateHeaderView(with: (manager?.queue ?? playlistItems).count, animated: false)
+        updateEditButton(animated: false)
         
         notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -120,13 +85,11 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
         [Notification.Name.entityCountVisibilityChanged, .showExplicitnessChanged].forEach({ notifier.addObserver(self, selector: #selector(updateEntityCountVisibility), name: $0, object: nil) }) 
         notifier.addObserver(self, selector: #selector(updateNowPlaying), name: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer)
         
-        nameSearchBar.setImage(#imageLiteral(resourceName: "Playlists16"), for: .search, state: .normal)
-        nameSearchBar.becomeFirstResponder()
-        nameSearchBar.textField?.clearButtonMode = .whileEditing
+        nameTextField.becomeFirstResponder()
         
         (parent as? PresentedContainerViewController)?.transitionStart = { [weak self] in
             
-            guard let weakSelf = self, weakSelf.nameSearchBar.isFirstResponder else { return }
+            guard let weakSelf = self, weakSelf.nameTextField.isFirstResponder else { return }
             
             weakSelf.bottomViewBottomConstraint.constant = 0
             weakSelf.wasFirstResponder = true
@@ -136,7 +99,7 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
             
             guard let weakSelf = self, weakSelf.wasFirstResponder else { return }
             
-            weakSelf.nameSearchBar.resignFirstResponder()
+            weakSelf.nameTextField.resignFirstResponder()
             weakSelf.view.layoutIfNeeded()
         }
         
@@ -144,9 +107,11 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
             
             guard let weakSelf = self, weakSelf.wasFirstResponder else { return }
             
-            weakSelf.nameSearchBar.becomeFirstResponder()
+            weakSelf.nameTextField.becomeFirstResponder()
             weakSelf.wasFirstResponder = false
         }
+        
+        editButton.addTarget(songManager, action: #selector(SongActionManager.toggleEditing(_:)), for: .touchUpInside)
     }
     
     @objc func updateEntityCountVisibility() {
@@ -175,9 +140,31 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
         }
     }
     
+    @IBAction func showMore() {
+        
+        var actions = [AlertAction]()
+        
+        if (manager?.queue ?? playlistItems).isEmpty.inverted {
+        
+            let clear = AlertAction.init(title: "Clear...", style: .destructive, image: #imageLiteral(resourceName: "Discard22"), requiresDismissalFirst: true, handler: { [weak self] in self?.clear() })
+            
+            actions.append(clear)
+        }
+        
+        let add = AlertAction.init(title: "Add Songs...", image: #imageLiteral(resourceName: "AddNoBorder22"), requiresDismissalFirst: true, handler: { [weak self] in self?.addSongs() })
+        
+        actions.append(add)
+        
+        let details = AlertAction.init(title: "Playlist Details...", image: #imageLiteral(resourceName: "Details22"), requiresDismissalFirst: true, handler: { [weak self] in self?.performSegue(withIdentifier: "toDetails", sender: nil) })
+        
+        actions.append(details)
+        
+        showAlert(title: nil, with: actions)
+    }
+    
     @objc func adjustKeyboard(with notification: Notification) {
         
-        guard let keyboardHeightAtEnd = ((notification as NSNotification).userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.size.height, nameSearchBar.isFirstResponder, let duration = (notification as NSNotification).userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval else { return }
+        guard let keyboardHeightAtEnd = ((notification as NSNotification).userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.size.height, nameTextField.isFirstResponder, let duration = (notification as NSNotification).userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval else { return }
         
         let keyboardWillShow = notification.name == UIResponder.keyboardWillShowNotification
         
@@ -186,31 +173,17 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
         UIView.animate(withDuration: duration, animations: { self.view.layoutIfNeeded() })
     }
     
-    @objc func updateHeaderView(with count: Int, animated: Bool = true) {
+    func updateEditButton(animated: Bool = true) {
         
         UIView.animate(withDuration: animated ? 0.3 : 0, animations: {
             
-            ([self.editView, self.clearView] as [UIView]).forEach({
-                
-                if $0.isHidden && count == 0 { } else {
-                    
-                    $0.isHidden = count == 0
-                    $0.alpha = count == 0 ? 0 : 1
-                }
-            })
-        
-        })
-        
-        var array = [addView, clearView, editView]
-        
-        if count == 0 {
+            self.editButton.lightOverride = (self.manager?.queue ?? self.playlistItems).isEmpty
             
-            array.removeLast(2)
-        }
-        
-        borderedButtons = array
-        
-        updateButtons()
+//            if (self.manager?.queue ?? self.playlistItems).isEmpty && self.editView.isHidden == true { } else {
+//
+//                self.editView.isHidden = (self.manager?.queue ?? self.playlistItems).isEmpty
+//            }
+        })
     }
     
     @objc func handleRightSwipe(_ sender: Any) {
@@ -246,7 +219,7 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
     
     @objc func createPlaylist() {
         
-        guard nameSearchBar.text?.isEmpty == false else {
+        guard nameTextField.text?.isEmpty == false else {
             
             let newBanner = Banner.init(title: "Your playlist must have a name", subtitle: nil, image: nil, backgroundColor: .red, didTapBlock: nil)
             newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
@@ -255,16 +228,17 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
             return
         }
         
-        let creationMetadata = MPMediaPlaylistCreationMetadata.init(name: nameSearchBar.text!)
+        let creationMetadata = MPMediaPlaylistCreationMetadata.init(name: nameTextField.text!)
         creationMetadata.authorDisplayName = creatorText
         creationMetadata.descriptionText = descriptionText ?? ""
         
 //        UIApplication.shared.isNetworkActivityIndicatorVisible = true
-        (parent as? PresentedContainerViewController)?.updateIndicator(to: .visible)
+        let parent = self.parent as? PresentedContainerViewController
+        parent?.updateIndicator(to: .visible)
             
-        musicLibrary.getPlaylist(with: UUID(), creationMetadata: creationMetadata, completionHandler: { [weak self] playlist, error in
+        musicLibrary.getPlaylist(with: UUID(), creationMetadata: creationMetadata, completionHandler: { [weak self, weak parent] playlist, error in
             
-            guard let weakSelf = self, let parent = weakSelf.parent as? PresentedContainerViewController else { return }
+            guard let weakSelf = self, let parent = parent else { return }
             
             if isInDebugMode {
                 
@@ -415,7 +389,7 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
         tableView.deleteRows(at: details.indexPathsToRemove, with: .none)
         UniversalMethods.performOnMainThread({ self.tableView.reloadRows(at: self.tableView.indexPathsForVisibleRows ?? [], with: .none) }, afterDelay: 0.3)
         parent.prepare(animated: true)
-        updateHeaderView(with: (manager?.queue ?? playlistItems).count, animated: true)
+        updateEditButton()
     }
     
     @objc func clear() {
@@ -450,8 +424,6 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
         }
         
         showAlert(title: "Clear...", with: array)
-        
-//        present(UIAlertController.withTitle("Clear...", message: nil, style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
     }
     
     @IBAction func addSongs() {
@@ -466,16 +438,16 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
     
     @IBAction func enterName(_ sender: AnyObject) {
         
-        nameSearchBar.becomeFirstResponder()
+        nameTextField.becomeFirstResponder()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         if segue.identifier == "toDetails", let presentedVC = segue.destination as? PresentedContainerViewController {
             
-            if nameSearchBar.isFirstResponder {
+            if nameTextField.isFirstResponder {
                 
-                nameSearchBar.resignFirstResponder()
+                nameTextField.resignFirstResponder()
                 wasFirstResponder = true
             }
             
@@ -505,7 +477,7 @@ extension NewPlaylistViewController: MPMediaPickerControllerDelegate {
     
     func mediaPicker(_ mediaPicker: MPMediaPickerController, didPickMediaItems mediaItemCollection: MPMediaItemCollection) {
         
-        if let manager = manager, let parent = parent as? PresentedContainerViewController {
+        if let _ = manager, let parent = parent as? PresentedContainerViewController {
             
             notifier.post(name: .addedToQueue, object: nil, userInfo: [DictionaryKeys.queueItems: mediaItemCollection.items])
             
@@ -517,7 +489,7 @@ extension NewPlaylistViewController: MPMediaPickerControllerDelegate {
                 presenter.queueVC.tableView.reloadData()
             }
             
-            updateHeaderView(with: manager.queue.count, animated: false)
+            updateEditButton(animated: false)
             tableView.reloadData()
         
         } else {
@@ -527,7 +499,7 @@ extension NewPlaylistViewController: MPMediaPickerControllerDelegate {
             (parent as? PresentedContainerViewController)?.itemsToAdd = array
             
             tableView.reloadData()
-            updateHeaderView(with: playlistItems.count, animated: false)
+            updateEditButton(animated: false)
             
             (parent as? PresentedContainerViewController)?.prepare(animated: false)
         }
@@ -611,6 +583,11 @@ extension NewPlaylistViewController: UITableViewDelegate, UITableViewDataSource 
             manager?.queue.remove(at: sourceIndexPath.row)
             manager?.queue.insert(song, at: destinationIndexPath.row)
             
+            if songCountVisible {
+
+                tableView.reloadData()
+            }
+            
             if let presenter = presentingViewController as? PresentedContainerViewController, presenter.context == .items {
                 
                 presenter.queueVC.tableView.reloadData()
@@ -620,6 +597,11 @@ extension NewPlaylistViewController: UITableViewDelegate, UITableViewDataSource 
             
             playlistItems.remove(at: sourceIndexPath.row)
             playlistItems.insert(song, at: destinationIndexPath.row)
+            
+            if songCountVisible {
+
+                tableView.reloadData()
+            }
         }
     }
     
@@ -629,16 +611,13 @@ extension NewPlaylistViewController: UITableViewDelegate, UITableViewDataSource 
     }
 }
 
-extension NewPlaylistViewController: UISearchBarDelegate {
+extension NewPlaylistViewController: UITextFieldDelegate {
     
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         
         (parent as? PresentedContainerViewController)?.rightButtonTapped()
         
-        if searchBar.text?.isEmpty == false {
-            
-            searchBar.resignFirstResponder()
-        }
+        return textField.text?.isEmpty == false
     }
 }
 

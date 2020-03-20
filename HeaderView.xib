@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
-    <device id="retina4_7" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15510"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -48,10 +46,10 @@
                             <rect key="frame" x="0.0" y="0.0" width="474" height="44"/>
                             <subviews>
                                 <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="oIz-FE-Vxb">
-                                    <rect key="frame" x="0.0" y="0.0" width="479" height="44"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="494" height="44"/>
                                     <subviews>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yi6-PI-nsU">
-                                            <rect key="frame" x="0.0" y="0.0" width="116" height="44"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="131" height="44"/>
                                             <subviews>
                                                 <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="I7l-BX-nnr" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
                                                     <rect key="frame" x="12" y="14" width="24" height="24"/>
@@ -67,7 +65,7 @@
                                                     </userDefinedRuntimeAttributes>
                                                 </view>
                                                 <button opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="751" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WIS-jN-R0X" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="0.0" y="0.0" width="116" height="44"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="131" height="44"/>
                                                     <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                     <inset key="contentEdgeInsets" minX="25" minY="8" maxX="12" maxY="0.0"/>
                                                     <inset key="titleEdgeInsets" minX="0.0" minY="1" maxX="0.0" maxY="0.0"/>
@@ -95,7 +93,7 @@
                                             </userDefinedRuntimeAttributes>
                                         </view>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Xqr-Vo-LnQ">
-                                            <rect key="frame" x="116" y="0.0" width="108" height="44"/>
+                                            <rect key="frame" x="131" y="0.0" width="108" height="44"/>
                                             <subviews>
                                                 <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="reL-hE-933" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
                                                     <rect key="frame" x="4" y="14" width="24" height="24"/>
@@ -141,7 +139,7 @@
                                             </constraints>
                                         </view>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zsD-hE-mWh">
-                                            <rect key="frame" x="224" y="0.0" width="123" height="44"/>
+                                            <rect key="frame" x="239" y="0.0" width="123" height="44"/>
                                             <subviews>
                                                 <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gn5-KQ-Cne" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
                                                     <rect key="frame" x="4" y="14" width="24" height="24"/>
@@ -185,7 +183,7 @@
                                             </userDefinedRuntimeAttributes>
                                         </view>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Rd7-Zx-ZfW">
-                                            <rect key="frame" x="347" y="0.0" width="44" height="44"/>
+                                            <rect key="frame" x="362" y="0.0" width="44" height="44"/>
                                             <subviews>
                                                 <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="SfE-JR-8Tp" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
                                                     <rect key="frame" x="4" y="14" width="24" height="24"/>
@@ -222,7 +220,7 @@
                                             </userDefinedRuntimeAttributes>
                                         </view>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uq9-Zz-TgE">
-                                            <rect key="frame" x="391" y="0.0" width="44" height="44"/>
+                                            <rect key="frame" x="406" y="0.0" width="44" height="44"/>
                                             <subviews>
                                                 <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aqO-J8-PiC" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
                                                     <rect key="frame" x="4" y="14" width="24" height="24"/>
@@ -259,7 +257,7 @@
                                             </userDefinedRuntimeAttributes>
                                         </view>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="AEj-vB-Z3z">
-                                            <rect key="frame" x="435" y="0.0" width="44" height="44"/>
+                                            <rect key="frame" x="450" y="0.0" width="44" height="44"/>
                                             <subviews>
                                                 <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="CxX-CJ-ZtL" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
                                                     <rect key="frame" x="4" y="14" width="24" height="24"/>
@@ -299,7 +297,7 @@
                                     <edgeInsets key="layoutMargins" top="0.0" left="0.0" bottom="0.0" right="0.0"/>
                                 </stackView>
                                 <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="Xik-7R-75C">
-                                    <rect key="frame" x="479" y="0.0" width="50" height="44"/>
+                                    <rect key="frame" x="494" y="0.0" width="50" height="44"/>
                                     <constraints>
                                         <constraint firstAttribute="width" priority="200" constant="50" placeholder="YES" id="FlI-ga-vMk"/>
                                     </constraints>
@@ -365,16 +363,16 @@
                             </userDefinedRuntimeAttributes>
                         </collectionView>
                         <visualEffectView hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6zL-CQ-7yb" customClass="MELVisualEffectView" customModule="Mode" customModuleProvider="target">
-                            <rect key="frame" x="140.5" y="59" width="193.5" height="40"/>
+                            <rect key="frame" x="148" y="59" width="178" height="40"/>
                             <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="mzm-YD-VFV">
-                                <rect key="frame" x="0.0" y="0.0" width="193.5" height="40"/>
+                                <rect key="frame" x="0.0" y="0.0" width="178" height="40"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
                                     <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="751" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="hPq-aX-UXH" customClass="MELActivityIndicatorView" customModule="Mode" customModuleProvider="target">
                                         <rect key="frame" x="10" y="10" width="20" height="20"/>
                                     </activityIndicatorView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Loading Recents..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6eE-IR-d5E" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                        <rect key="frame" x="40" y="10" width="143" height="20"/>
+                                        <rect key="frame" x="40" y="10" width="127.5" height="20"/>
                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -451,6 +449,7 @@
                 <outlet property="collectionViewHeightConstraint" destination="ym2-9o-A6P" id="atm-Gj-gte"/>
                 <outlet property="descriptionTextView" destination="sNU-4G-E1G" id="GJe-iA-Fvm"/>
                 <outlet property="descriptionTextViewHeightConstraint" destination="fri-v9-eeH" id="sN1-RF-T8S"/>
+                <outlet property="gradientView" destination="hPt-1A-Uje" id="QYH-YC-B0R"/>
                 <outlet property="groupingButton" destination="WIS-jN-R0X" id="uWL-af-IZ2"/>
                 <outlet property="groupingView" destination="yi6-PI-nsU" id="4W4-si-jNm"/>
                 <outlet property="infoButton" destination="sT6-YK-CNg" id="ft7-qj-sIn"/>
@@ -461,6 +460,7 @@
                 <outlet property="loadingEffectView" destination="6zL-CQ-7yb" id="cwn-5T-tIR"/>
                 <outlet property="scrollStackView" destination="Xik-7R-75C" id="Svg-WK-Nky"/>
                 <outlet property="scrollStackViewHeightConstraint" destination="Ftj-XX-cLc" id="cg0-zi-Zbl"/>
+                <outlet property="scrollView" destination="oCg-6I-fI1" id="9r5-Tw-4ro"/>
                 <outlet property="sortActivityIndicatorView" destination="VwR-sC-hT0" id="oBW-5e-Gzc"/>
                 <outlet property="sortBorderView" destination="reL-hE-933" id="tJq-bq-Oa2"/>
                 <outlet property="sortButton" destination="Tip-95-vbe" id="UKV-3H-cZh"/>

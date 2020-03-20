@@ -69,8 +69,18 @@ class QueueTableViewController: UITableViewController {
             sharedDefaults.set(true, forKey: .quitWidget)
             sharedDefaults.synchronize()
             
+            let hasContent: Bool = {
+                
+                if #available(iOS 10, *) {
+                    
+                    return newPreference
+                }
+                
+                return false
+            }()
+            
             #warning("Update for Mode App Store release")
-            NCWidgetController().setHasContent(newPreference, forWidgetWithBundleIdentifier: (Bundle.main.bundleIdentifier ?? ModeBuild.stable.rawValue) + ".Widget")
+            NCWidgetController().setHasContent(hasContent, forWidgetWithBundleIdentifier: (Bundle.main.bundleIdentifier ?? ModeBuild.stable.rawValue) + ".Widget")
             
             fatalError()
         })

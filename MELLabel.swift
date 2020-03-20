@@ -48,6 +48,7 @@ class MELLabel: UILabel {
         }
     }
     
+    @objc var reversed = false
     @objc var allowFontChange = true
     @objc var scaleFactor: CGFloat = 1
     var colorOverride: UIColor? {
@@ -125,7 +126,7 @@ class MELLabel: UILabel {
     
     @objc func changeThemeColor() {
         
-        let colour = colorOverride ?? (lightOverride ? Themer.tempInactiveColours : Themer.textColour(for: greyOverride ? .subtitle : .title))
+        let colour = colorOverride ?? (reversed ? (lightOverride ? Themer.reversedTempInactiveColours : Themer.reversedTextColour(for: greyOverride ? .subtitle : .title)) : (lightOverride ? Themer.tempInactiveColours : Themer.textColour(for: greyOverride ? .subtitle : .title)))
         textColor = colour
         
         if let attributes = attributes, let text = text {

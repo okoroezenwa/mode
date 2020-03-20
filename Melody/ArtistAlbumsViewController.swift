@@ -149,6 +149,8 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, I
     var filterEntities: FilterViewController.FilterEntities { return .collections(albums, kind: .album) }
     var collectionView: UICollectionView?
     
+    var needsToUpdateHeaderView = false
+    
     var staticSortCriteria = SortCriteria.standard
     var sortCriteria: SortCriteria {
         
@@ -360,11 +362,6 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, I
         let swipeLeft = UISwipeGestureRecognizer.init(target: songManager, action: #selector(SongActionManager.toggleEditing(_:)))
         swipeLeft.direction = .left
         tableView.addGestureRecognizer(swipeLeft)
-        
-        let itemOptionsHold = UILongPressGestureRecognizer.init(target: tableDelegate, action: #selector(TableDelegate.showOptions(_:)))
-        itemOptionsHold.minimumPressDuration = longPressDuration
-        tableView.addGestureRecognizer(itemOptionsHold)
-        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: itemOptionsHold))
     }
     
     @objc func revealEntity(_ sender: Any) {
@@ -409,12 +406,14 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, I
             let duration = collection.totalDuration.stringRepresentation(as: .short)
             let created = collection.recentlyAdded.timeIntervalSinceNow.shortStringRepresentation
             let plays = collection.totalPlays.formatted
+            let count = (weakSelf.currentArtistQuery?.collections?.count ?? 0).fullCountText(for: .album, capitalised: false)
             let totalSize = FileSize.init(actualSize: collection.totalSize).actualSize.fileSizeRepresentation
             
             guard weakSelf.supplementaryOperation?.isCancelled == false else { return }
             
             OperationQueue.main.addOperation({
                 
+                weakSelf.headerView.groupingButton.setTitle(count, for: .normal)
                 weakSelf.totalDurationLabel.text = duration
                 weakSelf.dateCreatedLabel.text = created
                 weakSelf.playsLabel.text = plays
@@ -458,6 +457,12 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, I
             
             invokeSearch()
             wasFiltering = false
+        }
+        
+        if needsToUpdateHeaderView {
+            
+            prepareSupplementaryInfo()
+            needsToUpdateHeaderView = false
         }
         
         entityVC?.setCurrentOptions()
@@ -569,7 +574,7 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, I
         }
         
         currentArtistQuery?.groupingType = .album
-        prepareSupplementaryInfo()
+//        prepareSupplementaryInfo()
         sortAllItems()
     }
     

@@ -167,9 +167,11 @@ extension UIImage {
         return nil
     }
     
-    class var inactiveEditImage: UIImage { return #imageLiteral(resourceName: "Edit") }
-    class var moreEditImage: UIImage { return #imageLiteral(resourceName: "MoreBordered13") }
-    class var doneImage: UIImage { return #imageLiteral(resourceName: "CheckBordered13") }
+    class var inactiveEditImage: UIImage { #imageLiteral(resourceName: "Edit") }
+    class var inactiveEditBorderlessImage: UIImage { #imageLiteral(resourceName: "EditNoBorder13") }
+    class var moreEditImage: UIImage { #imageLiteral(resourceName: "MoreBordered13") }
+    class var doneImage: UIImage { #imageLiteral(resourceName: "CheckBordered13") }
+    class var doneBorderlessImage: UIImage { #imageLiteral(resourceName: "Check13") }
     
     func masked(with mask: UIImage) -> UIImage? {
         

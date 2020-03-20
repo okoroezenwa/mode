@@ -15,7 +15,7 @@ class ActionsManager: NSObject {
     enum Sender {
         
         case indexPath(IndexPath, within: [MPMediaEntity])
-        case entity(MPMediaEntity, ofType: Entity)
+        case entity(MPMediaEntity, ofType: EntityType)
     }
     
     enum AddLocation { case library, newPlaylist, existingPlaylist }

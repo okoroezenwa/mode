@@ -775,7 +775,7 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
             
                 guard isInDebugMode else { break }
             
-                Transitioner.shared.showProperties(of: entity(), entityType: newOptionsVC.context.entity, title: titleLabel.text?.replacingOccurrences(of: "Info", with: "Properties") ?? "", from: self)
+                Transitioner.shared.showProperties(of: entity(), entityType: newOptionsVC.context.entityType, title: titleLabel.text?.replacingOccurrences(of: "Info", with: "Properties") ?? "", from: self)
             
             case .playlistDetails:
             
@@ -843,7 +843,7 @@ extension PresentedContainerViewController: UIGestureRecognizerDelegate {
     
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         
-        return gestureRecognizer.location(in: view).x < 44
+        return gestureRecognizer.location(in: view).x < 23
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {

@@ -170,14 +170,6 @@ public extension MPMusicPlayerController {
             
             vc.showAlert(title: title, subtitle: subtitle, context: .other, with: .init(info: .init(title: alertTitle, accessoryType: .none), requiresDismissalFirst: true, handler: play))
             
-//            let interrupt = UIAlertAction.init(title: alertTitle, style: .default, handler: { _ in
-//
-//                play()
-//            })
-//
-//            let alert = UniversalMethods.alertController(withTitle: title, message: subtitle, preferredStyle: .actionSheet, actions: interrupt, UniversalMethods.cancelAlertAction())
-//            vc.present(alert, animated: true, completion: nil)
-            
         } else {
             
             play()

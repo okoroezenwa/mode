@@ -108,7 +108,17 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         
         super.viewDidLoad()
         
-        NCWidgetController().setHasContent(sharedUseSystemPlayer, forWidgetWithBundleIdentifier: Bundle.main.bundleIdentifier ?? (ModeBuild.release.rawValue + ".Widget"))
+        let hasContent: Bool = {
+            
+            if #available(iOS 10, *) {
+                
+                return sharedUseSystemPlayer
+            }
+            
+            return false
+        }()
+        
+        NCWidgetController().setHasContent(hasContent, forWidgetWithBundleIdentifier: Bundle.main.bundleIdentifier ?? (ModeBuild.release.rawValue + ".Widget"))
         
         updateMaxSizes()
         updateNowPlayingLabel()

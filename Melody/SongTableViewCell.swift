@@ -87,11 +87,11 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell {
         return indicator
     }()
     
-    var entity = Entity.song {
+    var entityType = EntityType.song {
         
         didSet {
             
-            guard entity != oldValue, let _ = artworkContainer, let _ = artworkImageView else { return }
+            guard entityType != oldValue, let _ = artworkContainer, let _ = artworkImageView else { return }
             
             updateCornersAndShadows()
         }
@@ -111,20 +111,20 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell {
         let tap = UITapGestureRecognizer.init(target: self, action: #selector(tapCell(_:)))
         supplemetaryScrollView.addGestureRecognizer(tap)
         
-        let editHold = UILongPressGestureRecognizer.init(target: self, action: #selector(performHold(_:)))
-        editHold.minimumPressDuration = longPressDuration
-        editButton.addGestureRecognizer(editHold)
-        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: editHold))
+//        let editHold = UILongPressGestureRecognizer.init(target: self, action: #selector(performHold(_:)))
+//        editHold.minimumPressDuration = longPressDuration
+//        editButton.addGestureRecognizer(editHold)
+//        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: editHold))
         
-        let accessoryHold = UILongPressGestureRecognizer.init(target: self, action: #selector(performHold(_:)))
-        accessoryHold.minimumPressDuration = longPressDuration
-        infoButton.addGestureRecognizer(accessoryHold)
-        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: accessoryHold))
-        
-        let artworkHold = UILongPressGestureRecognizer.init(target: self, action: #selector(performHold(_:)))
-        artworkHold.minimumPressDuration = longPressDuration
-        playButton.addGestureRecognizer(artworkHold)
-        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: artworkHold))
+//        let accessoryHold = UILongPressGestureRecognizer.init(target: self, action: #selector(performHold(_:)))
+//        accessoryHold.minimumPressDuration = longPressDuration
+//        infoButton.addGestureRecognizer(accessoryHold)
+//        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: accessoryHold))
+//
+//        let artworkHold = UILongPressGestureRecognizer.init(target: self, action: #selector(performHold(_:)))
+//        artworkHold.minimumPressDuration = longPressDuration
+//        playButton.addGestureRecognizer(artworkHold)
+//        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: artworkHold))
         
         notifier.addObserver(self, selector: #selector(modifyPlayOnly), name: .playOnlyChanged, object: nil)
         notifier.addObserver(self, selector: #selector(modifyBackground), name: .themeChanged, object: nil)
@@ -167,8 +167,6 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell {
                     }
                 }()
                 
-                if view == .edit { guard isInDebugMode else { return } }
-                
                 switch view {
                     
                     case .edit: delegate?.editButtonHeld(in: self)
@@ -177,8 +175,6 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell {
                     
                     case .artwork: delegate?.artworkHeld(in: self)
                 }
-            
-                UniversalMethods.banner(withTitle: view.rawValue).show(for: 1)
             
             case .changed, .ended:
             
@@ -206,7 +202,7 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell {
         
         [artworkImageView, playingView].forEach({
             
-            (listsCornerRadius ?? cornerRadius).updateCornerRadius(on: $0?.layer, width: width, entityType: entity, globalRadiusType: cornerRadius)
+            (listsCornerRadius ?? cornerRadius).updateCornerRadius(on: $0?.layer, width: width, entityType: entityType, globalRadiusType: cornerRadius)
         })
         
         UniversalMethods.addShadow(to: artworkContainer, radius: 4, opacity: 0.35, shouldRasterise: true)
@@ -305,7 +301,7 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell {
                  highlightedSong: MPMediaItem? = nil,
                  hideOptionsView: Bool = !showInfoButtons) {
         
-        entity = .song
+        entityType = .song
         
         nameLabel.text = song.title ??? .untitledSong
         
@@ -542,7 +538,7 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell {
     
     func prepare(with playlist: MPMediaPlaylist, count: Int, number: Int? = nil) {
         
-        entity = .playlist
+        entityType = .playlist
         
         nameLabel.text = playlist.name ??? "Untitled Playlist"
         
@@ -576,7 +572,7 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell {
     
     func prepare(for kind: AlbumBasedCollectionKind, with collection: MPMediaItemCollection, number: Int? = nil) {
         
-        entity = kind.entity
+        entityType = kind.entityType
         
         var set: Set<String> = []
         
@@ -638,7 +634,7 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell {
         
         guard let item = album.representativeItem else { return }
         
-        entity = .album
+        entityType = .album
         
         nameLabel.text = item.validAlbum
         

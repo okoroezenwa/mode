@@ -47,12 +47,11 @@ class SavedLyricsViewController: UIViewController {
             actions.append(AlertAction.init(title: "Unselected", style: .destructive, handler: {
                 
                 let set = Set(indexPaths.map({ self.songs[$0.row] }))
-                Song.delete(self.songs.filter({ set.contains($0).inverted }), completion: { self.resetLyrics() }) }))
+                Song.delete(self.songs.filter({ set.contains($0).inverted }), completion: { self.resetLyrics() })
+            }))
         }
         
         showAlert(title: "Delete...", with: actions)
-        
-//        present(UIAlertController.withTitle("Delete...", message: nil, style: .actionSheet, actions: actions + [.cancel()]), animated: true, completion: nil)
     }
     
     deinit {

@@ -30,7 +30,7 @@ class PropertiesViewController: UIViewController {
         
         case persistentID, mediaLibrary, multiverseIdentifier, itemsQuery, artworkCatalog, dateAccessed, lyrics, effectiveAlbumArtist, effectiveStopTime, playCountSinceSync, storeCloudAlbumID, cloudUniversalLibraryID, existsInLibrary, isCloudMix, storeCloudID, isPlaybackHistoryPlaylist, cloudShareURL, cloudGlobalID, cloudIsSubscribed, albumStoreID, artistArtworkCatalog, artistStoreID, albumArtistArtworkCatalog, albumArtistStoreID, genreStoreID, composerStoreID
         
-        static func keys(for entityType: Entity) -> [Key] {
+        static func keys(for entityType: EntityType) -> [Key] {
         
             let array = [Key.persistentID, .mediaLibrary, .multiverseIdentifier]
             let collectionArray = [Key.itemsQuery]
@@ -79,7 +79,7 @@ class PropertiesViewController: UIViewController {
         }
     }
     
-    var entityType = Entity.song
+    var entityType = EntityType.song
     var entity: MPMediaEntity?
     lazy var keys = Key.keys(for: entityType)
     var keyType = KeyType.property {

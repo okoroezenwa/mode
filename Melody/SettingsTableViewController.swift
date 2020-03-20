@@ -18,16 +18,17 @@ class SettingsTableViewController: UITableViewController {
         3: ("now playing", nil),
         4: ("temporary", nil),
         5: ("sleep prevention", nil),
-        6: (nil, nil),
+        6: ("default sort options", nil),
         7: (nil, nil),
         8: (nil, nil),
-        9: (nil, nil)
+        9: (nil, nil),
+        10: (nil, nil)
     ]
     lazy var settings: SettingsDictionary = [
         
         .init(0, 0): .init(title: "Rate and Review", accessoryType: .none, textAlignment: .center, borderVisibility: .both),
         .init(1, 0): .init(title: "Offline Mode", accessoryType: .onOff(isOn: { showiCloudItems.inverted }, action: { [weak self] in self?.toggleCloud() })),
-        .init(1, 1): .init(title: "Theme", tertiaryDetail: appTheme.title, accessoryType: .none/*.onOff(isOn: { darkTheme }, action: { SettingsTableViewController.toggleTheme() })*/),
+        .init(1, 1): .init(title: "Theme", tertiaryDetail: { appTheme.title }, accessoryType: .none),
         .init(1, 2): .init(title: "Library Refresh", accessoryType: .chevron),
         .init(1, 3): .init(title: "Tab Bar", accessoryType: .chevron),
         .init(1, 4): .init(title: "Gestures", accessoryType: .chevron),
@@ -55,13 +56,23 @@ class SettingsTableViewController: UITableViewController {
         .init(5, 0): .init(title: "Never", accessoryType: .check({ screenLockPreventionMode == InsomniaMode.disabled.rawValue })),
         .init(5, 1): .init(title: "Always", accessoryType: .check({ screenLockPreventionMode == InsomniaMode.always.rawValue })),
         .init(5, 2): .init(title: "While Charging", accessoryType: .check({ screenLockPreventionMode == InsomniaMode.whenCharging.rawValue })),
-        .init(6, 0): .init(title: "Manage Saved Lyrics", accessoryType: .none, textAlignment: .center, borderVisibility: .both),
-        .init(7, 0): .init(title: "Reset All Settings", accessoryType: .none, textAlignment: .center, borderVisibility: .both),
-        .init(8, 0): .init(title: "Show Deinit Banner", accessoryType: .onOff(isOn: { deinitBannersEnabled }, action: { [weak self] in self?.toggleDeinit() })),
-        .init(8, 1): .init(title: "Use Descriptor", accessoryType: .onOff(isOn: { useDescriptor }, action: { [weak self] in self?.toggleDescriptor() })),
-        .init(8, 2): .init(title: "Use Media Items", accessoryType: .onOff(isOn: { useMediaItems }, action: { [weak self] in self?.toggleMediaItems() })),
-        .init(8, 3): .init(title: "Manual Queue Insertion", accessoryType: .onOff(isOn: { useOldStyleQueue }, action: { [weak self] in self?.toggleManual() })),
-        .init(9, 0): .init(title: "Collect New Songs", accessoryType: .none, textAlignment: .center, borderVisibility: .both)
+        .init(6, 0): .init(title: "Playlists", subtitle: "Songs", tertiaryDetail: { [weak self] in self?.tertiaryText(for: .playlist) }, accessoryType: .button(type: .image({ SettingsTableViewController.image(for: 0) }), bordered: false, widthType: .other(36), touchEnabled: false)),
+        .init(6, 1): .init(title: "Albums", subtitle: "Songs", tertiaryDetail: { [weak self] in self?.tertiaryText(for: .album) }, accessoryType: .button(type: .image({ SettingsTableViewController.image(for: 1) }), bordered: false, widthType: .other(36), touchEnabled: false)),
+        .init(6, 2): .init(title: "Artists", subtitle: "Songs", tertiaryDetail: { [weak self] in self?.tertiaryText(for: .collection(kind: .artist, point: .songs)) }, accessoryType: .button(type: .image({ SettingsTableViewController.image(for: 2) }), bordered: false, widthType: .other(36), touchEnabled: false)),
+        .init(6, 3): .init(title: "Artists", subtitle: "Albums", tertiaryDetail: { [weak self] in self?.tertiaryText(for: .collection(kind: .artist, point: .albums)) }, accessoryType: .button(type: .image({ SettingsTableViewController.image(for: 3) }), bordered: false, widthType: .other(36), touchEnabled: false)),
+        .init(6, 4): .init(title: "Album Artists", subtitle: "Songs", tertiaryDetail: { [weak self] in self?.tertiaryText(for: .collection(kind: .albumArtist, point: .songs)) }, accessoryType: .button(type: .image({ SettingsTableViewController.image(for: 4) }), bordered: false, widthType: .other(36), touchEnabled: false)),
+        .init(6, 5): .init(title: "Album Artists", subtitle: "Albums", tertiaryDetail: { [weak self] in self?.tertiaryText(for: .collection(kind: .albumArtist, point: .albums)) }, accessoryType: .button(type: .image({ SettingsTableViewController.image(for: 5) }), bordered: false, widthType: .other(36), touchEnabled: false)),
+        .init(6, 6): .init(title: "Genres", subtitle: "Songs", tertiaryDetail: { [weak self] in self?.tertiaryText(for: .collection(kind: .genre, point: .songs)) }, accessoryType: .button(type: .image({ SettingsTableViewController.image(for: 6) }), bordered: false, widthType: .other(36), touchEnabled: false)),
+        .init(6, 7): .init(title: "Genres", subtitle: "Albums", tertiaryDetail: { [weak self] in self?.tertiaryText(for: .collection(kind: .genre, point: .albums)) }, accessoryType: .button(type: .image({ SettingsTableViewController.image(for: 7) }), bordered: false, widthType: .other(36), touchEnabled: false)),
+        .init(6, 8): .init(title: "Composers", subtitle: "Songs", tertiaryDetail: { [weak self] in self?.tertiaryText(for: .collection(kind: .composer, point: .songs)) }, accessoryType: .button(type: .image({ SettingsTableViewController.image(for: 8) }), bordered: false, widthType: .other(36), touchEnabled: false)),
+        .init(6, 9): .init(title: "Composers", subtitle: "Albums", tertiaryDetail: { [weak self] in self?.tertiaryText(for: .collection(kind: .composer, point: .albums)) }, accessoryType: .button(type: .image({ SettingsTableViewController.image(for: 9) }), bordered: false, widthType: .other(36), touchEnabled: false)),
+        .init(7, 0): .init(title: "Manage Saved Lyrics", accessoryType: .none, textAlignment: .center, borderVisibility: .both),
+        .init(8, 0): .init(title: "Reset All Settings", accessoryType: .none, textAlignment: .center, borderVisibility: .both),
+        .init(9, 0): .init(title: "Show Deinit Banner", accessoryType: .onOff(isOn: { deinitBannersEnabled }, action: { [weak self] in self?.toggleDeinit() })),
+        .init(9, 1): .init(title: "Use Descriptor", accessoryType: .onOff(isOn: { useDescriptor }, action: { [weak self] in self?.toggleDescriptor() })),
+        .init(9, 2): .init(title: "Use Media Items", accessoryType: .onOff(isOn: { useMediaItems }, action: { [weak self] in self?.toggleMediaItems() })),
+        .init(9, 3): .init(title: "Manual Queue Insertion", accessoryType: .onOff(isOn: { useOldStyleQueue }, action: { [weak self] in self?.toggleManual() })),
+        .init(10, 0): .init(title: "Collect New Songs", accessoryType: .none, textAlignment: .center, borderVisibility: .both)
     ]
 
     override func viewDidLoad() {
@@ -71,18 +82,95 @@ class SettingsTableViewController: UITableViewController {
         tableView.scrollIndicatorInsets.bottom = 14
         
         notifier.addObserver(self, selector: #selector(updateThemeCellTertiaryText), name: .themeChanged, object: nil)
+        
+        notifier.addObserver(self, selector: #selector(updateSortSection(_:)), name: .collectionSortChanged, object: nil)
+    }
+    
+    @objc func updateSortSection(_ notification: Notification) {
+        
+        let path: ((Int) -> IndexPath)? = { IndexPath.init(row: $0, section: 6) }
+        
+        guard let index = notification.userInfo?["index"] as? Int, let indexPath = path?(index), let setting = settings[indexPath.settingsSection] else { return }
+        
+        (tableView.cellForRow(at: indexPath) as? SettingsTableViewCell)?.updateTertiaryText(with: setting)
+        
+        switch setting.accessoryType {
+            
+            case .button(type: let type, bordered: _, widthType: _, touchEnabled: _): (tableView.cellForRow(at: indexPath) as? SettingsTableViewCell)?.updateAccessoryButtonDetails(with: setting, type: type)
+            
+            default: break
+        }
     }
     
     @objc func updateThemeCellTertiaryText() {
         
-        let section = SettingSection.init(1, 1)
-        settings[section] = .init(title: "Theme", tertiaryDetail: appTheme.title, accessoryType: .none)
-        (tableView.cellForRow(at: section.indexPath) as? SettingsTableViewCell)?.tertiaryLabel.text = appTheme.title
+        let indexPath = IndexPath.init(row: 1, section: 1)
+        
+        guard let setting = settings[indexPath.settingsSection] else { return }
+        
+        (tableView.cellForRow(at: indexPath) as? SettingsTableViewCell)?.updateTertiaryText(with: setting)
     }
 
     override func didReceiveMemoryWarning() {
         
         super.didReceiveMemoryWarning()
+    }
+    
+    func tertiaryText(for location: Location) -> String? {
+        
+        let details = EntityType.collectionEntityDetails(for: location)
+        
+        let criteria: String? = {
+            
+            if let rawValue = collectionSortCategories?[details.type.title(albumArtistOverride: true, matchingPropertyName: true) + details.startPoint.title], let criteria = SortCriteria(rawValue: rawValue) {
+                
+                return criteria.title(from: location) + criteria.subtitle(from: location).replacingOccurrences(of: "by ", with: " ")// + ", "
+            }
+            
+            return nil
+        }()
+        
+        return criteria
+    }
+    
+    static func image(for index: Int) -> UIImage {
+        
+        let details = EntityType.collectionEntityDetails(for: location(for: index))
+        
+        if let ascending = collectionSortOrders?[details.type.title(albumArtistOverride: true, matchingPropertyName: true) + details.startPoint.title] {
+
+            return #imageLiteral(resourceName: ascending ? "Save22" : "Upload22")
+        }
+        
+        return #imageLiteral(resourceName: "Save22")
+    }
+    
+    static func location(for index: Int) -> Location {
+        
+        switch index {
+            
+            case 0: return .playlist
+            
+            case 1: return .album
+            
+            case 2: return .collection(kind: .artist, point: .songs)
+            
+            case 3: return .collection(kind: .artist, point: .albums)
+                
+            case 4: return .collection(kind: .albumArtist, point: .songs)
+                
+            case 5: return .collection(kind: .albumArtist, point: .albums)
+                
+            case 6: return .collection(kind: .genre, point: .songs)
+                
+            case 7: return .collection(kind: .genre, point: .albums)
+                
+            case 8: return .collection(kind: .composer, point: .songs)
+                
+            case 9: return .collection(kind: .composer, point: .albums)
+            
+            default: fatalError("Not allowed")
+        }
     }
     
     func toggleCloud() {
@@ -231,6 +319,21 @@ class SettingsTableViewController: UITableViewController {
         if segue.identifier == "toTips", let presentedVC = segue.destination as? PresentedContainerViewController {
             
             presentedVC.context = .tips
+        
+        } else if segue.identifier == "toArranger", let vc = segue.destination as? VerticalPresentationContainerViewController, let index = sender as? Int {
+            
+            let location = SettingsTableViewController.location(for: index)
+            let details = EntityType.collectionEntityDetails(for: location)
+            let key = details.type.title(albumArtistOverride: true, matchingPropertyName: true) + details.startPoint.title
+                    
+            vc.title = "Select Default Sort"
+            vc.segments = [.init(title: "Ascending", image: #imageLiteral(resourceName: "Save22")), .init(title: "Descending", image: #imageLiteral(resourceName: "Upload22"))]
+            vc.context = .sort
+            vc.topHeaderMode = .themedImage(name: "Order17", height: 17)
+            vc.arrangeVC.isSetting = true
+            vc.arrangeVC.index = index
+            vc.arrangeVC.locationDetails = (location, SortCriteria(rawValue: collectionSortCategories?[key] ?? 0) ?? .standard, collectionSortOrders?[key] ?? true)
+            vc.leftButtonAction = { button, vc in (vc as? VerticalPresentationContainerViewController)?.arrangeVC.persist(button) }
         }
     }
     
@@ -238,7 +341,7 @@ class SettingsTableViewController: UITableViewController {
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         
-        return isInDebugMode ? 10 : 8
+        return isInDebugMode ? 11 : 9
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -262,7 +365,9 @@ class SettingsTableViewController: UITableViewController {
             
             case 5: return 3
             
-            case 8: return 4
+            case 6: return 10
+            
+            case 9: return 4
             
             default: return 1
         }
@@ -380,11 +485,11 @@ class SettingsTableViewController: UITableViewController {
             
             tableView.reloadSections(indexPath.indexSet, with: .none)
         
-        } else if indexPath.section == 7 {
-            
-            reset()
-        
         } else if indexPath.section == 6 {
+            
+            performSegue(withIdentifier: "toArranger", sender: indexPath.row)
+            
+        } else if indexPath.section == 7 {
             
             guard let presentedVC = presentedStoryboard.instantiateViewController(withIdentifier: "presentedVC") as? PresentedContainerViewController else { return }
             
@@ -392,7 +497,11 @@ class SettingsTableViewController: UITableViewController {
             
             self.present(presentedVC, animated: true, completion: nil)
             
-        } else if indexPath.section == 9 {
+        } else if indexPath.section == 8 {
+            
+            reset()
+        
+        } else if indexPath.section == 10 {
             
             let playlists = (MPMediaQuery.playlists().collections as? [MPMediaPlaylist])?.filter({ $0.isAppleMusic })
             playlists?.forEach({ ($0.value(forKey: "itemsQuery") as? MPMediaQuery)?.showAll() })
@@ -406,7 +515,7 @@ class SettingsTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         
-        return indexPath.section == 0 || (indexPath.section == 1 && Set([0]).contains(indexPath.row).inverted) || indexPath.section == 2 || (indexPath.section == 4 && Set([3, 4, 9]).contains(indexPath.row)) || indexPath.section == 5 || indexPath.section == 6 || indexPath.section == 7 || indexPath.section == 9
+        return indexPath.section == 0 || (indexPath.section == 1 && Set([0]).contains(indexPath.row).inverted) || indexPath.section == 2 || (indexPath.section == 4 && Set([3, 4, 10]).contains(indexPath.row)) || indexPath.section == 5 || indexPath.section == 6 || indexPath.section == 7 || indexPath.section == 8 || indexPath.section == 10
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -420,7 +529,7 @@ class SettingsTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         
-        guard Set([0, 1, 2, 3, 4, 5]).contains(section) else { return .tableHeader }
+        guard Set([0, 1, 2, 3, 4, 5, 6]).contains(section) else { return .tableHeader }
         
         return .textHeaderHeight + 8
     }

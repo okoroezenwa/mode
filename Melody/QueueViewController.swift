@@ -101,7 +101,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
     lazy var notificationName = isQueueAvailable ? Notification.Name.indexUpdated : .nowPlayingItemChanged
     
     @objc var actionableSongs: [MPMediaItem] { return queue }
-    let applicableActions = [.collect, SongAction.newPlaylist, .addTo]
+    let applicableActions = [SongAction.collect, .newPlaylist, .addTo]
     @objc lazy var songManager: SongActionManager = { return SongActionManager.init(actionable: self) }()
     
     @objc var operations = ImageOperations()
@@ -203,11 +203,11 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             
             tableView.register(UINib.init(nibName: "PlaybackCell", bundle: nil), forCellReuseIdentifier: "cell")
             
-            let swipeRight = UISwipeGestureRecognizer.init(target: self, action: #selector(handleRightSwipe(_:)))
+            let swipeRight = UISwipeGestureRecognizer.init(target: songManager, action: #selector(SongActionManager.toggleEditing(_:)))
             swipeRight.direction = .right
             tableView.addGestureRecognizer(swipeRight)
             
-            let swipeLeft = UISwipeGestureRecognizer.init(target: self, action: #selector(handleLeftSwipe(_:)))
+            let swipeLeft = UISwipeGestureRecognizer.init(target: songManager, action: #selector(SongActionManager.toggleEditing(_:)))
             swipeLeft.direction = .left
             tableView.addGestureRecognizer(swipeLeft)
             
@@ -290,14 +290,27 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             
                 guard let indexPath = tableView.indexPathForRow(at: sender.location(in: tableView)), let cell = tableView.cellForRow(at: indexPath) as? SongTableViewCell, let item = getSong(from: indexPath) else { return }
                 
-                var actions = [SongAction.collect, .info(context: context(from: indexPath)), .queue(name: cell.nameLabel.text, query: nil), .newPlaylist, .addTo].map({ singleItemAlertAction(for: $0, entity: .song, using: item, from: self) })
+                let location = sender.location(in: cell)
                 
-                if item.existsInLibrary.inverted {
+                if cell.editingView.frame.contains(location) {
                     
-                    actions.insert(singleItemAlertAction(for: .library, entity: .song, using: item, from: self), at: 3)
-                }
+                    Transitioner.shared.performDeepSelection(from: self, title: cell.nameLabel.text)
+                    
+                } else if cell.mainView.convert(cell.infoButton.frame, to: cell).contains(location) {
+                    
+                    singleItemActionDetails(for: .show(title: cell.nameLabel.text, context: context(from: indexPath), canDisplayInLibrary: true), entityType: .song, using: item, from: self, useAlternateTitle: true).handler()
                 
-                showAlert(title: cell.nameLabel.text, with: actions)
+                } else {
+                    
+                    var actions = [SongAction.collect, .info(context: context(from: indexPath)), .newPlaylist, .addTo, .show(title: cell.nameLabel.text, context: context(from: indexPath), canDisplayInLibrary: true), .search(unwinder: { [weak self] in self?.parent })].map({ singleItemAlertAction(for: $0, entityType: .song, using: item, from: self) })
+                    
+                    if item.existsInLibrary.inverted {
+                        
+                        actions.append(singleItemAlertAction(for: .library, entityType: .song, using: item, from: self))
+                    }
+                    
+                    showAlert(title: cell.nameLabel.text, with: actions)
+                }
             
             case .changed, .ended:
             
@@ -690,10 +703,6 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             
             showAlert(title: (indexPaths.count + 1).fullCountText(for: .song).capitalized, with: update)
             
-//            let alert = UniversalMethods.alertController(withTitle: (indexPaths.count + 1).fullCountText(for: .song).capitalized, message: nil, preferredStyle: .actionSheet, actions: update, UniversalMethods.cancelAlertAction())
-//
-//            present(alert, animated: true, completion: nil)
-            
             return
         }
         
@@ -904,7 +913,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             
             if let indexPaths = tableView.indexPathsForSelectedRows, indexPaths.isEmpty.inverted {
                 
-                if #available(iOS 11.3, *), !useSystemPlayer, forceOldStyleQueue.inverted { return [] }
+                if #available(iOS 11.3, *), useSystemPlayer || forceOldStyleQueue { return [] }
                 
                 return [clearSelected, clearUnselected]
             }
@@ -1103,9 +1112,9 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         }
     }
     
-    func goToDetails(basedOn entity: Entity) -> (entities: [Entity], albumArtOverride: Bool) {
+    func goToDetails(basedOn entity: EntityType) -> (entities: [EntityType], albumArtOverride: Bool) {
         
-        return ([Entity.artist, .genre, .album, .composer, .albumArtist], true)
+        return ([EntityType.artist, .genre, .album, .composer, .albumArtist], true)
     }
     
 //    @objc func updateLoadingViews(hidden: Bool) {
@@ -1445,8 +1454,6 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                         let play = AlertAction.init(title: "Change Song", style: .default, handler: {  play(item, indexPath.row) })
                         
                         showAlert(title: item?.validTitle, with: play)
-                        
-//                        present(UniversalMethods.alertController(withTitle: item?.validTitle, message: nil, preferredStyle: .actionSheet, actions: play, UniversalMethods.cancelAlertAction()), animated: true, completion: nil)
                         
                     } else {
                         
@@ -1849,6 +1856,24 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         return header
     }
     
+//    @available(iOS 13, *)
+//    func tableView(_ tableView: UITableView, didBeginMultipleSelectionInteractionAt indexPath: IndexPath) {
+//        print("yo")
+//        songManager.toggleEditing(self)
+//    }
+//
+//    @available(iOS 13, *)
+//    func tableViewDidEndMultipleSelectionInteraction(_ tableView: UITableView) {
+//
+//        songManager.toggleEditing(self)
+//    }
+//
+//    @available(iOS 13, *)
+//    func tableView(_ tableView: UITableView, shouldBeginMultipleSelectionInteractionAt indexPath: IndexPath) -> Bool {
+//
+//        return true
+//    }
+    
     func sectionIndexTitles(for tableView: UITableView) -> [String]? {
         
         return ["P", "N", "U"]
@@ -1858,7 +1883,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         
         guard !tableView.isEditing else { return false }
         
-        if touch.location(in: parent?.view).x < 44 {
+        if touch.location(in: parent?.view).x < 23 {
             
             return false
         
@@ -2055,11 +2080,11 @@ extension QueueViewController: EntityCellDelegate {
         
         guard let indexPath = tableView.indexPath(for: cell), let item = getSong(from: indexPath) else { return }
         
-        var actions = [SongAction.collect, .info(context: context(from: indexPath)), .queue(name: cell.nameLabel.text, query: nil), .newPlaylist, .addTo].map({ singleItemAlertAction(for: $0, entity: .song, using: item, from: self) })
+        var actions = [SongAction.collect, .info(context: context(from: indexPath)), .newPlaylist, .addTo, .show(title: cell.nameLabel.text, context: context(from: indexPath), canDisplayInLibrary: true), .search(unwinder: { [weak self] in self?.parent })].map({ singleItemAlertAction(for: $0, entityType: .song, using: item, from: self) })
         
         if item.existsInLibrary.inverted {
             
-            actions.insert(singleItemAlertAction(for: .library, entity: .song, using: item, from: self), at: 3)
+            actions.append(singleItemAlertAction(for: .library, entityType: .song, using: item, from: self))
         }
         
         showAlert(title: cell.nameLabel.text, with: actions)

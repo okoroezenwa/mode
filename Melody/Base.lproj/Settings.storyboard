@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14868" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
-    <device id="retina6_1" orientation="portrait" appearance="light"/>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14824"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15510"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -17,7 +17,7 @@
             <objects>
                 <tableViewController storyboardIdentifier="SettingsTableViewController" id="Ix0-Rh-PmN" customClass="SettingsTableViewController" customModule="Mode" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" alwaysBounceVertical="YES" contentInsetAdjustmentBehavior="never" dataMode="prototypes" style="grouped" separatorStyle="none" rowHeight="54" sectionHeaderHeight="18" sectionFooterHeight="18" id="W6y-7z-f2T" customClass="MELTableView" customModule="Mode" customModuleProvider="target">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <edgeInsets key="layoutMargins" top="0.0" left="0.0" bottom="0.0" right="0.0"/>
@@ -37,6 +37,7 @@
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
                         <segue destination="vJL-YB-7qo" kind="presentation" identifier="toTips" id="htP-US-vjR"/>
+                        <segue destination="Be2-wx-v0f" kind="presentation" identifier="toArranger" id="yeo-zK-eGM"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cKI-Gn-iTh" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -48,7 +49,7 @@
             <objects>
                 <tableViewController storyboardIdentifier="TabBarTableViewController" id="1yj-Ye-guh" customClass="TabBarTableViewController" customModule="Mode" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="none" rowHeight="54" sectionHeaderHeight="18" sectionFooterHeight="18" contentViewInsetsToSafeArea="NO" id="0Eg-H2-Hvn" customClass="MELTableView" customModule="Mode" customModuleProvider="target">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <sections/>
@@ -631,12 +632,20 @@
             </objects>
             <point key="canvasLocation" x="5074" y="-1100"/>
         </scene>
+        <!--VerticalPresentationContainerViewController-->
+        <scene sceneID="NID-0d-Qc5">
+            <objects>
+                <viewControllerPlaceholder storyboardName="Popovers" referencedIdentifier="VerticalPresentationContainerViewController" id="Be2-wx-v0f" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="1M6-xI-oV7" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3237" y="-616"/>
+        </scene>
         <!--Playback Table View Controller-->
         <scene sceneID="54u-N6-gXj">
             <objects>
                 <tableViewController storyboardIdentifier="PlaybackTableViewController" id="ViA-AN-9F1" customClass="PlaybackTableViewController" customModule="Mode" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="none" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" contentViewInsetsToSafeArea="NO" id="FzN-K7-864" customClass="MELTableView" customModule="Mode" customModuleProvider="target">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <sections/>
@@ -672,24 +681,24 @@
                         <viewControllerLayoutGuide type="bottom" id="KHM-gf-Kfk"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="Ile-f0-NCu">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" style="grouped" separatorStyle="none" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" contentViewInsetsToSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TpY-f8-CJN" customClass="MELTableView" customModule="Mode" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="44" width="414" height="818"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <color key="separatorColor" white="0.0" alpha="0.080000000000000002" colorSpace="calibratedWhite"/>
                                 <inset key="separatorInset" minX="10" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="cell" rowHeight="54" id="mby-sL-KP6" customClass="SongDetailsTableViewCell" customModule="Mode" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="55.5" width="414" height="54"/>
+                                        <rect key="frame" x="0.0" y="55.5" width="375" height="54"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="mby-sL-KP6" id="Pmc-L6-hg2">
-                                            <rect key="frame" x="0.0" y="0.0" width="414" height="54"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="54"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="NoLove14" translatesAutoresizingMaskIntoConstraints="NO" id="PVO-Gr-Bam" customClass="MELImageView" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="22" y="19" width="14" height="14"/>
+                                                    <rect key="frame" x="17" y="19" width="14" height="14"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" secondItem="PVO-Gr-Bam" secondAttribute="height" multiplier="1:1" id="gYE-Ka-aeX"/>
                                                         <constraint firstAttribute="width" constant="14" id="paM-tJ-EPF"/>
@@ -699,13 +708,13 @@
                                                     </userDefinedRuntimeAttributes>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YoC-VB-ZOO" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="46" y="18.5" width="38.5" height="17"/>
+                                                    <rect key="frame" x="41" y="18.5" width="38.5" height="17"/>
                                                     <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Check15" translatesAutoresizingMaskIntoConstraints="NO" id="xNq-nL-APO" customClass="MELImageView" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="372" y="17" width="20" height="20"/>
+                                                    <rect key="frame" x="338" y="17" width="20" height="20"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="20" id="Lxo-0V-rzz"/>
                                                         <constraint firstAttribute="width" secondItem="xNq-nL-APO" secondAttribute="height" multiplier="1:1" id="tg4-gE-b2Y"/>
@@ -765,21 +774,21 @@
                         <viewControllerLayoutGuide type="bottom" id="fML-iZ-Eks"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="WdM-51-4P6">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="C5e-gs-Q1r">
-                                <rect key="frame" x="0.0" y="646" width="414" height="216"/>
+                                <rect key="frame" x="0.0" y="451" width="375" height="216"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eIB-wS-aw7" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="414" height="1"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="1"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.050000000000000003" colorSpace="calibratedWhite"/>
                                         <constraints>
                                             <constraint firstAttribute="height" priority="900" constant="1" id="JMw-qK-cm3"/>
                                         </constraints>
                                     </view>
                                     <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4ze-89-SYC">
-                                        <rect key="frame" x="0.0" y="0.0" width="414" height="216"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="216"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         <connections>
                                             <outlet property="dataSource" destination="LRd-7c-Psa" id="Tcb-2c-w3u"/>
@@ -806,7 +815,7 @@
                                 </constraints>
                             </view>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Z3U-J5-DgE">
-                                <rect key="frame" x="0.0" y="44" width="414" height="602"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="451"/>
                                 <connections>
                                     <segue destination="qqQ-pa-q77" kind="embed" id="I9U-Kf-kiF"/>
                                 </connections>
@@ -1052,7 +1061,7 @@
                                                     </subviews>
                                                 </stackView>
                                                 <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="RightArrowHandle22" translatesAutoresizingMaskIntoConstraints="NO" id="T6u-75-YeK" customClass="MELImageView" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="149" y="17" width="22" height="20"/>
+                                                    <rect key="frame" x="138" y="7" width="44" height="40"/>
                                                 </imageView>
                                             </subviews>
                                             <constraints>
@@ -1120,7 +1129,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" minimumValueImage="MinBrightness12" maximumValueImage="MaxBrightness16" translatesAutoresizingMaskIntoConstraints="NO" id="EFZ-tT-3j8" customClass="MELSlider" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="22" y="12" width="276" height="31"/>
+                                                    <rect key="frame" x="22" y="9.5" width="276" height="36"/>
                                                     <userDefinedRuntimeAttributes>
                                                         <userDefinedRuntimeAttribute type="number" keyPath="size">
                                                             <integer key="value" value="16"/>
@@ -1252,7 +1261,7 @@
             <objects>
                 <tableViewController storyboardIdentifier="BackgroundTableViewController" id="hEs-N9-bU3" customClass="BackgroundTableViewController" customModule="Mode" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="none" rowHeight="54" sectionHeaderHeight="18" sectionFooterHeight="18" contentViewInsetsToSafeArea="NO" id="RAj-sE-JO1" customClass="MELTableView" customModule="Mode" customModuleProvider="target">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <sections/>
@@ -1275,7 +1284,7 @@
             <objects>
                 <tableViewController storyboardIdentifier="IconSelectionTableViewController" id="trM-TK-Ma7" customClass="IconSelectionTableViewController" customModule="Mode" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="off-vq-aKk" customClass="MELTableView" customModule="Mode" customModuleProvider="target">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <sections/>
@@ -1298,7 +1307,7 @@
             <objects>
                 <tableViewController storyboardIdentifier="LibraryRefreshTableViewController" id="qcI-zJ-fgq" customClass="LibraryRefreshTableViewController" customModule="Mode" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="uYe-eF-jvC" customClass="MELTableView" customModule="Mode" customModuleProvider="target">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <sections/>
@@ -1827,7 +1836,7 @@
             <objects>
                 <tableViewController storyboardIdentifier="GesturesTableViewController" id="KdU-ST-gwc" customClass="GesturesTableViewController" customModule="Mode" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="none" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" contentViewInsetsToSafeArea="NO" id="3dz-mv-2Pl" customClass="MELTableView" customModule="Mode" customModuleProvider="target">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <sections/>
@@ -1851,7 +1860,7 @@
             <objects>
                 <tableViewController storyboardIdentifier="QueueTableViewController" id="hen-EG-Oqo" customClass="QueueTableViewController" customModule="Mode" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="none" rowHeight="54" sectionHeaderHeight="18" sectionFooterHeight="18" contentViewInsetsToSafeArea="NO" id="Lku-8a-Jkr" customClass="MELTableView" customModule="Mode" customModuleProvider="target">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <color key="separatorColor" white="0.0" alpha="0.080000000000000002" colorSpace="calibratedWhite"/>
@@ -1877,7 +1886,7 @@
             <objects>
                 <tableViewController storyboardIdentifier="RecentsTableViewController" id="Ecp-t4-sRW" customClass="RecentsTableViewController" customModule="Mode" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="none" rowHeight="54" sectionHeaderHeight="18" sectionFooterHeight="18" contentViewInsetsToSafeArea="NO" id="DjU-Nr-yuv" customClass="MELTableView" customModule="Mode" customModuleProvider="target">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <sections/>
@@ -1901,7 +1910,7 @@
             <objects>
                 <tableViewController storyboardIdentifier="PropertiesTableViewController" id="hAX-E9-UUd" customClass="PropertiesTableViewController" customModule="Mode" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="none" allowsSelection="NO" rowHeight="54" sectionHeaderHeight="18" sectionFooterHeight="18" contentViewInsetsToSafeArea="NO" id="YbC-IS-5hS" customClass="MELTableView" customModule="Mode" customModuleProvider="target">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <sections/>

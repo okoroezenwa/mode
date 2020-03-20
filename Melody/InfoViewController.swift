@@ -36,7 +36,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
         
         enum Location { case list, queue(loaded: Bool, index: Int?) }
         
-        var entity: Entity {
+        var entityType: EntityType {
             
             switch self {
                 
@@ -46,14 +46,14 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
                 
                 case .playlist: return .playlist
                 
-                case .collection(let kind, _, _): return kind.entity
+                case .collection(let kind, _, _): return kind.entityType
             }
         }
     }
     
     enum EntityState { case single, combined(previousIndex: Int) }
     
-    lazy var applicableSections = InfoSection.applicableSections(for: self.context.entity)
+    lazy var applicableSections = InfoSection.applicableSections(for: self.context.entityType)
 //    lazy var sections = self.prepareSections()
     
     var headerView: InfoCollectionReusableView! {
@@ -191,13 +191,13 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
         
         if case .song(location: _, at: let index, within: let items) = context, !items[index].existsInLibrary {
             
-            actions.insert(.library, at: 1)
+            actions.append(.library)
         }
         
         return actions
     }
     lazy var songManager: SongActionManager = { return SongActionManager.init(actionable: self) }()
-    var otherEntities = [Entity]()
+    var otherEntities = [EntityType]()
     var showLyrics = false
     var boldableLabels: [TextContaining?] { return [titleButton.titleLabel, alternateButton3.titleLabel, alternateButton1.titleLabel, alternateButton2.titleLabel, addedLabel, playedLabel, genreButton.titleLabel, albumArtistButton.titleLabel, composerButton.titleLabel, copyrightLabel, groupingLabel, lyricsTextView, commentsLabel, durationLabel, trackLabel, playlistsButton.titleLabel, compilationButton.titleLabel, explicitButton.titleLabel] }
     var firstLaunch = true
@@ -344,7 +344,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
                     }
                 }()
                 
-                showInLibrary(entity: entity, type: context.entity, unwinder: parent)
+                showInLibrary(entity: entity, type: context.entityType, unwinder: parent)
             
             } else if case .song = context, composerButton.superview?.bounds.contains(sender.location(in: composerButton.superview)) == true, let collections = composerQuery?.collections, collections.isEmpty.inverted {
                 
@@ -434,7 +434,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
     
     @objc func updateCornersAndShadows() {
         
-        (infoCornerRadius ?? cornerRadius).updateCornerRadius(on: artworkImageView.layer, width: artworkImageView.bounds.width, entityType: context.entity, globalRadiusType: cornerRadius)
+        (infoCornerRadius ?? cornerRadius).updateCornerRadius(on: artworkImageView.layer, width: artworkImageView.bounds.width, entityType: context.entityType, globalRadiusType: cornerRadius)
         
         UniversalMethods.addShadow(to: artworkContainer, radius: 8, opacity: 0.2, shouldRasterise: true)
     }
@@ -493,7 +493,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
             }
         }
         
-        var entities: Set<Entity> {
+        var entities: Set<EntityType> {
             
             switch context {
                 
@@ -501,7 +501,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
                 
                 case .album: return [.album, .albumArtist, .genre]
                 
-                default: return [context.entity]
+                default: return [context.entityType]
             }
         }
         
@@ -553,25 +553,25 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
                     base?.dismiss(animated: true, completion: nil)
                 }
             
-            case .album: performUnwindSegue(with: .album, isEntityAvailable: albumQuery != nil, title: Entity.album.title())
+            case .album: performUnwindSegue(with: .album, isEntityAvailable: albumQuery != nil, title: EntityType.album.title())
             
             case .collection(kind: let kind, at: _, within: _):
             
                 switch kind {
                     
-                    case .artist: performUnwindSegue(with: .artist, isEntityAvailable: artistQuery != nil, title: Entity.artist.title(albumArtistOverride: false))
+                    case .artist: performUnwindSegue(with: .artist, isEntityAvailable: artistQuery != nil, title: EntityType.artist.title(albumArtistOverride: false))
                     
-                    case .composer: performUnwindSegue(with: .composer, isEntityAvailable: composerQuery != nil, title: Entity.composer.title())
+                    case .composer: performUnwindSegue(with: .composer, isEntityAvailable: composerQuery != nil, title: EntityType.composer.title())
                     
-                    case .genre: performUnwindSegue(with: .genre, isEntityAvailable: genreQuery != nil, title: Entity.genre.title())
+                    case .genre: performUnwindSegue(with: .genre, isEntityAvailable: genreQuery != nil, title: EntityType.genre.title())
                     
-                    case .albumArtist: performUnwindSegue(with: .albumArtist, isEntityAvailable: albumArtistQuery != nil, title: Entity.albumArtist.title(albumArtistOverride: false))
+                    case .albumArtist: performUnwindSegue(with: .albumArtist, isEntityAvailable: albumArtistQuery != nil, title: EntityType.albumArtist.title(albumArtistOverride: false))
                 }
             
             case .playlist(at: let index, within: let playlists):
             
                 playlistQuery = MPMediaQuery.init(filterPredicates: [.for(.playlist, using: playlists[index])]).grouped(by: .playlist)
-                performUnwindSegue(with: .playlist, isEntityAvailable: playlistQuery != nil, title: Entity.playlist.title())
+                performUnwindSegue(with: .playlist, isEntityAvailable: playlistQuery != nil, title: EntityType.playlist.title())
         }
         
         noteFilterState()
@@ -581,9 +581,9 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
         
         switch context {
             
-            case .song: performUnwindSegue(with: .artist, isEntityAvailable: artistQuery != nil, title: Entity.artist.title(albumArtistOverride: false))
+            case .song: performUnwindSegue(with: .artist, isEntityAvailable: artistQuery != nil, title: EntityType.artist.title(albumArtistOverride: false))
             
-            case .album: performUnwindSegue(with: albumArtistsAvailable ? .albumArtist : .artist, isEntityAvailable: albumArtistsAvailable ? albumArtistQuery != nil : artistQuery != nil, title: Entity.artist.title(albumArtistOverride: false))
+            case .album: performUnwindSegue(with: albumArtistsAvailable ? .albumArtist : .artist, isEntityAvailable: albumArtistsAvailable ? albumArtistQuery != nil : artistQuery != nil, title: EntityType.artist.title(albumArtistOverride: false))
             
             default: break
         }
@@ -593,7 +593,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
         
         switch context {
             
-            case .song: performUnwindSegue(with: .album, isEntityAvailable: albumQuery != nil, title: Entity.album.title())
+            case .song: performUnwindSegue(with: .album, isEntityAvailable: albumQuery != nil, title: EntityType.album.title())
             
             default: break
         }
@@ -603,7 +603,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
         
         switch context {
             
-            case .song, .album: performUnwindSegue(with: .genre, isEntityAvailable: genreQuery != nil, title: Entity.genre.title())
+            case .song, .album: performUnwindSegue(with: .genre, isEntityAvailable: genreQuery != nil, title: EntityType.genre.title())
             
             default: break
         }
@@ -613,7 +613,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
         
         switch context {
             
-            case .song: performUnwindSegue(with: .composer, isEntityAvailable: composerQuery != nil, title: Entity.composer.title())
+            case .song: performUnwindSegue(with: .composer, isEntityAvailable: composerQuery != nil, title: EntityType.composer.title())
             
             default: break
         }
@@ -623,7 +623,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
         
         switch context {
             
-            case .song: performUnwindSegue(with: .albumArtist, isEntityAvailable: albumArtistQuery != nil, title: Entity.albumArtist.title())
+            case .song: performUnwindSegue(with: .albumArtist, isEntityAvailable: albumArtistQuery != nil, title: EntityType.albumArtist.title())
             
             default: break
         }
@@ -905,9 +905,9 @@ extension InfoViewController: UIViewControllerPreviewingDelegate {
             
             previewingContext.sourceRect = superview.convert(superview.bounds, to: collectionView)
             
-            return Transitioner.shared.transition(to: context.entity, vc: entityVC, from: self, sender: sender, highlightedItem: currentItem, preview: true, titleOverride: (container?.activeViewController?.topViewController as? Navigatable)?.preferredTitle)
+            return Transitioner.shared.transition(to: context.entityType, vc: entityVC, from: self, sender: sender, highlightedItem: currentItem, preview: true, titleOverride: (container?.activeViewController?.topViewController as? Navigatable)?.preferredTitle)
         
-        } else if case .single = entityState, let superview = alternateButton1.superview, superview.bounds.contains(collectionView.convert(location, to: superview)), let details: (entity: Entity, collection: MPMediaItemCollection?) = {
+        } else if case .single = entityState, let superview = alternateButton1.superview, superview.bounds.contains(collectionView.convert(location, to: superview)), let details: (entity: EntityType, collection: MPMediaItemCollection?) = {
             
             switch context {
                 
@@ -1040,7 +1040,7 @@ extension InfoViewController {
     
     func prepareTopView() {
         
-        guard let details: (currentItem: MPMediaItem?, entity: Entity, title: String?, alternateTitle1: String?, alternateTitle2: String?, alternateTitle3: String?, entityInstance: Any?) = {
+        guard let details: (currentItem: MPMediaItem?, entity: EntityType, title: String?, alternateTitle1: String?, alternateTitle2: String?, alternateTitle3: String?, entityInstance: Any?) = {
             
             switch entityState {
                 
@@ -1873,9 +1873,9 @@ extension InfoViewController {
                 
             case .collection(kind: let kind, at: let index, within: let collections):
                 
-                let entity = kind.entity
+                let entityType = kind.entityType
                 
-                return MPMediaQuery.init(filterPredicates: [.for(entity, using: collections[index])]).cloud.grouped(by: entity.grouping)
+                return MPMediaQuery.init(filterPredicates: [.for(entityType, using: collections[index])]).cloud.grouped(by: entityType.grouping)
                 
             case .playlist(at: let index, within: let playlists): return MPMediaQuery.init(filterPredicates: [.for(.playlist, using: playlists[index])]).cloud.grouped(by: .playlist)
         }
@@ -1891,9 +1891,9 @@ extension InfoViewController {
             
             case .collection(kind: let kind, at: _, within: let collections):
                 
-                let entity = kind.entity
+                let entityType = kind.entityType
                 
-                return collections.map({ MPMediaQuery.init(filterPredicates: [.for(entity, using: $0)]).cloud.grouped(by: entity.grouping) })
+                return collections.map({ MPMediaQuery.init(filterPredicates: [.for(entityType, using: $0)]).cloud.grouped(by: entityType.grouping) })
             
             case .playlist(at: _, within: let playlists): return playlists.map({ MPMediaQuery.init(filterPredicates: [.for(.playlist, using: $0)]).cloud.grouped(by: .playlist) })
         }
@@ -1969,7 +1969,7 @@ extension InfoViewController: UICollectionViewDataSourcePrefetching {
             
             guard let cell = collectionView.cellForItem(at: $0) as? PlaylistCollectionViewCell else { return }
             
-            updateImageView(using: playlists[$0.row], entityType: .playlist, in: cell, indexPath: $0, reusableView: collectionView)
+            updateImageView(using: playlists[$0.item], entityType: .playlist, in: cell, indexPath: $0, reusableView: collectionView)
         })
     }
     

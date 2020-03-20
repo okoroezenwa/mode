@@ -132,7 +132,7 @@ extension MPMediaItemCollection {
     
     var artworkItem: MPMediaItem? { return showiCloudItems ? representativeItem : items.first(where: { !$0.isCloudItem && $0.actualArtwork != nil }) }
     
-    func customArtwork(for type: Entity) -> UIImage? {
+    func customArtwork(for type: EntityType) -> UIImage? {
         
         guard let string: String = {
             
@@ -152,7 +152,7 @@ extension MPMediaItemCollection {
         return image
     }
     
-    func representativeArtwork(for entityType: Entity, size: CGSize) -> UIImage? {
+    func representativeArtwork(for entityType: EntityType, size: CGSize) -> UIImage? {
         
         (showiCloudItems ? representativeItem : items.first(where: { !$0.isCloudItem && $0.actualArtwork != nil }))?.actualArtwork?.image(at: size)
     }

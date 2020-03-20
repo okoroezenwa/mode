@@ -23,7 +23,7 @@ import UIKit
 
 extension EntityVerifiable {
     
-    @discardableResult func verifyLibraryStatus(of item: MPMediaItem?, itemProperty property: Entity, animated: Bool = true, updateButton: Bool = true) -> ItemStatus {
+    @discardableResult func verifyLibraryStatus(of item: MPMediaItem?, itemProperty property: EntityType, animated: Bool = true, updateButton: Bool = true) -> ItemStatus {
         
         switch property {
             
@@ -293,7 +293,7 @@ extension EntityVerifiable {
         }
     }
     
-    func performUnwindSegue(with entity: Entity, isEntityAvailable check: Bool, title: String, completion: (() -> Void)? = nil) {
+    func performUnwindSegue(with entityType: EntityType, isEntityAvailable check: Bool, title: String, completion: (() -> Void)? = nil) {
         
         guard let vc = self as? UIViewController else { return }
         
@@ -312,7 +312,7 @@ extension EntityVerifiable {
         
         if let containerVC = vc as? ContainerViewController {
             
-            switch entity {
+            switch entityType {
             
                 case .album: containerVC.unwindToAlbum(from: containerVC)
                 
@@ -330,7 +330,7 @@ extension EntityVerifiable {
             return
         }
         
-        switch entity {
+        switch entityType {
             
             case .album where self is AlbumTransitionable: vc.performSegue(withIdentifier: .albumUnwind, sender: nil)
             
@@ -350,9 +350,9 @@ extension EntityVerifiable {
         completion?()
     }
     
-    func showInLibrary(entity: MPMediaEntity, type: Entity, unwinder: UIViewController?) {
+    func showInLibrary(entity: MPMediaEntity, type: EntityType, unwinder: UIViewController?) {
         
-        guard let container = appDelegate.window?.rootViewController as? ContainerViewController, type != .albumArtist else { return }
+        guard let container = appDelegate.window?.rootViewController as? ContainerViewController, (albumArtistsAvailable && type != .artist) || (albumArtistsAvailable.inverted && type != .albumArtist) else { return }
         
         let currentSection = prefs.integer(forKey: .lastUsedLibrarySection)
         let section = type.librarySection(from: entity)
@@ -406,13 +406,27 @@ extension EntityVerifiable {
             
             }() else { return }
             
-            let libraryVCIsTopVC = container.activeViewController == container.libraryNavigationController
+            let libraryNVCIsTopVC = container.activeViewController == container.libraryNavigationController
             
             if section.rawValue == currentSection {
                 
-                if libraryVCIsTopVC.inverted {
+                if libraryNVCIsTopVC.inverted {
                     
-                    container.switchViewController(container.libraryButton)
+                    if details.needsToReturnToRoot {
+                        
+                        details.libraryVC?.navigationController?.popToRootViewController(animated: false)
+                        container.switchViewController(container.libraryButton)
+                        details.libraryVC?.view.alpha = 1
+                        
+                    } else {
+                    
+                        container.switchViewController(container.libraryButton)
+                        details.libraryVC?.view.alpha = 1
+                    }
+                
+                } else {
+                    
+                    details.libraryVC?.navigationController?.popToRootViewController(animated: true)
                 }
                 
                 setHighlightedEntity()
@@ -422,30 +436,41 @@ extension EntityVerifiable {
                 
                 let oldChild = libraryVC.activeChildViewController
                 
-                if libraryVCIsTopVC.inverted {
+                if let details = container.filterViewContainer.filterView.locationDetails(for: section) {
                     
-                    prefs.set(section.rawValue, forKey: .lastUsedLibrarySection)
-                    container.switchViewController(container.libraryButton)
-                
-                } else if let sections = container.filterViewContainer.filterView.properties as? [LibrarySection], let index = sections.firstIndex(of: section) {
-                    
-                    container.filterViewContainer.filterView.collectionView(container.filterViewContainer.filterView.collectionView, didSelectItemAt: .init(item: index, section: 0))
-                    container.filterViewContainer.filterView.collectionView.scrollToItem(at: .init(item: index, section: 0), at: .centeredHorizontally, animated: true)
-                    
-                    prefs.set(section.rawValue, forKey: .lastUsedLibrarySection)
-                
-                } else {
-                    
-                    prefs.set(section.rawValue, forKey: .lastUsedLibrarySection)
+                    container.filterViewContainer.filterView.selectCell(at: details.indexPath, usingOtherArray: details.fromOtherArray, arrayIndex: details.index, performTransitions: false)
+                    container.filterViewContainer.filterView.collectionView.scrollToItem(at: details.indexPath, at: .centeredHorizontally, animated: true)
                 }
+                
+                prefs.set(section.rawValue, forKey: .lastUsedLibrarySection)
                 
                 if libraryVC.isViewControllerInitialised(for: section).inverted {
                     
                     setHighlightedEntity()
+                    
+                    if details.needsToReturnToRoot {
+                    
+                        libraryVC.shouldSetTitles = false
+                    }
+                    
                     libraryVC.changeActiveVC = false
                     libraryVC.activeChildViewController = libraryVC.viewControllerForCurrentSection()
                     libraryVC.changeActiveVC = true
-                    libraryVC.changeActiveViewControllerFrom(oldChild, animated: libraryVCIsTopVC)
+                    libraryVC.changeActiveViewControllerFrom(oldChild, animated: libraryNVCIsTopVC, completion: {
+                        
+                        if details.needsToReturnToRoot {
+                        
+                            libraryVC.navigationController?.popToRootViewController(animated: libraryNVCIsTopVC)
+                        }
+                        
+                        if libraryNVCIsTopVC.inverted {
+                        
+                            container.switchViewController(container.libraryButton)
+                            details.libraryVC?.view.alpha = 1
+                        }
+                        
+                        libraryVC.shouldSetTitles = true
+                    })
                 
                 } else {
                     
@@ -453,19 +478,21 @@ extension EntityVerifiable {
                     libraryVC.changeActiveVC = false
                     libraryVC.activeChildViewController = libraryVC.viewControllerForCurrentSection()
                     libraryVC.changeActiveVC = true
-                    libraryVC.changeActiveViewControllerFrom(oldChild, animated: libraryVCIsTopVC)
+                    libraryVC.changeActiveViewControllerFrom(oldChild, animated: libraryNVCIsTopVC, completion: {
+                        
+                        if details.needsToReturnToRoot {
+                        
+                            libraryVC.navigationController?.popToRootViewController(animated: libraryNVCIsTopVC)
+                        }
+                        
+                        if libraryNVCIsTopVC.inverted {
+                        
+                            container.switchViewController(container.libraryButton)
+                            details.libraryVC?.view.alpha = 1
+                        }
+                    })
                     scrollToRow()
                 }
-            }
-            
-            if details.needsToReturnToRoot {
-                
-                details.libraryVC?.navigationController?.popToRootViewController(animated: true)
-                
-//                if libraryVCIsTopVC.inverted {
-//
-//                    details.libraryVC?.view.alpha = 1
-//                }
             }
         }
     }

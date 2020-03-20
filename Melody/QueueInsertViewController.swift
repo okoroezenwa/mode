@@ -21,7 +21,9 @@ class QueueInsertController {
         
         didSet {
             
-            alertVC?.tableView.reloadData()
+            guard let tableView = alertVC?.tableView else { return }
+            
+            tableView.reloadData()
         }
     }
     
@@ -100,8 +102,6 @@ class QueueInsertController {
                     self.kind = kind
                     self.title = title
                     self.context = context
-                    
-                    vc.verticalPresentedVC?.setTitle(labelTitle)
                 }
             
                 self.alertVC = vc
@@ -113,7 +113,6 @@ class QueueInsertController {
     func addToQueue(_ sender: QueuePosition) {
         
         alertVC?.verticalPresentedVC?.segmentedEffectView.isUserInteractionEnabled = false
-        alertVC?.verticalPresentedVC?.staticView.isUserInteractionEnabled = false
         alertVC?.view.isUserInteractionEnabled = false
         
         if sender == .after {
@@ -149,8 +148,9 @@ class QueueInsertController {
             
             alertVC?.present(presentedVC, animated: true, completion: { [weak self] in
                 
-                self?.alertVC?.verticalPresentedVC?.staticCollectionView.deselectItem(at: .init(item: 1, section: 0), animated: false)
-                self?.alertVC?.verticalPresentedVC?.staticView.isUserInteractionEnabled = true
+                self?.alertVC?.verticalPresentedVC?.selectedCollectionIndexPath = nil
+                self?.alertVC?.verticalPresentedVC?.segmentedCollectionView.cellForItem(at: .init(item: 1, section: 0))?.isSelected = false
+                self?.alertVC?.verticalPresentedVC?.segmentedCollectionView.cellForItem(at: .init(item: 1, section: 0))?.isHighlighted = false
                 self?.alertVC?.verticalPresentedVC?.segmentedEffectView.isUserInteractionEnabled = true
                 self?.alertVC?.view.isUserInteractionEnabled = true
             })

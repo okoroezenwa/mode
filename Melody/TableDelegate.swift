@@ -17,7 +17,7 @@ class TableDelegate: NSObject, Detailing {
     weak var container: TableViewContainer?
     var tableView: MELTableView! {
     
-        get { container?.tableView }
+        get { (container?.filterContainer ?? container)?.tableView }
         
         set { }
     }
@@ -54,12 +54,18 @@ class TableDelegate: NSObject, Detailing {
         
         if #available(iOS 10, *) {
             
-            container.tableView.prefetchDataSource = self
+            tableView?.prefetchDataSource = self
         }
         
         notifier.addObserver(self, selector: #selector(updateEntityCountVisibility), name: .entityCountVisibilityChanged, object: nil)
         notifier.addObserver(self, selector: #selector(updateNumbersBelowLetters), name: .numbersBelowLettersChanged, object: nil)
         notifier.addObserver(self, selector: #selector(updateTableView), name: .activeFontChanged, object: nil)
+        
+        let hold = UILongPressGestureRecognizer.init(target: self, action: #selector(performHold(_:)))
+        hold.minimumPressDuration = longPressDuration
+        hold.delegate = self
+        tableView?.addGestureRecognizer(hold)
+        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: hold))
         
         switch location {
             
@@ -119,11 +125,11 @@ class TableDelegate: NSObject, Detailing {
             
             case .artistAlbums: return MPMediaQuery.init(filterPredicates: [.for(.album, using: container!.getEntity(at: indexPath, filtering: filtering).persistentID)]).cloud
             
-            case .collections(let kind): return MPMediaQuery.init(filterPredicates: [.for(kind.entity, using: container!.getEntity(at: indexPath, filtering: filtering).persistentID)]).cloud
+            case .collections(let kind): return MPMediaQuery.init(filterPredicates: [.for(kind.entityType, using: container!.getEntity(at: indexPath, filtering: filtering).persistentID)]).cloud
         }
     }
     
-    func entityType() -> Entity {
+    func entityType() -> EntityType {
         
         switch location {
             
@@ -131,7 +137,7 @@ class TableDelegate: NSObject, Detailing {
             
             case .artistAlbums: return .album
             
-            case .collections(let kind): return kind.entity
+            case .collections(let kind): return kind.entityType
         }
     }
     
@@ -155,17 +161,26 @@ class TableDelegate: NSObject, Detailing {
         vc.present(sectionVC, animated: true, completion: nil)
     }
     
-    func goToDetails(basedOn entity: Entity = .song) -> (entities: [Entity], albumArtOverride: Bool) {
+    func goToDetails(basedOn entityType: EntityType = .song) -> (entities: [EntityType], albumArtOverride: Bool) {
         
         switch location {
             
             case .songs, .playlist: return ([.artist, .genre, .album, .composer, .albumArtist], true)
     
-            case .album: return ([.artist, .genre, .composer, .albumArtist], true)
+            case .album:
+                
+                switch entityType {
+                    
+                    case .artist: return ([.artist], false)
+                    
+                    case .albumArtist: return ([.albumArtist], false)
+                    
+                    default: return ([.artist, .genre, .composer, .albumArtist], true)
+                }
             
             case .artistSongs(withinArtist: false):
             
-                var array = [Entity.artist, .genre, .album, .composer, .albumArtist]
+                var array = [EntityType.artist, .genre, .album, .composer, .albumArtist]
                 
                 if let entityVC = (container as? ArtistSongsViewController)?.entityVC {
                     
@@ -185,7 +200,7 @@ class TableDelegate: NSObject, Detailing {
     
             case .artistAlbums(withinArtist: false):
                 
-                var array = [albumArtistsAvailable ? Entity.albumArtist : .artist, .genre, .album]
+                var array = [albumArtistsAvailable ? EntityType.albumArtist : .artist, .genre, .album]
                 
                 if let entityVC = (container as? ArtistAlbumsViewController)?.entityVC {
                     
@@ -222,7 +237,7 @@ class TableDelegate: NSObject, Detailing {
         
         guard let container = container, let vc = vc else { return nil }
         
-        return container.singleItemActionDetails(for: action, entity: entityType(), using: container.getEntity(at: indexPath, filtering: container.filterContainer != nil), from: vc, useAlternateTitle: alternateTitle)
+        return container.singleItemActionDetails(for: action, entityType: entityType(), using: container.getEntity(at: indexPath, filtering: container.filterContainer != nil), from: vc, useAlternateTitle: alternateTitle)
     }
 }
 
@@ -296,6 +311,145 @@ extension TableDelegate: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         
         self.tableView(tableView, commit: editingStyle, forRowAt: indexPath, filtering: false)
+    }
+    
+    @objc func performHold(_ sender: UILongPressGestureRecognizer) {
+            
+        switch sender.state {
+            
+            case .began:
+                
+                if let collectionsVC = container as? CollectionsViewController, collectionsVC.presented { return }
+                
+                var location: CGPoint?
+                var expectedIndexPath: IndexPath?
+                var name: String?
+                var editingRect: CGRect?
+                var leftRect: CGRect?
+                var rightRect: CGRect?
+                var fromCollectionView = false
+                var expectedEntity: MPMediaEntity?
+                var query: MPMediaQuery?
+                
+                if let tableView = container?.tableView, let header = tableView.tableHeaderView as? HeaderView, header.frame.contains(sender.location(in: tableView)) {
+                    
+                    if header.scrollView.convert(header.groupingView.frame, to: header).contains(sender.location(in: tableView)) {
+                        
+                        if let vc = container as? UIViewController, container is ArtistSongsViewController || container is ArtistAlbumsViewController {
+                            
+                            (vc.parent as? EntityItemsViewController)?.showGroupings()
+                            
+                            return
+                            
+                        } else if let collectionsVC = container as? CollectionsViewController, collectionsVC.presented.inverted, collectionsVC.collectionKind == .playlist {
+                            
+                            collectionsVC.changePlaylistView()
+                            
+                            return
+                        }
+                    
+                    } else if header.scrollView.convert(header.sortView.frame, to: header).contains(sender.location(in: tableView)) {
+                        
+                        container?.showArranger()
+                        
+                        return
+                        
+                    } else if header.scrollView.convert(header.artistView.frame, to: header).contains(sender.location(in: tableView)), let albumItemsVC = container as? AlbumItemsViewController {
+                        
+                        albumItemsVC.showArtistActions()
+                        
+                    } else if let collectionView = container?.collectionView, let indexPath = collectionView.indexPathForItem(at: collectionView.convert(header.convert(sender.location(in: tableView), from: tableView), from: header)), let cell = collectionView.cellForItem(at: indexPath) as? PlaylistCollectionViewCell, let details: (entity: MPMediaEntity?, type: EntityType) = {
+                        
+                            switch self.location {
+                                
+                                case .songs: return ((container?.tableView.tableHeaderView as? HeaderView)?.songs[indexPath.item], .song)
+                                
+                                case .collections(.playlist): return ((container?.tableView.tableHeaderView as? HeaderView)?.playlists[indexPath.item], .playlist)
+                                
+                                case .collections(let kind): return ((container?.tableView.tableHeaderView as? HeaderView)?.collections[indexPath.item], kind.entityType)
+                                
+                                default: return nil
+                            }
+                        
+                        }(), let entity = details.entity {
+                        
+                        location = sender.location(in: cell)
+                        leftRect = cell.artworkContainer.convert(cell.playView.frame, to: cell)
+                        rightRect = cell.artworkContainer.convert(cell.accessoryView.frame, to: cell)
+                        expectedIndexPath = indexPath
+                        name = cell.nameLabel.text
+                        fromCollectionView = true
+                        expectedEntity = entity
+                        query = MPMediaQuery.init(filterPredicates: [.for(details.type, using: entity.persistentID)]).cloud
+                    }
+                    
+                } else if let indexPath = tableView.indexPathForRow(at: sender.location(in: tableView)), let cell = tableView.cellForRow(at: indexPath) as? SongTableViewCell, let entity = container?.getEntity(at: indexPath, filtering: container?.filterContainer != nil) {
+                
+                    location = sender.location(in: cell)
+                    editingRect = cell.editingView.frame
+                    leftRect = cell.mainView.convert(cell.playButton.frame, to: cell)
+                    rightRect = cell.mainView.convert(cell.infoButton.frame, to: cell)
+                    expectedIndexPath = indexPath
+                    name = cell.nameLabel.text
+                    expectedEntity = entity
+                    query = self.query(at: indexPath, filtering: container?.filterContainer != nil)
+                }
+                
+                guard let foundLocation = location, let indexPath = expectedIndexPath, let entity = expectedEntity else { return }
+                
+                if editingRect?.contains(foundLocation) == true {
+                    
+                    Transitioner.shared.performDeepSelection(from: container as? UIViewController, title: name)
+                    
+                } else if rightRect?.contains(foundLocation) == true, let vc: UIViewController = container?.filterContainer ?? container as? UIViewController, let actionable = vc as? SingleItemActionable {
+                    
+                    actionable.singleItemActionDetails(for: .show(title: name, context: infoContext(from: indexPath, collectionViewOverride: fromCollectionView, filtering: container?.filterContainer != nil), canDisplayInLibrary: canDisplayInLibrary() || fromCollectionView), entityType: entityType(), using: entity, from: vc, useAlternateTitle: true).handler()
+                
+                } else if musicPlayer.nowPlayingItem != nil, leftRect?.contains(foundLocation) == true {
+                    
+                    getActionDetails(from: SongAction.queue(name: name, query: query), indexPath: indexPath, vc: container?.filterContainer ?? container as? UIViewController, useAlternateTitle: true)?.handler()
+                    
+                } else if let count: Int = {
+                    
+                    if let _ = entity as? MPMediaItem {
+                        
+                        return 1
+                        
+                    } else if let collection = entity as? MPMediaItemCollection {
+                        
+                        return collection.count
+                    }
+                    
+                    return nil
+                
+                    }(), count > 0, let vc: UIViewController = container?.filterContainer ?? container as? UIViewController, let actionable = vc as? SingleItemActionable {
+                    
+                    var actions = [
+                        SongAction.collect,
+                        .info(context: infoContext(from: indexPath, collectionViewOverride: fromCollectionView, filtering: container?.filterContainer != nil)),
+                        .show(title: name, context: infoContext(from: indexPath, collectionViewOverride: fromCollectionView, filtering: container?.filterContainer != nil), canDisplayInLibrary: canDisplayInLibrary() || fromCollectionView),
+                        .queue(name: name, query: query),
+                        .newPlaylist,
+                        .addTo,
+                        .search(unwinder: container?.filterContainer != nil ? { [weak topViewController] in topViewController?.children.first } : nil)
+                        ].map({ actionable.singleItemAlertAction(for: $0, entityType: entityType(), using: entity, from: vc) })
+                            
+                    if let item = entity as? MPMediaItem, item.existsInLibrary.inverted {
+                        
+                        actions.append(actionable.singleItemAlertAction(for: .library, entityType: .song, using: item, from: vc))
+                    }
+                    
+                    vc.showAlert(title: name, with: actions)
+                }
+            
+            case .changed, .ended:
+            
+                guard let top = topViewController as? VerticalPresentationContainerViewController else { return }
+            
+                top.gestureActivated(sender)
+            
+            default: break
+        }
     }
     
     @objc func showOptions(_ sender: Any) {
@@ -388,19 +542,21 @@ extension TableDelegate: UITableViewDelegate, UITableViewDataSource {
     
     func infoContext(from indexPath: IndexPath, collectionViewOverride: Bool = false, filtering: Bool) -> InfoViewController.Context {
         
+        let entities = relevantEntities(filtering: filtering, collectionViewOverride: collectionViewOverride)
+        
         switch location {
             
-            case .playlist, .album, .artistSongs: return .song(location: .list, at: getIndex(from: indexPath, filtering: filtering), within: relevantEntities(filtering: filtering) as! [MPMediaItem])
+            case .playlist, .album, .artistSongs: return .song(location: .list, at: getIndex(from: indexPath, filtering: filtering), within: entities as! [MPMediaItem])
             
-            case .songs: return .song(location: .list, at: getIndex(from: indexPath, filtering: filtering), within: collectionViewOverride ? (container?.tableView.tableHeaderView as? HeaderView)!.songs : relevantEntities(filtering: filtering) as! [MPMediaItem])
+            case .artistAlbums(withinArtist: _): return .album(at: getIndex(from: indexPath, filtering: filtering), within: entities as! [MPMediaItemCollection])
             
-            case .artistAlbums(withinArtist: _): return .album(at: getIndex(from: indexPath, filtering: filtering), within: relevantEntities(filtering: filtering) as! [MPMediaItemCollection])
+            case .songs: return .song(location: .list, at: collectionViewOverride ? indexPath.item : getIndex(from: indexPath, filtering: filtering), within: entities as! [MPMediaItem])
             
-            case .collections(kind: .album), .collections(kind: .compilation): return .album(at: getIndex(from: indexPath, filtering: filtering), within: collectionViewOverride ? (container?.tableView.tableHeaderView as? HeaderView)!.collections : relevantEntities(filtering: filtering) as! [MPMediaItemCollection])
+            case .collections(kind: .album), .collections(kind: .compilation): return .album(at: collectionViewOverride ? indexPath.item : getIndex(from: indexPath, filtering: filtering), within: entities as! [MPMediaItemCollection])
             
-            case .collections(kind: .playlist): return .playlist(at: getIndex(from: indexPath, filtering: filtering), within: collectionViewOverride && !filtering ? (container?.tableView.tableHeaderView as? HeaderView)!.playlists : relevantEntities(filtering: filtering) as! [MPMediaPlaylist])
+            case .collections(kind: .playlist): return .playlist(at: collectionViewOverride ? indexPath.item : getIndex(from: indexPath, filtering: filtering), within: entities as! [MPMediaPlaylist])
             
-            case .collections(kind: let kind): return .collection(kind: kind.albumBasedCollectionKind, at: getIndex(from: indexPath, filtering: filtering), within: collectionViewOverride ? (container?.tableView.tableHeaderView as? HeaderView)!.collections : relevantEntities(filtering: filtering) as! [MPMediaItemCollection])
+            case .collections(kind: let kind): return .collection(kind: kind.albumBasedCollectionKind, at: collectionViewOverride ? indexPath.item : getIndex(from: indexPath, filtering: filtering), within: entities as! [MPMediaItemCollection])
         }
     }
     
@@ -414,11 +570,22 @@ extension TableDelegate: UITableViewDelegate, UITableViewDataSource {
         }
     }
     
-    private func relevantEntities(filtering: Bool) -> [MPMediaEntity] {
+    private func relevantEntities(filtering: Bool, collectionViewOverride: Bool) -> [MPMediaEntity] {
         
         guard let container = container else { return [] }
         
-        return filtering ? container.filteredEntities : container.entities
+        let entities = filtering ? container.filteredEntities : container.entities
+        
+        switch location {
+            
+            case .playlist, .album, .artistSongs, .artistAlbums: return entities
+            
+            case .songs: return collectionViewOverride ? (container.tableView.tableHeaderView as? HeaderView)!.songs : entities
+            
+            case .collections(kind: .playlist): return collectionViewOverride && !filtering ? (container.tableView.tableHeaderView as! HeaderView).playlists : entities
+                
+            case .collections(kind: _): return collectionViewOverride ? (container.tableView.tableHeaderView as! HeaderView).collections : entities
+        }
     }
 }
 
@@ -656,7 +823,7 @@ extension TableDelegate {
                         cell.swipeDelegate = self
                         
                         let loader: InfoLoading? = filtering ? container?.filterContainer : container
-                        loader?.updateImageView(using: collection, entityType: kind.entity, in: cell, indexPath: indexPath, reusableView: tableView)
+                        loader?.updateImageView(using: collection, entityType: kind.entityType, in: cell, indexPath: indexPath, reusableView: tableView)
                     
                     case .playlist:
                         
@@ -670,11 +837,13 @@ extension TableDelegate {
                             
                             if Set(collectionsVC.selectedPlaylists).contains(playlist), cell.isSelected.inverted {
                                 
-                                tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
+                                cell.isSelected = true
+//                                tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
                                 
                             } else if Set(collectionsVC.selectedPlaylists).contains(playlist).inverted, cell.isSelected {
                                 
-                                tableView.deselectRow(at: indexPath, animated: false)
+                                cell.isSelected = false
+//                                tableView.deselectRow(at: indexPath, animated: false)
                             }
                             
                         } else {
@@ -997,7 +1166,7 @@ extension TableDelegate {
                 case .collections(let kind):
                     
                     let loader: InfoLoading? = filtering ? container?.filterContainer : container
-                    loader?.updateImageView(using: entity as! MPMediaItemCollection, entityType: kind.entity, in: cell, indexPath: $0, reusableView: tableView, overridable: container as? OnlineOverridable)
+                    loader?.updateImageView(using: entity as! MPMediaItemCollection, entityType: kind.entityType, in: cell, indexPath: $0, reusableView: tableView, overridable: container as? OnlineOverridable)
             }
         })
     }
@@ -1060,11 +1229,19 @@ extension TableDelegate: EntityCellDelegate {
         
         }(), count > 0, let vc: UIViewController = container.filterContainer ?? container, let actionable = vc as? SingleItemActionable else { return }
         
-        var actions = [SongAction.collect, .info(context: infoContext(from: indexPath, filtering: container.filterContainer != nil)), .queue(name: cell.nameLabel.text, query: query(at: indexPath, filtering: container.filterContainer != nil)), .newPlaylist, .addTo].map({ actionable.singleItemAlertAction(for: $0, entity: .song, using: item, from: vc) })
+        var actions = [
+            SongAction.collect,
+            .info(context: infoContext(from: indexPath, filtering: container.filterContainer != nil)),
+            .queue(name: cell.nameLabel.text, query: query(at: indexPath, filtering: container.filterContainer != nil)),
+            .newPlaylist,
+            .addTo,
+            .show(title: cell.nameLabel.text, context: infoContext(from: indexPath, collectionViewOverride: false, filtering: container.filterContainer != nil), canDisplayInLibrary: canDisplayInLibrary()),
+            .search(unwinder: container.filterContainer != nil ? { [weak topViewController] in topViewController?.children.first } : nil)
+        ].map({ actionable.singleItemAlertAction(for: $0, entityType: entityType(), using: item, from: vc) })
         
         if let item = item as? MPMediaItem, item.existsInLibrary.inverted {
             
-            actions.insert(actionable.singleItemAlertAction(for: .library, entity: .song, using: item, from: vc), at: 3)
+            actions.append(actionable.singleItemAlertAction(for: .library, entityType: .song, using: item, from: vc))
         }
         
         vc.showAlert(title: cell.nameLabel.text, with: actions)
@@ -1122,7 +1299,6 @@ extension TableDelegate: EntityCellDelegate {
             
             if songs.count > 1 {
                 
-//                var array = [UIAlertAction]()
                 let canShuffleAlbums = songs.canShuffleAlbums
                 
                 var actions = [AlertAction.init(info: AlertInfo.init(title: "Play", accessoryType: .none), requiresDismissalFirst: true, handler: {
@@ -1266,6 +1442,19 @@ extension TableDelegate: SwipeTableViewCellDelegate {
     }
 }
 
+extension TableDelegate: UIGestureRecognizerDelegate {
+    
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        
+        if let collectionsVC = container as? CollectionsViewController, collectionsVC.presented {
+            
+            return gestureRecognizer.location(in: collectionsVC.parent?.parent?.view).x > 22
+        }
+        
+        return true
+    }
+}
+
 extension TableDelegate {
     
     // MARK: - SearchVC
@@ -1305,7 +1494,7 @@ extension TableDelegate {
                 
                 if let cell = searchViewController.tableView.cellForRow(at: indexPath) as? SongTableViewCell {
                     
-                    let details = searchViewController.getActionDetails(from: .show(title: cell.nameLabel.text, context: searchViewController.context(from: indexPath), canDisplayInLibrary: true), indexPath: indexPath, actionable: searchViewController, vc: searchViewController, entityType: searchViewController.sectionDetails[indexPath.section].category.entity, entity: searchViewController.getEntity(at: indexPath)!, useAlternateTitle: true)
+                    let details = searchViewController.getActionDetails(from: .show(title: cell.nameLabel.text, context: searchViewController.context(from: indexPath), canDisplayInLibrary: true), indexPath: indexPath, actionable: searchViewController, vc: searchViewController, entityType: searchViewController.sectionDetails[indexPath.section].category.entityType, entity: searchViewController.getEntity(at: indexPath)!, useAlternateTitle: true)
                         
                     let goTo = SwipeAction.init(style: .default, title: details?.title.lowercased(), handler: { _, indexPath in details?.handler() }, image: details?.action.icon)
                     
@@ -1348,7 +1537,7 @@ extension TableDelegate {
                 
                 if indexPath.section != 1, {
                     
-                    if #available(iOS 11.3, *) { return false }
+                    if #available(iOS 11.3, *), useSystemPlayer || forceOldStyleQueue { return false }
                     
                     return true
                     

@@ -10,6 +10,8 @@ import UIKit
 
 class HeaderView: UIView, InfoLoading {
 
+    @IBOutlet var gradientView: GradientView!
+    @IBOutlet var scrollView: MELScrollView!
     @IBOutlet var descriptionTextView: MELTextView!
     @IBOutlet var descriptionTextViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet var scrollStackView: UIStackView!
@@ -59,13 +61,13 @@ class HeaderView: UIView, InfoLoading {
         }
     }
     
-    lazy var entityType: Entity = {
+    lazy var entityType: EntityType = {
     
         switch context {
             
             case .albums(let collections): return .album
             
-            case .collections(kind: let kind, let collections): return kind.entity
+            case .collections(kind: let kind, let collections): return kind.entityType
         
             case .playlists(let playlists): return .playlist
         
@@ -273,6 +275,7 @@ class HeaderView: UIView, InfoLoading {
         updateSpacing(self)
         
         notifier.addObserver(self, selector: #selector(updateSpacing), name: .lineHeightsCalculated, object: nil)
+        notifier.addObserver(self, selector: #selector(updateCell(_:)), name: .playlistSelected, object: nil)
     }
     
     func updateScrollStackView() {
@@ -302,6 +305,28 @@ class HeaderView: UIView, InfoLoading {
             case .hidden: sortActivityIndicatorView.stopAnimating()
             
             case .visible: sortActivityIndicatorView.startAnimating()
+        }
+    }
+    
+    @objc func updateCell(_ sender: Notification) {
+        
+        guard let location = sender.userInfo?["location"] as? PlaylistModificationLocation, location != .header, let collectionsVC = viewController as? CollectionsViewController, collectionsVC.presented, let type = sender.userInfo?["type"] as? CellSelectionType, let playlist = sender.userInfo?["playlist"] as? MPMediaPlaylist else { return }
+        
+        switch type {
+            
+            case .select:
+            
+                if let selectedIndexPath = collectionView.indexPathsForVisibleItems.first(where: { playlists.value(at: $0.row) == playlist }), let cell = collectionView.cellForItem(at: selectedIndexPath), cell.isSelected.inverted {
+                    
+                    collectionView.selectItem(at: selectedIndexPath, animated: false, scrollPosition: [])
+                }
+            
+            case .deselect:
+            
+                if let selectedIndexPath = collectionView.indexPathsForVisibleItems.first(where: { playlists.value(at: $0.row) == playlist }), let indexPaths = collectionView.indexPathsForSelectedItems, Set(indexPaths).contains(selectedIndexPath) {
+                    
+                    collectionView.deselectItem(at: selectedIndexPath, animated: false)
+                }
         }
     }
 }
@@ -338,6 +363,18 @@ extension HeaderView: UICollectionViewDelegate, UICollectionViewDataSource {
             
                 let playlist = playlists[indexPath.row]
                 
+                if let collectionsVC = viewController as? CollectionsViewController, collectionsVC.presented {
+                    
+                    if Set(collectionsVC.selectedPlaylists).contains(playlist), cell.isSelected.inverted {
+                        
+                        cell.isSelected = true
+                        
+                    } else if Set(collectionsVC.selectedPlaylists).contains(playlist).inverted, cell.isSelected {
+                        
+                        cell.isSelected = false
+                    }
+                }
+                
                 updateImageView(using: playlist, entityType: .playlist, in: cell, indexPath: indexPath, reusableView: collectionView, overridable: viewController as? OnlineOverridable)
             
             case .albums(let albums):
@@ -350,7 +387,7 @@ extension HeaderView: UICollectionViewDelegate, UICollectionViewDataSource {
             
                 let collection = collections[indexPath.row]
                 
-                updateImageView(using: collection, entityType: kind.entity, in: cell, indexPath: indexPath, reusableView: collectionView)
+                updateImageView(using: collection, entityType: kind.entityType, in: cell, indexPath: indexPath, reusableView: collectionView)
         }
     }
     
@@ -405,7 +442,7 @@ extension HeaderView: UICollectionViewDelegate, UICollectionViewDataSource {
                     
                     cell.delegate = self
                     cell.prepare(with: album, editing: collectionsVC.tableView.isEditing)
-                    cell.details = (.album, width)
+                    cell.details = (.playlist, width)
                 }
             
             case .collections(kind: let kind, let collections):
@@ -416,7 +453,7 @@ extension HeaderView: UICollectionViewDelegate, UICollectionViewDataSource {
                     
                     cell.delegate = self
                     cell.prepare(with: collection, kind: kind, editing: collectionsVC.tableView.isEditing)
-                    cell.details = (.artist, width)
+                    cell.details = (.playlist, width)
                 }
         }
         
@@ -478,15 +515,22 @@ extension HeaderView: UICollectionViewDelegate, UICollectionViewDataSource {
                 
                 if collectionsVC.presented, let playlist = collection as? MPMediaPlaylist {
                     
-                    if collectionsVC.selectedPlaylists.firstIndex(of: playlist) == nil, let _ = collectionsVC.libraryVC?.parent as? PresentedContainerViewController {
+                    if collectionsVC.selectedPlaylists.firstIndex(of: playlist) == nil/*, let _ = collectionsVC.libraryVC?.parent as? PresentedContainerViewController*/ {
                         
                         collectionsVC.selectedPlaylists.append(playlist)
                         collectionsVC.addButton.setTitle("Add (\(collectionsVC.selectedPlaylists.count.formatted))", for: .normal)
                         
-                        if let selectedIndexPath = collectionsVC.tableView.indexPathsForVisibleRows?.first(where: { collectionsVC.getCollection(from: $0) == playlist }), let cell = collectionsVC.tableView.cellForRow(at: selectedIndexPath), cell.isSelected.inverted {
-
-                            collectionsVC.tableView.selectRow(at: selectedIndexPath, animated: false, scrollPosition: .none)
-                        }
+                        notifier.post(name: .playlistSelected, object: nil, userInfo: ["playlist": playlist, "type": CellSelectionType.select, "location": PlaylistModificationLocation.header])
+                        
+//                        if let selectedIndexPath = collectionsVC.tableView.indexPathsForVisibleRows?.first(where: { collectionsVC.getCollection(from: $0) == playlist }), let cell = collectionsVC.tableView.cellForRow(at: selectedIndexPath), cell.isSelected.inverted {
+//
+//                            collectionsVC.tableView.selectRow(at: selectedIndexPath, animated: false, scrollPosition: .none)
+//                        }
+//
+//                        if let selectedIndexPath = collectionsVC.lastUsedCollectionView.indexPathsForVisibleItems.first(where: { collectionsVC.lastUsedController?.playlists.value(at: $0.row) == playlist }), let cell = collectionsVC.lastUsedCollectionView.cellForItem(at: selectedIndexPath), cell.isSelected.inverted {
+//
+//                            collectionsVC.lastUsedCollectionView.selectItem(at: selectedIndexPath, animated: false, scrollPosition: [])
+//                        }
                     }
 
                     return
@@ -510,15 +554,22 @@ extension HeaderView: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         
-        if let collectionsVC = viewController as? CollectionsViewController, collectionsVC.presented, let playlist = playlists.value(at: indexPath.row), let index = collectionsVC.selectedPlaylists.firstIndex(of: playlist), let _ = collectionsVC.libraryVC?.parent as? PresentedContainerViewController {
+        if let collectionsVC = viewController as? CollectionsViewController, collectionsVC.presented, let playlist = playlists.value(at: indexPath.row), let index = collectionsVC.selectedPlaylists.firstIndex(of: playlist)/*, let _ = collectionsVC.libraryVC?.parent as? PresentedContainerViewController*/ {
             
             collectionsVC.selectedPlaylists.remove(at: index)
             collectionsVC.addButton.setTitle("Add (\(collectionsVC.selectedPlaylists.count.formatted))", for: .normal)
             
-            if let selectedIndexPath = collectionsVC.tableView.indexPathsForVisibleRows?.first(where: { collectionsVC.getCollection(from: $0) == playlist }), let indexPaths = collectionsVC.tableView.indexPathsForSelectedRows, Set(indexPaths).contains(selectedIndexPath) {
-                
-                collectionsVC.tableView.deselectRow(at: selectedIndexPath, animated: false)
-            }
+            notifier.post(name: .playlistSelected, object: nil, userInfo: ["playlist": playlist, "type": CellSelectionType.deselect, "location": PlaylistModificationLocation.header])
+            
+//            if let selectedIndexPath = collectionsVC.tableView.indexPathsForVisibleRows?.first(where: { collectionsVC.getCollection(from: $0) == playlist }), let indexPaths = collectionsVC.tableView.indexPathsForSelectedRows, Set(indexPaths).contains(selectedIndexPath) {
+//
+//                collectionsVC.tableView.deselectRow(at: selectedIndexPath, animated: false)
+//            }
+//
+//            if let selectedIndexPath = collectionsVC.lastUsedCollectionView.indexPathsForVisibleItems.first(where: { collectionsVC.lastUsedController?.playlists.value(at: $0.row) == playlist }), let indexPaths = collectionsVC.lastUsedCollectionView.indexPathsForSelectedItems, Set(indexPaths).contains(selectedIndexPath) {
+//
+//                collectionsVC.lastUsedCollectionView.deselectItem(at: selectedIndexPath, animated: false)
+//            }
         }
     }
 }
@@ -613,7 +664,7 @@ extension HeaderView: PlaylistCollectionCellDelegate {
         
         guard let indexPath = collectionView.indexPath(for: cell) else { return }
         
-        var item: MPMediaEntity {
+        var entity: MPMediaEntity {
             
             switch context {
                 
@@ -629,11 +680,11 @@ extension HeaderView: PlaylistCollectionCellDelegate {
         
         guard let count: Int = {
             
-            if let _ = item as? MPMediaItem {
+            if let _ = entity as? MPMediaItem {
                 
                 return 1
                 
-            } else if let collection = item as? MPMediaItemCollection {
+            } else if let collection = entity as? MPMediaItemCollection {
                 
                 return collection.count
             }
@@ -642,13 +693,21 @@ extension HeaderView: PlaylistCollectionCellDelegate {
             
         }(), count > 0, let vc = viewController as? UIViewController & SingleItemActionable else { return }
         
-        var actions = [SongAction.collect, .info(context: context.infoContext(at: indexPath)), .queue(name: cell.nameLabel.text, query: .init(filterPredicates: [.for(entityType, using: item)])), .newPlaylist, .addTo].map({ vc.singleItemAlertAction(for: $0, entity: entityType, using: item, from: vc) })
+        var actions = [
+            SongAction.collect,
+            .info(context: context.infoContext(at: indexPath)),
+            .queue(name: cell.nameLabel.text, query: .init(filterPredicates: [.for(entityType, using: entity)])),
+            .show(title: cell.nameLabel.text, context: context.infoContext(at: indexPath), canDisplayInLibrary: true),
+            .newPlaylist,
+            .addTo,
+            .search(unwinder: nil)
+        ].map({ vc.singleItemAlertAction(for: $0, entityType: entityType, using: entity, from: vc) })
         
-        actions.insert(vc.singleItemAlertAction(for: .show(title: cell.nameLabel.text, context: context.infoContext(at: indexPath), canDisplayInLibrary: true), entity: entityType, using: item, from: vc, useAlternateTitle: true), at: 1)
+//        actions.insert(vc.singleItemAlertAction(for: .show(title: cell.nameLabel.text, context: context.infoContext(at: indexPath), canDisplayInLibrary: true), entity: entityType, using: item, from: vc, useAlternateTitle: true), at: 1)
         
-        if let item = item as? MPMediaItem, item.existsInLibrary.inverted {
+        if let item = entity as? MPMediaItem, item.existsInLibrary.inverted {
             
-            actions.insert(vc.singleItemAlertAction(for: .library, entity: .song, using: item, from: vc), at: 4)
+            actions.append(vc.singleItemAlertAction(for: .library, entityType: .song, using: item, from: vc))
         }
         
         vc.showAlert(title: cell.nameLabel.text, with: actions)

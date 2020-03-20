@@ -173,7 +173,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>$(sharedBuildNumber)</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppleMusicUsageDescription</key>

@@ -74,13 +74,27 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
             LongPressManager.shared.gestureRecognisers.append(Weak.init(value: gr))
         }
     }
-    @IBOutlet var repeatView: MELBorderView?
+    @IBOutlet var repeatView: MELBorderView? {
+        
+        didSet {
+            
+            repeatView?.layer.setRadiusTypeIfNeeded()
+            repeatView?.layer.cornerRadius = 8
+        }
+    }
     @IBOutlet var repeatButton: MELButton?
     @IBOutlet var statusBarBackground: UIView!
     @IBOutlet var imageView: UIImageView!
     @IBOutlet var effectView: MELVisualEffectView!
     @IBOutlet var artworkIntermediaryView: UIView!
-    @IBOutlet var shuffleView: MELBorderView?
+    @IBOutlet var shuffleView: MELBorderView? {
+        
+        didSet {
+            
+            shuffleView?.layer.setRadiusTypeIfNeeded()
+            shuffleView?.layer.cornerRadius = 8
+        }
+    }
     @IBOutlet var queueChevronTrailingConstraint: NSLayoutConstraint!
     @IBOutlet var editButton: MELButton! {
         
@@ -103,11 +117,11 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
     @objc var actionableSongs: [MPMediaItem] { return [activeItem].compactMap({ $0 }) }
     var applicableActions: [SongAction] {
         
-        var actions = [SongAction.collect, .show(title: activeItem?.validTitle, context: .song(location: .list, at: 0, within: [activeItem].compactMap({ $0 })), canDisplayInLibrary: true), .newPlaylist, .addTo]
+        var actions = [SongAction.collect, .newPlaylist, .addTo, .show(title: activeItem?.validTitle, context: .song(location: .list, at: 0, within: actionableSongs), canDisplayInLibrary: true), .search(unwinder: { [weak self] in self })]
         
         if activeItem?.existsInLibrary == false {
             
-            actions.insert(.library, at: 2)
+            actions.append(.library)
         }
         
         return actions
@@ -174,6 +188,16 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         
         super.viewDidLoad()
         
+        if let button = repeatButton {
+        
+            repeatView?.superview?.bringSubviewToFront(button)
+        }
+        
+        if let button = shuffle {
+        
+            shuffleView?.superview?.bringSubviewToFront(button)
+        }
+        
         modalPresentationCapturesStatusBarAppearance = true
         NowPlaying.shared.nowPlayingVC = self
         ArtworkManager.shared.nowPlayingVC = self
@@ -227,33 +251,23 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         }
     }
     
-    @objc func showAlbumOptions(_ sender: UILongPressGestureRecognizer) {
+    @objc func showAlbumOptions() {
         
         guard let _ = activeItem else { return }
-        
-        if sender.state == .began {
             
-            guard albumQuery != nil else {
-                
-                let newBanner = Banner.init(title: showiCloudItems ? "This album is not in your library" : "This album is not available offline", subtitle: nil, image: nil, backgroundColor: .black, didTapBlock: nil)
-                newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
-                newBanner.show(duration: 0.7)
-                
-                return
-             }
-            
-            performSegue(withIdentifier: "toAlbumOptions", sender: nil)
-        }
+        performSegue(withIdentifier: "toAlbumOptions", sender: nil)
     }
+    
+    
     
     @objc func prepareGestures() {
         
-        let artistHold = UILongPressGestureRecognizer.init(target: self, action: #selector(showArtistOptions(_:)))
+        let artistHold = UILongPressGestureRecognizer.init(target: self, action: #selector(performHold))
         artistHold.minimumPressDuration = longPressDuration
         artistButton.addGestureRecognizer(artistHold)
         LongPressManager.shared.gestureRecognisers.append(Weak.init(value: artistHold))
         
-        let albumHold = UILongPressGestureRecognizer.init(target: self, action: #selector(showAlbumOptions(_:)))
+        let albumHold = UILongPressGestureRecognizer.init(target: self, action: #selector(performHold))
         albumHold.minimumPressDuration = longPressDuration
         albumButton.addGestureRecognizer(albumHold)
         LongPressManager.shared.gestureRecognisers.append(Weak.init(value: albumHold))
@@ -263,10 +277,10 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         albumArtContainer.addGestureRecognizer(mixHold)
         LongPressManager.shared.gestureRecognisers.append(Weak.init(value: mixHold))
         
-        let optionsHold = UILongPressGestureRecognizer.init(target: self, action: #selector(showOptions(_:)))
-        optionsHold.minimumPressDuration = longPressDuration
-        songName.addGestureRecognizer(optionsHold)
-        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: optionsHold))
+        let songHold = UILongPressGestureRecognizer.init(target: self, action: #selector(performHold))
+        songHold.minimumPressDuration = longPressDuration
+        songName.addGestureRecognizer(songHold)
+        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: songHold))
         
         let edge = UIScreenEdgePanGestureRecognizer.init(target: self, action: #selector(goToQueue))
         edge.edges = .right
@@ -293,34 +307,122 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         musicPlayer.currentPlaybackTime = item.playbackDuration
     }
     
+    @objc func performHold(_ sender: UILongPressGestureRecognizer) {
+        
+        switch sender.state {
+            
+            case .began:
+                
+                enum HeldButton {
+                    
+                    case song, artist, album
+                    
+                    var entityType: EntityType {
+                        
+                        switch self {
+                            
+                            case .song: return .song
+                            
+                            case .artist: return .artist
+                            
+                            case .album: return .album
+                        }
+                    }
+                }
+                
+                let button: HeldButton = {
+                    
+                    switch sender.view {
+                        
+                        case let x where x == songName: return .song
+                        
+                        case let x where x == artistButton: return .artist
+                        
+                        default: return .album
+                    }
+                }()
+                
+                guard let entity: MPMediaEntity = {
+                    
+                    switch button {
+                        
+                        case .song: return activeItem
+                        
+                        case .album: return albumQuery?.collections?.first
+                        
+                        case .artist: return artistQuery?.collections?.first
+                    }
+                    
+                }() else {
+                
+                    switch button {
+                        
+                        case .song: return
+                        
+                        case .album:
+                        
+                            let newBanner = Banner.init(title: showiCloudItems ? "This album is not in your library" : "This album is not available offline", subtitle: nil, image: nil, backgroundColor: .black, didTapBlock: nil)
+                            newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+                            newBanner.show(duration: 1)
+                            
+                            return
+                        
+                        case .artist:
+                        
+                            let newBanner = Banner.init(title: showiCloudItems ? "This artist is not in your library" : "This artist is not available offline", subtitle: nil, image: nil, backgroundColor: .black, didTapBlock: nil)
+                            newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+                            newBanner.show(duration: 1)
+                            
+                            return
+                    }
+                }
+            
+                let info = AlertAction.init(title: "Get Info", style: .default, requiresDismissalFirst: true, handler: { [weak self] in
+                    
+                    guard let weakSelf = self else { return }
+                    
+                    switch button {
+                        
+                        case .song: weakSelf.showOptions(weakSelf)
+                        
+                        case .album: weakSelf.performSegue(withIdentifier: "toAlbumOptions", sender: nil)
+                        
+                        case .artist: weakSelf.performSegue(withIdentifier: "toArtistOptions", sender: nil)
+                    }
+                })
+            
+                let temp: [SongAction] = {
+                    
+                    switch button {
+                        
+                        case .song: return applicableActions
+                        
+                        case .album: return [SongAction.collect, .show(title: albumButton.title(for: .normal), context: .album(at: 0, within: albumQuery?.collections ?? []), canDisplayInLibrary: true), .newPlaylist, .addTo, .search(unwinder: { [weak self] in self })]
+                        
+                        case .artist: return [SongAction.collect, .show(title: artistButton.title(for: .normal), context: .collection(kind: .artist, at: 0, within: artistQuery?.collections ?? []), canDisplayInLibrary: true), .newPlaylist, .addTo, .search(unwinder: { [weak self] in self })]
+                    }
+                }()
+                
+                var array = temp.map({ singleItemAlertAction(for: $0, entityType: button.entityType, using: entity, from: self, useAlternateTitle: false) })
+                array.append(info)
+                
+                showAlert(title: (sender.view as? UIButton)?.title(for: .normal), with: array)
+            
+            case .changed, .ended:
+            
+                guard let top = topViewController as? VerticalPresentationContainerViewController else { return }
+                
+                top.gestureActivated(sender)
+            
+            default: break
+        }
+    }
+    
     @IBAction func showSongActions() {
         
         guard let item = activeItem else { return }
         
-        let info = AlertAction.init(title: "Get Info", style: .default, requiresDismissalFirst: true, handler: { [weak self] in
-            
-            guard let weakSelf = self else { return }
-            
-            weakSelf.showOptions(weakSelf)
-        })
-        
-        let block: ((SongAction) -> Bool) = {
-            
-            if case .show = $0 {
-                
-                return true
-                
-            } else {
-                
-                return false
-            }
-        }
-        
-        var array = applicableActions.map({ singleItemAlertAction(for: $0, entity: .song, using: item, from: self, useAlternateTitle: block($0)) })
-//        let x = alertActions(from: self)
-        array.insert(info, at: 2)
-        
-        showAlert(title: activeItem?.validTitle, with: array)
+        singleItemActionDetails(for: .show(title: item.validTitle, context: .song(location: .list, at: 0, within: [item]), canDisplayInLibrary: true), entityType: .song, using: item, from: self).handler()
     }
     
     @objc func goToQueue(_ sender: UIGestureRecognizer) {
@@ -1010,14 +1112,14 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         
         guard activeItem != nil else { return }
         
-        performUnwindSegue(with: .artist, isEntityAvailable: artistQuery != nil, title: Entity.artist.title())
+        performUnwindSegue(with: .artist, isEntityAvailable: artistQuery != nil, title: EntityType.artist.title())
     }
     
     @IBAction func goToAlbum() {
         
         guard activeItem != nil else { return }
         
-        performUnwindSegue(with: .album, isEntityAvailable: albumQuery != nil, title: Entity.album.title())
+        performUnwindSegue(with: .album, isEntityAvailable: albumQuery != nil, title: EntityType.album.title())
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -1058,7 +1160,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
             presentedVC.qVC = vc as! QueueViewController
             presentedVC.context = .queue
             
-            present(presentedVC, animated: false, completion: { presentedVC.viewIfLoaded?.backgroundColor = UIColor.black.withAlphaComponent(0.2) })
+            present(presentedVC, animated: false, completion: nil)
         
         } else {
             
@@ -1283,9 +1385,16 @@ extension NowPlayingViewController: UIViewControllerPreviewingDelegate {
 
 extension NowPlayingViewController: Detailing {
     
-    func goToDetails(basedOn entity: Entity) -> (entities: [Entity], albumArtOverride: Bool) {
+    func goToDetails(basedOn entity: EntityType) -> (entities: [EntityType], albumArtOverride: Bool) {
         
-        return ([Entity.artist, .genre, .album, .composer, .albumArtist], true)
+        switch entity {
+            
+            case .artist: return ([.artist], false)
+            
+            case .album: return ([.genre, .album], false)
+            
+            default: return ([EntityType.genre, .composer, .albumArtist], true)
+        }
     }
 }
 

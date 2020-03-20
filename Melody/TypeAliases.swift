@@ -33,3 +33,5 @@ typealias SettingsDictionary = [SettingSection: Setting]
 typealias SectionDictionary = [Int: (header: String?, footer: String?)]
 
 typealias EmptyCompletion = (() -> ())
+
+//typealias = [String: (Int, Bool)]

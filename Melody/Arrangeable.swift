@@ -24,6 +24,7 @@ protocol Arrangeable: NSObjectProtocol, TableViewContaining {
 //    func sortItems()
     func updateHeaderView(withCount count: Int)
     func prepareSupplementaryInfo(animated: Bool)
+    func showArranger()
 }
 
 protocol FullySortable: Arrangeable {

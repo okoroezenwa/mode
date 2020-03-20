@@ -8,19 +8,44 @@
 
 import UIKit
 
-class SmallPlaylistCollectionViewCell: UICollectionViewCell {
+class SmallPlaylistCollectionViewCell: UICollectionViewCell, ArtworkContainingCell {
     
     @IBOutlet var artworkImageView: UIImageView!
     @IBOutlet var nameLabel: MELLabel!
     @IBOutlet var songCountLabel: MELLabel!
-    @IBOutlet var artworkContainer: UIView!
-    @IBOutlet var containerView: UIView!
+    @IBOutlet var artworkContainer: InvertIgnoringView!
+    @IBOutlet var containerView: MELBorderView!
+    @IBOutlet var chevron: MELImageView!
+    @IBOutlet var containerViewTopConstraint: NSLayoutConstraint!
+    @IBOutlet var containerViewBottomConstraint: NSLayoutConstraint!
+    @IBOutlet var chevronLeadingConstraint: NSLayoutConstraint!
+    @IBOutlet var chevronWidthConstraint: NSLayoutConstraint!
+    
+    var topConstraint: CGFloat = 0 {
+        
+        didSet {
+            
+            guard containerViewTopConstraint.constant != topConstraint else { return }
+            
+            containerViewTopConstraint.constant = topConstraint
+        }
+    }
+    
+    var bottomConstraint: CGFloat = 0 {
+        
+        didSet {
+            
+            guard containerViewBottomConstraint.constant != bottomConstraint else { return }
+            
+            containerViewBottomConstraint.constant = bottomConstraint
+        }
+    }
     
     override var isSelected: Bool {
         
         didSet {
             
-            containerView.backgroundColor = (darkTheme ? .white : UIColor.black).withAlphaComponent(isSelected ? 0.1 : 0.05)
+            update(for: isSelected ? .selected : isHighlighted ? .highlighted : .untouched)
         }
     }
     
@@ -28,7 +53,7 @@ class SmallPlaylistCollectionViewCell: UICollectionViewCell {
         
         didSet {
             
-            containerView.backgroundColor = (darkTheme ? .white : UIColor.black).withAlphaComponent(isHighlighted ? 0.1 : 0.05)
+            update(for: isSelected ? .selected : isHighlighted ? .highlighted : .untouched)
         }
     }
     
@@ -36,35 +61,48 @@ class SmallPlaylistCollectionViewCell: UICollectionViewCell {
         
         super.awakeFromNib()
         
-        UniversalMethods.addShadow(to: artworkContainer, radius: 2, path: UIBezierPath.init(roundedRect: CGRect.init(x: 0, y: 0, width: 30, height: 30), cornerRadius: 4).cgPath)
+        UniversalMethods.addShadow(to: artworkContainer, radius: 2, opacity: 0.35, shouldRasterise: true)
     }
     
-    @objc func prepare(with playlist: MPMediaPlaylist, count: Int) {
+    func update(for state: CellState) {
         
-        if let title = playlist.name, title != "" {
-            
-            nameLabel.text = title
-            
-        } else {
-            
-            nameLabel.text = "Untitled Playlist"
-        }
+        containerView.updateTheme = false
+        containerView.bordered = state == .untouched
+        containerView.clear = state == .untouched
+        containerView.alphaOverride = state == .selected ? 1 : 0
         
-        let count = count
+        nameLabel.reversed = state == .selected
+        songCountLabel.reversed = state == .selected
         
-        songCountLabel.text = (appDelegate.formatter.numberFormatter.string(from: NSNumber.init(value: count)) ?? "\(count)") + " \(count == 1 ? "song" : "songs")"
+        
+        UIView.animate(withDuration: 0.15, animations: {
+            
+            self.containerView.updateTheme = true
+            self.nameLabel.changeThemeColor()
+            self.songCountLabel.changeThemeColor()
+        })
+    }
+    
+    @objc func prepare(with playlist: MPMediaPlaylist, shouldHideChevron hideChevron: Bool) {
+        
+        nameLabel.text = playlist.validName
+        chevron.isHidden = hideChevron
+        chevronLeadingConstraint.constant = hideChevron ? 0 : 8
+        chevronWidthConstraint.constant = hideChevron ? 0 : 10
+        
+        songCountLabel.text = playlist.items.count.fullCountText(for: .song)
         
         if playlist.playlistAttributes == .genius {
             
-            artworkImageView.image = #imageLiteral(resourceName: "NoGeniusPlaylistSmall")
+            artworkImageView.image = #imageLiteral(resourceName: "NoGenius75")
             
         } else if playlist.playlistAttributes == .smart {
             
-            artworkImageView.image = #imageLiteral(resourceName: "NoSmartPlaylistSmall")
+            artworkImageView.image = #imageLiteral(resourceName: "NoSmart75")
             
         } else {
             
-            artworkImageView.image = #imageLiteral(resourceName: "NoPlaylistSmall")
+            artworkImageView.image = #imageLiteral(resourceName: "NoPlaylist75")
         }
     }
 }

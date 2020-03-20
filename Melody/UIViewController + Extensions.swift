@@ -104,11 +104,40 @@ extension UIViewController {
     }
     
     /// Array Version
-    func showAlert(title: String?, subtitle: String? = nil, context: AlertTableViewController.Context = .other, with actions: [AlertAction], segmentDetails: SegmentDetails = ([], []), leftAction: AccessoryButtonAction? = nil, rightAction: AccessoryButtonAction? = nil, showMenuParameters parameters: [ShowMenuParameters] = [], completion: (() -> ())? = nil) {
+    func showAlert(
+        title: String?,
+        subtitle: String? = nil,
+        context: AlertTableViewController.Context = .other,
+        topHeaderMode: VerticalPresentationContainerViewController.TopHeaderMode = .bar,
+        with actions: [AlertAction],
+        shouldSortActions: Bool = true,
+        segmentDetails: SegmentDetails = ([], []),
+        leftAction: AccessoryButtonAction? = nil,
+        rightAction: AccessoryButtonAction? = nil,
+        images: HeaderButtonImages? = nil,
+        topAction: UnwindAction? = nil,
+        topPreviewAction: PreviewAction? = nil,
+        showMenuParameters parameters: [ShowMenuParameters] = [],
+        completion: (() -> ())? = nil) {
         
         if useSystemAlerts {
             
-            present(UIAlertController.withTitle(title, message: subtitle, style: .actionSheet, actions: actions.map({ $0.systemAction }) + [.cancel()]), animated: true, completion: completion)
+            let actions: [UIAlertAction] = {
+                
+                let temp: [AlertAction] = {
+                
+                    if shouldSortActions {
+                        
+                        return actions.sorted(by: { $0.info.title.size < $1.info.title.size })
+                    }
+                    
+                    return actions
+                }()
+                
+                return temp.map({ $0.systemAction }) + [.cancel()]
+            }()
+            
+            present(UIAlertController.withTitle(title, message: subtitle, style: .actionSheet, actions: actions), animated: true, completion: completion)
             
         } else {
             
@@ -116,24 +145,63 @@ extension UIViewController {
             
             vc.context = .alert
             vc.alertVC.context = context
-            vc.alertVC.actions = actions
+            vc.topHeaderMode = topHeaderMode
+            vc.alertVC.actions = {
+                
+                if shouldSortActions {
+                    
+                    return actions.sorted(by: { $0.info.title.size < $1.info.title.size })
+                }
+                
+                return actions
+            }()
+            
+            if let images = images {
+                
+                vc.images = images
+            }
+            
             vc.alertVC.segmentActions = segmentDetails.actions
             vc.alertVC.showMenuParameters = parameters
             vc.leftButtonAction = leftAction
             vc.rightButtonAction = rightAction
+            vc.topAction = topAction
+            vc.topPreviewAction = topPreviewAction
             vc.title = title
             vc.subtitle = subtitle
             vc.segments = segmentDetails.array
-            vc.requiresSegmentedControl = segmentDetails.array.isEmpty.inverted
-            vc.requiresTopBorderView = true
+            vc.requiresTopBorderView = {
+                
+                if case .show = context, actions.isEmpty {
+                    
+                    return false
+                }
+                
+                return title != nil || subtitle != nil
+            }()
+            vc.requiresTopView = title != nil || subtitle != nil
             
             present(vc, animated: true, completion: completion)
         }
     }
     
     /// Variadic Version
-    func showAlert(title: String?, subtitle: String? = nil, context: AlertTableViewController.Context = .other, with actions: AlertAction..., segmentDetails: SegmentDetails = ([], []), leftAction: AccessoryButtonAction? = nil, rightAction: AccessoryButtonAction? = nil, showMenuParameters parameters: [ShowMenuParameters] = [], completion: (() -> ())? = nil) {
+    func showAlert(
+        title: String?,
+        subtitle: String? = nil,
+        context: AlertTableViewController.Context = .other,
+        topHeaderMode: VerticalPresentationContainerViewController.TopHeaderMode = .bar,
+        with actions: AlertAction...,
+        shouldSortActions: Bool = true,
+        segmentDetails: SegmentDetails = ([], []),
+        leftAction: AccessoryButtonAction? = nil,
+        rightAction: AccessoryButtonAction? = nil,
+        images: HeaderButtonImages? = nil,
+        topAction: UnwindAction? = nil,
+        topPreviewAction: PreviewAction? = nil,
+        showMenuParameters parameters: [ShowMenuParameters] = [],
+        completion: (() -> ())? = nil) {
         
-        showAlert(title: title, subtitle: subtitle, context: context, with: actions, segmentDetails: segmentDetails, leftAction: leftAction, rightAction: rightAction, showMenuParameters: parameters, completion: completion)
+        showAlert(title: title, subtitle: subtitle, context: context, topHeaderMode: topHeaderMode, with: actions, shouldSortActions: shouldSortActions, segmentDetails: segmentDetails, leftAction: leftAction, rightAction: rightAction, topAction: topAction, topPreviewAction: topPreviewAction, showMenuParameters: parameters, completion: completion)
     }
 }

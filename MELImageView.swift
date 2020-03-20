@@ -25,6 +25,8 @@ class MELImageView: UIImageView {
             changeThemeColor()
         }
     }
+    
+    @objc var reversed = false
 
     override func awakeFromNib() {
         
@@ -57,6 +59,6 @@ class MELImageView: UIImageView {
     
     @objc func changeThemeColor() {
         
-        tintColor = lightOverride ? Themer.tempInactiveColours : Themer.textColour(for: greyOverride ? .subtitle : .title)
+        tintColor = reversed ? (lightOverride ? Themer.reversedTempInactiveColours : Themer.reversedTextColour(for: greyOverride ? .subtitle : .title)) : (lightOverride ? Themer.tempInactiveColours : Themer.textColour(for: greyOverride ? .subtitle : .title))
     }
 }

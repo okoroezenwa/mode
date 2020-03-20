@@ -469,7 +469,7 @@ extension TableViewContainer {
                     
                     default: break
                 }
-            } else {  }
+            }
             
             guard !weakOperation.isCancelled else {
                 
@@ -851,16 +851,16 @@ extension TopScrollable {
 
 protocol Detailing {
     
-    func goToDetails(basedOn entity: Entity) -> (entities: [Entity], albumArtOverride: Bool)
+    func goToDetails(basedOn entityType: EntityType) -> (entities: [EntityType], albumArtOverride: Bool)
 }
 
 extension Detailing {
     
-    func getActionDetails(from action: SongAction, indexPath: IndexPath, actionable: SingleItemActionable?, vc: UIViewController?, entityType: Entity, entity: MPMediaEntity, useAlternateTitle alternateTitle: Bool = false) -> ActionDetails? {
+    func getActionDetails(from action: SongAction, indexPath: IndexPath, actionable: SingleItemActionable?, vc: UIViewController?, entityType: EntityType, entity: MPMediaEntity, useAlternateTitle alternateTitle: Bool = false) -> ActionDetails? {
         
         guard let actionable = actionable, let vc = vc else { return nil }
         
-        return actionable.singleItemActionDetails(for: action, entity: entityType, using: entity, from: vc, useAlternateTitle: alternateTitle)
+        return actionable.singleItemActionDetails(for: action, entityType: entityType, using: entity, from: vc, useAlternateTitle: alternateTitle)
     }
 }
 

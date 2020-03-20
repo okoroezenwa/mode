@@ -139,6 +139,8 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
     var ignorePropertyChange = false
     var collectionView: UICollectionView?
     
+    var needsToUpdateHeaderView = false
+    
     @objc lazy var refresher: Refresher = { Refresher.init(refreshable: self) }()
     
     @objc weak var entityVC: EntityItemsViewController? { return parent as? EntityItemsViewController }
@@ -325,11 +327,6 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
         let swipeLeft = UISwipeGestureRecognizer.init(target: songManager, action: #selector(SongActionManager.toggleEditing(_:)))
         swipeLeft.direction = .left
         tableView.addGestureRecognizer(swipeLeft)
-        
-        let itemOptionsHold = UILongPressGestureRecognizer.init(target: tableDelegate, action: #selector(TableDelegate.showOptions(_:)))
-        itemOptionsHold.minimumPressDuration = longPressDuration
-        tableView.addGestureRecognizer(itemOptionsHold)
-        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: itemOptionsHold))
     }
     
     @objc func revealEntity(_ sender: Any) {
@@ -374,7 +371,7 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
             let duration = collection.totalDuration.stringRepresentation(as: .short)
             let created = collection.recentlyAdded.timeIntervalSinceNow.shortStringRepresentation
             let plays = collection.totalPlays.formatted
-            let count = collection.count.fullCountText(for: .song, capitalised: true)
+            let count = collection.count.fullCountText(for: .song, capitalised: false)
             let totalSize = FileSize.init(actualSize: collection.totalSize).actualSize.fileSizeRepresentation
             
             guard weakSelf.supplementaryOperation?.isCancelled == false else { return }
@@ -433,6 +430,12 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
             
             invokeSearch()
             wasFiltering = false
+        }
+        
+        if needsToUpdateHeaderView {
+            
+            prepareSupplementaryInfo()
+            needsToUpdateHeaderView = false
         }
         
         entityVC?.setCurrentOptions()

@@ -71,13 +71,13 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
             }
         }
         
-        var entityType: Entity {
+        var entityType: EntityType {
             
             switch self {
                 
                 case .songs: return .song
                 
-                case .collections(_, let kind): return kind.entity
+                case .collections(_, let kind): return kind.entityType
             }
         }
     }
@@ -246,6 +246,11 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         
         sender?.filtering = true
         tableContainer?.filterContainer = self
+        
+        let hold = UILongPressGestureRecognizer.init(target: tableContainer?.tableDelegate, action: #selector(TableDelegate.performHold(_:)))
+        hold.minimumPressDuration = longPressDuration
+        hold.delegate = self
+        tableView?.addGestureRecognizer(hold)
         
 //        let refreshControl = MELRefreshControl.init()
 //        refreshControl.addTarget(refresher, action: #selector(Refresher.refresh(_:)), for: .valueChanged)
@@ -594,7 +599,7 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
                 
                 case .songs: return .song
                 
-                case .collections(_, kind: let kind): return kind.entity
+                case .collections(_, kind: let kind): return kind.entityType
             }
         }())
     }
@@ -632,8 +637,6 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
             array.append(shuffleAlbums)
             
             showAlert(title: "Filtered Items", with: array)
-            
-//            present(UIAlertController.withTitle(nil, message: "Filtered Items", style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
             
         } else {
             
@@ -807,6 +810,19 @@ extension FilterViewController: UITableViewDelegate, UITableViewDataSource {
         guard filtering else { return }
         
         tableContainer?.tableDelegate.tableView(tableView, commit: editingStyle, forRowAt: indexPath, filtering: true)
+    }
+}
+
+extension FilterViewController: UIGestureRecognizerDelegate {
+    
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        
+        if let _ = gestureRecognizer as? UILongPressGestureRecognizer {
+            
+            return gestureRecognizer.location(in: parent?.view).x > 22
+        }
+        
+        return true
     }
 }
 

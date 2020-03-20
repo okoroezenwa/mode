@@ -57,14 +57,7 @@ class GestureSelectableCollectionViewCell: UICollectionViewCell {
         
         didSet {
             
-            guard useBorderView else {
-                
-                selectedBorderView.isHidden = true
-                
-                return
-            }
-            
-            selectedBorderView.isHidden = !self.isHighlighted
+            update(for: isSelected ? .selected : isHighlighted ? .highlighted : .untouched)
         }
     }
     
@@ -72,14 +65,7 @@ class GestureSelectableCollectionViewCell: UICollectionViewCell {
         
         didSet {
             
-            guard useBorderView else {
-                
-                selectedBorderView.isHidden = true
-                
-                return
-            }
-            
-            selectedBorderView.isHidden = !self.isSelected
+            update(for: isSelected ? .selected : isHighlighted ? .highlighted : .untouched)
         }
     }
     
@@ -89,6 +75,32 @@ class GestureSelectableCollectionViewCell: UICollectionViewCell {
         
         selectedBorderView.layer.setRadiusTypeIfNeeded()
         selectedBorderView.layer.cornerRadius = 14
+    }
+    
+    func update(for state: CellState) {
+        
+        if useBorderView {
+            
+            selectedBorderView.alphaOverride = state == .selected ? 1 : 0
+            selectedBorderView.isHidden = state == .untouched
+            
+        } else {
+            
+//            selectedBorderView.isHidden = true
+            
+            if let borderView = selectedBackgroundView as? MELBorderView {
+                
+                borderView.alphaOverride = state == .selected ? 1 : 0
+                borderView.isHidden = state == .untouched
+            }
+        }
+        
+        titleLabel.reversed = state == .selected
+        titleLabel.changeThemeColor()
+        subtitleLabel.reversed = state == .selected
+        subtitleLabel.changeThemeColor()
+        imageView.reversed = state == .selected
+        imageView.changeThemeColor()
     }
     
     func prepare(with title: String?, subtitle: String? = nil, image: UIImage? = nil, style: TextStyle = .body, switchDetails: (isOn: Bool, action: () -> ())? = nil) {

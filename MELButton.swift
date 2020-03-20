@@ -40,6 +40,7 @@ class MELButton: UIButton {
     
     @objc var temp = false
     @objc var ignoreTheme = false
+    @objc var reversed = false
     
     var attributes: [Attributes]? {
         
@@ -120,7 +121,7 @@ class MELButton: UIButton {
     
     @objc func changeThemeColor() {
         
-        let colour = lightOverride ? Themer.tempInactiveColours : Themer.textColour(for: greyOverride ? .subtitle : .title)
+        let colour = reversed ? (lightOverride ? Themer.reversedTempInactiveColours : Themer.reversedTextColour(for: greyOverride ? .subtitle : .title)) : (lightOverride ? Themer.tempInactiveColours : Themer.textColour(for: greyOverride ? .subtitle : .title))
         tintColor = colour
         setTitleColor(colour, for: .normal)
         

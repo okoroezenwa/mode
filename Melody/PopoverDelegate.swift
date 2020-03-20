@@ -26,14 +26,19 @@ class PopoverDelegate: NSObject, UIPopoverPresentationControllerDelegate {
             vc.preferredContentSize = size
         }
         
-        vc.view.backgroundColor = .clear//UIDevice.current.isBlurAvailable ? .clear : darkTheme ? UIColor.darkGray : .white
+        vc.view.backgroundColor = .clear
         
         if let popover = vc.popoverPresentationController {
             
             popover.delegate = self
             popover.sourceRect = sourceRect
             popover.sourceView = view
-            popover.backgroundColor = darkTheme ? UIColor.darkGray.withAlphaComponent(UIDevice.current.isBlurAvailable ? 0.5 : 1) : UIColor.white.withAlphaComponent(UIDevice.current.isBlurAvailable ? 0.6 : 1)
+            
+            if #available(iOS 13, *) { } else {
+            
+                popover.backgroundColor = darkTheme ? UIColor.darkGray.withAlphaComponent(UIDevice.current.isBlurAvailable ? 0.5 : 1) : UIColor.white.withAlphaComponent(UIDevice.current.isBlurAvailable ? 0.6 : 1)
+            }
+            
             popover.permittedArrowDirections = directions
         }
     }

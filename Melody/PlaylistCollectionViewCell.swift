@@ -29,11 +29,11 @@ class PlaylistCollectionViewCell: UICollectionViewCell, ArtworkContainingCell {
     @IBOutlet var stackView: UIStackView!
     @IBOutlet var stackViewTopConstraint: NSLayoutConstraint!
     
-    var details: (entity: Entity, width: CGFloat?) = (.playlist, nil) {
+    var details: (entityType: EntityType, width: CGFloat?) = (.playlist, nil) {
 
         didSet {
 
-            guard !(details.entity == oldValue.entity && details.width == oldValue.width), let _ = artworkContainer, let _ = artworkImageView, let _ = selectedView else { return }
+            guard !(details.entityType == oldValue.entityType && details.width == oldValue.width), let _ = artworkContainer, let _ = artworkImageView, let _ = selectedView else { return }
             
             updateCornersAndShadows()
         }
@@ -84,7 +84,7 @@ class PlaylistCollectionViewCell: UICollectionViewCell, ArtworkContainingCell {
         
         [artworkImageView, selectedView].forEach({
             
-            (listsCornerRadius ?? cornerRadius).updateCornerRadius(on: $0?.layer, width: (details.width ?? artworkImageView.bounds.width) - 16, entityType: details.entity, globalRadiusType: cornerRadius)
+            (listsCornerRadius ?? cornerRadius).updateCornerRadius(on: $0?.layer, width: (details.width ?? artworkImageView.bounds.width) - 16, entityType: details.entityType, globalRadiusType: cornerRadius)
         })
         
         UniversalMethods.addShadow(to: artworkContainer, radius: 4, opacity: 0.35, shouldRasterise: true)
@@ -226,8 +226,8 @@ class PlaylistCollectionViewCell: UICollectionViewCell, ArtworkContainingCell {
     
     func prepare(with collection: MPMediaItemCollection, kind: AlbumBasedCollectionKind, editing: Bool = false) {
         
-        nameLabel.textAlignment = .center
-        songCountLabel.textAlignment = .center
+//        nameLabel.textAlignment = .center
+//        songCountLabel.textAlignment = .center
         
         nameLabel.text = {
             

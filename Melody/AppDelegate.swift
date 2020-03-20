@@ -9,9 +9,10 @@
 import UIKit
 import StoreKit
 import CoreData
+import NotificationCenter
 
 let appDelegate = UIApplication.shared.delegate as! AppDelegate
-public var musicPlayer: MPMusicPlayerController {
+public let musicPlayer: MPMusicPlayerController = {
     
     if #available(iOS 10.3, *), !useSystemPlayer {
 
@@ -21,7 +22,7 @@ public var musicPlayer: MPMusicPlayerController {
     
         return .systemMusicPlayer
     }
-}
+}()
 public let musicLibrary = MPMediaLibrary.default()
 
 @UIApplicationMain
@@ -59,7 +60,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         musicLibrary.beginGeneratingLibraryChangeNotifications()
         musicPlayer.beginGeneratingPlaybackNotifications()
-        window?.tintColor = .black
         
         prefs.removeObject(forKey: .activeFont)
         
@@ -79,6 +79,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         })
         
         if #available(iOS 13, *) {
+            
+            setTintColour()
         
             notifier.addObserver(forName: .themeChanged, object: nil, queue: nil, using: { [weak self] _ in
                 
@@ -93,7 +95,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         case .dark: return .dark
                     }
                 }()
+                
+                self?.setTintColour()
             })
+        
+        } else {
+            
+            window?.tintColor = .black
         }
         
         performLaunchChecks()
@@ -159,6 +167,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        }
         
         return true
+    }
+    
+    @available(iOS 13, *)
+    func setTintColour() {
+        
+        window?.tintColor = {
+        
+            switch appTheme {
+                
+                case .system: return window?.traitCollection.userInterfaceStyle == .dark ? .white : .black
+                
+                case .light: return .black
+                
+                case .dark: return .white
+            }
+        }()
     }
     
     @objc func updateLibrary() {

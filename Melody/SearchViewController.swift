@@ -54,7 +54,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
     
     @objc let presenter = NavigationAnimationController()
     @objc var recentSearches = [RecentSearch]()
-    var currentEntity = Entity.artist
+    var currentEntity = EntityType.artist
     @objc var filtering = false {
         
         didSet {
@@ -296,7 +296,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         swipeLeft.direction = .left
         tableView.addGestureRecognizer(swipeLeft)
         
-        let hold = UILongPressGestureRecognizer.init(target: self, action: #selector(showOptions(_:)))
+        let hold = UILongPressGestureRecognizer.init(target: self, action: #selector(performHold(_:)))
         hold.minimumPressDuration = longPressDuration
         tableView.addGestureRecognizer(hold)
         LongPressManager.shared.gestureRecognisers.append(Weak.init(value: hold))
@@ -327,6 +327,59 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         borderedButtons = array
         
         updateButtons()
+    }
+    
+    @objc func performHold(_ sender: UILongPressGestureRecognizer) {
+        
+        guard filtering else { return }
+        
+        switch sender.state {
+            
+            case .began:
+            
+                guard let indexPath = tableView.indexPathForRow(at: sender.location(in: tableView)), let cell = tableView.cellForRow(at: indexPath) as? SongTableViewCell, let entity = getEntity(at: indexPath) else { return }
+                
+                let location = sender.location(in: cell)
+                
+                if cell.editingView.frame.contains(location) {
+                    
+                    Transitioner.shared.performDeepSelection(from: self, title: cell.nameLabel.text)
+                    
+                } else if cell.mainView.convert(cell.infoButton.frame, to: cell).contains(location) {
+                    
+                    singleItemActionDetails(for: .show(title: cell.nameLabel.text, context: context(from: indexPath), canDisplayInLibrary: true), entityType: sectionDetails[indexPath.section].category.entityType, using: entity, from: self, useAlternateTitle: true).handler()
+                
+                } else if musicPlayer.nowPlayingItem != nil, cell.mainView.convert(cell.playButton.frame, to: cell).contains(location) == true {
+                    
+                    singleItemActionDetails(for: .queue(name: cell.nameLabel.text, query: nil), entityType: sectionDetails[indexPath.section].category.entityType, using: entity, from: self).handler()
+                    
+                } else {
+                    
+                    var actions = [
+                        SongAction.collect,
+                        .info(context: context(from: indexPath)),
+                        .queue(name: cell.nameLabel.text, query: nil),
+                        .newPlaylist,
+                        .addTo,
+                        .show(title: cell.nameLabel.text, context: context(from: indexPath), canDisplayInLibrary: true),
+                        .search(unwinder: nil)].map({ singleItemAlertAction(for: $0, entityType: .song, using: entity, from: self) })
+                    
+                    if let item = entity as? MPMediaItem, item.existsInLibrary.inverted {
+                        
+                        actions.append(singleItemAlertAction(for: .library, entityType: .song, using: item, from: self))
+                    }
+                    
+                    showAlert(title: cell.nameLabel.text, with: actions)
+                }
+            
+            case .changed, .ended:
+            
+                guard let top = topViewController as? VerticalPresentationContainerViewController else { return }
+            
+                top.gestureActivated(sender)
+            
+            default: break
+        }
     }
     
     @objc func showOptions(_ sender: Any) {
@@ -1062,7 +1115,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         }
     }
     
-    func goToDetails(basedOn entity: Entity) -> (entities: [Entity], albumArtOverride: Bool) {
+    func goToDetails(basedOn entity: EntityType) -> (entities: [EntityType], albumArtOverride: Bool) {
         
         switch entity {
             
@@ -1185,7 +1238,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
                 let collection = collectionArray(from: sectionDetails[indexPath.section].category)[indexPath.row]
             
                 cell.prepare(for: sectionDetails[indexPath.section].category.albumBasedCollectionKind, with: collection, number: songCountVisible.inverted ? nil : indexPath.row + 1)
-                updateImageView(using: collection, entityType: sectionDetails[indexPath.section].category.entity, in: cell, indexPath: indexPath, reusableView: tableView, overridable: self)
+                updateImageView(using: collection, entityType: sectionDetails[indexPath.section].category.entityType, in: cell, indexPath: indexPath, reusableView: tableView, overridable: self)
         }
         
         cell.delegate = self
@@ -1279,7 +1332,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
                     
                     case .artists, .genres, .composers:
                     
-                        currentEntity = sectionDetails[indexPath.section].category.entity
+                        currentEntity = sectionDetails[indexPath.section].category.entityType
                         performSegue(withIdentifier: "toArtist", sender: collectionArray(from: sectionDetails[indexPath.section].category)[indexPath.row])
                     
                     case .albums:
@@ -1344,6 +1397,24 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
         
         return filtering.inverted
     }
+    
+//    @available(iOS 13, *)
+//    func tableView(_ tableView: UITableView, shouldBeginMultipleSelectionInteractionAt indexPath: IndexPath) -> Bool {
+//
+//        return true
+//    }
+//
+//    @available(iOS 13, *)
+//    func tableView(_ tableView: UITableView, didBeginMultipleSelectionInteractionAt indexPath: IndexPath) {
+//
+//        songManager.toggleEditing(self)
+//    }
+//
+//    @available(iOS 13, *)
+//    func tableViewDidEndMultipleSelectionInteraction(_ tableView: UITableView) {
+//
+//        songManager.toggleEditing(self)
+//    }
 }
 
 // MARK: - SearchBar
@@ -1432,7 +1503,7 @@ extension SearchViewController: UIViewControllerPreviewingDelegate {
         
         previewingContext.sourceRect = cell.frame
         
-        return Transitioner.shared.transition(to: sectionDetails[indexPath.section].category.entity, vc: vc, from: self, sender: collectionArray(from: sectionDetails[indexPath.section].category)[indexPath.row], preview: true)
+        return Transitioner.shared.transition(to: sectionDetails[indexPath.section].category.entityType, vc: vc, from: self, sender: collectionArray(from: sectionDetails[indexPath.section].category)[indexPath.row], preview: true)
     }
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
@@ -1561,8 +1632,6 @@ extension SearchViewController: EntityCellDelegate {
                 
                 showAlert(title: cell.nameLabel.text, with: array)
                 
-//                present(UIAlertController.withTitle(cell.nameLabel.text, message: nil, style: .actionSheet, actions: array + [.cancel()]), animated: true, completion: nil)
-                
             } else {
                 
                 musicPlayer.play(songs, startingFrom: nil, from: self, withTitle: cell.nameLabel.text, alertTitle: "Play", completion: { self.saveRecentSearch(withTitle: self.searchBar?.text, resignFirstResponder: false) })
@@ -1603,11 +1672,18 @@ extension SearchViewController: EntityCellDelegate {
             
         }(), count > 0 else { return }
         
-        var actions = [SongAction.collect, .info(context: context(from: indexPath)), .queue(name: cell.nameLabel.text, query: nil), .newPlaylist, .addTo].map({ singleItemAlertAction(for: $0, entity: .song, using: entity, from: self) })
+        var actions = [
+            SongAction.collect,
+            .info(context: context(from: indexPath)),
+            .queue(name: cell.nameLabel.text, query: nil),
+            .newPlaylist,
+            .addTo,
+            .show(title: cell.nameLabel.text, context: context(from: indexPath), canDisplayInLibrary: true),
+            .search(unwinder: nil)].map({ singleItemAlertAction(for: $0, entityType: sectionDetails[indexPath.section].category.entityType, using: entity, from: self) })
         
         if let item = entity as? MPMediaItem, item.existsInLibrary.inverted {
             
-            actions.insert(singleItemAlertAction(for: .library, entity: .song, using: item, from: self), at: 3)
+            actions.append(singleItemAlertAction(for: .library, entityType: .song, using: item, from: self))
         }
         
         showAlert(title: cell.nameLabel.text, with: actions)

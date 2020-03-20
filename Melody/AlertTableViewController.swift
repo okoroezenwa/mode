@@ -8,8 +8,8 @@
 
 import UIKit
 
-typealias ShowMenuParameters = (collection: MPMediaItemCollection?, entityType: Entity)
-typealias ShowMenuImageInfo = (image: UIImage?, entityType: Entity)
+typealias ShowMenuParameters = (collection: MPMediaItemCollection?, entityType: EntityType)
+typealias ShowMenuImageInfo = (image: UIImage?, entityType: EntityType)
 
 class AlertTableViewController: UITableViewController, PreviewTransitionable {
     
@@ -42,7 +42,7 @@ class AlertTableViewController: UITableViewController, PreviewTransitionable {
     lazy var imageInfo = [ShowMenuImageInfo]()
     
     var segmentActions = [((UIViewController?) -> ())]()
-    var queueInsertController: QueueInsertController?
+    lazy var queueInsertController = QueueInsertController.init(vc: self)
 
     override func viewDidLoad() {
         
@@ -51,8 +51,13 @@ class AlertTableViewController: UITableViewController, PreviewTransitionable {
         verticalPresentedVC?.containerViewHeightConstraint.constant = (FontManager.shared.alertCellHeight + 2) * CGFloat(actions.count)
         
         if case .queue = context {
+
+            verticalPresentedVC?.setTitle(queueInsertController.labelTitle)
+        }
+        
+        if case .show = context {
             
-            queueInsertController = QueueInsertController.init(vc: self)
+            verticalPresentedVC?.leftButton.setImage(#imageLiteral(resourceName: "Search13"), for: .normal)
         }
         
         verticalPresentedVC?.view.layoutIfNeeded()
@@ -65,11 +70,11 @@ class AlertTableViewController: UITableViewController, PreviewTransitionable {
         
         if case .select = context {
             
-            verticalPresentedVC?.selectedSegmentedIndexPath = .init(item: 0, section: 0)
+            verticalPresentedVC?.selectedCollectionIndexPath = .init(item: 0, section: 0)
         
         } else if case .other = context, verticalPresentedVC?.segments.isEmpty == false {
             
-            verticalPresentedVC?.selectedSegmentedIndexPath = .init(item: 0, section: 0)
+            verticalPresentedVC?.selectedCollectionIndexPath = .init(item: 0, section: 0)
         }
         
         registerForPreviewing(with: self, sourceView: tableView)
@@ -233,24 +238,18 @@ extension AlertTableViewController: SegmentedResponder {
             
                 switch index {
             
-                    case 0: queueInsertController?.addToQueue(.next)
+                    case 0: queueInsertController.addToQueue(.next)
                     
-                    case 1: queueInsertController?.addToQueue(.after)
+                    case 1: queueInsertController.addToQueue(.after)
                     
-                    case 2: queueInsertController?.addToQueue(.last)
+                    case 2: queueInsertController.addToQueue(.last)
                     
                     default: break
                 }
             
-            case .select:
-                
-                segmentActions[index](self)
-                verticalPresentedVC?.selectedSegmentedIndexPath = .init(item: index, section: 0)
+            case .select: segmentActions[index](self)
             
-            case .other:
-            
-                segmentActions[index](self)
-                verticalPresentedVC?.selectedSegmentedIndexPath = .init(item: index, section: 0)
+            case .other: segmentActions[index](self)
         }
     }
 }
@@ -278,7 +277,14 @@ extension AlertTableViewController: GestureSelectable {
             case .ended:
             
                 guard let indexPath = selectedIndexPath else { return }
-            
+                
+                if let cell = tableView.cellForRow(at: indexPath) as? SettingsTableViewCell, let view = cell.accessoryButton.superview, view.convert(cell.accessoryButton.frame, to: cell.contentView).contains(sender.location(in: cell)) {
+                    
+                    accessoryButtonTapped(in: cell)
+                    
+                    return
+                }
+                
                 self.tableView(tableView, didSelectRowAt: indexPath)
         
             default: noSelection()
@@ -291,32 +297,6 @@ extension AlertTableViewController: GestureSelectable {
             
             selectedIndexPath = nil
             tableView.deselectRow(at: indexPath, animated: false)
-        }
-    }
-}
-
-extension AlertTableViewController: StaticOptionResponder {
-    
-    func selectedStaticOption(at index: Int) {
-        
-        switch context {
-            
-            case .queue:
-            
-                switch index {
-            
-                    case 0: queueInsertController?.addToQueue(.next)
-                    
-                    case 1: queueInsertController?.addToQueue(.after)
-                    
-                    case 2: queueInsertController?.addToQueue(.last)
-                    
-                    default: break
-                }
-            
-            case .other, .show: break
-            
-            case .select: verticalPresentedVC?.selectedStaticIndexPath = nil
         }
     }
 }

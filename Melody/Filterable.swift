@@ -197,7 +197,7 @@ extension Filterable {
                     case .playlist: return (collection as? MPMediaPlaylist)?.validName.lowercased().folded
                 }
             
-            case .artwork: return collection.customArtwork(for: kind.entity) != nil
+            case .artwork: return collection.customArtwork(for: kind.entityType) != nil
             
                 /*switch kind {
                     
@@ -264,7 +264,7 @@ extension Filterable {
                     
                     default:
                         
-                        let count = MPMediaQuery.init(filterPredicates: [.for(kind.entity, using: collection)]).cloud.grouped(by: .album).collections?.count
+                        let count = MPMediaQuery.init(filterPredicates: [.for(kind.entityType, using: collection)]).cloud.grouped(by: .album).collections?.count
                         
                         return count
                 }
@@ -531,8 +531,8 @@ extension Filterable {
                     
                     case .isExactly: return collections.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return filterTerm(from: $0, kind: kind) as? String == (term as? String)?.lowercased().folded })
                     
-                    case .contains: return collections.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return ((filterTerm(from: $0, kind: kind) as? String)?.score(word: (term as? String ?? "").lowercased().folded, fuzziness: 1 - filterFuzziness) ?? 0) >= 0.5 || (filterTerm(from: $0, kind: kind) as? String)?.range(of: (term as? String ?? "").lowercased().folded) != nil })
-                    
+                    case .contains: return collections.filter({ ((filterTerm(from: $0, kind: kind) as? String)?.score(word: (term as? String ?? "").lowercased().folded, fuzziness: 1 - filterFuzziness) ?? 0) >= 0.5 || (filterTerm(from: $0, kind: kind) as? String)?.range(of: (term as? String ?? "").lowercased().folded) != nil }, until: { filterOperation?.isCancelled == true })
+                            
                     case .beginsWith: return collections.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return (filterTerm(from: $0, kind: kind) as? String)?.hasPrefix((term as? String ?? "").lowercased().folded) == true })
                     
                     case .endsWith: return collections.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return (filterTerm(from: $0, kind: kind) as? String)?.hasSuffix((term as? String ?? "").lowercased().folded) == true })

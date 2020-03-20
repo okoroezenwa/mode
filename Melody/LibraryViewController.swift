@@ -34,6 +34,7 @@ class LibraryViewController: UIViewController, Contained, OptionsContaining, Nav
     var section: LibrarySection { return sectionOverride ?? LibrarySection(rawValue: lastUsedLibrarySection) ?? .artists }
     var sectionOverride: LibrarySection?
     var changeActiveVC = true
+    var shouldSetTitles = true
     var highlightedEntities: (song: MPMediaItem?, collection: MPMediaItemCollection?)?
     
     var options: LibraryOptions {
@@ -378,7 +379,7 @@ class LibraryViewController: UIViewController, Contained, OptionsContaining, Nav
     
     func updateViews(inSection section: LibrarySection, count: Int, setTitle: Bool) {
         
-        let text = count.fullCountText(for: section.entity, compilationOverride: section == .compilations, capitalised: true)
+        let text = count.fullCountText(for: section.entityType, compilationOverride: section == .compilations, capitalised: true)
         
         title = text
         preferredTitle = section.title.capitalized

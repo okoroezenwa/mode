@@ -82,16 +82,6 @@ class Refresher: NSObject {
                     }
                 })
             
-//                vc.present(UIAlertController.withTitle(nil, message: nil, style: .actionSheet, actions: filter, reload, offline, theme, .cancel()), animated: true, completion: { [weak self] in
-//
-//                    guard let weakSelf = self else { return }
-//
-//                    if let refreshable = weakSelf.refreshable, abs(refreshable.tableView.contentOffset.y) > 10 {
-//
-//                        refreshable.tableView.setContentOffset(.zero, animated: true)
-//                    }
-//                })
-            
             case .filter:
                 
                 guard let filter = refreshable as? Filterable else {

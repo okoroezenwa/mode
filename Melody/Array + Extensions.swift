@@ -27,6 +27,15 @@ extension Array {
         return array
     }
     
+    func inserting<C>(contentsOf newElements: C, at index: Index) -> [Element] where C: Collection, Element == C.Element {
+        
+        var array = self
+        
+        array.insert(contentsOf: newElements, at: index)
+        
+        return array
+    }
+    
     func appending(_ element: Element) -> [Element] {
         
         var array = self
@@ -34,6 +43,38 @@ extension Array {
         array.append(element)
         
         return array
+    }
+    
+    /**
+     Appends an element to this array if the passed condition is met.
+     
+     - Parameters:
+     
+        - element: The element to append.
+        - predicate: The condition on which to append the given element.
+     */
+    mutating func append(_ element: Element, if predicate: Bool) {
+        
+        if predicate {
+            
+            append(element)
+        }
+    }
+    
+    /**
+    Appends a sequence to this array if the passed condition is met.
+    
+    - Parameters:
+    
+       - sequence: The sequence whose contents to append.
+       - predicate: The condition on which to append the given element.
+    */
+    mutating func append<S>(contentsOf sequence: S, if predicate: Bool) where Element == S.Element, S: Sequence {
+        
+        if predicate {
+            
+            append(contentsOf: sequence)
+        }
     }
     
     func appending<S>(contentsOf sequence: S) -> [Element] where Element == S.Element, S: Sequence {
@@ -73,6 +114,11 @@ extension Array where Element: Equatable {
         
         return firstIndex(of: element)
     }
+    
+//    func removing<S>(contentsOf sequence: S) -> [Element] where Element == S.Element, S: Sequence {
+//
+//        return self.filter({ element in sequence.contains(where: { element == $0 }).inverted })
+//    }
     
     func reorder(by preferredOrder: [Element]) -> [Element] {
         
@@ -117,6 +163,13 @@ extension Array where Element: Hashable {
         var new = self
         new.removeDuplicates()
         return new
+    }
+    
+    func removing<S>(contentsOf sequence: S) -> [Element] where Element == S.Element, S: Sequence {
+        
+        let set = Set(sequence)
+        
+        return self.filter({ set.contains($0).inverted })
     }
 }
 

@@ -42,6 +42,14 @@ class MELBorderView: UIView {
         }
     }
     
+    var updateTheme = true {
+        
+        didSet {
+            
+            if updateTheme { changeThemeColor() }
+        }
+    }
+    
     @objc var desiredAlpha: CGFloat = 1
 
     override func awakeFromNib() {
@@ -85,6 +93,8 @@ class MELBorderView: UIView {
     
     @objc func changeThemeColor() {
         
+        guard updateTheme else { return }
+        
         guard !temp else {
             
             layer.borderColor = (greyOverride ? Themer.borderViewColor(withAlphaOverride: alphaOverride) : Themer.tempActiveColours).cgColor
@@ -92,7 +102,7 @@ class MELBorderView: UIView {
             return
         }
         
-        layer.borderColor = bordered ? Themer.borderViewColor(withAlphaOverride: alphaOverride).cgColor : nil
+        layer.borderColor = bordered ? (reversed ? Themer.reversedBorderViewColor(withAlphaOverride: alphaOverride) : Themer.borderViewColor(withAlphaOverride: alphaOverride)).cgColor : UIColor.clear.cgColor
         
         backgroundColor = {
             
@@ -102,7 +112,7 @@ class MELBorderView: UIView {
                 
             } else {
                 
-                return clear ? .clear : reversed ? Themer.reversedBorderViewColor(withAlphaOverride: alphaOverride) : Themer.borderViewColor(withAlphaOverride: alphaOverride)
+                return clear ? .clear : (reversed ? Themer.reversedBorderViewColor(withAlphaOverride: alphaOverride) : Themer.borderViewColor(withAlphaOverride: alphaOverride))
             }
         }()
     }

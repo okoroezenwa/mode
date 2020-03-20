@@ -312,7 +312,7 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
     
     @objc func prepareSupplementaryInfo(animated: Bool = true) {
         
-        headerView.groupingButton.setTitle((playlistQuery?.items ?? []).count.fullCountText(for: .song, capitalised: true), for: .normal)
+        headerView.groupingButton.setTitle((playlistQuery?.items ?? []).count.fullCountText(for: .song, capitalised: false), for: .normal)
         
         if animated {
             
@@ -531,12 +531,6 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
         let swipeLeft = UISwipeGestureRecognizer.init(target: songManager, action: #selector(SongActionManager.toggleEditing(_:)))
         swipeLeft.direction = .left
         tableView.addGestureRecognizer(swipeLeft)
-        
-        let optionsHold = UILongPressGestureRecognizer.init(target: tableDelegate, action: #selector(TableDelegate.showOptions(_:)))
-        optionsHold.minimumPressDuration = longPressDuration
-        optionsHold.delegate = self
-        tableView.addGestureRecognizer(optionsHold)
-        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: optionsHold))
     }
     
     @objc func revealEntity(_ sender: Any) {

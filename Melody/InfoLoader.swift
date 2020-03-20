@@ -45,7 +45,7 @@ extension InfoLoading {
                 return nil
             }()
             
-            if let image = (entity as? MPMediaItemCollection)?.customArtwork(for: infoVC.context.entity)?.scaled(to: infoVC.artworkImageView.bounds.size, by: 2) ?? item?.actualArtwork?.image(at: infoVC.artworkImageView.bounds.size) {
+            if let image = (entity as? MPMediaItemCollection)?.customArtwork(for: infoVC.context.entityType)?.scaled(to: infoVC.artworkImageView.bounds.size, by: 2) ?? item?.actualArtwork?.image(at: infoVC.artworkImageView.bounds.size) {
                 
                 OperationQueue.main.addOperation({
                     
@@ -145,7 +145,7 @@ extension InfoLoading {
         }
     }
     
-    func updateImageView(using collection: MPMediaItemCollection, entityType type: Entity, in cell: ArtworkContainingCell, indexPath: IndexPath, reusableView: AnyObject, overridable: OnlineOverridable? = nil) {
+    func updateImageView(using collection: MPMediaItemCollection, entityType type: EntityType, in cell: ArtworkContainingCell, indexPath: IndexPath, reusableView: AnyObject, overridable: OnlineOverridable? = nil) {
         
         let bool: Bool = {
             

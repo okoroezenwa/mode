@@ -68,29 +68,42 @@ class RateShareView: UIView {
         notifier.addObserver(self, selector: #selector(update), name: UIApplication.willEnterForegroundNotification, object: UIApplication.shared)
     }
     
-    @objc func setLastFMAffinity(_ gr: UILongPressGestureRecognizer) {
+    @objc func setLastFMAffinity(_ sender: UILongPressGestureRecognizer) {
         
-        guard gr.state == .began, let song = entity as? MPMediaItem, let container = container else { return }
+        guard let song = entity as? MPMediaItem, let container = container else { return }
+        
+        switch sender.state {
             
-        guard Scrobbler.shared.sessionInfoObtained else {
+            case .began:
             
-            UniversalMethods.banner(withTitle: "Not logged in to Last.fm").show(for: 2)
+                guard Scrobbler.shared.sessionInfoObtained else {
+                    
+                    UniversalMethods.banner(withTitle: "Not logged in to Last.fm").show(for: 2)
+                    
+                    return
+                }
+                
+                let actions = [AlertAction.init(info: .init(title: "Loved", image: #imageLiteral(resourceName: "Loved22"), accessoryType: .none), handler: {
+                    
+                    Scrobbler.shared.love(song)
+                    container.dismiss(animated: true, completion: nil)
+                    
+                }), .init(info: .init(title: "Unloved", image: #imageLiteral(resourceName: "Unloved22"), accessoryType: .none), handler: {
+                    
+                    Scrobbler.shared.unlove(song)
+                    container.dismiss(animated: true, completion: nil)
+                })]
+                
+                container.showAlert(title: "Last.fm", subtitle: "Set as...", context: .other, with: actions)
             
-            return
+            case .changed, .ended:
+            
+                guard let top = topViewController as? VerticalPresentationContainerViewController else { return }
+            
+                top.gestureActivated(sender)
+            
+            default: break
         }
-        
-        let actions = [AlertAction.init(info: .init(title: "Loved", image: #imageLiteral(resourceName: "Loved22"), accessoryType: .none), handler: {
-            
-            Scrobbler.shared.love(song)
-            container.dismiss(animated: true, completion: nil)
-            
-        }), .init(info: .init(title: "Unloved", image: #imageLiteral(resourceName: "Unloved22"), accessoryType: .none), handler: {
-            
-            Scrobbler.shared.unlove(song)
-            container.dismiss(animated: true, completion: nil)
-        })]
-        
-        container.showAlert(title: "Last.fm", subtitle: "Set as...", context: .other, with: actions)
     }
     
     func determineOverrides() {
@@ -260,7 +273,9 @@ class RateShareView: UIView {
                     
                     guard operation?.isCancelled != true else { return }
 
-                    let images = collection.items.compactMap({ $0.actualArtwork?.image(at: $0.artwork?.bounds.size ?? .zero) })
+                    let images = collection.items.compactMap({ $0.actualArtwork?.image(at: $0.artwork?.bounds.size ?? .zero) }, until: { operation?.isCancelled == true })
+                    
+                    print(images.count)
                     
                     OperationQueue.main.addOperation { [weak self] in
                         

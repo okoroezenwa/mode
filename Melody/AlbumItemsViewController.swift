@@ -424,15 +424,10 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Inf
         swipeLeft.direction = .left
         tableView.addGestureRecognizer(swipeLeft)
         
-        let hold = UILongPressGestureRecognizer.init(target: tableDelegate, action: #selector(TableDelegate.showOptions(_:)))
-        hold.minimumPressDuration = longPressDuration
-        tableView.addGestureRecognizer(hold)
-        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: hold))
-        
-        let artistOptionsHold = UILongPressGestureRecognizer.init(target: self, action: #selector(showArtistOptions(_:)))
-        artistOptionsHold.minimumPressDuration = longPressDuration
-        artistButton.addGestureRecognizer(artistOptionsHold)
-        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: artistOptionsHold))
+//        let artistOptionsHold = UILongPressGestureRecognizer.init(target: self, action: #selector(showArtistOptions(_:)))
+//        artistOptionsHold.minimumPressDuration = longPressDuration
+//        artistButton.addGestureRecognizer(artistOptionsHold)
+//        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: artistOptionsHold))
     }
     
     @objc func revealEntity(_ sender: Any) {
@@ -467,6 +462,24 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Inf
         performSegue(withIdentifier: "toArranger", sender: nil)
     }
     
+    func showArtistActions() {
+        
+        guard let artist = getArtist(from: album?.representativeItem) else { return }
+        
+        var array = [SongAction.collect, .newPlaylist, .search(unwinder: nil), .show(title: artistButton.title(for: .normal), context: InfoViewController.Context.collection(kind: .albumArtist, at: 0, within: [artist]), canDisplayInLibrary: true), .addTo].map({ singleItemAlertAction(for: $0, entityType: .albumArtist, using: artist, from: self, useAlternateTitle: false) })
+        
+        let info = AlertAction.init(title: "Get Info", style: .default, requiresDismissalFirst: true, handler: { [weak self] in
+            
+            guard let weakSelf = self else { return }
+            
+            weakSelf.performSegue(withIdentifier: "toArtistOptions", sender: nil)
+        })
+        
+        array.append(info)
+        
+        showAlert(title: artistButton.title(for: .normal), with: array)
+    }
+    
     @objc func showArtistOptions(_ sender: UILongPressGestureRecognizer) {
         
         if sender.state == .began {
@@ -484,7 +497,7 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Inf
     
     @objc func updateSongsLabel(with count: Int, animated: Bool) {
         
-        headerView.groupingButton.setTitle(count.fullCountText(for: .song, capitalised: true), for: .normal)
+        headerView.groupingButton.setTitle(count.fullCountText(for: .song, capitalised: false), for: .normal)
         
         guard animated else { return }
         

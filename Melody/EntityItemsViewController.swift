@@ -19,7 +19,7 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         
         case playlist, collection, album
         
-        var entity: Entity {
+        var entityType: EntityType {
             
             switch self {
                 
@@ -31,7 +31,20 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
             }
         }
     }
-    enum StartPoint: Int { case albums, songs }
+    enum StartPoint: Int {
+        
+        case albums, songs
+        
+        var title: String {
+            
+            switch self {
+                
+                case .albums: return "albums"
+                
+                case .songs: return "songs"
+            }
+        }
+    }
     
     var options: LibraryOptions { return LibraryOptions.init(fromVC: activeChildViewController, configuration: .collection, context: contextForContainerType()) }
     
@@ -88,15 +101,34 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
     }
     var highlightedEntities: (song: MPMediaItem?, collection: MPMediaItemCollection?)?
     @objc var backLabelText: String?
-    @objc var ascending = true
+    @objc lazy var ascending: Bool = {
+        
+        let details = EntityType.collectionEntityDetails(for: location(for: .songs))
+        
+        return collectionSortOrders?[details.type.title(albumArtistOverride: true, matchingPropertyName: true) + details.startPoint.title] ?? true
+    }()
     lazy var sortCriteria: SortCriteria = {
         
-        guard isInDebugMode, entityContainerType == .collection, Set([AlbumBasedCollectionKind.artist, .albumArtist]).contains(kind) else { return .standard }
+        let details = EntityType.collectionEntityDetails(for: location(for: .songs))
         
-        return .albumName
+        guard let index = collectionSortCategories?[details.type.title(albumArtistOverride: true, matchingPropertyName: true) + details.startPoint.title], let criteria = SortCriteria(rawValue: index), SortCriteria.applicableSortCriteria(for: location(for: .songs)).contains(criteria) else { return .standard }
+        
+        return criteria
     }()
-    @objc var albumAscending = true
-    var albumSortCriteria = SortCriteria.standard
+    @objc lazy var albumAscending: Bool = {
+        
+        let details = EntityType.collectionEntityDetails(for: location(for: .albums))
+        
+        return collectionSortOrders?[details.type.title(albumArtistOverride: true, matchingPropertyName: true) + details.startPoint.title] ?? true
+    }()
+    lazy var albumSortCriteria: SortCriteria = {
+        
+        let details = EntityType.collectionEntityDetails(for: location(for: .albums))
+        
+        guard let index = collectionSortCategories?[details.type.title(albumArtistOverride: true, matchingPropertyName: true) + details.startPoint.title], let criteria = SortCriteria(rawValue: index), SortCriteria.applicableSortCriteria(for: location(for: .albums)).contains(criteria) else { return .standard }
+        
+        return criteria
+    }()
     @objc var currentItem: MPMediaItem?
     @objc var currentAlbum: MPMediaItemCollection?
     @objc var artistQuery: MPMediaQuery?
@@ -130,10 +162,15 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
     @objc lazy var temporaryEffectView = MELVisualEffectView()
     var inset: CGFloat { return VisualEffectNavigationBar.Location.entity.inset }
     lazy var preferredTitle: String? = title
+    var artistSongsVCLoaded = false
+    var artistAlbumsVCLoaded = false
+    var playlistItemsVCLoaded = false
+    var albumItemsVCLoaded = false
     
     @objc lazy var artistSongsViewController: ArtistSongsViewController = {
         
         let vc = entityStoryboard.instantiateViewController(withIdentifier: "artistSongsVC") as!  ArtistSongsViewController
+        self.artistSongsVCLoaded = true
         vc.ascending = self.ascending
         vc.staticSortCriteria = self.sortCriteria
         return vc
@@ -142,6 +179,7 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
     @objc lazy var artistAlbumsViewController: ArtistAlbumsViewController = {
         
         let vc = entityStoryboard.instantiateViewController(withIdentifier: "artistAlbumsVC") as!  ArtistAlbumsViewController
+        self.artistAlbumsVCLoaded = true
         vc.ascending = self.albumAscending
         vc.staticSortCriteria = self.albumSortCriteria
         return vc
@@ -150,6 +188,7 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
     @objc lazy var playlistItemsViewController: PlaylistItemsViewController = {
         
         let vc = entityStoryboard.instantiateViewController(withIdentifier: "playlistItems") as!  PlaylistItemsViewController
+        self.playlistItemsVCLoaded = true
         vc.ascending = self.ascending
         vc.staticSortCriteria = self.sortCriteria
         return vc
@@ -158,6 +197,7 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
     @objc lazy var albumItemsViewController: AlbumItemsViewController = {
         
         let vc = entityStoryboard.instantiateViewController(withIdentifier: "albumItems") as! AlbumItemsViewController
+        self.albumItemsVCLoaded = true
         vc.ascending = self.ascending
         vc.staticSortCriteria = self.sortCriteria
         return vc
@@ -255,6 +295,18 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         view.addGestureRecognizer(edge)
         
         firstLaunch = false
+    }
+    
+    func location(for startPoint: StartPoint) -> Location {
+        
+        switch entityContainerType {
+            
+            case .playlist: return .playlist
+            
+            case .album: return .album
+            
+            case .collection: return .collection(kind: kind, point: startPoint)
+        }
     }
     
     @objc func updateSections(_ gr: UIScreenEdgePanGestureRecognizer) {
@@ -425,15 +477,17 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
                 
                 updateable.updateWithQuery()
                 
-                if weakSelf.activeChildViewController == weakSelf.artistSongsViewController {
-                    
-                    weakSelf.artistAlbumsViewController.currentArtistQuery = weakSelf.query?.copy() as? MPMediaQuery
-                    weakSelf.artistAlbumsViewController.updateWithQuery()
-                    
-                } else if weakSelf.activeChildViewController == weakSelf.artistAlbumsViewController {
-                    
+                if weakSelf.artistSongsVCLoaded, weakSelf.activeChildViewController != weakSelf.artistSongsViewController {
+
                     weakSelf.artistSongsViewController.currentArtistQuery = weakSelf.query?.copy() as? MPMediaQuery
                     weakSelf.artistSongsViewController.updateWithQuery()
+                    weakSelf.artistSongsViewController.needsToUpdateHeaderView = true
+
+                } else if weakSelf.artistAlbumsVCLoaded, weakSelf.activeChildViewController != weakSelf.artistAlbumsViewController {
+
+                    weakSelf.artistAlbumsViewController.currentArtistQuery = weakSelf.query?.copy() as? MPMediaQuery
+                    weakSelf.artistAlbumsViewController.updateWithQuery()
+                    weakSelf.artistAlbumsViewController.needsToUpdateHeaderView = true
                 }
             }
         })
@@ -551,7 +605,7 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         }
     }
     
-    func entityForContainerType() -> Entity {
+    func entityForContainerType() -> EntityType {
         
         switch entityContainerType {
             
@@ -597,11 +651,11 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         let albumCount = query?.collections?.count ?? 0
         let songCount = query?.items?.count ?? 0
         
-        let songs = AlertAction.init(title: "Songs", subtitle: songCount.fullCountText(for: .song), style: .default, accessoryType: .check({ [weak self] in self?.activeChildViewController == self?.artistSongsViewController }), image: Entity.song.images.size22, handler: { [weak self] in self?.activeChildViewController = self?.artistSongsViewController })
+        let songs = AlertAction.init(title: "Songs", subtitle: songCount.fullCountText(for: .song), style: .default, accessoryType: .check({ [weak self] in self?.activeChildViewController == self?.artistSongsViewController }), image: EntityType.song.images.size22, handler: { [weak self] in self?.activeChildViewController = self?.artistSongsViewController })
         
-        let albums = AlertAction.init(title: "Albums", subtitle: albumCount.fullCountText(for: .album), style: .default, accessoryType: .check({ [weak self] in self?.activeChildViewController == self?.artistAlbumsViewController }), image: Entity.album.images.size22, handler: { [weak self] in self?.activeChildViewController = self?.artistAlbumsViewController })
+        let albums = AlertAction.init(title: "Albums", subtitle: albumCount.fullCountText(for: .album), style: .default, accessoryType: .check({ [weak self] in self?.activeChildViewController == self?.artistAlbumsViewController }), image: EntityType.album.images.size22, handler: { [weak self] in self?.activeChildViewController = self?.artistAlbumsViewController })
         
-        showAlert(title: title, with: songs, albums)
+        showAlert(title: title, subtitle: "Group by...", topHeaderMode: .themedImage(name: "Grouping22", height: 22), with: songs, albums)
     }
     
     @IBAction func dismissVC() {
@@ -669,13 +723,17 @@ extension EntityItemsViewController: EntityVerifiable {
             case .album: return albumItemsViewController.songs.isEmpty ? (query?.items ?? []) : albumItemsViewController.songs
             
             case .collection:
-            
-                switch startPoint {
+                
+                if artistSongsVCLoaded, activeChildViewController == artistSongsViewController {
                     
-                    case .albums: return artistAlbumsViewController.albums.isEmpty ? (query?.items ?? []) : artistAlbumsViewController.albums.reduce([], { $0 + $1.items })
+                    return artistSongsViewController.songs.isEmpty ? (query?.items ?? []) : artistSongsViewController.songs
                     
-                    case .songs: return artistSongsViewController.songs.isEmpty ? (query?.items ?? []) : artistSongsViewController.songs
+                } else if artistAlbumsVCLoaded, activeChildViewController == artistAlbumsViewController {
+                    
+                    return artistAlbumsViewController.albums.isEmpty ? (query?.items ?? []) : artistAlbumsViewController.albums.reduce([], { $0 + $1.items })
                 }
+                
+                return []
             
             case .playlist: return playlistItemsViewController.songs.isEmpty ? (query?.items ?? []) : playlistItemsViewController.songs
         }

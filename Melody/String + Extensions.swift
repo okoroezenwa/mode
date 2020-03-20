@@ -31,6 +31,7 @@ public extension String {
     static let filterViewContext = "filterViewContext"
     static let lastFMSessionKey = "lastFMSessionKey"
     static let lastFMUsername = "lastFMUsername"
+    static let `default` = "default"
     
     static func shuffle(_ suffix: ShuffleSuffix = .none) -> String {
         

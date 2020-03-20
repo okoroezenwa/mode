@@ -647,10 +647,10 @@ class ActionsViewController: UIViewController {
                 
                 if let container = appDelegate.window?.rootViewController as? ContainerViewController {
                     
-                    if container.activeViewController == container.libraryNavigationController, let sections = container.filterViewContainer.filterView.properties as? [LibrarySection], let index = sections.firstIndex(of: weakSelf.section(for: sender)) {
+                    if container.activeViewController == container.libraryNavigationController, let details = container.filterViewContainer.filterView.locationDetails(for: weakSelf.section(for: sender)) {
                         
-                        container.filterViewContainer.filterView.collectionView(container.filterViewContainer.filterView.collectionView, didSelectItemAt: .init(row: index, section: 0))
-                        container.filterViewContainer.filterView.collectionView.scrollToItem(at: .init(row: index, section: 0), at: .centeredHorizontally, animated: true)
+                        container.filterViewContainer.filterView.selectCell(at: details.indexPath, usingOtherArray: details.fromOtherArray, arrayIndex: details.index)
+                        container.filterViewContainer.filterView.collectionView.scrollToItem(at: details.indexPath, at: .centeredHorizontally, animated: true)
                         
                     } else {
                         
