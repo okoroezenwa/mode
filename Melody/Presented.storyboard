@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.13.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
-    <device id="retina4_0" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_0" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.9"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15510"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -30,10 +28,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XpN-em-90f">
-                                <rect key="frame" x="6" y="40" width="308" height="522"/>
+                                <rect key="frame" x="6" y="20" width="308" height="542"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="kXk-gR-kLO" customClass="ShadowImageView" customModule="Mode" customModuleProvider="target">
-                                        <rect key="frame" x="-30" y="-30" width="368" height="582"/>
+                                        <rect key="frame" x="-30" y="-30" width="368" height="602"/>
                                         <userDefinedRuntimeAttributes>
                                             <userDefinedRuntimeAttribute type="number" keyPath="radius">
                                                 <integer key="value" value="14"/>
@@ -47,12 +45,12 @@
                                         </userDefinedRuntimeAttributes>
                                     </imageView>
                                     <view clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Xsi-BV-UjQ">
-                                        <rect key="frame" x="0.0" y="0.0" width="308" height="522"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="308" height="542"/>
                                         <subviews>
                                             <visualEffectView opaque="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="trW-Zk-lgl" customClass="MELVisualEffectView" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="0.0" width="308" height="522"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="308" height="542"/>
                                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="7kP-HA-DyU">
-                                                    <rect key="frame" x="0.0" y="0.0" width="308" height="522"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="308" height="542"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
                                                         <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gIU-j1-DAl">
@@ -175,10 +173,10 @@
                                                             </constraints>
                                                         </stackView>
                                                         <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="y7R-9t-1tT" customClass="MELActivityIndicatorView" customModule="Mode" customModuleProvider="target">
-                                                            <rect key="frame" x="135.5" y="242.5" width="37" height="37"/>
+                                                            <rect key="frame" x="135.5" y="252.5" width="37" height="37"/>
                                                         </activityIndicatorView>
                                                         <containerView opaque="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wTT-Wj-puz">
-                                                            <rect key="frame" x="0.0" y="45" width="308" height="477"/>
+                                                            <rect key="frame" x="0.0" y="45" width="308" height="497"/>
                                                         </containerView>
                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ymt-Wm-2e6" userLabel="Top Divider View" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
                                                             <rect key="frame" x="0.0" y="44" width="308" height="1"/>
@@ -210,6 +208,7 @@
                                                     <userDefinedRuntimeAttribute type="number" keyPath="alphaOverride">
                                                         <real key="value" value="0.10000000000000001"/>
                                                     </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="boolean" keyPath="darkPresentationAccomodation" value="YES"/>
                                                 </userDefinedRuntimeAttributes>
                                             </visualEffectView>
                                         </subviews>

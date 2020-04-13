@@ -25,7 +25,7 @@ class Queue {
             
         } else {
             
-            return musicPlayer.nowPlayingItemIndex == indexOfNowPlayingItem ? musicPlayer.nowPlayingItemIndex : indexOfNowPlayingItem
+            return musicPlayer.nowPlayingItemIndex == indexOfNowPlayingItem ? musicPlayer.nowPlayingItemIndex : (indexOfNowPlayingItem == nil && musicPlayer.nowPlayingItemIndex != nil ? musicPlayer.nowPlayingItemIndex : indexOfNowPlayingItem)
         }
     }
     

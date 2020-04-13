@@ -54,7 +54,7 @@ extension Filterable {
                 
                 case .playlist: return 1
                 
-                case .artist, .albumArtist: return 3
+                case .albumArtist: return 3
                 
                 case .album: return 4
                 
@@ -63,6 +63,8 @@ extension Filterable {
                 case .composer: return 6
                 
                 case .compilation: return 7
+                
+                case .artist: return 8
             }
         
         } else if let _ = self as? SongsViewController { return 2 }
@@ -74,7 +76,7 @@ extension Filterable {
     
     var filterTitle: String { return filterProperty.title }
     
-    var placeholder: String {
+    var placeholder: String? {
         
         switch filterProperty {
             
@@ -84,7 +86,7 @@ extension Filterable {
             
             case .duration: return "HH.MM.SS"
             
-            default: return ""
+            default: return nil
         }
     }
     
@@ -96,7 +98,7 @@ extension Filterable {
         
         switch filterProperty {
             
-            case .album, .artist, .title, .composer, .genre, .trackCount, .albumCount, .plays, .year, .size: return []
+            case .album, .artist, .title, .composer, .genre, .trackCount, .albumCount, .plays, .year, .size, .albumArtist: return []
             
             case .rating: return [nil] + {
                 
@@ -131,6 +133,8 @@ extension Filterable {
             case .album: return song.validAlbum.lowercased().folded
             
             case .artist: return song.validArtist.lowercased().folded
+            
+            case .albumArtist: return song.validAlbumArtist.lowercased().folded
             
             case .title: return song.validTitle.lowercased().folded
             
@@ -174,10 +178,18 @@ extension Filterable {
                 
                 switch kind {
                     
+                    case .artist where self is SearchViewController: return collection.representativeItem?.validArtist.lowercased().folded
+                    
+                    default: return nil
+                }
+            
+            case .albumArtist:
+            
+                switch kind {
+                    
                     case .album,
                          .compilation,
-                         .artist where self is SearchViewController,
-                         .albumArtist where self is SearchViewController: return (albumArtistsAvailable ? collection.representativeItem?.validAlbumArtist : collection.representativeItem?.validArtist)?.lowercased().folded
+                         .albumArtist where self is SearchViewController: return collection.representativeItem?.validAlbumArtist.lowercased().folded
                     
                     default: return nil
                 }
@@ -290,7 +302,7 @@ extension Filterable {
         
         switch filterProperty {
             
-            case .album, .artist, .title, .composer, .genre: return [.isExactly, .contains, .beginsWith, .endsWith]
+            case .album, .artist, .title, .composer, .genre, .albumArtist: return [.isExactly, .contains, .beginsWith, .endsWith]
                 
             case .trackCount, .albumCount, .plays, .rating, .year, .size: return [.isExactly, .isOver, .isUnder]
                 
@@ -306,7 +318,7 @@ extension Filterable {
         
         switch property {
             
-            case .album, .artist, .title, .composer, .genre: return .contains
+            case .album, .artist, .title, .composer, .genre, .albumArtist: return .contains
             
             case .trackCount, .albumCount, .plays, .year, .size: return .isOver
             
@@ -335,9 +347,10 @@ extension Filterable {
     var inputView: UIView? {
         
         switch filterProperty {
-        case .album, .artist, .title, .composer, .genre, .trackCount, .albumCount, .plays, .year, .size, .lastPlayed, .dateAdded: return nil
             
-            case .duration, .isCloud, .isCompilation, .artwork, .isExplicit, .rating, .status: return filterContainer?.requiredInputView
+            case .album, .artist, .title, .composer, .genre, .trackCount, .albumCount, .plays, .year, .size, .lastPlayed, .dateAdded, .duration, .albumArtist: return nil
+            
+            case .isCloud, .isCompilation, .artwork, .isExplicit, .rating, .status: return filterContainer?.requiredInputView
         }
     }
     
@@ -363,7 +376,7 @@ extension Filterable {
         
         switch filterProperty {
             
-            case .album, .artist, .title, .composer, .genre:
+            case .album, .artist, .title, .composer, .genre, .albumArtist:
                 
                 guard let text = term as? String, !text.isEmpty else { return [] }
             
@@ -523,7 +536,7 @@ extension Filterable {
         
         switch filterProperty {
             
-            case .artist, .title, .genre, .album, .composer:
+            case .artist, .title, .genre, .album, .composer, .albumArtist:
                 
                 guard let text = term as? String, !text.isEmpty else { return [] }
             
@@ -670,9 +683,9 @@ extension Filterable {
                     
                     case .album, .artist, .title, .composer, .genre: return "matches"
                     
-                    case .trackCount, .albumCount, .plays: return "equal"
-                    
-                    case .rating, .size, .duration: return "equals"
+//                    case .trackCount, .albumCount, .plays: return "equal"
+//
+//                    case .rating, .size, .duration: return "equals"
                     
                     case .lastPlayed, .dateAdded: return "on"
                     
@@ -689,7 +702,7 @@ extension Filterable {
             
                 switch property {
                     
-                case .album, .artist, .title, .composer, .genre, .isCloud, .isCompilation, .artwork, .isExplicit, .status: return ""
+                case .album, .artist, .title, .composer, .genre, .isCloud, .isCompilation, .artwork, .isExplicit, .status, .albumArtist: return ""
                     
                     case .trackCount, .albumCount, .plays, .rating, .size, .duration: return "over"
                     
@@ -700,7 +713,7 @@ extension Filterable {
             
                 switch property {
                     
-                    case .album, .artist, .title, .composer, .genre, .isCloud, .isCompilation, .artwork, .isExplicit, .status: return ""
+                    case .album, .artist, .title, .composer, .genre, .isCloud, .isCompilation, .artwork, .isExplicit, .status, .albumArtist: return ""
                     
                     case .trackCount, .albumCount, .plays, .rating, .size, .duration: return "under"
                     

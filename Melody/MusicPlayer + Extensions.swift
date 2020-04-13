@@ -53,7 +53,7 @@ public extension MPMusicPlayerController {
               queueGuardCriteria: Bool = warnForQueueInterruption && playGuard,
               completion: (() -> ())? = nil) {
         
-        let startDate = Date()
+//        let startDate = Date()
         
         let play: () -> () = {
             
@@ -142,9 +142,9 @@ public extension MPMusicPlayerController {
             
             if isSameItem {
                 
-                let finish = Date()
-                let interval = finish.timeIntervalSince(startDate)
-                self.currentPlaybackTime = time + interval
+//                let finish = Date()
+//                let interval = finish.timeIntervalSince(startDate)
+                self.currentPlaybackTime = time// + interval
             }
             
             completion?()

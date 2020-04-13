@@ -16,12 +16,12 @@ protocol FilterContainer: LargeActivityIndicatorContaining, UISearchBarDelegate,
     var rightViewButton: MELButton { get set }
     var searchBar: MELSearchBar! { get }
     var filterOperationQueue: OperationQueue { get }
-    var rightViewSetUp: Bool { get set }
     var sender: (UIViewController & Filterable)? { get set }
     var unfilteredPoint: CGPoint { get set }
     var recentSearches: [RecentSearch] { get set }
     var category: SearchCategory { get set }
     var filtering: Bool { get set }
+    var filterTitle: String? { get }
     var emptyCondition: Bool { get }
     func filter(with searchText: String)
     func updateHeaderView(withCount count: Int)
@@ -31,61 +31,112 @@ extension FilterContainer where Self: UIViewController {
     
     var managedContext: NSManagedObjectContext { return appDelegate.managedObjectContext }
     
-    func updateTestView() {
+    var placeholder: String {
         
-        guard case .filter(filter: let filter, container: _) = filterViewContainer.context else { return }
+        if let placeholder = sender?.placeholder { return placeholder }
         
-        filterViewContainer.filterView.filterTestButton.setTitle(filter?.testTitle, for: .normal)
+        let initial = self is SearchViewController ? "Search" : "Filter"
         
-        UIView.animate(withDuration: 0.3, animations: { self.filterViewContainer.layoutIfNeeded() })
+        guard let end = filterTitle else { return initial }
+        
+        return initial + " " + end
     }
     
-    func updateRightView() {
+    func updateTestView() {
         
-        guard case .filter(filter: let sender, container: _) = filterViewContainer.context, let filter = sender else { return }
+        guard let filter = filterViewContainer.filterInfo?.filter else { return }
         
-        let details = filter.rightViewDetails
+        filterViewContainer.filterView.leftView.translatesAutoresizingMaskIntoConstraints = false
+        filterViewContainer.filterView.filterTestButton.setTitle(filter.testTitle, for: .normal)
         
-        searchBar.textField?.rightView = details.rightView
+        UIView.animate(withDuration: 0.3, animations: { self.filterViewContainer.layoutIfNeeded() }, completion: { _ in self.filterViewContainer.filterView.leftView.translatesAutoresizingMaskIntoConstraints = true })
+    }
+    
+    func updateRightView(animated: Bool = true) {
+        
+        guard let sender = sender else { return }
+        
+        let constraint = filterViewContainer.filterView.rightButtonContainerWidthConstraint
+        let container = filterViewContainer.filterView.rightButtonContainer
+        let canUseRightView = sender.filterProperty.canUseRightView
+        
+        if animated {
+        
+            filterViewContainer.filterView.leftView.translatesAutoresizingMaskIntoConstraints = false
+        }
+
+        constraint?.priority = .init(rawValue: canUseRightView.inverted ? 999 : 250)
+        filterViewContainer.filterView.rightButtonContainerEqualityWidthConstraint.isActive = canUseRightView
         updateRightViewButtonText()
-        searchBar.textField?.rightViewMode = details.mode
         
-        if let _ = details.rightView?.superview {
+        if animated {
+
+            UIView.animate(withDuration: 0.3, animations: {
+
+                container?.alpha = canUseRightView.inverted ? 0 : 1
+                container?.superview?.layoutIfNeeded()
             
-            rightViewSetUp = true
+            }, completion: { _ in self.filterViewContainer.filterView.leftView.translatesAutoresizingMaskIntoConstraints = true })
+            
+        } else {
+            
+            container?.alpha = canUseRightView.inverted ? 0 : 1
+            container?.superview?.layoutIfNeeded()
         }
     }
     
     func updateRightViewButtonText() {
         
-        guard let size = Int64.FileSize(rawValue: primarySizeSuffix) else { return }
+        guard let sender = sender else { return }
         
-        rightViewButton.setTitle(size.suffix, for: .normal)
+        switch sender.filterProperty {
+            
+            case .album, .albumCount, .artist, .albumArtist, .artwork, .composer, .genre, .isCloud, .isCompilation, .isExplicit, .plays, .rating, .trackCount, .title, .year, .status: break
+            
+            case .duration: rightViewButton.setTitle("s", for: .normal)
+            
+            case .dateAdded, .lastPlayed: rightViewButton.setTitle("d ago", for: .normal)
+                 
+            case .size:
+            
+                guard let size = Int64.FileSize(rawValue: primarySizeSuffix) else { return }
+                
+                rightViewButton.setTitle(size.suffix, for: .normal)
+        }
     }
     
-    func updateRightViewButton() {
+    func showRightButtonOptions() {
         
-        guard case .filter(filter: let sender, container: _) = filterViewContainer.context, let filter = sender else { return }
+        guard let filter = filterViewContainer.filterInfo?.filter, filter.filterProperty.canUseRightView else { return }
         
-        let action: ((Int64.FileSize) -> Void) = { [weak self] size in
+        let action: ((Int) -> Void) = { [weak self] rawValue in
             
             guard let weakSelf = self else { return }
             
-            prefs.set(size.rawValue, forKey: .primarySizeSuffix)
-            weakSelf.rightViewButton.setTitle(size.suffix, for: .normal)
+            if filter.filterProperty == .size {
+            
+                prefs.set(rawValue, forKey: .primarySizeSuffix)
+            }
+            
+            weakSelf.updateRightViewButtonText()
             weakSelf.filter(with: weakSelf.searchBar.text ?? "")
         }
         
-        switch filter.filterProperty {
+        let actions: [AlertAction] = {
             
-            case .size:
+            switch filter.filterProperty {
                 
-                let actions = Array(Int64.FileSize.byte.rawValue...Int64.FileSize.terabyte.rawValue).compactMap({ Int64.FileSize(rawValue: $0) }).map({ size in AlertAction.init(title: size.suffix, style: .default, handler: { action(size) }) })
+                case .size: return Array(Int64.FileSize.byte.rawValue...Int64.FileSize.terabyte.rawValue).compactMap({ Int64.FileSize(rawValue: $0) }).map({ size in AlertAction.init(title: size.suffix, style: .default, handler: { action(size.rawValue) }) })
                 
-                showAlert(title: nil, with: actions)
-            
-            default: return
-        }
+                case .duration: return [AlertAction.init(title: "s", style: .default, handler: nil)]
+                
+                case .dateAdded, .lastPlayed: return [AlertAction.init(title: "d ago", style: .default, handler: nil)]
+                
+                default: return []
+            }
+        }()
+        
+        showAlert(title: nil, with: actions, shouldSortActions: false)
     }
     
     func saveRecentSearch(withTitle title: String?, resignFirstResponder resign: Bool) {
@@ -185,7 +236,7 @@ extension FilterContainer where Self: UIViewController {
         
         sender?.ignorePropertyChange = true
         
-        if let properties = filterViewContainer.filterView.properties as? [Property], let property = Property(rawValue: property), let index = properties.firstIndex(of: property), let sender = sender {
+        if let property = Property(rawValue: property), let sender = sender {
             
             sender.propertyTest = {
                 
@@ -197,7 +248,24 @@ extension FilterContainer where Self: UIViewController {
                 return sender.initialPropertyTest(for: property)
             }()
             
-            filterViewContainer.filterView.collectionView(filterViewContainer.filterView.collectionView, didSelectItemAt: .init(row: index, section: 0))
+            if sender.filterProperty != property {
+                
+                sender.clearIfNeeded(with: property)
+                sender.filterProperty = property
+                filterViewContainer.filterView.propertyButton.setTitle(property.title, for: .normal)
+                requiredInputView?.pickerView.reloadAllComponents()
+                updateRightView()
+                UIView.performWithoutAnimation { searchBar.updateTextField(with: placeholder) }
+            }
+            
+            if sender.ignorePropertyChange {
+                
+                sender.verifyPropertyTest(with: self)
+                
+            } else if searchBar.isFirstResponder.inverted, searchBar.textField?.text?.isEmpty == true {
+                
+                searchBar.becomeFirstResponder()
+            }
         }
         
         sender?.ignorePropertyChange = false
@@ -268,6 +336,63 @@ extension FilterContainer where Self: UIViewController {
         })
         
         showAlert(title: sender.filterProperty.title.capitalized, with: actions)
+    }
+    
+    func showFilterProperties() {
+        
+        guard let sender = sender else { return }
+        
+        let propertyHandler: ([Property]) -> [AlertAction] = { properties in
+            
+            properties.map({ property in
+                
+                AlertAction.init(title: property.title, subtitle: nil, style: .default, accessoryType: .check({ sender.filterProperty == property }), image: #imageLiteral(resourceName: "Search22"), handler: { [weak self] in
+                    
+                    guard let weakSelf = self else { return }
+                    
+                    if sender.filterProperty != property {
+                        
+                        sender.clearIfNeeded(with: property)
+                        sender.filterProperty = property
+                        weakSelf.filterViewContainer.filterView.propertyButton.setTitle(property.title, for: .normal)
+                        sender.verifyPropertyTest(with: weakSelf)
+                        weakSelf.requiredInputView?.pickerView.reloadAllComponents()
+                        weakSelf.updateRightView()
+                        UIView.performWithoutAnimation { weakSelf.searchBar.updateTextField(with: weakSelf.placeholder) }
+                    }
+                    
+                    if sender.ignorePropertyChange {
+                        
+                        sender.verifyPropertyTest(with: weakSelf)
+                        
+                    } else if weakSelf.searchBar.isFirstResponder.inverted, isInDebugMode.inverted, weakSelf.searchBar.textField?.text?.isEmpty == true {
+                        
+                        weakSelf.searchBar.becomeFirstResponder()
+                    }
+                })
+            })
+        }
+        
+        let initial = "\(self is FilterViewController ? "Filter" : "Search") Categories"
+        let title = initial + " Settings..."
+        let handler = { [weak self] in
+            
+            guard let weakSelf = self else { return }
+            
+            Transitioner.shared.showPropertySettings(from: weakSelf, with: .filter)
+        }
+        
+        var properties = propertyHandler(filterProperties.removing(contentsOf: hiddenFilterProperties))
+        
+        properties.append(.init(title: "Secondary Categories...", image: #imageLiteral(resourceName: "More22"), requiresDismissalFirst: true, handler: { [weak self] in
+            
+            self?.showAlert(title: "Secondary Categories", subtitle: nil, with: propertyHandler(otherFilterProperties), shouldSortActions: false, rightAction: { _, vc in vc.dismiss(animated: true, completion: handler) }, images: (nil, #imageLiteral(resourceName: "Settings")))
+            
+        }), if: otherFilterProperties.isEmpty.inverted)
+        
+        properties.append(.init(title: title, handler: handler), if: useSystemAlerts)
+        
+        showAlert(title: initial, subtitle: nil, with: properties, shouldSortActions: false, rightAction: { _, vc in vc.dismiss(animated: true, completion: handler) }, images: (nil, #imageLiteral(resourceName: "Settings")))
     }
     
     func deleteRecentSearch(in cell: RecentSearchTableViewCell) {

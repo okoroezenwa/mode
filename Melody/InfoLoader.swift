@@ -263,7 +263,7 @@ extension InfoLoading {
         }
     }
     
-    func update(category: SecondaryCategory, using song: MPMediaItem, in cell: SongTableViewCell, at indexPath: IndexPath, reusableView: Any) {
+    func update(category: SecondaryCategory, using song: MPMediaItem, in cell: EntityTableViewCell, at indexPath: IndexPath, reusableView: Any) {
         
         let view = cell.view(for: category)
         
@@ -352,7 +352,7 @@ extension InfoLoading {
                     
                     OperationQueue.main.addOperation {
                         
-                        if let cell = (reusableView as? UITableView)?.cellForRow(at: indexPath) as? SongTableViewCell, operation?.isCancelled == false {
+                        if let cell = (reusableView as? UITableView)?.cellForRow(at: indexPath) as? EntityTableViewCell, operation?.isCancelled == false {
                             
                             if category == .rating {
                                 
@@ -375,7 +375,7 @@ extension InfoLoading {
                     
                     OperationQueue.main.addOperation {
                         
-                        if let cell = (reusableView as? UITableView)?.cellForRow(at: indexPath) as? SongTableViewCell, operation?.isCancelled == false {
+                        if let cell = (reusableView as? UITableView)?.cellForRow(at: indexPath) as? EntityTableViewCell, operation?.isCancelled == false {
                             
                             cell.view(for: category).isHidden = true
                         }

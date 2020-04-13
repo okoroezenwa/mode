@@ -65,7 +65,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         }
     }
     var filterText: String?
-    var rightViewSetUp = false
+    let filterTitle: String? = "Library"
     var category = SearchCategory.all
     var entityCount = 0
     @objc var unfilteredPoint = CGPoint.zero
@@ -157,7 +157,9 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
     @objc lazy var albums = [MPMediaItemCollection]()
     @objc lazy var genres = [MPMediaItemCollection]()
     @objc lazy var composers = [MPMediaItemCollection]()
-    @objc var itemCount: Int { return songs.count + playlists.count + albums.count + artists.count + genres.count + composers.count }
+    @objc lazy var albumArtists = [MPMediaItemCollection]()
+    
+    @objc var itemCount: Int { return songs.count + playlists.count + albums.count + artists.count + genres.count + composers.count + albumArtists.count }
     @objc var onlineOverride = false
     var options: LibraryOptions { return .init(fromVC: self, configuration: .search) }
     var sectionIndexViewController: SectionIndexViewController?
@@ -185,21 +187,13 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         return view
     }()
     
-    lazy var rightViewButton: MELButton = {
-        
-        let button = MELButton.init(frame: .init(x: 0, y: 0, width: 30, height: 30))
-        button.fontWeight = FontWeight.semibold.rawValue
-        button.setTitle(nil, for: .normal)
-        button.addTarget(self, action: #selector(rightViewButtonTapped), for: .touchUpInside)
-//        button.titleLabel?.font = UIFont.font(ofWeight: .semibold, size: 17)
-        
-        return button
-    }()
+    lazy var rightViewButton: MELButton = filterViewContainer.filterView.rightButton
     
     var sectionDetails: [SectionDetails] {
         
         return getSectionDetails(from: ("songs", songs.count, .songs),
                                 ("artists", artists.count, .artists),
+                                ("album artists", albumArtists.count, .albumArtists),
                                  ("albums", albums.count, .albums),
                                  ("playlists", playlists.count, .playlists),
                                  ("genres", genres.count, .genres),
@@ -280,6 +274,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         adjustInsets(context: .container)
         searchBar?.delegate = self
         filterViewContainer.filterView.filterTestButton.setTitle(testTitle, for: .normal)
+        filterViewContainer.filterInfo = (self, self)
         
         tableView.register(UINib.init(nibName: "RecentSearchCell", bundle: nil), forCellReuseIdentifier: .recentCell)
         updateTopInset()
@@ -304,6 +299,11 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         let edge = UIScreenEdgePanGestureRecognizer.init(target: self, action: #selector(updateSections))
         edge.edges = .right
         view.addGestureRecognizer(edge)
+        
+        searchBar?.textField?.leftView = filterViewContainer.filterView.leftView
+        searchBar?.updateTextField(with: placeholder)
+        
+        updateRightView(animated: false)
         
         if traitCollection.forceTouchCapability == .available {
             
@@ -337,7 +337,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
             
             case .began:
             
-                guard let indexPath = tableView.indexPathForRow(at: sender.location(in: tableView)), let cell = tableView.cellForRow(at: indexPath) as? SongTableViewCell, let entity = getEntity(at: indexPath) else { return }
+                guard let indexPath = tableView.indexPathForRow(at: sender.location(in: tableView)), let cell = tableView.cellForRow(at: indexPath) as? EntityTableViewCell, let entity = getEntity(at: indexPath) else { return }
                 
                 let location = sender.location(in: cell)
                 
@@ -362,7 +362,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
                         .newPlaylist,
                         .addTo,
                         .show(title: cell.nameLabel.text, context: context(from: indexPath), canDisplayInLibrary: true),
-                        .search(unwinder: nil)].map({ singleItemAlertAction(for: $0, entityType: .song, using: entity, from: self) })
+                        .search(unwinder: nil)].map({ singleItemAlertAction(for: $0, entityType: sectionDetails[indexPath.section].category.entityType, using: entity, from: self) })
                     
                     if let item = entity as? MPMediaItem, item.existsInLibrary.inverted {
                         
@@ -424,6 +424,8 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
             
             case .songs: return .song(location: .list, at: indexPath.row, within: songs)
             
+            case .albumArtists: return .collection(kind: .albumArtist, at: indexPath.row, within: albumArtists)
+            
             case .all: fatalError("Nothing should call this yet")
         }
     }
@@ -441,6 +443,8 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         
         notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+        
+        container?.visualEffectNavigationBar.entityTypeLabel.superview?.isHidden = true
         
         container?.currentModifier = nil
         container?.currentOptionsContaining = self
@@ -602,11 +606,11 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
     
     @objc func adjustKeyboard(with notification: Notification) {
         
-        guard let keyboardHeightAtEnd = ((notification as NSNotification).userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.size.height, searchBar?.isFirstResponder == true else { return }
+        guard let keyboardHeightAtEnd = ((notification as NSNotification).userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.size.height, searchBar?.isFirstResponder == true, let container = container else { return }
         
         let keyboardWillShow = notification.name == UIResponder.keyboardWillShowNotification
         
-        filterViewContainer.filterView.filterInputViewBottomConstraint.constant = keyboardWillShow ? keyboardHeightAtEnd - 50 - (container?.collectedView.isHidden == true ? 0 : 44) : 0
+        filterViewContainer.filterView.filterInputViewBottomConstraint.constant = keyboardWillShow ? keyboardHeightAtEnd - 51 - container.collectedViewHeight - container.sliderHeight - container.titlesHeight : 0
         
         UIView.animate(withDuration: 0.3, animations: {
             
@@ -650,10 +654,10 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
             
             for cell in weakSelf.tableView.visibleCells where weakSelf.tableView.indexPath(for: cell)?.section != SearchCategory.playlists.rawValue {
                 
-                guard let entityCell = cell as? SongTableViewCell, let indexPath = weakSelf.tableView.indexPath(for: entityCell), let nowPlaying = musicPlayer.nowPlayingItem else {
+                guard let entityCell = cell as? EntityTableViewCell, let indexPath = weakSelf.tableView.indexPath(for: entityCell), let nowPlaying = musicPlayer.nowPlayingItem else {
                     
-                    (cell as? SongTableViewCell)?.playingView.isHidden = true
-                    (cell as? SongTableViewCell)?.indicator.state = .stopped
+                    (cell as? EntityTableViewCell)?.playingView.isHidden = true
+                    (cell as? EntityTableViewCell)?.indicator.state = .stopped
                     
                     continue
                 }
@@ -706,21 +710,10 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         }) as! NSObject)
     }
     
-    @objc func rightViewButtonTapped() {
-        
-        updateRightViewButton()
-    }
-    
-    override func viewDidLayoutSubviews() {
-        
-        super.viewDidLayoutSubviews()
-        
-        if rightViewSetUp.inverted {
-            
-            searchBar.updateTextField(with: placeholder.isEmpty ? "Search Library" : placeholder)
-            updateRightView()
-        }
-    }
+//    @objc func rightViewButtonTapped() {
+//        
+//        showRightButtonOptions()
+//    }
     
     @objc func dismissSearch() {
         
@@ -757,10 +750,10 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
             }
         }
         
-        searchBar?.updateTextField(with: placeholder.isEmpty ? "Search Library" : placeholder)
+        searchBar?.updateTextField(with: placeholder)
         onlineOverride = false
         
-        filterViewContainer.filterView.updateClearButton(to: .hidden)
+//        filterViewContainer.filterView.updateClearButton(to: .hidden)
 //        updateTempView(hidden: true)
     }
     
@@ -783,7 +776,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         if tableView.isEditing { tableView.setEditing(false, animated: false) }
         
 //        topView.layoutIfNeeded()
-//        searchBar?.updateTextField(with: placeholder.isEmpty ? "Search Library" : placeholder)
+//        searchBar?.updateTextField(with: placeholder)
 //
 //        clearButtonTrailingConstraint.constant = filtering || recentSearches.isEmpty ? -44 : 0
 //
@@ -791,7 +784,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         
         onlineOverride = false
         
-        filterViewContainer.filterView.updateClearButton(to: .hidden)
+//        filterViewContainer.filterView.updateClearButton(to: .hidden)
 //        updateTempView(hidden: true)
     }
     
@@ -930,6 +923,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
             var genres = [MPMediaItemCollection]()
             var composers = [MPMediaItemCollection]()
             var playlists = [MPMediaPlaylist]()
+            var albumArtists = [MPMediaItemCollection]()
             
             let songsQuery = MPMediaQuery.songs().cloud
             songsQuery.showAll()
@@ -939,6 +933,11 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
             if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
             
             artists = weakSelf.getResults(for: MPMediaQuery.artists().cloud.collections ?? [], of: .artist, against: searchText)
+            
+            if weakSelf.filterOperation == nil { UniversalMethods.performInMain{ weakSelf.updateLoadingViews(hidden: true) }; return }
+            if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
+            
+            albumArtists = weakSelf.getResults(for: MPMediaQuery.albumArtists.cloud.collections ?? [], of: .albumArtist, against: searchText)
             
             if weakSelf.filterOperation == nil { UniversalMethods.performInMain{ weakSelf.updateLoadingViews(hidden: true) }; return }
             if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
@@ -976,6 +975,11 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
                 if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
                 
                 weakSelf.artists = artists
+                
+                if weakSelf.filterOperation == nil { weakSelf.updateLoadingViews(hidden: true); return }
+                if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
+                
+                weakSelf.albumArtists = albumArtists
                 
                 if weakSelf.filterOperation == nil { weakSelf.updateLoadingViews(hidden: true); return }
                 if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
@@ -1103,6 +1107,8 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
             
             case .artists: return artists
             
+            case .albumArtists: return albumArtists
+            
             case .genres: return genres
             
             case .composers: return composers
@@ -1160,6 +1166,8 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
                 case .songs: return songs.count
                 
                 case .artists: return artists.count
+                
+                case .albumArtists: return albumArtists.count
                 
                 case .albums: return albums.count
                 
@@ -1233,7 +1241,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
                 cell.prepare(with: album, withinArtist: false, number: songCountVisible.inverted ? nil : indexPath.row + 1)
                 updateImageView(using: album, entityType: .album, in: cell, indexPath: indexPath, reusableView: tableView, overridable: self)
             
-            case .artists, .genres, .composers:
+            case .artists, .genres, .composers, .albumArtists:
                 
                 let collection = collectionArray(from: sectionDetails[indexPath.section].category)[indexPath.row]
             
@@ -1242,7 +1250,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
         }
         
         cell.delegate = self
-        cell.swipeDelegate = self
+//        cell.swipeDelegate = self
         cell.preferredEditingStyle = preferredEditingStyle
         
         cell.playButton.isUserInteractionEnabled = allowPlayOnly
@@ -1272,6 +1280,8 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
                         case .albums: return albums[indexPath.row].items
                             
                         case .artists: return artists[indexPath.row].items
+                        
+                        case .albumArtists: return albumArtists[indexPath.row].items
                             
                         case .playlists: return showiCloudItems || onlineOverride ? playlists[indexPath.row].items : playlists[indexPath.row].items.filter({ !$0.isCloudItem })
                             
@@ -1330,7 +1340,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
                         
                         musicPlayer.play(songs, startingFrom: song, from: self, withTitle: "Search Results (Songs)", subtitle: "Starting from \(song.validTitle)", alertTitle: "Play")
                     
-                    case .artists, .genres, .composers:
+                    case .artists, .genres, .composers, .albumArtists:
                     
                         currentEntity = sectionDetails[indexPath.section].category.entityType
                         performSegue(withIdentifier: "toArtist", sender: collectionArray(from: sectionDetails[indexPath.section].category)[indexPath.row])
@@ -1453,7 +1463,7 @@ extension SearchViewController: UISearchBarDelegate {
         
         filtering = searchText != ""
         
-        filterViewContainer.filterView.updateClearButton(to: filtering ? .visible : .hidden)
+//        filterViewContainer.filterView.updateClearButton(to: filtering ? .visible : .hidden)
         
         if filtering {
             
@@ -1520,7 +1530,7 @@ extension SearchViewController: UIViewControllerPreviewingDelegate {
         
         if let container = container {
             
-            container.filterViewContainer.filterView.withinSearchTerm = true
+            container.filterViewContainer.filterView.requiresSearchBar = true
             notifier.post(name: .resetInsets, object: nil)
         }
     }
@@ -1572,12 +1582,12 @@ extension SearchViewController: OnlineOverridable {
 
 extension SearchViewController: EntityCellDelegate {
     
-    func editButtonHeld(in cell: SongTableViewCell) {
+    func editButtonHeld(in cell: EntityTableViewCell) {
         
         Transitioner.shared.performDeepSelection(from: self, title: cell.nameLabel.text)
     }
     
-    func artworkTapped(in cell: SongTableViewCell) {
+    func artworkTapped(in cell: EntityTableViewCell) {
         
         guard let indexPath = tableView.indexPath(for: cell) else { return }
         
@@ -1639,14 +1649,14 @@ extension SearchViewController: EntityCellDelegate {
         }
     }
     
-    func artworkHeld(in cell: SongTableViewCell) {
+    func artworkHeld(in cell: EntityTableViewCell) {
         
         guard musicPlayer.nowPlayingItem != nil, let indexPath = tableView.indexPath(for: cell) else { return }
         
         getActionDetails(from: .queue(name: cell.nameLabel.text, query: nil), indexPath: indexPath, actionable: self, vc: self, entityType: .song, entity: getEntity(at: indexPath)!)?.handler()
     }
     
-    func editButtonTapped(in cell: SongTableViewCell) {
+    func editButtonTapped(in cell: EntityTableViewCell) {
         
         guard let indexPath = tableView.indexPath(for: cell) else { return }
         
@@ -1655,7 +1665,7 @@ extension SearchViewController: EntityCellDelegate {
         cell.setHighlighted(false, animated: true)
     }
     
-    func accessoryButtonTapped(in cell: SongTableViewCell) {
+    func accessoryButtonTapped(in cell: EntityTableViewCell) {
         
         guard let indexPath = tableView.indexPath(for: cell), let entity = getEntity(at: indexPath), let count: Int = {
             
@@ -1689,14 +1699,14 @@ extension SearchViewController: EntityCellDelegate {
         showAlert(title: cell.nameLabel.text, with: actions)
     }
     
-    func accessoryButtonHeld(in cell: SongTableViewCell) {
+    func accessoryButtonHeld(in cell: EntityTableViewCell) {
         
         guard let indexPath = tableView.indexPath(for: cell), let action = self.tableView(tableView, editActionsForRowAt: indexPath, for: .right)?.first else { return }
         
         action.handler?(action, indexPath)
     }
     
-    func scrollViewTapped(in cell: SongTableViewCell) {
+    func scrollViewTapped(in cell: EntityTableViewCell) {
         
         guard let indexPath = tableView.indexPath(for: cell) else { return }
         

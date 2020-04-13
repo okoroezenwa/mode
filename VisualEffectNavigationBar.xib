@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14868" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14824"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15510"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -181,6 +181,35 @@
                                                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" horizontalCompressionResistancePriority="999" verticalCompressionResistancePriority="999" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="P1K-eF-QI8" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
                                                                 <rect key="frame" x="0.0" y="0.0" width="203" height="54"/>
                                                                 <subviews>
+                                                                    <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YhK-VG-y4Y" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
+                                                                        <rect key="frame" x="-105.5" y="9.5" width="105.5" height="31.5"/>
+                                                                        <subviews>
+                                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Entity Type" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pln-IU-Tn9" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                                                                <rect key="frame" x="10" y="6" width="85.5" height="20.5"/>
+                                                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                                                <nil key="textColor"/>
+                                                                                <nil key="highlightedColor"/>
+                                                                                <userDefinedRuntimeAttributes>
+                                                                                    <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                                        <integer key="value" value="2"/>
+                                                                                    </userDefinedRuntimeAttribute>
+                                                                                    <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="prompt"/>
+                                                                                </userDefinedRuntimeAttributes>
+                                                                            </label>
+                                                                        </subviews>
+                                                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                                        <constraints>
+                                                                            <constraint firstAttribute="trailing" secondItem="pln-IU-Tn9" secondAttribute="trailing" constant="10" id="Ps0-UX-Cee"/>
+                                                                            <constraint firstItem="pln-IU-Tn9" firstAttribute="leading" secondItem="YhK-VG-y4Y" secondAttribute="leading" constant="10" id="Zmk-bx-9gM"/>
+                                                                            <constraint firstAttribute="bottom" secondItem="pln-IU-Tn9" secondAttribute="bottom" constant="5" id="g67-dE-5iC"/>
+                                                                            <constraint firstItem="pln-IU-Tn9" firstAttribute="top" secondItem="YhK-VG-y4Y" secondAttribute="top" constant="6" id="w74-wt-EwC"/>
+                                                                        </constraints>
+                                                                        <userDefinedRuntimeAttributes>
+                                                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                                                <integer key="value" value="6"/>
+                                                                            </userDefinedRuntimeAttribute>
+                                                                        </userDefinedRuntimeAttributes>
+                                                                    </view>
                                                                     <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Rgk-Zh-1E7">
                                                                         <rect key="frame" x="10" y="10" width="226" height="34"/>
                                                                         <subviews>
@@ -235,8 +264,10 @@
                                                                 <gestureRecognizers/>
                                                                 <constraints>
                                                                     <constraint firstItem="Rgk-Zh-1E7" firstAttribute="height" secondItem="P1K-eF-QI8" secondAttribute="height" constant="-20" id="337-Sb-cEw"/>
+                                                                    <constraint firstItem="Rgk-Zh-1E7" firstAttribute="leading" secondItem="YhK-VG-y4Y" secondAttribute="trailing" constant="10" id="6MO-nL-YAe"/>
                                                                     <constraint firstItem="Rgk-Zh-1E7" firstAttribute="top" secondItem="P1K-eF-QI8" secondAttribute="top" constant="10" id="Eku-Iq-yVb"/>
                                                                     <constraint firstAttribute="trailing" secondItem="Rgk-Zh-1E7" secondAttribute="trailing" constant="10" id="dog-Ow-FCM"/>
+                                                                    <constraint firstItem="YhK-VG-y4Y" firstAttribute="centerY" secondItem="Rgk-Zh-1E7" secondAttribute="centerY" constant="-2" id="jmj-Ok-W7E"/>
                                                                     <constraint firstAttribute="bottom" secondItem="Rgk-Zh-1E7" secondAttribute="bottom" constant="10" id="odI-Yv-eeR"/>
                                                                     <constraint firstItem="Rgk-Zh-1E7" firstAttribute="leading" secondItem="P1K-eF-QI8" secondAttribute="leading" constant="10" id="zvT-wl-Sv1"/>
                                                                 </constraints>
@@ -347,6 +378,7 @@
                 <outlet property="containerView" destination="ViO-xG-ZtR" id="Imx-xV-a2R"/>
                 <outlet property="entityImageView" destination="Ofg-i6-SIT" id="tQN-9s-cWk"/>
                 <outlet property="entityImageViewContainer" destination="qkD-Ac-gtA" id="XCu-Zk-2j8"/>
+                <outlet property="entityTypeLabel" destination="pln-IU-Tn9" id="2BJ-dt-bPr"/>
                 <outlet property="gradientView" destination="jLH-Vb-2XB" id="Lo6-MP-GYc"/>
                 <outlet property="rightButton" destination="h6m-Xr-JvA" id="m39-zG-rhG"/>
                 <outlet property="rightView" destination="g33-J7-tm2" id="zq2-hO-1hi"/>
@@ -359,7 +391,7 @@
                 <outlet property="titleScrollView" destination="P1K-eF-QI8" id="7D5-3f-yc1"/>
                 <outlet property="titleStackViewEqualHeightConstraint" destination="337-Sb-cEw" id="84h-JH-sN0"/>
             </connections>
-            <point key="canvasLocation" x="1198" y="119"/>
+            <point key="canvasLocation" x="1196.8" y="118.74062968515743"/>
         </visualEffectView>
     </objects>
     <resources>

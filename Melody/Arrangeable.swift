@@ -193,6 +193,8 @@ extension Arrangeable {
             case .albumYear: return "Album by Year"
                 
             case .artist: return "Artist Name"
+            
+            case .albumArtist: return "Album Artist"
                 
             case .year: return "Year"
             
@@ -241,9 +243,20 @@ extension Arrangeable {
                 
                 switch sortLocation {
                     
-                    case .collections: return .init(key: numbersBelowLetters ? #keyPath(MPMediaItemCollection.sortArtistName) : #keyPath(MPMediaItemCollection.artistName), ascending: localAscending, selector: #selector(NSString.localizedStandardCompare(_:)))
+                    case .collections: return .init(key: numbersBelowLetters ? #keyPath(MPMediaItemCollection.sortAlbumArtistName) : #keyPath(MPMediaItemCollection.albumArtist), ascending: localAscending, selector: #selector(NSString.localizedStandardCompare(_:)))
                     
                     case .playlist, .songs, .album: return .init(key: numbersBelowLetters ? #keyPath(MPMediaItem.sortArtist) : #keyPath(MPMediaItem.validArtist), ascending: localAscending, selector: #selector(NSString.localizedStandardCompare(_:)))
+                    
+                    case .playlistList: return .init()
+                }
+            
+            case .albumArtist:
+            
+                switch sortLocation {
+                    
+                    case .collections: return .init(key: numbersBelowLetters ? #keyPath(MPMediaItemCollection.sortArtistName) : #keyPath(MPMediaItemCollection.artistName), ascending: localAscending, selector: #selector(NSString.localizedStandardCompare(_:)))
+                    
+                    case .playlist, .songs, .album: return .init(key: numbersBelowLetters ? #keyPath(MPMediaItem.sortAlbumArtist) : #keyPath(MPMediaItem.validAlbumArtist), ascending: localAscending, selector: #selector(NSString.localizedStandardCompare(_:)))
                     
                     case .playlistList: return .init()
                 }
@@ -427,7 +440,6 @@ extension Arrangeable {
     }
     
     /**
-     
      Generates section titles and indices from a sorted array of songs or collections.
      
      - Parameters:
@@ -495,6 +507,16 @@ extension Arrangeable {
             case .artist:
             
                 let props = collections.map({ $0.artistName }).map({ !CharacterSet.letters.contains(String($0.prefix(1)).unicodeScalars.first!) ? "#" : String($0.prefix(1)).uppercased() }).map({ $0.folding(options: .diacriticInsensitive, locale: .current) })
+                let orderedProps = Set(props).sorted(by: { (ascending ? $0 < $1 : $0 > $1) })
+                let numeric = orderedProps.filter({ $0 == "#" })
+                let alpha = orderedProps.filter({ $0 != "#" })
+                let trueSort = numbersBelowLetters ? (ascending ? alpha + numeric : numeric + alpha) : (ascending ? numeric + alpha : alpha + numeric)
+                
+                return getSectionDetails(from: props, withOrderedArray: trueSort, sectionTitles: trueSort, indexTitles: trueSort)
+            
+            case .albumArtist:
+            
+                let props = collections.map({ $0.albumArtist }).map({ !CharacterSet.letters.contains(String($0.prefix(1)).unicodeScalars.first!) ? "#" : String($0.prefix(1)).uppercased() }).map({ $0.folding(options: .diacriticInsensitive, locale: .current) })
                 let orderedProps = Set(props).sorted(by: { (ascending ? $0 < $1 : $0 > $1) })
                 let numeric = orderedProps.filter({ $0 == "#" })
                 let alpha = orderedProps.filter({ $0 != "#" })
@@ -1009,6 +1031,16 @@ extension Arrangeable {
             case .artist:
                 
                 let props = items.map({ $0.validArtist }).map({ !CharacterSet.letters.contains(String($0.prefix(1)).unicodeScalars.first!) ? "#" : String($0.prefix(1)).uppercased() }).map({ $0.folding(options: .diacriticInsensitive, locale: .current) })
+                let orderedProps = Set(props).sorted(by: { (ascending ? $0 < $1 : $0 > $1) })
+                let numeric = orderedProps.filter({ $0 == "#" })
+                let alpha = orderedProps.filter({ $0 != "#" })
+                let trueSort = numbersBelowLetters ? (ascending ? alpha + numeric : numeric + alpha) : (ascending ? numeric + alpha : alpha + numeric)
+                
+                return getSectionDetails(from: props, withOrderedArray: trueSort, sectionTitles: trueSort, indexTitles: trueSort)
+            
+            case .albumArtist:
+            
+                let props = items.map({ $0.validAlbumArtist }).map({ !CharacterSet.letters.contains(String($0.prefix(1)).unicodeScalars.first!) ? "#" : String($0.prefix(1)).uppercased() }).map({ $0.folding(options: .diacriticInsensitive, locale: .current) })
                 let orderedProps = Set(props).sorted(by: { (ascending ? $0 < $1 : $0 > $1) })
                 let numeric = orderedProps.filter({ $0 == "#" })
                 let alpha = orderedProps.filter({ $0 != "#" })

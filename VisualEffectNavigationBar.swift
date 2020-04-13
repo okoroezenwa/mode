@@ -40,6 +40,7 @@ class VisualEffectNavigationBar: MELVisualEffectView {
     @IBOutlet var backBorderViewContainerBottomConstraint: NSLayoutConstraint!
     @IBOutlet var containerView: UIView!
     @IBOutlet var rightViewWidthConstraint: NSLayoutConstraint!
+    @IBOutlet var entityTypeLabel: MELLabel!
     
     var stackViewTopConstraint: NSLayoutConstraint!
     

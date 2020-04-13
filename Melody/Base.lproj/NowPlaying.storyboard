@@ -661,7 +661,7 @@
                         <outlet property="nowPlayingViewTopConstraint" destination="Nfd-vn-led" id="Wre-JL-WwI"/>
                         <outlet property="playPauseButton" destination="Mte-Wq-qWQ" id="6W2-tm-whr"/>
                         <outlet property="previous" destination="Hxt-cy-mvz" id="B2L-lf-MYN"/>
-                        <outlet property="queue" destination="CrQ-9d-W2d" id="yN8-jy-2MO"/>
+                        <outlet property="queueButton" destination="CrQ-9d-W2d" id="od8-km-W1C"/>
                         <outlet property="queueChevronTrailingConstraint" destination="cUq-sF-ICg" id="wc0-N8-aXs"/>
                         <outlet property="repeatButton" destination="dDa-G0-hSK" id="G8T-yG-NYz"/>
                         <outlet property="repeatView" destination="e09-X4-KyC" id="j2n-cz-QoT"/>

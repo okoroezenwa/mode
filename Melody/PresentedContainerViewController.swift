@@ -503,7 +503,9 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
                             
                                 switch kind {
                                     
-                                    case .artist, .albumArtist: return "Artist"
+                                    case .artist: return "Artist"
+                                    
+                                    case .albumArtist: return "Album Artist"
                                     
                                     case .composer: return "Composer"
                                     

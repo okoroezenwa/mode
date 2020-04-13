@@ -559,13 +559,13 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
             
                 switch kind {
                     
-                    case .artist: performUnwindSegue(with: .artist, isEntityAvailable: artistQuery != nil, title: EntityType.artist.title(albumArtistOverride: false))
+                    case .artist: performUnwindSegue(with: .artist, isEntityAvailable: artistQuery != nil, title: EntityType.artist.title())
                     
                     case .composer: performUnwindSegue(with: .composer, isEntityAvailable: composerQuery != nil, title: EntityType.composer.title())
                     
                     case .genre: performUnwindSegue(with: .genre, isEntityAvailable: genreQuery != nil, title: EntityType.genre.title())
                     
-                    case .albumArtist: performUnwindSegue(with: .albumArtist, isEntityAvailable: albumArtistQuery != nil, title: EntityType.albumArtist.title(albumArtistOverride: false))
+                    case .albumArtist: performUnwindSegue(with: .albumArtist, isEntityAvailable: albumArtistQuery != nil, title: EntityType.albumArtist.title())
                 }
             
             case .playlist(at: let index, within: let playlists):
@@ -581,9 +581,9 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
         
         switch context {
             
-            case .song: performUnwindSegue(with: .artist, isEntityAvailable: artistQuery != nil, title: EntityType.artist.title(albumArtistOverride: false))
+            case .song: performUnwindSegue(with: .artist, isEntityAvailable: artistQuery != nil, title: EntityType.artist.title())
             
-            case .album: performUnwindSegue(with: albumArtistsAvailable ? .albumArtist : .artist, isEntityAvailable: albumArtistsAvailable ? albumArtistQuery != nil : artistQuery != nil, title: EntityType.artist.title(albumArtistOverride: false))
+            case .album(at: let index, within: let albums): performUnwindSegue(with: albumArtistsAvailable || albums[index].representativeItem?.isCompilation == true ? .albumArtist : .artist, isEntityAvailable: albumArtistsAvailable || albums[index].representativeItem?.isCompilation == true ? albumArtistQuery != nil : artistQuery != nil, title: (albumArtistsAvailable || albums[index].representativeItem?.isCompilation == true ? .albumArtist : EntityType.artist).title())
             
             default: break
         }

@@ -96,7 +96,8 @@ class MELSearchBar: UISearchBar {
             if let textField = subview as? UITextField {
                 
                 self.textField = textField
-                textField.clearButtonMode = .never
+                textField.clearButtonMode = .always//.never
+                textField.delegate = self
                 
                 updateTextField(with: placeholder)
                 
@@ -120,5 +121,16 @@ class MELSearchBar: UISearchBar {
             .font: UIFont.font(ofWeight: .regular, size: 17),
             .foregroundColor: Themer.themeColour(alpha: 0.3)//textColour(for: .subtitle)
         ])
+    }
+}
+
+extension MELSearchBar: UITextFieldDelegate {
+    
+    func textFieldShouldClear(_ textField: UITextField) -> Bool {
+        
+        text = nil
+        delegate?.searchBar?(self, textDidChange: "")
+        
+        return false
     }
 }

@@ -12,20 +12,23 @@ class TabBarTableViewController: UITableViewController {
     
     var sections: SectionDictionary = [
         
-        0: ("selected tab behaviour", "A tap on the already selected tab will trigger a return to the starting view if not on it, otherwise scroll to the top of the main view when tapped."),
-        1: ("mini player", "Press and hold on the playing song to view song options."),
-        2: ("collector", nil)
+        0: ("appearance", nil),
+        1: ("selected tab behaviour", "A tap on the already selected tab will trigger a return to the starting view if not on it, otherwise scroll to the top of the main view when tapped."),
+        2: ("mini player", "Press and hold on the playing song to view song options."),
+        3: ("collector", nil)
     ]
     
     lazy var settings: SettingsDictionary = [
         
-        .init(0, 0): .init(title: "Do Nothing", accessoryType: .check({ tabBarTapBehaviour == .nothing })),
-        .init(0, 1): .init(title: "Scroll to Top", accessoryType: .check({ tabBarTapBehaviour == .scrollToTop })),
-        .init(0, 2): .init(title: "Return to Start", accessoryType: .check({ tabBarTapBehaviour == .returnToStart })),
-        .init(0, 3): .init(title: "Return, then Scroll to Top", accessoryType: .check({ tabBarTapBehaviour == .returnThenScroll })),
-        .init(1, 0): .init(title: "Compact", accessoryType: .onOff(isOn: { useMicroPlayer }, action: { [weak self] in self?.toggleCompactPlayer() })),
-        .init(2, 0): .init(title: "Compact", accessoryType: .onOff(isOn: { useCompactCollector }, action: { [weak self] in self?.toggleCompactCollector() })),
-        .init(2, 1): .init(title: "Prevent Duplicates", accessoryType: .onOff(isOn: { collectorPreventsDuplicates }, action: { [weak self] in self?.toggleDuplicates() })),
+        .init(0, 0): .init(title: "Show Tab Titles", accessoryType: .onOff(isOn: { showTabBarLabels }, action: { showTabBarLabels.toggle() })),
+        .init(1, 0): .init(title: "Do Nothing", accessoryType: .check({ tabBarTapBehaviour == .nothing })),
+        .init(1, 1): .init(title: "Scroll to Top", accessoryType: .check({ tabBarTapBehaviour == .scrollToTop })),
+        .init(1, 2): .init(title: "Return to Start", accessoryType: .check({ tabBarTapBehaviour == .returnToStart })),
+        .init(1, 3): .init(title: "Return, then Scroll to Top", accessoryType: .check({ tabBarTapBehaviour == .returnThenScroll })),
+        .init(2, 0): .init(title: "Show Song Titles", accessoryType: .onOff(isOn: { showMiniPlayerSongTitles }, action: { showMiniPlayerSongTitles.toggle() })),
+        .init(2, 1): .init(title: "Show Full Scrubber", accessoryType: .onOff(isOn: { useExpandedSlider }, action: { useExpandedSlider.toggle() })),
+        .init(3, 0): .init(title: "Compact", accessoryType: .onOff(isOn: { useCompactCollector }, action: { [weak self] in self?.toggleCompactCollector() })),
+        .init(3, 1): .init(title: "Prevent Duplicates", accessoryType: .onOff(isOn: { collectorPreventsDuplicates }, action: { [weak self] in self?.toggleDuplicates() })),
     ]
     
     override func viewDidLoad() {
@@ -33,12 +36,6 @@ class TabBarTableViewController: UITableViewController {
         super.viewDidLoad()
         
         tableView.scrollIndicatorInsets.bottom = 14
-    }
-    
-    func toggleCompactPlayer() {
-        
-        prefs.set(!useMicroPlayer, forKey: .microPlayer)
-        notifier.post(name: .microPlayerChanged, object: nil)
     }
     
     func toggleCompactCollector() {
@@ -56,21 +53,12 @@ class TabBarTableViewController: UITableViewController {
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         
-        return sections.count
+        sections.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        switch section {
-            
-            case 0: return 4
-            
-            case 1: return 1
-            
-            case 2: return 2
-            
-            default: return 0
-        }
+        settings.filter({ $0.key.section == section }).count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -110,7 +98,7 @@ class TabBarTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         
-        return .textHeaderHeight + 20
+        return .textHeaderHeight + (section == 1 ? 8 : 20)
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -123,8 +111,17 @@ class TabBarTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-
-        return indexPath.section == 0
+        
+        Set(settings.filter({
+            
+            switch $0.value.accessoryType {
+                
+                case .check: return true
+                
+                default: return false
+            }
+        
+        }).keys.map({ $0.section })).contains(indexPath.section)
     }
     
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {

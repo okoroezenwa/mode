@@ -84,7 +84,7 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
     }
     var artworkDetails: NavigationBarArtworkDetails? {
         
-        get { return (navBarArtworkMode == .large ? topArtwork : smallArtwork, (listsCornerRadius ?? cornerRadius).radiusDetails(for: entityForContainerType(), width: navBarArtworkMode == .large ? inset - 18 : smallArtworkHeight, globalRadiusType: cornerRadius)) }
+        get { return (navBarArtworkMode == .large ? topArtwork : smallArtwork, (listsCornerRadius ?? cornerRadius).radiusDetails(for: entityTypeForContainerType(), width: navBarArtworkMode == .large ? inset - 18 : smallArtworkHeight, globalRadiusType: cornerRadius)) }
         
         set { }
     }
@@ -105,13 +105,13 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         
         let details = EntityType.collectionEntityDetails(for: location(for: .songs))
         
-        return collectionSortOrders?[details.type.title(albumArtistOverride: true, matchingPropertyName: true) + details.startPoint.title] ?? true
+        return collectionSortOrders?[details.type.title(matchingPropertyName: true) + details.startPoint.title] ?? true
     }()
     lazy var sortCriteria: SortCriteria = {
         
         let details = EntityType.collectionEntityDetails(for: location(for: .songs))
         
-        guard let index = collectionSortCategories?[details.type.title(albumArtistOverride: true, matchingPropertyName: true) + details.startPoint.title], let criteria = SortCriteria(rawValue: index), SortCriteria.applicableSortCriteria(for: location(for: .songs)).contains(criteria) else { return .standard }
+        guard let index = collectionSortCategories?[details.type.title(matchingPropertyName: true) + details.startPoint.title], let criteria = SortCriteria(rawValue: index), SortCriteria.applicableSortCriteria(for: location(for: .songs)).contains(criteria) else { return .standard }
         
         return criteria
     }()
@@ -119,13 +119,13 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         
         let details = EntityType.collectionEntityDetails(for: location(for: .albums))
         
-        return collectionSortOrders?[details.type.title(albumArtistOverride: true, matchingPropertyName: true) + details.startPoint.title] ?? true
+        return collectionSortOrders?[details.type.title(matchingPropertyName: true) + details.startPoint.title] ?? true
     }()
     lazy var albumSortCriteria: SortCriteria = {
         
         let details = EntityType.collectionEntityDetails(for: location(for: .albums))
         
-        guard let index = collectionSortCategories?[details.type.title(albumArtistOverride: true, matchingPropertyName: true) + details.startPoint.title], let criteria = SortCriteria(rawValue: index), SortCriteria.applicableSortCriteria(for: location(for: .albums)).contains(criteria) else { return .standard }
+        guard let index = collectionSortCategories?[details.type.title(matchingPropertyName: true) + details.startPoint.title], let criteria = SortCriteria(rawValue: index), SortCriteria.applicableSortCriteria(for: location(for: .albums)).contains(criteria) else { return .standard }
         
         return criteria
     }()
@@ -229,7 +229,7 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         let item: MPMediaItem? = showiCloudItems ? collection?.representativeItem : collection?.items.first(where: { !$0.isCloudItem && $0.actualArtwork != nil })
         
         let size = CGSize.init(width: 100, height: 100)
-        let collectionImage = collection?.customArtwork(for: entityForContainerType())?.scaled(to: size, by: 2)
+        let collectionImage = collection?.customArtwork(for: entityTypeForContainerType())?.scaled(to: size, by: 2)
         let image = item?.actualArtwork?.image(at: size)
         
         var noImage: UIImage {
@@ -378,7 +378,7 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         
         guard container?.activeViewController?.topViewController == self, let artworkImageView = container?.visualEffectNavigationBar.artworkImageView, let artworkImageViewContainer = container?.visualEffectNavigationBar.artworkContainer else { return }
 
-        (listsCornerRadius ?? cornerRadius).updateCornerRadius(on: artworkImageView.layer, width: artworkImageView.bounds.width, entityType: entityForContainerType(), globalRadiusType: cornerRadius)
+        (listsCornerRadius ?? cornerRadius).updateCornerRadius(on: artworkImageView.layer, width: artworkImageView.bounds.width, entityType: entityTypeForContainerType(), globalRadiusType: cornerRadius)
 
         UniversalMethods.addShadow(to: artworkImageViewContainer, radius: 8, opacity: 0.35, shouldRasterise: true)
     }
@@ -410,6 +410,9 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         
         container?.currentModifier = self
         setCurrentOptions()
+        
+        container?.visualEffectNavigationBar.entityTypeLabel.superview?.isHidden = false
+        container?.visualEffectNavigationBar.entityTypeLabel.text = entityTypeForContainerType().title().capitalized
         
         if needsDismissal {
             
@@ -559,7 +562,7 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         
         let query: MPMediaQuery = {
             
-            let entity = entityForContainerType()
+            let entity = entityTypeForContainerType()
             
             let query = MPMediaQuery.init(filterPredicates: [.for(entity, using: collection)])
             query.groupingType = groupingTypeForContainerType()
@@ -583,7 +586,7 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         
         let query: MPMediaQuery = {
             
-            let entity = entityForContainerType()
+            let entity = entityTypeForContainerType()
             let query = MPMediaQuery.init(filterPredicates: [.for(entity, using: collection)])
             query.groupingType = groupingTypeForContainerType()
             
@@ -605,7 +608,7 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         }
     }
     
-    func entityForContainerType() -> EntityType {
+    func entityTypeForContainerType() -> EntityType {
         
         switch entityContainerType {
             

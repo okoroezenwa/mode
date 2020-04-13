@@ -151,6 +151,7 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
         hold.minimumPressDuration = longPressDuration
         hold.delegate = self
         tableView.addGestureRecognizer(hold)
+        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: hold))
         
         updateUpNextButton()
         updateShuffleButton()
@@ -175,7 +176,7 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
             
             case .began:
             
-                guard let indexPath = tableView.indexPathForRow(at: sender.location(in: tableView)), let cell = tableView.cellForRow(at: indexPath) as? SongTableViewCell, let item = manager?.queue[indexPath.row] else { return }
+                guard let indexPath = tableView.indexPathForRow(at: sender.location(in: tableView)), let cell = tableView.cellForRow(at: indexPath) as? EntityTableViewCell, let item = manager?.queue[indexPath.row] else { return }
                 
                 let location = sender.location(in: cell)
                 
@@ -288,7 +289,7 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
         
         for cell in tableView.visibleCells {
             
-            guard let cell = cell as? SongTableViewCell, let indexPath = tableView.indexPath(for: cell) else { continue }
+            guard let cell = cell as? EntityTableViewCell, let indexPath = tableView.indexPath(for: cell) else { continue }
             
             if cell.playingView.isHidden.inverted && musicPlayer.nowPlayingItem != manager?.queue[indexPath.row] {
                 
@@ -568,7 +569,7 @@ extension CollectorViewController: UITableViewDelegate, UITableViewDataSource {
         if let song = manager?.queue[indexPath.row] {
 
             cell.delegate = self
-            cell.swipeDelegate = self
+//            cell.swipeDelegate = self
             cell.preferredEditingStyle = preferredEditingStyle
             cell.playButton.isUserInteractionEnabled = false
             cell.prepare(with: song, songNumber: songCountVisible.inverted ? nil : indexPath.row + 1)
@@ -670,7 +671,7 @@ extension CollectorViewController: UIGestureRecognizerDelegate {
 }
 //extension CollectorViewController: SongCellButtonDelegate {
 //    
-//    @objc func showOptionsForSong(in cell: SongTableViewCell) {
+//    @objc func showOptionsForSong(in cell: EntityTableViewCell) {
 //        
 //        guard let indexPath = tableView.indexPath(for: cell) else { return }
 //        
@@ -681,12 +682,12 @@ extension CollectorViewController: UIGestureRecognizerDelegate {
 
 extension CollectorViewController: EntityCellDelegate {
     
-    func editButtonHeld(in cell: SongTableViewCell) {
+    func editButtonHeld(in cell: EntityTableViewCell) {
         
         Transitioner.shared.performDeepSelection(from: self, title: cell.nameLabel.text)
     }
     
-    func editButtonTapped(in cell: SongTableViewCell) {
+    func editButtonTapped(in cell: EntityTableViewCell) {
         
         guard let indexPath = tableView.indexPath(for: cell) else { return }
         
@@ -700,7 +701,7 @@ extension CollectorViewController: EntityCellDelegate {
         }
     }
     
-    func artworkTapped(in cell: SongTableViewCell) {
+    func artworkTapped(in cell: EntityTableViewCell) {
         
         guard let indexPath = tableView.indexPath(for: cell) else { return }
         
@@ -723,12 +724,12 @@ extension CollectorViewController: EntityCellDelegate {
         }
     }
     
-    func artworkHeld(in cell: SongTableViewCell) {
+    func artworkHeld(in cell: EntityTableViewCell) {
         
         
     }
     
-    func accessoryButtonTapped(in cell: SongTableViewCell) {
+    func accessoryButtonTapped(in cell: EntityTableViewCell) {
         
         guard let indexPath = tableView.indexPath(for: cell) else { return }
         
@@ -752,14 +753,14 @@ extension CollectorViewController: EntityCellDelegate {
         showAlert(title: cell.nameLabel.text, with: actions)
     }
     
-    func accessoryButtonHeld(in cell: SongTableViewCell) {
+    func accessoryButtonHeld(in cell: EntityTableViewCell) {
         
         guard let indexPath = tableView.indexPath(for: cell), let action = self.tableView(tableView, editActionsForRowAt: indexPath, for: .right)?.first else { return }
         
         action.handler?(action, indexPath)
     }
     
-    func scrollViewTapped(in cell: SongTableViewCell) {
+    func scrollViewTapped(in cell: EntityTableViewCell) {
         
         guard let indexPath = tableView.indexPath(for: cell) else { return }
         

@@ -56,6 +56,7 @@ class LibraryViewController: UIViewController, Contained, OptionsContaining, Nav
     
     var isSongsViewControllerInitialised = false
     var isArtistsViewControllerInitialised = false
+    var isAlbumArtistsViewControllerInitialised = false
     var isAlbumsViewControllerInitialised = false
     var isGenresViewControllerInitialised = false
     var isCompilationsViewControllerInitialised = false
@@ -72,9 +73,17 @@ class LibraryViewController: UIViewController, Contained, OptionsContaining, Nav
     
     @objc lazy var artistsViewController: CollectionsViewController? = {
         
-        guard let vc = LibraryViewController.collectionsVC(for: albumArtistsAvailable ? .albumArtist : .artist) else { return nil }
+        guard let vc = LibraryViewController.collectionsVC(for: .artist) else { return nil }
         
         isArtistsViewControllerInitialised = true
+        return vc
+    }()
+    
+    @objc lazy var albumArtistsViewController: CollectionsViewController? = {
+        
+        guard let vc = LibraryViewController.collectionsVC(for: .albumArtist) else { return nil }
+        
+        isAlbumArtistsViewControllerInitialised = true
         return vc
     }()
     
@@ -165,6 +174,8 @@ class LibraryViewController: UIViewController, Contained, OptionsContaining, Nav
             case .albums: title = "Albums"
             
             case .artists: title = "Artists"
+            
+            case .albumArtists: title = "Album Artists"
             
             case .songs: title = "Songs"
             
@@ -257,6 +268,8 @@ class LibraryViewController: UIViewController, Contained, OptionsContaining, Nav
             
             case .artists: return artistsViewController
             
+            case .albumArtists: return albumArtistsViewController
+            
             case .compilations: return compilationsViewController
             
             case .genres: return genresViewController
@@ -279,6 +292,8 @@ class LibraryViewController: UIViewController, Contained, OptionsContaining, Nav
         super.viewDidAppear(animated)
         
         prepareTransientObservers()
+        
+        container?.visualEffectNavigationBar.entityTypeLabel.superview?.isHidden = true
         
         container?.currentModifier = nil
         setCurrentOptions()
@@ -329,12 +344,25 @@ class LibraryViewController: UIViewController, Contained, OptionsContaining, Nav
             
             guard let weakSelf = self, notification.userInfo?["section"] as? Int != notification.userInfo?["oldSection"] as? Int else { return }
             
+            let animated = notification.userInfo?["animated"] as? Bool ?? true
+            
             if weakSelf.navigationController?.topViewController != weakSelf.viewControllerForCurrentSection() {
                 
-                weakSelf.navigationController?.popToRootViewController(animated: true)
+                weakSelf.navigationController?.popToRootViewController(animated: animated)
             }
             
-            weakSelf.activeChildViewController = weakSelf.viewControllerForCurrentSection()
+            if animated {
+            
+                weakSelf.activeChildViewController = weakSelf.viewControllerForCurrentSection()
+            
+            } else {
+                
+                let old = weakSelf.activeChildViewController
+                weakSelf.changeActiveVC = false
+                weakSelf.activeChildViewController = weakSelf.viewControllerForCurrentSection()
+                weakSelf.changeActiveVC = true
+                weakSelf.changeActiveViewControllerFrom(old, animated: false, completion: { weakSelf.view.alpha = 1 })
+            }
             
         }) as! NSObject)
     }
@@ -397,6 +425,8 @@ class LibraryViewController: UIViewController, Contained, OptionsContaining, Nav
             case .songs: return isSongsViewControllerInitialised
             
             case .artists: return isArtistsViewControllerInitialised
+            
+            case .albumArtists: return isAlbumArtistsViewControllerInitialised
             
             case .albums: return isAlbumsViewControllerInitialised
             

@@ -31,7 +31,8 @@ class NavigationAnimationController: NSObject, UIViewControllerAnimatedTransitio
         modalIndex = 0
         
         guard let fromVC = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.from),
-            let toVC = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.to) else { return }
+            let toVC = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.to),
+            let container = appDelegate.window?.rootViewController as? ContainerViewController else { return }
         
         let containerView = transitionContext.containerView
         let duration = transitionDuration(using: transitionContext)
@@ -42,27 +43,27 @@ class NavigationAnimationController: NSObject, UIViewControllerAnimatedTransitio
         containerView.addSubview(fromVC.view)
         containerView.addSubview(toVC.view)
         
-        var needsToUpdateBottomBar = false
-        
         toVC.view.layoutIfNeeded()
         
-        if let first = fromVC as? Navigatable, let second = toVC as? Navigatable, let container = appDelegate.window?.rootViewController as? ContainerViewController {
+        if let first = fromVC as? Navigatable, let second = toVC as? Navigatable {
             
             container.view.layoutIfNeeded()
             container.visualEffectNavigationBar.animateViews(direction: direction, section: .preparation, with: first, and: second)
         }
         
-        if let container = appDelegate.window?.rootViewController as? ContainerViewController, container.activeViewController == container.searchNavigationController {
+        let needsToUpdateBottomBar: Bool = {
             
-            needsToUpdateBottomBar = container.filterViewContainer.filterView.withinSearchTerm != (toVC != container.searchNavigationController?.viewControllers.first)
+            let requiresSearchBar: (UIViewController) -> Bool = { $0 is FilterContainer }
             
-            if needsToUpdateBottomBar {
+            return (requiresSearchBar(toVC) && requiresSearchBar(fromVC).inverted) || (requiresSearchBar(fromVC) && requiresSearchBar(toVC).inverted)
+        }()
+        
+        if needsToUpdateBottomBar {
                 
-                container.filterViewContainer.filterView.withinSearchTerm = !container.filterViewContainer.filterView.withinSearchTerm
-            }
+            container.filterViewContainer.filterView.requiresSearchBar = !container.filterViewContainer.filterView.requiresSearchBar
         }
         
-        if let container = appDelegate.window?.rootViewController as? ContainerViewController, let final = toVC as? ArtworkModifying {
+        if let final = toVC as? ArtworkModifying {
             
             container.altImageView.image = container.imageView.image
             container.altImageView.alpha = 1
@@ -77,7 +78,7 @@ class NavigationAnimationController: NSObject, UIViewControllerAnimatedTransitio
                 fromVC.view.frame.origin.x += (self.direction == .forward ? -40 : 40)
                 fromVC.view.alpha = 0
                 
-                if let first = fromVC as? Navigatable, let second = toVC as? Navigatable, let container = appDelegate.window?.rootViewController as? ContainerViewController {
+                if let first = fromVC as? Navigatable, let second = toVC as? Navigatable {
                     
                     container.visualEffectNavigationBar.animateViews(direction: self.direction, section: .firstHalf, with: first, and: second)
                 }
@@ -87,7 +88,7 @@ class NavigationAnimationController: NSObject, UIViewControllerAnimatedTransitio
             
                 toVC.view.frame.origin.x += (self.direction == .forward ? -40 : 40)
                 
-                if let first = fromVC as? Navigatable, let second = toVC as? Navigatable, let container = appDelegate.window?.rootViewController as? ContainerViewController {
+                if let first = fromVC as? Navigatable, let second = toVC as? Navigatable {
                     
                     container.visualEffectNavigationBar.animateViews(direction: self.direction, section: .secondHalf, with: first, and: second)
                 }
@@ -101,30 +102,17 @@ class NavigationAnimationController: NSObject, UIViewControllerAnimatedTransitio
             })
             
             UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 1, animations: {
-                
-                if let container = appDelegate.window?.rootViewController as? ContainerViewController {
                     
-                    container.imageView.alpha = 1
-                    container.altImageView.alpha = 0
-                    container.view.layoutIfNeeded()
-                }
+                container.imageView.alpha = 1
+                container.altImageView.alpha = 0
+                container.view.layoutIfNeeded()
             })
             
-            if needsToUpdateBottomBar, let container = appDelegate.window?.rootViewController as? ContainerViewController, let filterView = container.filterViewContainer?.filterView {
-                
-                UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 1/2, animations: {
-                    
-                    filterView.filterTestButton.alpha = 0
-                })
-                
-                UIView.addKeyframe(withRelativeStartTime: 1/2, relativeDuration: 1/2, animations: {
-                    
-                    filterView.filterTestButton.alpha = 1
-                })
+            if needsToUpdateBottomBar, let filterView = container.filterViewContainer?.filterView {
                 
                 UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 1, animations: {
                     
-                    filterView.filterInputView.alpha = filterView.context == .library || filterView.withinSearchTerm ? 0 : 1
+                    filterView.alpha = filterView.requiresSearchBar ? 1 : 0
                     container.view.layoutIfNeeded()
                 })
             }
@@ -133,12 +121,12 @@ class NavigationAnimationController: NSObject, UIViewControllerAnimatedTransitio
             
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
             
-            if let weakSelf = self, let first = fromVC as? Navigatable, let second = toVC as? Navigatable, let container = appDelegate.window?.rootViewController as? ContainerViewController {
+            if let weakSelf = self, let first = fromVC as? Navigatable, let second = toVC as? Navigatable {
                 
                 container.visualEffectNavigationBar.animateViews(direction: weakSelf.direction, section: .end(completed: !transitionContext.transitionWasCancelled), with: first, and: second)
             }
             
-            if let container = appDelegate.window?.rootViewController as? ContainerViewController, let initial = fromVC as? ArtworkModifying, let final = toVC as? ArtworkModifying {
+            if let initial = fromVC as? ArtworkModifying, let final = toVC as? ArtworkModifying {
                 
                 container.altImageView.alpha = 0
                 container.imageView.alpha = 1
@@ -161,9 +149,10 @@ class NavigationAnimationController: NSObject, UIViewControllerAnimatedTransitio
                 
             } else {
                 
-                if needsToUpdateBottomBar, let container = appDelegate.window?.rootViewController as? ContainerViewController, let filterView = container.filterViewContainer?.filterView {
+                if needsToUpdateBottomBar, let filterView = container.filterViewContainer?.filterView {
                     
-                    filterView.withinSearchTerm = !filterView.withinSearchTerm
+                    filterView.requiresSearchBar = !filterView.requiresSearchBar
+                    filterView.alpha = filterView.requiresSearchBar ? 1 : 0
                 }
                 
                 fromVC.view.alpha = 1

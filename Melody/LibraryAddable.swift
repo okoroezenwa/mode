@@ -27,259 +27,259 @@ extension EntityVerifiable {
         
         switch property {
             
-        case .song:
-            
-            if let persistentID = item?.persistentID, let query: MPMediaQuery = {
+            case .song:
                 
-                let query: MPMediaQuery? = MPMediaQuery.init(filterPredicates: [.for(.song, using: persistentID)])
-                return query
-                
-            }(), let items = query.items, !items.isEmpty {
-                
-                updateAddButton(hidden: true, animated: animated)
-                return .present
-                
-            } else {
-                
-                let bool: Bool = {
+                if let persistentID = item?.persistentID, let query: MPMediaQuery = {
                     
-                    if appDelegate.appleMusicStatus == .appleMusic(libraryAccess: true) {
+                    let query: MPMediaQuery? = MPMediaQuery.init(filterPredicates: [.for(.song, using: persistentID)])
+                    return query
+                    
+                }(), let items = query.items, !items.isEmpty {
+                    
+                    updateAddButton(hidden: true, animated: animated)
+                    return .present
+                    
+                } else {
+                    
+                    let bool: Bool = {
                         
-                        return false
+                        if appDelegate.appleMusicStatus == .appleMusic(libraryAccess: true) {
+                            
+                            return false
+                            
+                        } else {
+                            
+                            return true
+                        }
+                    }()
+                    
+                    updateAddButton(hidden: bool, animated: animated)
+                    return .absent
+                }
+                
+            case .artist:
+                
+                if let persistentID = item?.artistPersistentID, let query: MPMediaQuery = {
+                    
+                    let query: MPMediaQuery? = MPMediaQuery.init(filterPredicates: [.for(.artist, using: persistentID)]).cloud.grouped(by: .artist)
+                    return query
+                    
+                    }(), let collections = query.collections, !collections.isEmpty {
+                    
+                    if let vc = self as? ArtistTransitionable {
                         
-                    } else {
-                        
-                        return true
+                        vc.artistQuery = query
+                        vc.currentItem = item
+                        vc.currentAlbum = {
+                            
+                            guard let id = item?.albumPersistentID else { return nil }
+                            
+                            return MPMediaQuery.init(filterPredicates: [.for(.album, using: id)]).cloud.grouped(by: .album).collections?.first
+                        }()
                     }
-                }()
+                    
+                    if updateButton {
+                        
+                        artistButton??.greyOverride = false
+                        divider??.greyOverride = false
+                    }
+                    
+                    return .present
+                    
+                } else {
+                    
+                    if let vc = self as? ArtistTransitionable {
+                        
+                        vc.artistQuery = nil
+                        vc.currentAlbum = nil
+                        vc.currentItem = nil
+                    }
+                    
+                    if updateButton {
+                        
+                        artistButton??.greyOverride = true
+                        divider??.greyOverride = true
+                    }
+                    
+                    return .absent
+                }
                 
-                updateAddButton(hidden: bool, animated: animated)
-                return .absent
-            }
-            
-        case .artist:
-            
-            if let persistentID = item?.artistPersistentID, let query: MPMediaQuery = {
+            case .album:
                 
-                let query: MPMediaQuery? = MPMediaQuery.init(filterPredicates: [.for(.artist, using: persistentID)]).cloud.grouped(by: .artist)
-                return query
+                if let persistentID = item?.albumPersistentID, let query: MPMediaQuery = {
+                    
+                    let query: MPMediaQuery? = MPMediaQuery.init(filterPredicates: [.for(.album, using: persistentID)]).cloud.grouped(by: .album)
+                    return query
+                    
+                    }(), let collections = query.collections, !collections.isEmpty {
+                    
+                    if let vc = self as? AlbumTransitionable {
+                        
+                        vc.albumQuery = query
+                        vc.currentItem = item
+                    }
+                    
+                    if updateButton {
+                        
+                        albumButton??.greyOverride = false
+                    }
+                    
+                    return .present
+                    
+                } else {
+                    
+                    if let vc = self as? AlbumTransitionable {
+                        
+                        vc.albumQuery = nil
+                        vc.currentItem = nil
+                    }
+                    
+                    if updateButton {
+                        
+                        albumButton??.greyOverride = true
+                    }
+                    
+                    return .absent
+                }
                 
+            case .genre:
+                
+                if let persistentID = item?.genrePersistentID, let query: MPMediaQuery = {
+                    
+                    let query: MPMediaQuery? = MPMediaQuery.init(filterPredicates: [.for(.genre, using: persistentID)]).cloud.grouped(by: .genre)
+                    return query
+                    
                 }(), let collections = query.collections, !collections.isEmpty {
-                
-                if let vc = self as? ArtistTransitionable {
                     
-                    vc.artistQuery = query
-                    vc.currentItem = item
-                    vc.currentAlbum = {
+                    if let vc = self as? GenreTransitionable {
                         
-                        guard let id = item?.albumPersistentID else { return nil }
+                        vc.genreQuery = query
+                        vc.currentItem = item
+                        vc.currentAlbum = {
+                            
+                            guard let id = item?.albumPersistentID else { return nil }
+                            
+                            return MPMediaQuery.init(filterPredicates: [.for(.album, using: id)]).cloud.grouped(by: .album).collections?.first
+                        }()
+                    }
+                    
+                    if updateButton {
                         
-                        return MPMediaQuery.init(filterPredicates: [.for(.album, using: id)]).cloud.grouped(by: .album).collections?.first
-                    }()
-                }
-                
-                if updateButton {
+                        genreButton??.greyOverride = false
+                    }
                     
-                    artistButton??.greyOverride = false
-                    divider??.greyOverride = false
-                }
-                
-                return .present
-                
-            } else {
-                
-                if let vc = self as? ArtistTransitionable {
+                    return .present
                     
-                    vc.artistQuery = nil
-                    vc.currentAlbum = nil
-                    vc.currentItem = nil
-                }
-                
-                if updateButton {
+                } else {
                     
-                    artistButton??.greyOverride = true
-                    divider??.greyOverride = true
-                }
-                
-                return .absent
-            }
-            
-        case .album:
-            
-            if let persistentID = item?.albumPersistentID, let query: MPMediaQuery = {
-                
-                let query: MPMediaQuery? = MPMediaQuery.init(filterPredicates: [.for(.album, using: persistentID)]).cloud.grouped(by: .album)
-                return query
-                
-                }(), let collections = query.collections, !collections.isEmpty {
-                
-                if let vc = self as? AlbumTransitionable {
-                    
-                    vc.albumQuery = query
-                    vc.currentItem = item
-                }
-                
-                if updateButton {
-                    
-                    albumButton??.greyOverride = false
-                }
-                
-                return .present
-                
-            } else {
-                
-                if let vc = self as? AlbumTransitionable {
-                    
-                    vc.albumQuery = nil
-                    vc.currentItem = nil
-                }
-                
-                if updateButton {
-                    
-                    albumButton??.greyOverride = true
-                }
-                
-                return .absent
-            }
-            
-        case .genre:
-            
-            if let persistentID = item?.genrePersistentID, let query: MPMediaQuery = {
-                
-                let query: MPMediaQuery? = MPMediaQuery.init(filterPredicates: [.for(.genre, using: persistentID)]).cloud.grouped(by: .genre)
-                return query
-                
-            }(), let collections = query.collections, !collections.isEmpty {
-                
-                if let vc = self as? GenreTransitionable {
-                    
-                    vc.genreQuery = query
-                    vc.currentItem = item
-                    vc.currentAlbum = {
+                    if let vc = self as? GenreTransitionable {
                         
-                        guard let id = item?.albumPersistentID else { return nil }
+                        vc.genreQuery = nil
+                        vc.currentAlbum = nil
+                        vc.currentItem = nil
+                    }
+                    
+                    if updateButton {
                         
-                        return MPMediaQuery.init(filterPredicates: [.for(.album, using: id)]).cloud.grouped(by: .album).collections?.first
-                    }()
+                        genreButton??.greyOverride = true
+                    }
+                    
+                    return .absent
                 }
                 
-                if updateButton {
+            case .playlist: return .present
+                
+            case .composer:
+                
+                if let persistentID = item?.composerPersistentID, let query: MPMediaQuery = {
                     
-                    genreButton??.greyOverride = false
-                }
-                
-                return .present
-                
-            } else {
-                
-                if let vc = self as? GenreTransitionable {
+                    let query: MPMediaQuery? = MPMediaQuery.init(filterPredicates: [.for(.composer, using: persistentID)]).cloud.grouped(by: .composer)
+                    return query
                     
-                    vc.genreQuery = nil
-                    vc.currentAlbum = nil
-                    vc.currentItem = nil
-                }
-                
-                if updateButton {
+                    }(), let collections = query.collections, !collections.isEmpty {
                     
-                    genreButton??.greyOverride = true
-                }
-                
-                return .absent
-            }
-            
-        case .playlist: return .present
-            
-        case .composer:
-            
-            if let persistentID = item?.composerPersistentID, let query: MPMediaQuery = {
-                
-                let query: MPMediaQuery? = MPMediaQuery.init(filterPredicates: [.for(.composer, using: persistentID)]).cloud.grouped(by: .composer)
-                return query
-                
-                }(), let collections = query.collections, !collections.isEmpty {
-                
-                if let vc = self as? ComposerTransitionable {
-                    
-                    vc.composerQuery = query
-                    vc.currentItem = item
-                    vc.currentAlbum = {
+                    if let vc = self as? ComposerTransitionable {
                         
-                        guard let id = item?.albumPersistentID else { return nil }
+                        vc.composerQuery = query
+                        vc.currentItem = item
+                        vc.currentAlbum = {
+                            
+                            guard let id = item?.albumPersistentID else { return nil }
+                            
+                            return MPMediaQuery.init(filterPredicates: [.for(.album, using: id)]).cloud.grouped(by: .album).collections?.first
+                        }()
+                    }
+                    
+                    if updateButton {
                         
-                        return MPMediaQuery.init(filterPredicates: [.for(.album, using: id)]).cloud.grouped(by: .album).collections?.first
-                    }()
-                }
-                
-                if updateButton {
+                        composerButton??.greyOverride = false
+                    }
                     
-                    composerButton??.greyOverride = false
-                }
-                
-                return .present
-                
-            } else {
-                
-                if let vc = self as? ComposerTransitionable {
+                    return .present
                     
-                    vc.composerQuery = nil
-                    vc.currentAlbum = nil
-                    vc.currentItem = nil
-                }
-                
-                if updateButton {
+                } else {
                     
-                    composerButton??.greyOverride = true
-                }
-                
-                return .absent
-            }
-            
-        case .albumArtist:
-            
-            if let persistentID = item?.albumArtistPersistentID, let query: MPMediaQuery = {
-                
-                let query: MPMediaQuery? = MPMediaQuery.init(filterPredicates: [.for(.albumArtist, using: persistentID)]).cloud.grouped(by: .albumArtist)
-                return query
-                
-                }(), let collections = query.collections, !collections.isEmpty {
-                
-                if let vc = self as? AlbumArtistTransitionable {
-                    
-                    vc.albumArtistQuery = query
-                    vc.currentItem = item
-                    vc.currentAlbum = {
+                    if let vc = self as? ComposerTransitionable {
                         
-                        guard let id = item?.albumPersistentID else { return nil }
+                        vc.composerQuery = nil
+                        vc.currentAlbum = nil
+                        vc.currentItem = nil
+                    }
+                    
+                    if updateButton {
                         
-                        return MPMediaQuery.init(filterPredicates: [.for(.album, using: id)]).cloud.grouped(by: .album).collections?.first
-                    }()
-                }
-                
-                if updateButton {
+                        composerButton??.greyOverride = true
+                    }
                     
-                    albumArtistButton??.greyOverride = false
-                    divider??.greyOverride = false
+                    return .absent
                 }
                 
-                return .present
+            case .albumArtist:
                 
-            } else {
-                
-                if let vc = self as? AlbumArtistTransitionable {
+                if let persistentID = item?.albumArtistPersistentID, let query: MPMediaQuery = {
                     
-                    vc.albumArtistQuery = nil
-                    vc.currentAlbum = nil
-                    vc.currentItem = nil
-                }
-                
-                if updateButton {
+                    let query: MPMediaQuery? = MPMediaQuery.init(filterPredicates: [.for(.albumArtist, using: persistentID)]).cloud.grouped(by: .albumArtist)
+                    return query
                     
-                    albumArtistButton??.greyOverride = true
-                    divider??.greyOverride = true
+                    }(), let collections = query.collections, !collections.isEmpty {
+                    
+                    if let vc = self as? AlbumArtistTransitionable {
+                        
+                        vc.albumArtistQuery = query
+                        vc.currentItem = item
+                        vc.currentAlbum = {
+                            
+                            guard let id = item?.albumPersistentID else { return nil }
+                            
+                            return MPMediaQuery.init(filterPredicates: [.for(.album, using: id)]).cloud.grouped(by: .album).collections?.first
+                        }()
+                    }
+                    
+                    if updateButton {
+                        
+                        albumArtistButton??.greyOverride = false
+                        divider??.greyOverride = false
+                    }
+                    
+                    return .present
+                    
+                } else {
+                    
+                    if let vc = self as? AlbumArtistTransitionable {
+                        
+                        vc.albumArtistQuery = nil
+                        vc.currentAlbum = nil
+                        vc.currentItem = nil
+                    }
+                    
+                    if updateButton {
+                        
+                        albumArtistButton??.greyOverride = true
+                        divider??.greyOverride = true
+                    }
+                    
+                    return .absent
                 }
-                
-                return .absent
-            }
         }
     }
     
@@ -352,7 +352,7 @@ extension EntityVerifiable {
     
     func showInLibrary(entity: MPMediaEntity, type: EntityType, unwinder: UIViewController?) {
         
-        guard let container = appDelegate.window?.rootViewController as? ContainerViewController, (albumArtistsAvailable && type != .artist) || (albumArtistsAvailable.inverted && type != .albumArtist) else { return }
+        guard let container = appDelegate.window?.rootViewController as? ContainerViewController/*, (albumArtistsAvailable && type != .artist) || (albumArtistsAvailable.inverted && type != .albumArtist)*/ else { return }
         
         let currentSection = prefs.integer(forKey: .lastUsedLibrarySection)
         let section = type.librarySection(from: entity)
@@ -436,11 +436,11 @@ extension EntityVerifiable {
                 
                 let oldChild = libraryVC.activeChildViewController
                 
-                if let details = container.filterViewContainer.filterView.locationDetails(for: section) {
-                    
-                    container.filterViewContainer.filterView.selectCell(at: details.indexPath, usingOtherArray: details.fromOtherArray, arrayIndex: details.index, performTransitions: false)
-                    container.filterViewContainer.filterView.collectionView.scrollToItem(at: details.indexPath, at: .centeredHorizontally, animated: true)
-                }
+//                if let details = container.filterViewContainer.filterView.locationDetails(for: section) {
+//                    
+//                    container.filterViewContainer.filterView.selectCell(at: details.indexPath, usingOtherArray: details.fromOtherArray, arrayIndex: details.index, performTransitions: false)
+//                    container.filterViewContainer.filterView.collectionView.scrollToItem(at: details.indexPath, at: .centeredHorizontally, animated: true)
+//                }
                 
                 prefs.set(section.rawValue, forKey: .lastUsedLibrarySection)
                 

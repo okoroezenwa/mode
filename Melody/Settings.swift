@@ -18,6 +18,8 @@ var albumsCriteria: Int { return prefs.integer(forKey: .albumsSort) } // 1.2
 var albumsOrder: Bool { return prefs.bool(forKey: .albumsOrder) }
 var artistsCriteria: Int { return prefs.integer(forKey: .artistsSort) }
 var artistsOrder: Bool { return prefs.bool(forKey: .artistsOrder) }
+var albumArtistsCriteria: Int { return prefs.integer(forKey: .albumArtistsSort) }
+var albumArtistsOrder: Bool { return prefs.bool(forKey: .albumArtistsOrder) }
 var genresCriteria: Int { return prefs.integer(forKey: .genresSort) }
 var genresOrder: Bool { return prefs.bool(forKey: .genresOrder) }
 var compilationsCriteria: Int { return prefs.integer(forKey: .compilationsSort) }
@@ -32,13 +34,13 @@ var firstAuthorisation: Bool { return prefs.bool(forKey: .firstAuthorisation) }
 var shouldHideEmptyPlaylists: Bool { return prefs.bool(forKey: .hideEmptyPlaylists) }
 var lastUsedLibrarySection: Int { return prefs.integer(forKey: .lastUsedLibrarySection) }
 var lastUsedTab: Int { return prefs.integer(forKey: .lastUsedTab) }
-var filterShortcutEnabled: Bool { return prefs.bool(forKey: .filterShortcutEnabled) }
 var boldHeaders: Bool { return prefs.bool(forKey: .boldSectionTitles) } // 1.0, used in 1.2
 var showRecentPlaylists: Bool { return prefs.bool(forKey: .showRecentPlaylists) } // 1.1, used in 1.2
 public var keepShuffleState: Bool { return prefs.bool(forKey: .keepShuffleState) }
 var numbersBelowLetters: Bool { return prefs.bool(forKey: .numbersBelowLetters) } // 1.2
 var showRecentComposers: Bool { return prefs.bool(forKey: .showRecentComposers) }
 var showRecentArtists: Bool { return prefs.bool(forKey: .showRecentArtists) }
+var showRecentAlbumArtists: Bool { return prefs.bool(forKey: .showRecentAlbumArtists) }
 var showRecentAlbums: Bool { return prefs.bool(forKey: .showRecentAlbums) }
 var showRecentSongs: Bool { return prefs.bool(forKey: .showRecentSongs) }
 var showRecentCompilations: Bool { return prefs.bool(forKey: .showRecentCompilations) }
@@ -61,7 +63,6 @@ var stopGuard: Bool { return prefs.bool(forKey: .stopGuard) }
 var clearGuard: Bool { return prefs.bool(forKey: .clearGuard) }
 var changeGuard: Bool { return prefs.bool(forKey: .changeGuard) }
 var removeGuard: Bool { return prefs.bool(forKey: .removeGuard) }
-var useMicroPlayer: Bool { return prefs.bool(forKey: .microPlayer) }
 var refreshMode: Int { return prefs.integer(forKey: .refreshMode) }
 var backToStartEnabled: Bool { return prefs.bool(forKey: .backToStart) }
 var showUnaddedMusic: Bool { return prefs.bool(forKey: .showUnaddedMusic) }
@@ -105,7 +106,6 @@ var widgetCornerRadius: CornerRadius? { return CornerRadius(rawValue: prefs.inte
 var listsCornerRadius: CornerRadius? { return CornerRadius(rawValue: prefs.integer(forKey: .listsCornerRadius)) }
 var infoCornerRadius: CornerRadius? { return CornerRadius(rawValue: prefs.integer(forKey: .infoCornerRadius)) }
 var miniPlayerCornerRadius: CornerRadius? { return CornerRadius(rawValue: prefs.integer(forKey: .miniPlayerCornerRadius)) }
-var compactCornerRadius: CornerRadius? { return CornerRadius(rawValue: prefs.integer(forKey: .compactCornerRadius)) }
 var fullPlayerCornerRadius: CornerRadius? { return CornerRadius(rawValue: prefs.integer(forKey: .fullScreenPlayerCornerRadius)) }
 var filterFuzziness: Double { return prefs.double(forKey: .filterFuzziness) }
 var iconTheme: IconTheme { return IconTheme(rawValue: prefs.integer(forKey: .iconTheme)) ?? .light }
@@ -280,6 +280,39 @@ var collectionSortOrders: [String: Bool]? {
     set { prefs.set(newValue, forKey: .defaultCollectionSortOrders) }
 }
 
+var useExpandedSlider: Bool {
+    
+    get { prefs.bool(forKey: .useExpandedSlider) }
+    
+    set {
+        
+        prefs.set(newValue, forKey: .useExpandedSlider)
+        notifier.post(name: .useExpandedSliderChanged, object: nil)
+    }
+}
+
+var showMiniPlayerSongTitles: Bool {
+    
+    get { prefs.bool(forKey: .showMiniPlayerSongTitles) }
+    
+    set {
+        
+        prefs.set(newValue, forKey: .showMiniPlayerSongTitles)
+        notifier.post(name: .showMiniPlayerSongTitlesChanged, object: nil)
+    }
+}
+
+var showTabBarLabels: Bool {
+    
+    get { prefs.bool(forKey: .showTabBarLabels) }
+    
+    set {
+        
+        prefs.set(newValue, forKey: .showTabBarLabels)
+        notifier.post(name: .showTabBarLabelsChanged, object: nil)
+    }
+}
+
 class Settings {
     
     class var isInDebugMode: Bool {
@@ -297,7 +330,7 @@ class Settings {
 
     class func registerDefaults() {
         
-        let defaultSortDetails: (sorts: [String: Int], orders: [String: Bool]) = [Location.album, .playlist, .collection(kind: .artist, point: .songs), .collection(kind: .artist, point: .albums), .collection(kind: .albumArtist, point: .songs), .collection(kind: .albumArtist, point: .albums), .collection(kind: .genre, point: .songs), .collection(kind: .genre, point: .albums), .collection(kind: .composer, point: .songs), .collection(kind: .composer, point: .albums)].map({ EntityType.collectionEntityDetails(for: $0) }).map({ $0.type.title(albumArtistOverride: true, matchingPropertyName: true) + $0.startPoint.title }).reduce(([String: Int](), [String: Bool]()), { ($0.0.appending(key: $1, value: ($1.contains("rtistson") ? .albumName : SortCriteria.standard).rawValue), $0.1.appending(key: $1, value: true)) })
+        let defaultSortDetails: (sorts: [String: Int], orders: [String: Bool]) = [Location.album, .playlist, .collection(kind: .artist, point: .songs), .collection(kind: .artist, point: .albums), .collection(kind: .albumArtist, point: .songs), .collection(kind: .albumArtist, point: .albums), .collection(kind: .genre, point: .songs), .collection(kind: .genre, point: .albums), .collection(kind: .composer, point: .songs), .collection(kind: .composer, point: .albums)].map({ EntityType.collectionEntityDetails(for: $0) }).map({ $0.type.title(matchingPropertyName: true) + $0.startPoint.title }).reduce(([String: Int](), [String: Bool]()), { ($0.0.appending(key: $1, value: ($1.contains("rtistson") ? .albumName : SortCriteria.standard).rawValue), $0.1.appending(key: $1, value: true)) })
         
         prefs.register(defaults: [
             
@@ -314,6 +347,8 @@ class Settings {
             .albumsOrder: true,
             .artistsSort: SortCriteria.standard.rawValue,
             .artistsOrder: true,
+            .albumArtistsSort: SortCriteria.standard.rawValue,
+            .albumArtistsOrder: true,
             .genresSort: SortCriteria.standard.rawValue,
             .genresOrder: true,
             .composersSort: SortCriteria.standard.rawValue,
@@ -326,10 +361,10 @@ class Settings {
             .hideEmptyPlaylists: isInDebugMode,
             .lastUsedLibrarySection: LibrarySection.artists.rawValue,
             .lastUsedTab: StartPoint.library.rawValue,
-            .filterShortcutEnabled: false,
             .showRecentPlaylists: true,
             .showRecentSongs: isInDebugMode.inverted,
             .showRecentArtists: isInDebugMode.inverted,
+            .showRecentAlbumArtists: isInDebugMode.inverted,
             .showRecentAlbums: isInDebugMode.inverted,
             .showRecentGenres: isInDebugMode.inverted,
             .showRecentComposers: isInDebugMode.inverted,
@@ -354,7 +389,6 @@ class Settings {
             .clearGuard: true,
             .changeGuard: isInDebugMode,
             .removeGuard: true,
-            .microPlayer: true,
             .refreshMode: RefreshMode.refresh.rawValue, // may not bother
             .backToStart: !isInDebugMode,
             .showUnaddedMusic: false, // not set
@@ -391,8 +425,7 @@ class Settings {
             .widgetCornerRadius: CornerRadius.large.rawValue,
             .listsCornerRadius: CornerRadius.automatic.rawValue,
             .infoCornerRadius: CornerRadius.automatic.rawValue,
-            .miniPlayerCornerRadius: CornerRadius.square.rawValue,
-            .compactCornerRadius: CornerRadius.large.rawValue,
+            .miniPlayerCornerRadius: CornerRadius.large.rawValue,
             .fullScreenPlayerCornerRadius: CornerRadius.small.rawValue,
             .filterFuzziness: 0.4,
             .iconLineWidth: IconLineWidth.thin.rawValue,
@@ -444,14 +477,17 @@ class Settings {
             .lastUsedPlaylists: [MPMediaPlaylist](),
             .showPlaylistHistory: false,
             .defaultCollectionSortCategories: defaultSortDetails.sorts,
-            .defaultCollectionSortOrders: defaultSortDetails.orders
+            .defaultCollectionSortOrders: defaultSortDetails.orders,
+            .useExpandedSlider: false,
+            .showMiniPlayerSongTitles: false,
+            .showTabBarLabels: true
         ])
         
         sharedDefaults.register(defaults: [
             
             .systemPlayer: useSystemMusicPlayer,
             .lighterBorders: useLighterBorders,
-            .widgetCornerRadius: CornerRadius.small.rawValue
+            .widgetCornerRadius: CornerRadius.large.rawValue
         ])
     }
     
@@ -575,9 +611,9 @@ class Settings {
         
         let sections = [LibrarySection.playlists, .songs, .artists]
         
-        return isInDebugMode ? sections : sections + [.albums, .genres, .composers, .compilations]
+        return isInDebugMode ? sections : sections + [.albumArtists, .albums, .genres, .composers, .compilations]
     }
-    static var defaultOtherLibrarySections: [LibrarySection] { return isInDebugMode ? [.albums, .genres, .composers, .compilations] : [] }
+    static var defaultOtherLibrarySections: [LibrarySection] { return isInDebugMode ? [.albums, .genres, .albumArtists, .composers, .compilations] : [] }
     
     static func components(from date: Date) -> TimeConstraintComponents {
         
@@ -604,6 +640,8 @@ extension String {
     static let albumsOrder = "albumsOrder"
     static let artistsSort = "artistsSort"
     static let artistsOrder = "artistsOrder"
+    static let albumArtistsSort = "albumArtistsSort"
+    static let albumArtistsOrder = "albumArtistsOrder"
     static let genresSort = "genresSort"
     static let genresOrder = "genresOrder"
     static let compilationsSort = "compilationsSort"
@@ -628,11 +666,12 @@ extension String {
     static let hideEmptyPlaylists = "hideEmptyPlaylists"
     static let lastUsedLibrarySection = "lastUsedLibrarySection"
     static let lastUsedTab = "lastUsedTab"
-    static let filterShortcutEnabled = "filterShortcutEnabled"
+//    static let filterShortcutEnabled = "filterShortcutEnabled"
     static let showRecentPlaylists = "showRecentPlaylists"
     static let showRecentSongs = "showRecentSongs"
     static let showRecentAlbums = "showRecentAlbums"
     static let showRecentArtists = "showRecentArtists"
+    static let showRecentAlbumArtists = "showRecentAlbumArtists"
     static let showRecentComposers = "showRecentComposers"
     static let showRecentCompilations = "showRecentCompilations"
     static let showRecentGenres = "showRecentGenres"
@@ -655,7 +694,6 @@ extension String {
     static let removeGuard = "removeGuard"
     static let clearGuard = "clearGuard"
     static let stopGuard = "stopGuard"
-    static let microPlayer = "microPlayer"
     static let refreshMode = "refreshMode"
     static let backToStart = "backToStart"
     static let showUnaddedMusic = "showUnaddedMusic"
@@ -691,7 +729,6 @@ extension String {
     static let listsCornerRadius = "listsCornerRadius"
     static let infoCornerRadius = "infoCornerRadius"
     static let miniPlayerCornerRadius = "miniPlayerCornerRadius"
-    static let compactCornerRadius = "compactCornerRadius"
     static let fullScreenPlayerCornerRadius = "fullScreenPlayerCornerRadius"
     static let filterFuzziness = "filterFuzziness"
     static let iconLineWidth = "iconLineWidth"
@@ -742,6 +779,9 @@ extension String {
     static let showPlaylistHistory = "showPlaylistHistory"
     static let defaultCollectionSortCategories = "defaultCollectionSortCategories"
     static let defaultCollectionSortOrders = "defaultCollectionSortOrders"
+    static let useExpandedSlider = "useExpandedSlider"
+    static let showMiniPlayerSongTitles = "showMiniPlayerSongTitles"
+    static let showTabBarLabels = "showTabBarLabels"
 }
 
 // MARK: - Notification Settings Constants
@@ -761,7 +801,6 @@ extension NSNotification.Name {
     static let backgroundArtworkAdaptivityChanged = Notification.Name.init("backgroundArtworkAdaptivityChanged")
     static let themeChanged = Notification.Name.init("themeChanged")
     static let songCellCategoriesChanged = Notification.Name.init("songCellCategoriesChanged")
-    static let microPlayerChanged = Notification.Name.init("microPlayerChanged")
     static let volumeVisibilityChanged = Notification.Name.init("volumeVisibilityChanged")
     static let longPressDurationChanged = Notification.Name.init("longPressDurationChanged")
     static let timeConstraintChanged = Notification.Name.init("timeConstraintChanged")
@@ -786,6 +825,7 @@ extension NSNotification.Name {
     static let showRecentSongsChanged = Notification.Name.init("showRecentSongsChanged")
     static let showRecentAlbumsChanged = Notification.Name.init("showRecentAlbumsChanged")
     static let showRecentArtistsChanged = Notification.Name.init("showRecentArtistsChanged")
+    static let showRecentAlbumArtistsChanged = Notification.Name.init("showRecentAlbumArtistsChanged")
     static let showRecentComposersChanged = Notification.Name.init("showRecentComposersChanged")
     static let showRecentCompilationsChanged = Notification.Name.init("showRecentCompilationsChanged")
     static let showRecentGenresChanged = Notification.Name.init("showRecentGenresChanged")
@@ -808,6 +848,9 @@ extension NSNotification.Name {
     static let navBarConstantChanged = nameByAppending(to: .navBarConstant)
     static let useSystemSwitchChanged = nameByAppending(to: .useSystemSwitch)
     static let collectionSortChanged = nameByAppending(to: "collectionSort")
+    static let useExpandedSliderChanged = nameByAppending(to: .useExpandedSlider)
+    static let showMiniPlayerSongTitlesChanged = nameByAppending(to: .showMiniPlayerSongTitles)
+    static let showTabBarLabelsChanged = nameByAppending(to: .showTabBarLabels)
     
     static func nameByAppending(to text: String) -> Notification.Name {
         

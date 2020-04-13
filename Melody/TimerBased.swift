@@ -10,21 +10,22 @@ import UIKit
 
 @objc protocol TimerBased {
     
-    @objc optional var startTime: MELLabel? { get set }
-    @objc optional var stopTime: MELLabel? { get set }
+    var startTime: MELLabel! { get set }
+    var stopTime: MELLabel! { get set }
     var playPauseButton: MELButton! { get set }
     var timeSlider: MELSlider! { get set }
     var playingImage: UIImage { get }
     var pausedImage: UIImage { get }
     var playPauseButtonNeedsAnimation: Bool { get }
     @objc optional var playingInset: CGFloat { get }
-    @objc optional var altPlayPauseButton: MELButton? { get set }
     @objc optional var pausedInset: CGFloat { get }
     @objc optional var shuffle: MELButton? { get set }
     @objc optional var repeatButton: MELButton? { get set }
     @objc optional var repeatView: MELBorderView? { get set }
     @objc optional var shuffleView: MELBorderView? { get set }
     @objc optional var prefersBoldOnTap: Bool { get }
+    @objc optional var playButtonLabel: MELLabel? { get set }
+//    @objc optional var queueButtonLabel: MELLabel! { get set }
 }
 
 extension TimerBased {
@@ -33,8 +34,8 @@ extension TimerBased {
         
         if let item = item {
             
-            startTime??.text = seeking ? TimeInterval(timeSlider.value).nowPlayingRepresentation : time.nowPlayingRepresentation
-            stopTime??.text = (TimeInterval(seeking ? TimeInterval(timeSlider.value) : time) - item.playbackDuration).nowPlayingRepresentation
+            startTime.text = seeking ? TimeInterval(timeSlider.value).nowPlayingRepresentation : time.nowPlayingRepresentation
+            stopTime.text = (TimeInterval(seeking ? TimeInterval(timeSlider.value) : time) - item.playbackDuration).nowPlayingRepresentation
             
             if setValue {
                 
@@ -52,7 +53,7 @@ extension TimerBased {
         }
     }
     
-    func modifyPlayPauseButton() {
+    func modifyPlayPauseButton(setImageOnly: Bool = false) {
         
         let image: UIImage = {
             
@@ -60,21 +61,29 @@ extension TimerBased {
             
             return musicPlayer.isPlaying ? playingImage : pausedImage
         }()
-        
+            
         playPauseButton.setImage(image, for: .normal)
-        playPauseButton.imageEdgeInsets.left = musicPlayer.isPlaying ? playingInset ?? 0 : pausedInset ?? 0
-        altPlayPauseButton??.setImage(musicPlayer.isPlaying ? #imageLiteral(resourceName: "PauseFilled17") : #imageLiteral(resourceName: "PlayFilled17"), for: .normal)
         
-        UIView.animate(withDuration: 0.65, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .allowUserInteraction, animations: {
-            
-            if self.playPauseButtonNeedsAnimation {
-                
-                self.playPauseButton.superview?.layoutIfNeeded()
+        if setImageOnly { return }
+        
+        playButtonLabel??.text = {
+
+            if let _ = musicPlayer.nowPlayingItem {
+
+                return musicPlayer.isPlaying ? "Playing" : "Paused"
+
+            } else {
+
+                return "Stopped"
             }
+        }()
+        
+        playPauseButton.imageEdgeInsets.left = musicPlayer.isPlaying ? playingInset ?? 0 : pausedInset ?? 0
+        
+        if playPauseButtonNeedsAnimation {
             
-            self.altPlayPauseButton??.superview?.layoutIfNeeded()
-            
-        }, completion: nil)
+            UIView.animate(withDuration: 0.65, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .allowUserInteraction, animations: { self.playPauseButton.superview?.layoutIfNeeded() }, completion: nil)
+        }
     }
     
     func modifyRepeatButton(changingMusicPlayer: Bool) {

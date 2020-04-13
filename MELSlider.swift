@@ -10,7 +10,15 @@ import UIKit
 
 class MELSlider: UISlider {
     
-    @objc var border = false
+    @objc var border = false {
+        
+        didSet {
+            
+            guard oldValue != border else { return }
+            
+            changeThemeColor()
+        }
+    }
     @objc var size: CGFloat = 8
     @objc var brightness = false
 
@@ -27,15 +35,10 @@ class MELSlider: UISlider {
         
         maximumTrackTintColor = (darkTheme ? UIColor.white : UIColor.black).withAlphaComponent(border ? 0.05 : 0.1)
         minimumTrackTintColor = border ? (darkTheme ? UIColor.white.withAlphaComponent(0.5) : UIColor.black.withAlphaComponent(0.5)) : (darkTheme ? .white : .black)
-        
-        if border {
             
-            thumbTintColor = .clear
+        thumbTintColor = .clear
             
-        } else {
-            
-            setThumbImage(UIImage.new(withColour: darkTheme ? .white : .black, size: .square(of: size * 2)).at(.square(of: size)).withCornerRadii(size / 2), for: .normal)
-        }
+        [UIButton.State.normal, .application, .disabled, .focused, .highlighted, .reserved, .selected].forEach({ setThumbImage(UIImage.new(withColour: border ? .clear : Themer.themeColour(), size: .square(of: size * 2)).at(.square(of: size)).withCornerRadii(size / 2), for: $0) })
         
         if brightness {
             

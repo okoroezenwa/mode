@@ -43,6 +43,7 @@ class ActionsViewController: UIViewController {
     @IBOutlet var emptySearchButton: UIButton!
     @IBOutlet var getInfoButton: UIButton!
     @IBOutlet var artistsButton: UIButton!
+    @IBOutlet var albumArtistsButton: UIButton!
     @IBOutlet var albumsButton: UIButton!
     @IBOutlet var songsButton: UIButton!
     @IBOutlet var genresButton: UIButton!
@@ -277,7 +278,7 @@ class ActionsViewController: UIViewController {
                 
                 array = [emptyPlaylistsSwitch, foldersSwitch, emptySearchButton, allButton.superview, dynamicSwitch, boldSwitch, switchButton, unaddedSwitch, volumeViewContainer.viewWithTag(1), preventSwitch, removeDuplicatesButton] as [UIView?]
                 
-                if let container = appDelegate.window?.rootViewController as? ContainerViewController, !container.filterViewContainer.filterView.withinSearchTerm {
+                if let container = appDelegate.window?.rootViewController as? ContainerViewController, !container.filterViewContainer.filterView.requiresSearchBar {
                     
                     [libraryTopStackView, libraryBottomStackView].forEach({ array.append($0) })
                 }
@@ -481,6 +482,8 @@ class ActionsViewController: UIViewController {
         switch section {
             
             case .artists: return artistsButton
+            
+            case .albumArtists: return albumArtistsButton
                 
             case .albums: return albumsButton
                 
@@ -513,6 +516,8 @@ class ActionsViewController: UIViewController {
             case composersButton: return .composers
             
             case playlistsButton: return .playlists
+            
+            case albumArtistsButton: return .albumArtists
             
             default: fatalError("No other buttons should invoke this")
         }
@@ -647,18 +652,44 @@ class ActionsViewController: UIViewController {
                 
                 if let container = appDelegate.window?.rootViewController as? ContainerViewController {
                     
-                    if container.activeViewController == container.libraryNavigationController, let details = container.filterViewContainer.filterView.locationDetails(for: weakSelf.section(for: sender)) {
+                    if container.activeViewController == container.libraryNavigationController {
                         
-                        container.filterViewContainer.filterView.selectCell(at: details.indexPath, usingOtherArray: details.fromOtherArray, arrayIndex: details.index)
-                        container.filterViewContainer.filterView.collectionView.scrollToItem(at: details.indexPath, at: .centeredHorizontally, animated: true)
+                        let librarySection = weakSelf.section(for: sender)
+                        
+                        if section == librarySection, container.libraryNavigationController?.topViewController != container.libraryNavigationController?.viewControllers.first {
+                            
+                            container.libraryNavigationController?.popToRootViewController(animated: true)
+                        
+                        } else if section != librarySection, let libraryVC = container.libraryNavigationController?.viewControllers.first as? LibraryViewController {
+                            
+                            prefs.set(librarySection.rawValue, forKey: .lastUsedLibrarySection)
+                            libraryVC.activeChildViewController = libraryVC.viewControllerForCurrentSection()
+                            
+                            if libraryVC.navigationController?.topViewController != libraryVC.navigationController?.viewControllers.first {
+                                
+                                libraryVC.navigationController?.popToRootViewController(animated: true)
+                            }
+                        }
                         
                     } else {
                         
-                        let oldSection = prefs.integer(forKey: .lastUsedLibrarySection)
-                        let section = weakSelf.section(for: sender).rawValue
-        
-                        prefs.set(section, forKey: .lastUsedLibrarySection)
-                        notifier.post(name: .changeLibrarySection, object: nil, userInfo: ["section": section, "oldSection": oldSection])
+                        let librarySection = weakSelf.section(for: sender)
+                        
+                        if container.activeViewController != container.libraryNavigationController {
+                        
+                            if section == librarySection, (container.libraryNavigationController?.topViewController is LibraryViewController).inverted {
+
+                                container.libraryNavigationController?.popToRootViewController(animated: false)
+                                container.libraryNavigationController?.topViewController?.view.alpha = 1
+
+                            } else {
+                                
+                                let rawValue = librarySection.rawValue
+                
+                                prefs.set(rawValue, forKey: .lastUsedLibrarySection)
+                                notifier.post(name: .changeLibrarySection, object: nil, userInfo: ["section": rawValue, "oldSection": section.rawValue, "animated": false])
+                            }
+                        }
                         
                         container.switchViewController(container.libraryButton)
                     }

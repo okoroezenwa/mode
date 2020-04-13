@@ -922,7 +922,7 @@ extension SingleItemActionable {
                                     return
                                 }
                                 
-                                verifiable.performUnwindSegue(with: verifiedEntityType, isEntityAvailable: true, title: verifiedEntityType.title(albumArtistOverride: true), completion: {
+                                verifiable.performUnwindSegue(with: verifiedEntityType, isEntityAvailable: true, title: verifiedEntityType.title(), completion: {
                                     
                                     if let container = vc as? FilterContainer & UIViewController {
                                         
@@ -964,7 +964,7 @@ extension SingleItemActionable {
                         } else {
                         
                             actions.append(
-                                .init(info: .init(title: "\(entityType == verifiedEntityType ? "This " : "")" + verifiedEntityType.title(albumArtistOverride: details.albumArtOverride).capitalized,
+                                .init(info: .init(title: "\(entityType == verifiedEntityType ? "This " : "")" + verifiedEntityType.title().capitalized,
                                     subtitle: entity.title(for: verifiedEntityType, basedOn: entityType),
                                     image: verifiedEntityType.images.size22,
                                     accessoryType: .button(type: .image({ #imageLiteral(resourceName: "InfoNoBorder13") }), bordered: true, widthType: .standard, touchEnabled: true)),
@@ -988,7 +988,7 @@ extension SingleItemActionable {
                                         return
                                     }
                                     
-                                    verifiable.performUnwindSegue(with: verifiedEntityType, isEntityAvailable: true, title: verifiedEntityType.title(albumArtistOverride: true), completion: {
+                                    verifiable.performUnwindSegue(with: verifiedEntityType, isEntityAvailable: true, title: verifiedEntityType.title(), completion: {
                                         
                                         if let container = vc as? FilterContainer & UIViewController {
                                             
@@ -1098,7 +1098,7 @@ extension SingleItemActionable {
                         if shouldSetProperties, searchVC.filterProperty != .title {
                             
                             searchVC.filterProperty = .title
-                            container.filterViewContainer.filterView.collectionView.reloadData()
+//                            container.filterViewContainer.filterView.collectionView.reloadData()
                         }
                         
                         if shouldSetProperties, searchVC.propertyTest != .contains {

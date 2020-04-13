@@ -28,7 +28,7 @@ class PropertiesViewController: UIViewController {
     enum Button { case leftButton, rightButton }
     enum Key: String {
         
-        case persistentID, mediaLibrary, multiverseIdentifier, itemsQuery, artworkCatalog, dateAccessed, lyrics, effectiveAlbumArtist, effectiveStopTime, playCountSinceSync, storeCloudAlbumID, cloudUniversalLibraryID, existsInLibrary, isCloudMix, storeCloudID, isPlaybackHistoryPlaylist, cloudShareURL, cloudGlobalID, cloudIsSubscribed, albumStoreID, artistArtworkCatalog, artistStoreID, albumArtistArtworkCatalog, albumArtistStoreID, genreStoreID, composerStoreID
+        case persistentID, mediaLibrary, multiverseIdentifier, itemsQuery, artworkCatalog, dateAccessed, lyrics, effectiveAlbumArtist, effectiveStopTime, playCountSinceSync, storeCloudAlbumID, cloudUniversalLibraryID, existsInLibrary, isCloudMix, storeCloudID, isPlaybackHistoryPlaylist, cloudShareURL, cloudGlobalID, cloudIsSubscribed, albumStoreID, artistArtworkCatalog, artistStoreID, albumArtistArtworkCatalog, albumArtistStoreID, genreStoreID, composerStoreID, bitRate
         
         static func keys(for entityType: EntityType) -> [Key] {
         
@@ -39,7 +39,7 @@ class PropertiesViewController: UIViewController {
             
                 switch entityType {
                     
-                    case .song: return [.artworkCatalog, .dateAccessed, .lyrics, .effectiveAlbumArtist, .effectiveStopTime, .playCountSinceSync, .storeCloudAlbumID, .cloudUniversalLibraryID]
+                    case .song: return [.artworkCatalog, .dateAccessed, .playCountSinceSync, .bitRate, .lyrics, .effectiveAlbumArtist, .effectiveStopTime, .storeCloudAlbumID, .cloudUniversalLibraryID]
                     
                     case .playlist: return collectionArray + [.artworkCatalog, .existsInLibrary, .isCloudMix, .storeCloudID, .isPlaybackHistoryPlaylist, .cloudShareURL, .cloudGlobalID, .cloudIsSubscribed]
                     

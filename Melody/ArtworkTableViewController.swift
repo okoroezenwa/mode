@@ -20,14 +20,13 @@ class ArtworkTableViewController: UITableViewController {
     @IBOutlet var widgetLabel: MELLabel!
     @IBOutlet var infoViewLabel: MELLabel!
     @IBOutlet var miniPlayerLabel: MELLabel!
-    @IBOutlet var compactPlayerLabel: MELLabel!
     @IBOutlet var fullPlayerLabel: MELLabel!
     @IBOutlet var automaticLabel: MELLabel!
     @IBOutlet var animatableViews: [UIView]!
     
     enum RadiusSection: Int {
         
-        case main, lists, widget, info, mini, compact, full
+        case main, lists, widget, info, mini, full
         
         var description: String {
             
@@ -42,8 +41,6 @@ class ArtworkTableViewController: UITableViewController {
                 case .info: return "Info View"
                 
                 case .mini: return "Mini Player"
-                
-                case .compact: return "Compact Player"
                 
                 case .full: return "Fullscreen Player"
             }
@@ -65,16 +62,12 @@ class ArtworkTableViewController: UITableViewController {
             
             case .mini: return .miniPlayerCornerRadius
             
-            case .compact: return .compactCornerRadius
-            
             case .full: return .fullScreenPlayerCornerRadius
         }
     }
     var relevantRadius: CornerRadius? {
         
         switch radiusSection {
-            
-            case .compact: return compactCornerRadius
             
             case .lists: return listsCornerRadius
             
@@ -127,10 +120,9 @@ class ArtworkTableViewController: UITableViewController {
     @objc func prepareLabels() {
     
         listsLabel.text = (listsCornerRadius ?? .automatic).description
-        widgetLabel.text = (widgetCornerRadius ?? .small).description
+        widgetLabel.text = (widgetCornerRadius ?? .large).description
         infoViewLabel.text = (infoCornerRadius ?? .automatic).description
-        miniPlayerLabel.text = (miniPlayerCornerRadius ?? .square).description
-        compactPlayerLabel.text = (compactCornerRadius ?? .rounded).description
+        miniPlayerLabel.text = (miniPlayerCornerRadius ?? .large).description
         fullPlayerLabel.text = (fullPlayerCornerRadius ?? .small).description
     }
 
@@ -143,7 +135,7 @@ class ArtworkTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return section == 0 ? 5 : 6
+        return 5
     }
     
     override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {

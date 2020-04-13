@@ -29,10 +29,10 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
     @IBOutlet var previous: MELButton!
     @IBOutlet var nextButton: MELButton!
     @IBOutlet var shuffle: MELButton?
-    @IBOutlet var startTime: MELLabel?
-    @IBOutlet var stopTime: MELLabel?
+    @IBOutlet var startTime: MELLabel!
+    @IBOutlet var stopTime: MELLabel!
     @IBOutlet var timeSlider: MELSlider!
-    @IBOutlet var queue: MELButton!
+    @IBOutlet var queueButton: MELButton!
     @IBOutlet var lyricsButton: MELButton!
     @IBOutlet var lyricsVisualEffectView: MELVisualEffectView!
     @IBOutlet var nowPlayingView: UIView!
@@ -1023,20 +1023,20 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         
         guard musicPlayer.nowPlayingItem != nil else {
             
-            queue.setTitle("Queue", for: .normal)
+            queueButton.setTitle("Queue", for: .normal)
             
             return
         }
         
-        queue.superview?.layoutIfNeeded()
+        queueButton.superview?.layoutIfNeeded()
         
         let string = musicPlayer.fullQueueCount(withInitialSpace: false, parentheses: false).uppercased()
-        queue.setTitle(string, for: .normal)
-        queue.attributes = [Attributes.init(name: .font, value: .other(UIFont.font(ofWeight: .regular, size: 13)), range: string.nsRange(of: "OF"))]
+        queueButton.setTitle(string, for: .normal)
+        queueButton.attributes = [Attributes.init(name: .font, value: .other(UIFont.font(ofWeight: .regular, size: 13)), range: string.nsRange(of: "OF"))]
         
-        queueChevronTrailingConstraint.constant = queue.intrinsicContentSize.width + 3
+        queueChevronTrailingConstraint.constant = queueButton.intrinsicContentSize.width + 3
         
-        UIView.animate(withDuration: 0.3, animations: { self.queue.superview?.layoutIfNeeded() })
+        UIView.animate(withDuration: 0.3, animations: { self.queueButton.superview?.layoutIfNeeded() })
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -1298,11 +1298,11 @@ extension NowPlayingViewController: UIViewControllerPreviewingDelegate {
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
         
-        if queue.bounds.contains(nowPlayingView.convert(location, to: queue)), let _ = musicPlayer.nowPlayingItem {
+        if queueButton.bounds.contains(nowPlayingView.convert(location, to: queueButton)), let _ = musicPlayer.nowPlayingItem {
             
             if let queueVC = presentedChilrenStoryboard.instantiateViewController(withIdentifier: "queueTVC") as? QueueViewController, let vc = performTransition(to: queueVC, sender: nil) {
                 
-                previewingContext.sourceRect = queue.convert(queue.bounds, to: nowPlayingView)
+                previewingContext.sourceRect = queueButton.convert(queueButton.bounds, to: nowPlayingView)
                 
                 return vc
             }
@@ -1391,9 +1391,9 @@ extension NowPlayingViewController: Detailing {
             
             case .artist: return ([.artist], false)
             
-            case .album: return ([.genre, .album], false)
+            case .album: return ([.genre, .album, .albumArtist], false)
             
-            default: return ([EntityType.genre, .composer, .albumArtist], true)
+            default: return ([EntityType.genre, .composer, .albumArtist, .album, .artist], true)
         }
     }
 }

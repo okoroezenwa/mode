@@ -316,7 +316,7 @@ struct Setting {
         
         enum ButtonType { case image(() -> UIImage), text(String) }
         
-        case none, chevron, button(type: ButtonType, bordered: Bool, widthType: SettingsTableViewCell.ButtonWidthType, touchEnabled: Bool), check(() -> (Bool)), onOff(isOn: () -> (Bool), action: (() -> ()))
+        case none, chevron, button(type: ButtonType, bordered: Bool, widthType: SettingsTableViewCell.ButtonWidthType, touchEnabled: Bool), check(() -> Bool), onOff(isOn: () -> (Bool), action: (() -> ()))
         
         static func ==(lhs: AccessoryType, rhs: AccessoryType) -> Bool {
             

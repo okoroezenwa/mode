@@ -383,7 +383,7 @@ extension TableDelegate: UITableViewDelegate, UITableViewDataSource {
                         query = MPMediaQuery.init(filterPredicates: [.for(details.type, using: entity.persistentID)]).cloud
                     }
                     
-                } else if let indexPath = tableView.indexPathForRow(at: sender.location(in: tableView)), let cell = tableView.cellForRow(at: indexPath) as? SongTableViewCell, let entity = container?.getEntity(at: indexPath, filtering: container?.filterContainer != nil) {
+                } else if let indexPath = tableView.indexPathForRow(at: sender.location(in: tableView)), let cell = tableView.cellForRow(at: indexPath) as? EntityTableViewCell, let entity = container?.getEntity(at: indexPath, filtering: container?.filterContainer != nil) {
                 
                     location = sender.location(in: cell)
                     editingRect = cell.editingView.frame
@@ -728,7 +728,7 @@ extension TableDelegate {
                 }()
                 
                 cell.prepare(with: song, songNumber: songNumber, highlightedSong: container?.highlightedEntity as? MPMediaItem)
-                cell.swipeDelegate = self
+//                cell.swipeDelegate = self
                 
                 let loader: InfoLoading? = filtering ? container?.filterContainer : container
                 loader?.updateImageView(using: song, in: cell, indexPath: indexPath, reusableView: tableView)
@@ -779,7 +779,7 @@ extension TableDelegate {
                     
                     cell.prepare(with: album, withinArtist: album.representativeItem?.isCompilation == true ? false : withinArtist, highlightedAlbum: container?.highlightedEntity as? MPMediaItemCollection, number: number)
                     cell.delegate = self
-                    cell.swipeDelegate = self
+//                    cell.swipeDelegate = self
                     
                     let loader: InfoLoading? = filtering ? container?.filterContainer : container
                     loader?.updateImageView(using: album, entityType: .album, in: cell, indexPath: indexPath, reusableView: tableView)
@@ -811,7 +811,7 @@ extension TableDelegate {
                         
                         cell.prepare(with: collection, withinArtist: false, number: number)
                         cell.delegate = self
-                        cell.swipeDelegate = self
+//                        cell.swipeDelegate = self
                         
                         let loader: InfoLoading? = filtering ? container?.filterContainer : container
                         loader?.updateImageView(using: collection, entityType: .album, in: cell, indexPath: indexPath, reusableView: tableView)
@@ -820,7 +820,7 @@ extension TableDelegate {
                         
                         cell.prepare(for: kind.albumBasedCollectionKind, with: collection, number: number)
                         cell.delegate = self
-                        cell.swipeDelegate = self
+//                        cell.swipeDelegate = self
                         
                         let loader: InfoLoading? = filtering ? container?.filterContainer : container
                         loader?.updateImageView(using: collection, entityType: kind.entityType, in: cell, indexPath: indexPath, reusableView: tableView)
@@ -851,7 +851,7 @@ extension TableDelegate {
                             cell.delegate = self
                         }
                         
-                        cell.swipeDelegate = self
+//                        cell.swipeDelegate = self
                         
                         if showPlaylistFolders, let collectionsVC = container as? CollectionsViewController, filtering.inverted {
                             
@@ -995,8 +995,9 @@ extension TableDelegate {
                                 
                                 case .album where showRecentAlbums: return 16
                                 
-                                case .artist where showRecentArtists,
-                                     .albumArtist where showRecentArtists: return 16
+                                case .artist where showRecentArtists: return 16
+                                
+                                case .albumArtist where showRecentAlbumArtists: return 16
                                 
                                 case .compilation where showRecentCompilations: return 16
                                 
@@ -1144,7 +1145,7 @@ extension TableDelegate {
         
         indexPaths.forEach({
             
-            guard let cell = tableView.cellForRow(at: $0) as? SongTableViewCell, let entity = container?.getEntity(at: $0, filtering: container?.filterContainer != nil) else { return }
+            guard let cell = tableView.cellForRow(at: $0) as? EntityTableViewCell, let entity = container?.getEntity(at: $0, filtering: container?.filterContainer != nil) else { return }
             
             switch location {
                 
@@ -1198,17 +1199,17 @@ extension TableDelegate {
 
 extension TableDelegate: EntityCellDelegate {
     
-    func editButtonHeld(in cell: SongTableViewCell) {
+    func editButtonHeld(in cell: EntityTableViewCell) {
         
         Transitioner.shared.performDeepSelection(from: container as? UIViewController, title: cell.nameLabel.text)
     }
     
-    func editButtonTapped(in cell: SongTableViewCell) {
+    func editButtonTapped(in cell: EntityTableViewCell) {
         
         scrollViewTapped(in: cell)
     }
     
-    func accessoryButtonTapped(in cell: SongTableViewCell) {
+    func accessoryButtonTapped(in cell: EntityTableViewCell) {
         
         guard let container = container as? TableViewContainer & UIViewController, let tableView = container.filterContainer?.tableView ?? container.tableView, let indexPath = tableView.indexPath(for: cell) else { return }
         
@@ -1247,14 +1248,14 @@ extension TableDelegate: EntityCellDelegate {
         vc.showAlert(title: cell.nameLabel.text, with: actions)
     }
     
-    func accessoryButtonHeld(in cell: SongTableViewCell) {
+    func accessoryButtonHeld(in cell: EntityTableViewCell) {
         
         guard let tableView = container?.tableView, let indexPath = tableView.indexPath(for: cell), let action = self.tableView(tableView, editActionsForRowAt: indexPath, for: .right)?.first else { return }
         
         action.handler?(action, indexPath)
     }
     
-    func scrollViewTapped(in cell: SongTableViewCell) {
+    func scrollViewTapped(in cell: EntityTableViewCell) {
         
         guard let container = container, let tableView = container.filterContainer?.tableView ?? container.tableView, let indexPath = tableView.indexPath(for: cell) else { return }
         
@@ -1277,7 +1278,7 @@ extension TableDelegate: EntityCellDelegate {
         cell.setHighlighted(false, animated: true)
     }
     
-    func artworkTapped(in cell: SongTableViewCell) {
+    func artworkTapped(in cell: EntityTableViewCell) {
         
         guard let container = container, let tableView = container.filterContainer?.tableView ?? container.tableView, let indexPath = tableView.indexPath(for: cell) else { return }
         
@@ -1347,7 +1348,7 @@ extension TableDelegate: EntityCellDelegate {
         }
     }
     
-    func artworkHeld(in cell: SongTableViewCell) {
+    func artworkHeld(in cell: EntityTableViewCell) {
         
         guard musicPlayer.nowPlayingItem != nil, let indexPath = container?.tableView.indexPath(for: cell) else { return }
         
@@ -1379,11 +1380,11 @@ extension TableDelegate: SwipeTableViewCellDelegate {
                     actionable.songManager.toggleEditing(action)
                 })
                 
-                edit.image = tableView.isEditing ? #imageLiteral(resourceName: "CheckBordered17") : #imageLiteral(resourceName: "Edit17")
+                edit.image = tableView.isEditing ? #imageLiteral(resourceName: "CheckBordered17") : #imageLiteral(resourceName: "EditNoBorder17")
                 
                 array.append(edit)
                 
-                if musicPlayer.nowPlayingItem != nil, let cell = tableView.cellForRow(at: indexPath) as? SongTableViewCell {
+                if musicPlayer.nowPlayingItem != nil, let cell = tableView.cellForRow(at: indexPath) as? EntityTableViewCell {
                     
                     let details = getActionDetails(from: .queue(name: cell.nameLabel.text, query: query(at: indexPath, filtering: container.filterContainer != nil)), indexPath: indexPath, vc: container.filterContainer ?? container as? UIViewController)
                     
@@ -1405,7 +1406,7 @@ extension TableDelegate: SwipeTableViewCellDelegate {
                 
                 var array = [SwipeAction]()
                 
-                if let cell = tableView.cellForRow(at: indexPath) as? SongTableViewCell {
+                if let cell = tableView.cellForRow(at: indexPath) as? EntityTableViewCell {
                     
                     let details = getActionDetails(from: SongAction.show(title: cell.nameLabel.text, context: infoContext(from: indexPath, filtering: container?.filterContainer != nil), canDisplayInLibrary: canDisplayInLibrary()), indexPath: indexPath, vc: container?.filterContainer ?? container as? UIViewController, useAlternateTitle: true)
                     
@@ -1473,11 +1474,11 @@ extension TableDelegate {
                     editing ? searchViewController.handleLeftSwipe(searchViewController) : searchViewController.handleRightSwipe(searchViewController)
                 })
                 
-                edit.image = editing ? #imageLiteral(resourceName: "CheckBordered17") : #imageLiteral(resourceName: "Edit17")
+                edit.image = editing ? #imageLiteral(resourceName: "CheckBordered17") : #imageLiteral(resourceName: "EditNoBorder17")
                 
                 array.append(edit)
                 
-                if musicPlayer.nowPlayingItem != nil, let cell = searchViewController.tableView.cellForRow(at: indexPath) as? SongTableViewCell {
+                if musicPlayer.nowPlayingItem != nil, let cell = searchViewController.tableView.cellForRow(at: indexPath) as? EntityTableViewCell {
                     
                     let details = searchViewController.getActionDetails(from: .queue(name: cell.nameLabel.text, query: nil), indexPath: indexPath, actionable: searchViewController, vc: searchViewController, entityType: .song, entity: searchViewController.getEntity(at: indexPath)!)
                     
@@ -1492,7 +1493,7 @@ extension TableDelegate {
             
                 var array = [SwipeAction]()
                 
-                if let cell = searchViewController.tableView.cellForRow(at: indexPath) as? SongTableViewCell {
+                if let cell = searchViewController.tableView.cellForRow(at: indexPath) as? EntityTableViewCell {
                     
                     let details = searchViewController.getActionDetails(from: .show(title: cell.nameLabel.text, context: searchViewController.context(from: indexPath), canDisplayInLibrary: true), indexPath: indexPath, actionable: searchViewController, vc: searchViewController, entityType: searchViewController.sectionDetails[indexPath.section].category.entityType, entity: searchViewController.getEntity(at: indexPath)!, useAlternateTitle: true)
                         
@@ -1525,7 +1526,7 @@ extension TableDelegate {
                     queueViewController.songManager.toggleEditing(action)
                 })
                 
-                edit.image = editing ? #imageLiteral(resourceName: "CheckBordered17") : #imageLiteral(resourceName: "Edit17")
+                edit.image = editing ? #imageLiteral(resourceName: "CheckBordered17") : #imageLiteral(resourceName: "EditNoBorder17")
                 
                 array.append(edit)
             
@@ -1553,7 +1554,7 @@ extension TableDelegate {
                     array.append(delete)
                 }
                 
-                if let cell = queueViewController.tableView.cellForRow(at: indexPath) as? SongTableViewCell {
+                if let cell = queueViewController.tableView.cellForRow(at: indexPath) as? EntityTableViewCell {
                     
                     let details = queueViewController.getActionDetails(from: .show(title: cell.nameLabel.text, context: queueViewController.context(from: indexPath), canDisplayInLibrary: true), indexPath: indexPath, actionable: queueViewController, vc: queueViewController, entityType: .song, entity: queueViewController.getSong(from: indexPath)!, useAlternateTitle: true)
                 
@@ -1587,7 +1588,7 @@ extension TableDelegate {
                     collectorItemsViewController.songManager.toggleEditing(collectorItemsViewController.editButton as Any)
                 })
                 
-                edit.image = editing ? #imageLiteral(resourceName: "CheckBordered17") : #imageLiteral(resourceName: "Edit17")
+                edit.image = editing ? #imageLiteral(resourceName: "CheckBordered17") : #imageLiteral(resourceName: "EditNoBorder17")
                 
                 array.append(edit)
                 
@@ -1606,7 +1607,7 @@ extension TableDelegate {
                 
                 array.append(delete)
                 
-                if let cell = collectorItemsViewController.tableView.cellForRow(at: indexPath) as? SongTableViewCell {
+                if let cell = collectorItemsViewController.tableView.cellForRow(at: indexPath) as? EntityTableViewCell {
                     
                     let details = collectorItemsViewController.getActionDetails(from: .show(title: cell.nameLabel.text, context: .song(location: .list, at: indexPath.row, within: collectorItemsViewController.manager.queue), canDisplayInLibrary: true), indexPath: indexPath, actionable: collectorItemsViewController, vc: collectorItemsViewController, entityType: .song, entity: collectorItemsViewController.manager.queue[indexPath.row], useAlternateTitle: true)
                     
@@ -1640,7 +1641,7 @@ extension TableDelegate {
                 newPlaylistViewController.songManager.toggleEditing(newPlaylistViewController)
             })
             
-            edit.image = editing ? #imageLiteral(resourceName: "CheckBordered17") : #imageLiteral(resourceName: "Edit17")
+            edit.image = editing ? #imageLiteral(resourceName: "CheckBordered17") : #imageLiteral(resourceName: "EditNoBorder17")
             
             array.append(edit)
             

@@ -823,7 +823,7 @@ extension LargeActivityIndicatorContaining {
         
         if let queueVC = self as? QueueViewController {
             
-            activityVisualEffectView.isHidden = queueVC.queueIsBeingEdited ? hidden : queueVC.isQueueAvailable ? hidden : queueVC.firstScroll
+            activityVisualEffectView.isHidden = queueVC.queueIsBeingEdited ? hidden : /*queueVC.*/isQueueAvailable ? hidden : queueVC.firstScroll
         }
         
         tableView.isUserInteractionEnabled = hidden

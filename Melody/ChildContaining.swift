@@ -71,8 +71,6 @@ extension ChildContaining where Self: UIViewController {
             return
         }
         
-//        guard  else { return }
-        
         snapshot.frame = containerView.frame
         view.insertSubview(snapshot, aboveSubview: containerView)
         containerView.alpha = 0
@@ -100,22 +98,7 @@ extension ChildContaining where Self: UIViewController {
             oldVC = (vc as? UINavigationController)?.topViewController as? Navigatable
             newVC = containerVC.activeViewController?.topViewController as? Navigatable
             
-            if let startPoint = StartPoint(rawValue: lastUsedTab) {
-                
-                switch startPoint {
-                    
-                    case .library:
-                        
-                        containerVC.filterViewContainer.context = .library
-                    
-                    case .search:
-                        
-                        if let searchVC = containerVC.searchNavigationController?.viewControllers.first as? SearchViewController {
-                            
-                            containerVC.filterViewContainer.context = .filter(filter: searchVC, container: searchVC)
-                        }
-                }
-            }
+            containerVC.filterViewContainer.filterView.requiresSearchBar = containerVC.activeViewController?.topViewController is FilterContainer
             
             container.visualEffectNavigationBar.animateViews(direction: .forward, section: .preparation, with: oldVC, and: newVC, preferVerticalTransition: true)
             
@@ -148,7 +131,7 @@ extension ChildContaining where Self: UIViewController {
                 
                 UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 1, animations: {
                     
-                    containerVC.filterViewContainer.filterView.filterInputView.alpha = containerVC.filterViewContainer.filterView.context == .library ? 0 : 1
+                    containerVC.filterViewContainer.filterView.alpha = containerVC.filterViewContainer.filterView.requiresSearchBar.inverted ? 0 : 1
                     containerVC.view.layoutIfNeeded()
                 })
             }

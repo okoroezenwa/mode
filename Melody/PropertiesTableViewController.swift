@@ -12,8 +12,8 @@ class PropertiesTableViewController: UITableViewController {
     
     lazy var sections: SectionDictionary = [
         
-        0: (nil, "Turn an item off to hide it from view."),
-        1: ("other", "Move items here to group into an \"Other\" list.")
+        0: ("main", "Turn an item off to hide it from view."),
+        1: ("secondary", "Move items here to group into a Secondary \(context == .library ? "Sections" : "Categories") list.")
     ]
     
     lazy var settings = SettingsDictionary()
@@ -127,7 +127,7 @@ class PropertiesTableViewController: UITableViewController {
         guard sourceIndexPath != destinationIndexPath else { return }
         
         let arrays = relevantArrays
-        
+            
         switch (sourceIndexPath.section, destinationIndexPath.section) {
             
             case (0, 1):
@@ -208,7 +208,7 @@ class PropertiesTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         
-        return (section == 0 ? .tableHeader : .textHeaderHeight) + 8
+        return .textHeaderHeight + 20
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

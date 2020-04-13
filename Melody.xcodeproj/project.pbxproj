@@ -36,6 +36,7 @@
 		BE0F5C471D2D663F00C9E8A1 /* MelodyUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0F5C461D2D663F00C9E8A1 /* MelodyUITests.swift */; };
 		BE10508B211AFF7B00F5DC78 /* LyricsInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE10508A211AFF7B00F5DC78 /* LyricsInfoViewController.swift */; };
 		BE10508D211AFFB000F5DC78 /* LyricsInfoViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BE10508C211AFFB000F5DC78 /* LyricsInfoViewController.storyboard */; };
+		BE1171912427D48500D01FD9 /* SearchLeftView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1171902427D48500D01FD9 /* SearchLeftView.swift */; };
 		BE11A63D1F95334000A852C2 /* LibraryAddable.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE11A63C1F95334000A852C2 /* LibraryAddable.swift */; };
 		BE11E52C1D7970FD0086A570 /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE11E52B1D7970FD0086A570 /* Protocols.swift */; };
 		BE11E52E1D7971C00086A570 /* Enumerations.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE11E52D1D7971C00086A570 /* Enumerations.swift */; };
@@ -178,10 +179,11 @@
 		BE7314EE1E2635FA0050A46B /* PillButtonView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BE7314ED1E2635FA0050A46B /* PillButtonView.xib */; };
 		BE7314F01E2638A30050A46B /* EffectBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7314EF1E2638A30050A46B /* EffectBanner.swift */; };
 		BE7314F21E263FF80050A46B /* PillButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7314F11E263FF80050A46B /* PillButtonView.swift */; };
-		BE73B1E31D96708C0059D084 /* SongCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = BE73B1E21D96708C0059D084 /* SongCell.xib */; };
+		BE73B1E31D96708C0059D084 /* EntityCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = BE73B1E21D96708C0059D084 /* EntityCell.xib */; };
 		BE73B1E51D96D9C30059D084 /* SongTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE73B1E41D96D9C20059D084 /* SongTableViewCell.swift */; };
 		BE7486EA1D982CA60062EB68 /* NavigationAnimationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7486E91D982CA60062EB68 /* NavigationAnimationController.swift */; };
 		BE75DDEB1E4EF5500045BEA3 /* PopoverDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE75DDEA1E4EF5500045BEA3 /* PopoverDelegate.swift */; };
+		BE7624F22426884D00462E62 /* SearchLeftView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BE7624F12426884D00462E62 /* SearchLeftView.xib */; };
 		BE7A19BB1ECB470200825303 /* MusicPlayer + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7A19BA1ECB470200825303 /* MusicPlayer + Extensions.swift */; };
 		BE7A66941E6253120091A216 /* MELLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7A66931E6253120091A216 /* MELLabel.swift */; };
 		BE7A66961E62C91E0091A216 /* MELSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7A66951E62C91E0091A216 /* MELSlider.swift */; };
@@ -201,6 +203,7 @@
 		BE89790E1E30C22B008634E6 /* NowPlaying.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE89790D1E30C22B008634E6 /* NowPlaying.swift */; };
 		BE8B6A6420D5963000A823A1 /* SharedTypeAliases.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8B6A6320D5963000A823A1 /* SharedTypeAliases.swift */; };
 		BE8B6A6520D5964400A823A1 /* SharedTypeAliases.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8B6A6320D5963000A823A1 /* SharedTypeAliases.swift */; };
+		BE93B4052433B1A200217501 /* ItemsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE93B4042433B1A200217501 /* ItemsViewController.swift */; };
 		BE9481341EA4085000AAE895 /* Filterable.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9481331EA4085000AAE895 /* Filterable.swift */; };
 		BE99B5361ED6CF130033B796 /* MELLayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE99B5351ED6CF130033B796 /* MELLayerView.swift */; };
 		BE99D5481E2222E200D54E14 /* EntityItemsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE99D5471E2222E200D54E14 /* EntityItemsViewController.swift */; };
@@ -397,6 +400,7 @@
 		BE0F5C481D2D663F00C9E8A1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BE10508A211AFF7B00F5DC78 /* LyricsInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsInfoViewController.swift; sourceTree = "<group>"; };
 		BE10508C211AFFB000F5DC78 /* LyricsInfoViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LyricsInfoViewController.storyboard; sourceTree = "<group>"; };
+		BE1171902427D48500D01FD9 /* SearchLeftView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchLeftView.swift; sourceTree = "<group>"; };
 		BE11A63C1F95334000A852C2 /* LibraryAddable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryAddable.swift; sourceTree = "<group>"; };
 		BE11E52B1D7970FD0086A570 /* Protocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
 		BE11E52D1D7971C00086A570 /* Enumerations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enumerations.swift; sourceTree = "<group>"; };
@@ -543,10 +547,11 @@
 		BE7314ED1E2635FA0050A46B /* PillButtonView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PillButtonView.xib; sourceTree = "<group>"; };
 		BE7314EF1E2638A30050A46B /* EffectBanner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EffectBanner.swift; sourceTree = "<group>"; };
 		BE7314F11E263FF80050A46B /* PillButtonView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PillButtonView.swift; sourceTree = "<group>"; };
-		BE73B1E21D96708C0059D084 /* SongCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = SongCell.xib; path = Melody/SongCell.xib; sourceTree = "<group>"; };
+		BE73B1E21D96708C0059D084 /* EntityCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = EntityCell.xib; path = Melody/EntityCell.xib; sourceTree = "<group>"; };
 		BE73B1E41D96D9C20059D084 /* SongTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongTableViewCell.swift; sourceTree = "<group>"; };
 		BE7486E91D982CA60062EB68 /* NavigationAnimationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationAnimationController.swift; sourceTree = "<group>"; };
 		BE75DDEA1E4EF5500045BEA3 /* PopoverDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PopoverDelegate.swift; sourceTree = "<group>"; };
+		BE7624F12426884D00462E62 /* SearchLeftView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SearchLeftView.xib; sourceTree = "<group>"; };
 		BE7A19BA1ECB470200825303 /* MusicPlayer + Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MusicPlayer + Extensions.swift"; sourceTree = "<group>"; };
 		BE7A66931E6253120091A216 /* MELLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MELLabel.swift; sourceTree = "<group>"; };
 		BE7A66951E62C91E0091A216 /* MELSlider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MELSlider.swift; sourceTree = "<group>"; };
@@ -565,6 +570,7 @@
 		BE8328641D8B4D38001F015E /* NewPlaylistViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewPlaylistViewController.swift; sourceTree = "<group>"; };
 		BE89790D1E30C22B008634E6 /* NowPlaying.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NowPlaying.swift; sourceTree = "<group>"; };
 		BE8B6A6320D5963000A823A1 /* SharedTypeAliases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedTypeAliases.swift; sourceTree = "<group>"; };
+		BE93B4042433B1A200217501 /* ItemsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemsViewController.swift; sourceTree = "<group>"; };
 		BE9481331EA4085000AAE895 /* Filterable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Filterable.swift; sourceTree = "<group>"; };
 		BE99B5351ED6CF130033B796 /* MELLayerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MELLayerView.swift; sourceTree = "<group>"; };
 		BE99D5471E2222E200D54E14 /* EntityItemsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityItemsViewController.swift; sourceTree = "<group>"; };
@@ -943,6 +949,7 @@
 		BE15DA331E8121B900E44CE2 /* Library Children */ = {
 			isa = PBXGroup;
 			children = (
+				BE93B4042433B1A200217501 /* ItemsViewController.swift */,
 				BE18B59423C5C76C0017E666 /* LastUsedViewController.swift */,
 				BE34A48F1DDEDCCF0023A0EB /* CollectionsViewController.swift */,
 				BE6A9CB71D7F989B00FA4CB9 /* SongsViewController.swift */,
@@ -1054,6 +1061,7 @@
 		BE27153B1D5A8265001F01FF /* View Subclasses */ = {
 			isa = PBXGroup;
 			children = (
+				BE1171902427D48500D01FD9 /* SearchLeftView.swift */,
 				BE2715351D5A7584001F01FF /* Table View Cells */,
 				BEB3AC721DD881F200682854 /* Collection View Cells */,
 				BE2E7CC91E61F2D900FD69C4 /* Themable */,
@@ -1264,9 +1272,10 @@
 				BE51B718230945620039C790 /* BorderedButtonView.xib */,
 				BE53A9A31DD0D5F100FB3073 /* TableHeaderView.xib */,
 				BE56D13D1DD4C96D00BBF64B /* PlaylistCollectionCell.xib */,
-				BE73B1E21D96708C0059D084 /* SongCell.xib */,
+				BE73B1E21D96708C0059D084 /* EntityCell.xib */,
 				BE9EA2D11DBF9AC5001F8C85 /* NoAccessView.xib */,
 				BEB3AC6F1DD881AD00682854 /* SmallPlaylistCollectionCell.xib */,
+				BE7624F12426884D00462E62 /* SearchLeftView.xib */,
 				BE21DAFF1F229EF600441BF6 /* TableFooterView.xib */,
 				BEBC4E311FB2DAE200F18E06 /* InputView.xib */,
 				BE2808871FC973A500D3AB1C /* FilterView.xib */,
@@ -1566,7 +1575,8 @@
 				BE28088A1FC97F3200D3AB1C /* PropertyCollectionViewCell.xib in Resources */,
 				BE34C96D21A9C40A00236BAE /* GestureSelectableCell.xib in Resources */,
 				BEC0B1592021D47E008CBEB5 /* Dark App Icon Medium@2x.png in Resources */,
-				BE73B1E31D96708C0059D084 /* SongCell.xib in Resources */,
+				BE7624F22426884D00462E62 /* SearchLeftView.xib in Resources */,
+				BE73B1E31D96708C0059D084 /* EntityCell.xib in Resources */,
 				BE14559F237FF4B90016CAE8 /* Dark Rainbow App Icon Wide@2x.png in Resources */,
 				BEC0B16B2021D506008CBEB5 /* Light App Icon Thin@3x.png in Resources */,
 				BEBC4E321FB2DAE200F18E06 /* InputView.xib in Resources */,
@@ -1925,6 +1935,8 @@
 				BEDC53AB1EBCE06D00566424 /* CellSecondaryDetailsSettingViewController.swift in Sources */,
 				BE2189251EF2CB4700B40CEE /* Refreshable.swift in Sources */,
 				BE7314F21E263FF80050A46B /* PillButtonView.swift in Sources */,
+				BE1171912427D48500D01FD9 /* SearchLeftView.swift in Sources */,
+				BE93B4052433B1A200217501 /* ItemsViewController.swift in Sources */,
 				BEC933D21F6D9B0800FB5984 /* SwipeExtensions.swift in Sources */,
 				BE2A692B1F1E2A0600DEE878 /* ThemeTableViewController.swift in Sources */,
 				BE6A9CB81D7F989B00FA4CB9 /* SongsViewController.swift in Sources */,

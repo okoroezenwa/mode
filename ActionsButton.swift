@@ -18,6 +18,36 @@ class ActionsButton: MELButton {
         
         super.awakeFromNib()
         
-        setImage(useLargerImage ? #imageLiteral(resourceName: "Actions22") : useMiddleImage ? #imageLiteral(resourceName: "Actions18") : useSmallestImage ? #imageLiteral(resourceName: "Actions13") : #imageLiteral(resourceName: "Actions15"), for: .normal)
+        prepareImage()
+        
+        if useLargerImage {
+            
+            notifier.addObserver(self, selector: #selector(prepareImage), name: .showTabBarLabelsChanged, object: nil)
+        }
+    }
+    
+    @objc func prepareImage() {
+        
+        let image: UIImage = {
+            
+            if useLargerImage {
+                
+                return showTabBarLabels ? #imageLiteral(resourceName: "Actions20") : #imageLiteral(resourceName: "Actions22")
+                
+            } else if useMiddleImage {
+                
+                return #imageLiteral(resourceName: "Actions18")
+                
+            } else if useSmallestImage {
+                
+                return #imageLiteral(resourceName: "Actions13")
+                
+            } else {
+                
+                return #imageLiteral(resourceName: "Actions15")
+            }
+        }()
+        
+        setImage(image, for: .normal)
     }
 }

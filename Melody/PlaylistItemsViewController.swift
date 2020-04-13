@@ -729,7 +729,7 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
             
             for cell in weakSelf.tableView.visibleCells {
                 
-                guard let cell = cell as? SongTableViewCell, let indexPath = weakSelf.tableView.indexPath(for: cell) else { continue }
+                guard let cell = cell as? EntityTableViewCell, let indexPath = weakSelf.tableView.indexPath(for: cell) else { continue }
                 
                 if cell.playingView.isHidden.inverted && musicPlayer.nowPlayingItem != weakSelf.getSong(from: indexPath) {
                     
@@ -833,7 +833,7 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
         
         for cell in tableView.visibleCells {
             
-            if let cell = cell as? SongTableViewCell, !cell.playingView.isHidden {
+            if let cell = cell as? EntityTableViewCell, !cell.playingView.isHidden {
                 
                 cell.indicator.state = musicPlayer.isPlaying ? .playing : .paused
             }

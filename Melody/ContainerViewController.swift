@@ -17,68 +17,58 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
     @IBOutlet var effectViewBottomEffectViewConstraint: NSLayoutConstraint!
     @IBOutlet var imageView: UIImageView!
     @IBOutlet var altImageView: InvertIgnoringImageView!
-    @IBOutlet var nowPlayingView: UIView!
     @IBOutlet var filterViewContainer: FilterViewContainer! {
         
         didSet {
             
             guard let startPoint = StartPoint(rawValue: lastUsedTab) else { return }
             
-            switch startPoint {
-                
-                case .library:
-                    
-                    filterViewContainer.context = .library
-                
-                case .search:
-                    
-                    guard let searchVC = searchNavigationController?.viewControllers.first as? SearchViewController else { return }
-                    
-                    filterViewContainer.context = .filter(filter: searchVC, container: searchVC)
-            }
+            filterViewContainer.filterView.requiresSearchBar = startPoint == .search
         }
     }
     @IBOutlet var bottomEffectView: MELVisualEffectView!
     
     @IBOutlet var songName: MELLabel!
     @IBOutlet var artistAndAlbum: MELLabel!
-    @IBOutlet var albumArt: UIImageView!
     @IBOutlet var collectedButton: MELButton!
-    @IBOutlet var altPlayPauseButton: MELButton?
     @IBOutlet var playPauseButton: MELButton!
-    @IBOutlet var playPauseButtonBorder: UIView!
     @IBOutlet var playShuffleButton: MELButton!
     @IBOutlet var collectedUpNextButton: MELButton!
-    @IBOutlet var upNextButton: MELButton!
     @IBOutlet var nowPlayingButton: UIButton!
     @IBOutlet var timeSlider: MELSlider!
+    @IBOutlet var timeSliderSuperview: UIView!
+    @IBOutlet var sliderParentViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet var containerView: UIView!
+    @IBOutlet var startTime: MELLabel!
+    @IBOutlet var stopTime: MELLabel!
+    @IBOutlet var sliderStackViewEdgeConstraints: [NSLayoutConstraint]!
+    @IBOutlet var songTitlesStackView: UIStackView!
+    @IBOutlet var timeSliderTopConstraint: NSLayoutConstraint!
+    @IBOutlet var timeSliderBottomConstraint: NSLayoutConstraint!
+    @IBOutlet var miniLabelsTopConstraint: NSLayoutConstraint!
+    @IBOutlet var miniLabelsBottomConstraint: NSLayoutConstraint!
+    @IBOutlet var artworkContainerWidthConstraint: NSLayoutConstraint!
+    @IBOutlet var artworkContainerCentreYConstraint: NSLayoutConstraint!
+    @IBOutlet var sliderBorderView: MELBorderView!
     @IBOutlet var tabView: UIView!
     @IBOutlet var searchButton: MELButton!
     @IBOutlet var libraryButton: MELButton!
+    @IBOutlet var libraryButtonLabel: MELLabel!
+    @IBOutlet var searchButtonLabel: MELLabel!
+    @IBOutlet var actionsButtonLabel: MELLabel!
+    @IBOutlet var playButtonLabel: MELLabel?
+    @IBOutlet var queueButtonLabel: MELLabel!
     @IBOutlet var collectedView: UIView!
     @IBOutlet var clearButton: MELButton!
     @IBOutlet var altQueueView: UIView!
-    @IBOutlet var addButtonLeadingConstraint: NSLayoutConstraint?
-    @IBOutlet var activityIndicator: UIActivityIndicatorView!
     @IBOutlet var bottomEffectViewBottomConstraint: NSLayoutConstraint!
     @IBOutlet var collectedUpNextViewEqualWidthConstraint: NSLayoutConstraint!
     @IBOutlet var collectedUpNextViewWidthConstraint: NSLayoutConstraint!
-    @IBOutlet var editButton: MELButton! {
-        
-        didSet {
-            
-            editButton.addTarget(songManager, action: #selector(SongActionManager.showActionsForAll(_:)), for: .touchUpInside)
-        }
-    }
-    @IBOutlet var infoViewWidthConstraint: NSLayoutConstraint!
-    @IBOutlet var infoView: UIView!
     @IBOutlet var altNowPlayingView: UIView!
     @IBOutlet var altAlbumArt: UIImageView!
     @IBOutlet var altNowPlayingButton: MELButton!
     @IBOutlet var altNowPlayingViewSuperview: UIView!
-    @IBOutlet var artworkContainer: UIView!
-    @IBOutlet var actionsButton: UIButton! {
+    @IBOutlet var actionsButton: ActionsButton! {
         
         didSet {
             
@@ -100,6 +90,8 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         
         return constraint
     }()
+    
+    var editButton: MELButton! = MELButton()
 
     @objc var activeChildViewController: UIViewController? {
         
@@ -137,7 +129,13 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         }
     }
     lazy var reverseShuffle = false
-    @objc var inset: CGFloat { return (self.nowPlayingView.isHidden ? 0 : 50) + (self.collectedView.isHidden ? 0 : 44) + 51 + (lastUsedTab == StartPoint.library.rawValue || filterViewContainer.filterView.withinSearchTerm ? 36 : 88) }
+    var collectedViewHeight: CGFloat { collectedView.isHidden ? 0 : 44 }
+    var searchViewHeight: CGFloat { lastUsedTab == StartPoint.library.rawValue || filterViewContainer.filterView.requiresSearchBar.inverted ? 0 : 52 + 1 }
+    var titlesHeight: CGFloat { musicPlayer.nowPlayingItem == nil ? 0 : showMiniPlayerSongTitles ? 4 + (FontManager.shared.height(for: .secondary) * 2) + (useExpandedSlider ? 5 : 7) : 0 }
+    var sliderHeight: CGFloat { musicPlayer.nowPlayingItem == nil ? 0 : useExpandedSlider ? expandedSliderHeight : 0 }
+    let expandedSliderHeight: CGFloat = 30
+    
+    @objc var inset: CGFloat { return collectedViewHeight + 51 + sliderHeight + titlesHeight + searchViewHeight }
     @objc var currentItem: MPMediaItem?
     @objc var albumQuery: MPMediaQuery?
     var albumArtistQuery: MPMediaQuery?
@@ -156,18 +154,14 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             notifier.post(name: .libraryOptionsChanged, object: nil, userInfo: ["options": options])
         }
     }
-    var modifier: ArtworkModifying? {
-        
-        return activeViewController?.topViewController as? ArtworkModifying
-    }
+    var modifier: ArtworkModifying? { activeViewController?.topViewController as? ArtworkModifying }
     @objc var deferToNowPlayingViewController = false
     @objc var lifetimeObservers = Set<NSObject>()
     @objc let presenter = PresentationAnimationController.init(interactor: InteractionController())
-    let playingImage = #imageLiteral(resourceName: "PauseFilled10")
-    let pausedImage = #imageLiteral(resourceName: "PlayFilledSmall")
+    var playingImage: UIImage { showTabBarLabels ? #imageLiteral(resourceName: "Pause16") : #imageLiteral(resourceName: "Pause20") }
+    var pausedImage: UIImage { showTabBarLabels ? #imageLiteral(resourceName: "PlayCurved16") : #imageLiteral(resourceName: "PlayCurved19") }
     let pausedInset: CGFloat = 1
     let playPauseButtonNeedsAnimation = true
-    var updateableView: UIView? { return nowPlayingView }
     @objc var fromSearchAction = false
     
     @objc lazy var searchNavigationController: UINavigationController? = {
@@ -209,6 +203,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
     var changeActiveVC = true
     var isSearchNavigationControllerInitialised = false
     var isLibraryNavigationControllerInitialised = false
+    var allowSwipeAssistedPan = false
     
     override func viewDidLoad() {
         
@@ -227,21 +222,20 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         update(button(for: startPoint), to: .selected, animated: false)
         
         updateActiveViewController()
-        updateLibraryButtonImage()
+        prepareTabBar(updateImages: false)
         
         updateSliderDuration()
         
         ArtworkManager.shared.container = self
         imageView.image = (activeViewController?.topViewController as? ArtworkModifying)?.artworkType.image
         
-        prepareNowPlayingViews(with: musicPlayer.nowPlayingItem, animated: false)
+        prepareNowPlayingViews(animated: false)
         prepareLifetimeObservers()
         prepareAltAlbumArt()
         
         notifier.addObserver(self, selector: #selector(updateCornersAndShadows), name: .cornerRadiusChanged, object: nil)
         
-        infoView.isHidden = !showInfoButtons
-        infoViewWidthConstraint.constant = showInfoButtons ? 50 : 0
+        updateSecondaryPlayingViews(self)
             
         view.addSubview(visualEffectNavigationBar)
         visualEffectNavigationBar.translatesAutoresizingMaskIntoConstraints = false
@@ -265,13 +259,119 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         
         registerForPreviewing(with: self, sourceView: bottomEffectView.contentView)
         
-        UniversalMethods.addShadow(to: playPauseButtonBorder, path: UIBezierPath.init(roundedRect: playPauseButtonBorder.bounds, cornerRadius: 12).cgPath)
-        
         updateCornersAndShadows()
-        updateNowPlayingView()
         
         getCollected()
         Queue.shared.verifyQueue()
+    }
+    
+    func prepareTabBar(updateImages: Bool) {
+        
+        if updateImages {
+        
+            updateLibraryButtonImage()
+            updateSearchButtonImage()
+            modifyPlayPauseButton(setImageOnly: true)
+        }
+        
+        artworkContainerCentreYConstraint.constant = showTabBarLabels ? -8.5 : 0
+        artworkContainerWidthConstraint.constant = showTabBarLabels ? 24 : 28
+        
+        [playPauseButton, libraryButton, searchButton, actionsButton].forEach({ $0?.contentEdgeInsets.bottom = showTabBarLabels ? 17 : 0 })
+        
+        [playButtonLabel, libraryButtonLabel, searchButtonLabel, queueButtonLabel, actionsButtonLabel].forEach({ $0?.isHidden = showTabBarLabels.inverted })
+    }
+    
+    func updateSecondaryPlayingViews(_ sender: Any) {
+        
+        let hasSong = musicPlayer.nowPlayingItem != nil
+        let animated = (sender is UIViewController).inverted
+        
+//        if let stackView = timeSliderSuperview.superview as? UIStackView {
+//
+//            if (useExpandedSlider && stackView.arrangedSubviews.firstIndex(of: timeSliderSuperview) == 1) || (useExpandedSlider.inverted && stackView.arrangedSubviews.firstIndex(of: timeSliderSuperview) == 0) { } else {
+//
+//                stackView.removeArrangedSubview(timeSliderSuperview)
+//
+//                if useExpandedSlider {
+//
+//                    stackView.insertArrangedSubview(timeSliderSuperview, at: 1)
+//
+//                } else {
+//
+//                    stackView.insertArrangedSubview(timeSliderSuperview, at: 0)
+//                }
+//
+//                stackView.layoutIfNeeded()
+//            }
+//        }
+        
+        songTitlesStackView.superview?.isHidden = hasSong ? showMiniPlayerSongTitles.inverted : true
+        timeSlider.border = hasSong ? useExpandedSlider.inverted : true
+        sliderParentViewHeightConstraint.constant = hasSong && useExpandedSlider ? expandedSliderHeight : 1
+        
+        if useExpandedSlider {
+            
+            if showMiniPlayerSongTitles {
+                
+                timeSliderTopConstraint.constant = 0
+                timeSliderBottomConstraint.constant = 0
+                miniLabelsTopConstraint.constant = 0
+                miniLabelsBottomConstraint.constant = hasSong ? 5 : 0
+                
+            } else {
+                
+                timeSliderTopConstraint.constant = hasSong ? 3 : 0
+                timeSliderBottomConstraint.constant = 0
+                miniLabelsTopConstraint.constant = 0
+                miniLabelsBottomConstraint.constant = 0
+            }
+            
+        } else {
+            
+            if showMiniPlayerSongTitles {
+                
+                timeSliderTopConstraint.constant = 0
+                timeSliderBottomConstraint.constant = 0
+                miniLabelsTopConstraint.constant = hasSong ? 7 : 0
+                miniLabelsBottomConstraint.constant = 0
+                
+            } else {
+                
+                timeSliderTopConstraint.constant = 0
+                timeSliderBottomConstraint.constant = 0
+                miniLabelsTopConstraint.constant = 0
+                miniLabelsBottomConstraint.constant = 0
+            }
+        }
+        
+        if animated {
+        
+            UIView.animate(withDuration: 0.3, animations: {
+                
+                self.sliderBorderView.isHidden = hasSong ? useExpandedSlider.inverted : true
+                self.view.layoutIfNeeded()
+                
+                [self.startTime, self.stopTime].forEach({
+                    
+                    $0?.alpha = hasSong && useExpandedSlider ? 1 : 0
+                    
+                    if ((hasSong && useExpandedSlider.inverted) || hasSong.inverted) && $0?.superview?.isHidden == true { } else {
+                        
+                        $0?.superview?.isHidden = hasSong ? useExpandedSlider.inverted : true
+                    }
+                })
+            })
+        
+        } else {
+            
+            sliderBorderView.isHidden = hasSong ? useExpandedSlider.inverted : true
+            [startTime, stopTime].forEach({
+                
+                $0?.alpha = hasSong && useExpandedSlider ? 1 : 0
+                $0?.superview?.isHidden = hasSong ? useExpandedSlider.inverted : true
+            })
+        }
     }
     
     func updateEffectViewConstraints(animated: Bool) {
@@ -292,7 +392,14 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
                 
             } else {
                 
-                return lastUsedTab == StartPoint.library.rawValue ? #imageLiteral(resourceName: "OfflineSelected22") : #imageLiteral(resourceName: "Offline22")
+                if showTabBarLabels {
+                    
+                    return lastUsedTab == StartPoint.library.rawValue ? #imageLiteral(resourceName: "OfflineSelected20") : #imageLiteral(resourceName: "Offline20")
+                    
+                } else {
+                    
+                    return lastUsedTab == StartPoint.library.rawValue ? #imageLiteral(resourceName: "OfflineSelected22") : #imageLiteral(resourceName: "Offline22")
+                }
             }
         }
         
@@ -303,6 +410,35 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             self.libraryButton.superview?.layoutIfNeeded()
             
         }, completion: nil)
+    }
+    
+    func updateSearchButtonImage() {
+        
+        let image: UIImage = {
+            
+            if showTabBarLabels {
+                
+                return lastUsedTab == StartPoint.search.rawValue ? #imageLiteral(resourceName: "SearchSelected19") : #imageLiteral(resourceName: "Search19")
+                
+            } else {
+                
+                return lastUsedTab == StartPoint.search.rawValue ? #imageLiteral(resourceName: "SearchSelected22") : #imageLiteral(resourceName: "Search22")
+            }
+        }()
+        
+        searchButton.setImage(image, for: .normal)
+    }
+    
+    @objc func modifyQueueLabel() {
+        
+        guard musicPlayer.nowPlayingItem != nil else {
+            
+            queueButtonLabel.text = "Queue"
+            
+            return
+        }
+        
+        queueButtonLabel.text = musicPlayer.fullQueueCount(withInitialSpace: false, parentheses: false)
     }
     
     @objc func getCollected() {
@@ -317,8 +453,6 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
     @objc func updateCollectedText(animated: Bool = true) {
         
         collectedButton.setTitle(queue.count.formatted, for: .normal)
-        
-        UIView.transition(with: filterViewContainer.filterView.collectedLabel, duration: animated ? 0.3 : 0, options: .transitionCrossDissolve, animations: { self.filterViewContainer.filterView.collectedLabel.text = self.queue.count.formatted }, completion: nil)
         
         if animated {
             
@@ -339,36 +473,160 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         clearButton.addGestureRecognizer(clear)
         LongPressManager.shared.gestureRecognisers.append(Weak.init(value: clear))
         
-        let optionsHold = UILongPressGestureRecognizer.init(target: self, action: #selector(showOptions(_:)))
-        optionsHold.minimumPressDuration = longPressDuration
-        nowPlayingButton.addGestureRecognizer(optionsHold)
-        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: optionsHold))
+        [nowPlayingButton, altNowPlayingButton].forEach({
+            
+            let gr = UILongPressGestureRecognizer.init(target: self, action: #selector(showNowPlayingActions(_:)))
+            gr.minimumPressDuration = longPressDuration
+            $0?.addGestureRecognizer(gr)
+            LongPressManager.shared.gestureRecognisers.append(Weak.init(value: gr))
+        })
         
-        let altOptionsHold = UILongPressGestureRecognizer.init(target: self, action: #selector(showNowPlayingActions(_:)))
-        altOptionsHold.minimumPressDuration = longPressDuration
-        altNowPlayingButton.addGestureRecognizer(altOptionsHold)
-        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: altOptionsHold))
-        
-        let swipeLeft = UISwipeGestureRecognizer.init(target: self, action: #selector(goTo))
-        swipeLeft.direction = .left
-        nowPlayingButton.addGestureRecognizer(swipeLeft)
-        
-        let altSwipeLeft = UISwipeGestureRecognizer.init(target: self, action: #selector(goTo))
-        altSwipeLeft.direction = .left
-        altSwipeLeft.delegate = self
-        tabView.addGestureRecognizer(altSwipeLeft)
-        
-        let queueSwipeLeft = UIScreenEdgePanGestureRecognizer.init(target: self, action: #selector(performAuxillaryNowPlayingAction))
-        queueSwipeLeft.edges = .right//direction = .left
-        upNextButton.addGestureRecognizer(queueSwipeLeft)
+        [nowPlayingButton, tabView].forEach({
+            
+            let gr = UISwipeGestureRecognizer.init(target: self, action: #selector(goTo))
+            gr.direction = .left
+            $0?.addGestureRecognizer(gr)
+            
+            let pan = UIPanGestureRecognizer.init(target: self, action: #selector(panTest(_:)))
+            pan.delegate = self
+            $0?.addGestureRecognizer(pan)
+        })
             
         let altQueueSwipeLeft = UIScreenEdgePanGestureRecognizer.init(target: self, action: #selector(performAuxillaryNowPlayingAction))
         altQueueSwipeLeft.edges = .right//direction = .left
         altNowPlayingButton.addGestureRecognizer(altQueueSwipeLeft)
         
-        let swipeUp = UISwipeGestureRecognizer.init(target: self, action: #selector(goToNowPlaying))
-        swipeUp.direction = .up
-        nowPlayingButton.addGestureRecognizer(swipeUp)
+//        let swipeUp = UISwipeGestureRecognizer.init(target: self, action: #selector(goToNowPlaying))
+//        swipeUp.direction = .up
+//        nowPlayingButton.addGestureRecognizer(swipeUp)
+        
+        [libraryButton, searchButton].forEach({
+            
+            let gr = UILongPressGestureRecognizer.init(target: self, action: #selector(tabButtonHeld))
+            gr.minimumPressDuration = longPressDuration
+            $0?.addGestureRecognizer(gr)
+            LongPressManager.shared.gestureRecognisers.append(Weak.init(value: gr))
+        })
+    }
+    
+    @objc func panTest(_ sender: UIPanGestureRecognizer) {
+        
+        guard allowSwipeAssistedPan else { return }
+        
+        switch sender.state {
+            
+            case .began, .changed, .ended:
+            
+                guard let top = topViewController as? VerticalPresentationContainerViewController else { return }
+                
+                top.gestureActivated(sender)
+            
+                if sender.state == .ended { allowSwipeAssistedPan = false }
+            
+            default: break
+        }
+    }
+    
+    @objc func tabButtonHeld(_ sender: UILongPressGestureRecognizer) {
+        
+        switch sender.state {
+            
+            case .began:
+            
+                if sender.view == libraryButton {
+                    
+                    showLibrarySections()
+                    
+                } else if sender.view == searchButton {
+                    
+                    showFilterProperties()
+                }
+            
+            case .changed, .ended:
+            
+                guard let top = topViewController as? VerticalPresentationContainerViewController else { return }
+                
+                top.gestureActivated(sender)
+            
+            default: break
+        }
+    }
+    
+    func showFilterProperties() {
+        
+        
+    }
+    
+    func showLibrarySections() {
+        
+        let sectionHandler: ([LibrarySection]) -> [AlertAction] = { sections in
+            
+            sections.map({ section in
+                
+                AlertAction.init(title: section.title, subtitle: nil, style: .default, accessoryType: .check({ LibrarySection(rawValue: lastUsedLibrarySection) == section }), image: section == .compilations ? #imageLiteral(resourceName: "CompilationsLarge") : section.entityType.images.size22, handler: { [weak self] in
+                    
+                    guard let weakSelf = self, let librarySection = LibrarySection(rawValue: lastUsedLibrarySection) else { return }
+                    
+                    if weakSelf.activeViewController != weakSelf.libraryNavigationController {
+                        
+                        if librarySection == section, (weakSelf.libraryNavigationController?.topViewController is LibraryViewController).inverted {
+
+                            weakSelf.libraryNavigationController?.popToRootViewController(animated: false)
+                            weakSelf.libraryNavigationController?.topViewController?.view.alpha = 1
+
+                        } else {
+                        
+                            let rawValue = section.rawValue
+            
+                            prefs.set(rawValue, forKey: .lastUsedLibrarySection)
+                            notifier.post(name: .changeLibrarySection, object: nil, userInfo: ["section": rawValue, "oldSection": librarySection.rawValue, "animated": false])
+                        }
+                        
+                        weakSelf.switchViewController(weakSelf.libraryButton)
+                    
+                    } else {
+                        
+                        guard let librarySection = LibrarySection(rawValue: lastUsedLibrarySection) else { return }
+                        
+                        if librarySection == section, weakSelf.libraryNavigationController?.topViewController != weakSelf.libraryNavigationController?.viewControllers.first {
+                            
+                            weakSelf.libraryNavigationController?.popToRootViewController(animated: true)
+                        
+                        } else if librarySection != section, let libraryVC = weakSelf.libraryNavigationController?.viewControllers.first as? LibraryViewController {
+                            
+                            prefs.set(section.rawValue, forKey: .lastUsedLibrarySection)
+                            libraryVC.activeChildViewController = libraryVC.viewControllerForCurrentSection()
+                            
+                            if libraryVC.navigationController?.topViewController != libraryVC.navigationController?.viewControllers.first {
+                                
+                                libraryVC.navigationController?.popToRootViewController(animated: true)
+                            }
+                        }
+                    }
+                })
+            })
+            
+        }
+        
+        let title = "Library Section Settings..."
+        let handler = { [weak self] in
+            
+            guard let weakSelf = self else { return }
+            
+            Transitioner.shared.showPropertySettings(from: weakSelf, with: .library)
+        }
+        
+        var sections = sectionHandler(librarySections.removing(contentsOf: hiddenLibrarySections))
+        
+        sections.append(.init(title: "Secondary Sections...", image: #imageLiteral(resourceName: "More22"), requiresDismissalFirst: true, handler: { [weak self] in
+            
+            self?.showAlert(title: "Secondary Sections", subtitle: nil, with: sectionHandler(otherLibrarySections), shouldSortActions: false, rightAction: { _, vc in vc.dismiss(animated: true, completion: handler) }, images: (nil, #imageLiteral(resourceName: "Settings")))
+            
+        }), if: otherLibrarySections.isEmpty.inverted)
+        
+        sections.append(.init(title: title, handler: handler), if: useSystemAlerts)
+        
+        showAlert(title: "Library Sections", subtitle: nil, with: sections, shouldSortActions: false, rightAction: { _, vc in vc.dismiss(animated: true, completion: handler) }, images: (nil, #imageLiteral(resourceName: "Settings")))
     }
     
     @objc func doubleTap(_ sender: UITapGestureRecognizer) {
@@ -421,9 +679,9 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             
             case .changed, .ended:
             
-                guard useSystemAlerts.inverted, let verticalPresentedVC = presentedViewController as? VerticalPresentationContainerViewController else { return }
+                guard let top = topViewController as? VerticalPresentationContainerViewController else { return }
             
-                verticalPresentedVC.gestureActivated(sender)
+                top.gestureActivated(sender)
             
             default: break
         }
@@ -433,7 +691,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         
         guard let item = musicPlayer.nowPlayingItem else { return }
         
-        var actions = /*[SongAction.collect, .newPlaylist, .addTo, .search(unwinder: nil)]*/applicableActions.map({ singleItemAlertAction(for: $0, entityType: .song, using: item, from: self) })
+        var actions = applicableActions.map({ singleItemAlertAction(for: $0, entityType: .song, using: item, from: self) })
         
         actions.append(.init(title: "Get Info", style: .default, requiresDismissalFirst: true, handler: { [weak self] in
             
@@ -442,18 +700,13 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             Transitioner.shared.showInfo(from: weakSelf, with: .song(location: .list, at: 0, within: [item]))
         }))
         
-//        if item.existsInLibrary.inverted {
-//
-//            actions.append(singleItemAlertAction(for: .library, entityType: .song, using: item, from: self))
-//        }
-        
         showAlert(title: item.validTitle, subtitle: item.validArtist + " — " + item.validAlbum, with: actions, rightAction: { [weak self] button, vc in
             
             guard musicPlayer.nowPlayingItem != nil else { return }
             
             vc.dismiss(animated: true, completion: { self?.performSegue(withIdentifier: "queue", sender: nil) })
         
-            }, images: (nil, #imageLiteral(resourceName: "Queue13")))
+        }, images: (nil, #imageLiteral(resourceName: "Queue13")))
     }
     
     @objc func performPlayingItemActions(_ sender: UISwipeGestureRecognizer) {
@@ -494,27 +747,6 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         }
     }
     
-    func updateNowPlayingView(animated: Bool = false) {
-        
-        UIView.animate(withDuration: animated ? 0.3 : 0, animations: {
-            
-            self.nowPlayingView.isHidden = useMicroPlayer || musicPlayer.nowPlayingItem == nil
-            self.nowPlayingView.alpha = useMicroPlayer || musicPlayer.nowPlayingItem == nil ? 0 : 1
-            self.nowPlayingView.superview?.layoutIfNeeded()
-            
-            self.altNowPlayingViewSuperview.isHidden = useMicroPlayer.inverted
-            self.altNowPlayingViewSuperview.alpha = useMicroPlayer ? 1 : 0
-            self.altQueueView.isHidden = useMicroPlayer.inverted
-            self.altQueueView.alpha = useMicroPlayer ? 1 : 0
-            
-        }, completion: { [weak self] _ in
-            
-            guard let weakSelf = self, let superview = weakSelf.actionsButton.superview, let stackView = superview.superview as? UIStackView else { return }
-            
-            stackView.insertArrangedSubview(superview, at: useMicroPlayer ? 2 : 1)
-        })
-    }
-    
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         
         super.traitCollectionDidChange(previousTraitCollection)
@@ -536,7 +768,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
 //            
 //            guard let weakSelf = self else { return }
 //            
-//            weakSelf.prepareNowPlayingViews(with: musicPlayer.nowPlayingItem, animated: true)
+//            weakSelf.prepareNowPlayingViews(animated: true)
 //
 //            weakSelf.updateBackgroundWithNowPlaying()
 //            
@@ -546,11 +778,13 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
 //        
 //        }) as! NSObject)
         
-        lifetimeObservers.insert(notifier.addObserver(forName: .nowPlayingItemChanged, object: nil, queue: nil, using: { [weak self] _ in
+        lifetimeObservers.insert(notifier.addObserver(forName: isQueueAvailable ? .indexUpdated : .nowPlayingItemChanged, object: nil, queue: nil, using: { [weak self] notification in
             
             guard let weakSelf = self else { return }
             
-            weakSelf.prepareNowPlayingViews(with: musicPlayer.nowPlayingItem, animated: true)
+            weakSelf.prepareNowPlayingViews(animated: true)
+            weakSelf.updateSecondaryPlayingViews(notification)
+            notifier.post(name: .resetInsets, object: nil)
             
             if ArtworkManager.shared.currentlyPeeking == nil {
             
@@ -563,15 +797,16 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             
         }) as! NSObject)
         
-        lifetimeObservers.insert(notifier.addObserver(forName: .microPlayerChanged, object: nil, queue: nil, using: { [weak self] _ in
+        [Notification.Name.useExpandedSliderChanged, .showMiniPlayerSongTitlesChanged].forEach({ lifetimeObservers.insert(notifier.addObserver(forName: $0, object: nil, queue: nil, using: { [weak self] notification in
             
-            guard let weakSelf = self else { return }
-            
-            weakSelf.updateNowPlayingView(animated: true)
-            
+            self?.updateSecondaryPlayingViews(notification)
             notifier.post(name: .resetInsets, object: nil)
             
-        }) as! NSObject)
+        }) as! NSObject) })
+        
+        lifetimeObservers.insert(notifier.addObserver(forName: .showMiniPlayerSongTitlesChanged, object: nil, queue: nil, using: { _ in notifier.post(name: .resetInsets, object: nil) }) as! NSObject)
+        
+        lifetimeObservers.insert(notifier.addObserver(forName: .showTabBarLabelsChanged, object: nil, queue: nil, using: { [weak self] _ in self?.prepareTabBar(updateImages: true) }) as! NSObject)
         
         lifetimeObservers.insert(notifier.addObserver(forName: .iCloudVisibilityChanged, object: nil, queue: nil, using: { [weak self] _ in
             
@@ -611,7 +846,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
                     
                     notifier.post(name: Notification.Name.init("updateSection"), object: nil)
                     
-                    self.prepareNowPlayingViews(with: musicPlayer.nowPlayingItem, animated: true)
+                    self.prepareNowPlayingViews(animated: true)
                     self.updateBackgroundWithNowPlaying()
                     self.updateSliderDuration()
                 }
@@ -685,9 +920,14 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             
             guard let weakSelf = self else { return }
             
+            weakSelf.modifyQueueLabel()
             weakSelf.verifyLibraryStatus(of: musicPlayer.nowPlayingItem, itemProperty: .song, animated: false)
         
         }) as! NSObject)
+        
+        lifetimeObservers.insert(notifier.addObserver(forName: .queueModified, object: nil, queue: nil, using: { [weak self] _ in self?.modifyQueueLabel() }) as! NSObject)
+        
+        lifetimeObservers.insert(notifier.addObserver(forName: .shuffleInvoked, object: nil, queue: nil, using: { [weak self] _ in self?.modifyQueueLabel() }) as! NSObject)
         
         lifetimeObservers.insert(notifier.addObserver(forName: .appleMusicStatusChecked, object: nil, queue: nil, using: { [weak self] _ in
             
@@ -695,15 +935,6 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             
             weakSelf.verifyLibraryStatus(of: musicPlayer.nowPlayingItem, itemProperty: .song, animated: true)
         
-        }) as! NSObject)
-        
-        lifetimeObservers.insert(notifier.addObserver(forName: .infoButtonVisibilityChanged, object: nil, queue: nil, using: { [weak self] _ in
-            
-            guard let weakSelf = self else { return }
-            
-            weakSelf.infoView.isHidden = !showInfoButtons
-            weakSelf.infoViewWidthConstraint.constant = showInfoButtons ? 50 : 0
-            
         }) as! NSObject)
         
         lifetimeObservers.insert(notifier.addObserver(forName: .themeChanged, object: nil, queue: nil, using: { [weak self] _ in
@@ -743,15 +974,11 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
     
     @objc func updateCornersAndShadows() {
         
-        ([albumArt, altAlbumArt] as [UIImageView]).forEach({ imageView in
-            
-            let appropriateRadius = imageView == albumArt ? miniPlayerCornerRadius ?? .square : compactCornerRadius ?? .large
-            
-            appropriateRadius.updateCornerRadius(on: imageView.layer, width: imageView.bounds.width, entityType: .song, globalRadiusType: cornerRadius)
-        })
+        let appropriateRadius = miniPlayerCornerRadius ?? .square
+        
+        appropriateRadius.updateCornerRadius(on: altAlbumArt.layer, width: altAlbumArt.bounds.width, entityType: .song, globalRadiusType: cornerRadius)
         
         UniversalMethods.addShadow(to: altNowPlayingView, radius: 6, opacity: 0.25, shouldRasterise: true)
-        UniversalMethods.addShadow(to: artworkContainer, shouldRasterise: true)
     }
     
     @IBAction func goToLibraryOptions() {
@@ -776,6 +1003,8 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
     @objc func goTo(_ sender: Any) {
         
         guard let song = musicPlayer.nowPlayingItem else { return }
+        
+        if let _ = sender as? UISwipeGestureRecognizer { allowSwipeAssistedPan = true }
         
         singleItemActionDetails(for: .show(title: song.validTitle, context: .song(location: .list, at: 0, within: [song]), canDisplayInLibrary: true), entityType: .song, using: song, from: self, useAlternateTitle: true).handler()
     }
@@ -804,9 +1033,9 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         
         switch vc {
             
-            case .some(libraryNavigationController!): return libraryButton
+            case let x where x == libraryNavigationController: return libraryButton
             
-            case .some(searchNavigationController!): return searchButton
+            case let x where x == searchNavigationController: return searchButton
             
             default: fatalError("These should be the only child NVCs")
         }
@@ -1038,7 +1267,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
                 notifier.post(name: .resetInsets, object: nil)
             }
             
-            filterViewContainer.filterView.withinSearchTerm = activeViewController == searchNavigationController
+            filterViewContainer.filterView.requiresSearchBar = vc is FilterViewController
             
             if let entityVC = activeViewController?.topViewController as? EntityItemsViewController {
                 
@@ -1152,31 +1381,39 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
 
     func update(_ button: UIButton?, to state: UIButton.SelectionState, animated: Bool = true) {
         
-        guard let button: MELButton = {
+        guard let details: (button: MELButton, label: MELLabel) = {
             
             if button == libraryButton {
                 
-                return libraryButton
+                return (libraryButton, libraryButtonLabel)
                 
             } else if button == searchButton {
                 
-                return searchButton
+                return (searchButton, searchButtonLabel)
             }
             
             return nil
             
         }() else { return }
         
-        UIView.transition(with: button, duration: animated ? 0.3 : 0, options: .transitionCrossDissolve, animations: {
+        UIView.transition(with: details.button, duration: animated ? 0.3 : 0, options: .transitionCrossDissolve, animations: {
             
-            if button == self.libraryButton {
+            if details.button == self.libraryButton {
                 
                 self.updateLibraryButtonImage()
                 
-            } else if button == self.searchButton {
+            } else if details.button == self.searchButton {
                 
-                button.setImage(state == .selected ? #imageLiteral(resourceName: "SearchSelected19") : #imageLiteral(resourceName: "Search19"), for: .normal)
+                self.updateSearchButtonImage()
             }
+            
+            details.label.fontWeight = (state == .selected ? FontWeight.bold : .regular).rawValue
+            
+        }, completion: nil)
+        
+        UIView.transition(with: details.label, duration: animated ? 0.3 : 0, options: .transitionCrossDissolve, animations: {
+            
+            details.label.fontWeight = (state == .selected ? FontWeight.bold : .regular).rawValue
             
         }, completion: nil)
     }
@@ -1302,12 +1539,12 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             
             self.collectedView.alpha = state == .dismissed || useCompactCollector ? 0 : 1
             
-            if (state == .dismissed || !useCompactCollector) && self.filterViewContainer.filterView.collectedView.isHidden { } else {
-                
-                self.filterViewContainer.filterView.collectedView.isHidden = state == .dismissed || !useCompactCollector
-            }
-            
-            self.filterViewContainer.filterView.collectedView.alpha = state == .dismissed || !useCompactCollector ? 0 : 1
+//            if (state == .dismissed || !useCompactCollector) && self.filterViewContainer.filterView.collectedView.isHidden { } else {
+//
+//                self.filterViewContainer.filterView.collectedView.isHidden = state == .dismissed || !useCompactCollector
+//            }
+//
+//            self.filterViewContainer.filterView.collectedView.alpha = state == .dismissed || !useCompactCollector ? 0 : 1
         
         }, completion: { _ in notifier.post(name: .resetInsets, object: nil) })
     }
@@ -1318,9 +1555,9 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         // Dispose of any resources that can be recreated.
     }
     
-    @objc func prepareNowPlayingViews(with nowPlaying: MPMediaItem?, animated: Bool) {
+    @objc func prepareNowPlayingViews(animated: Bool) {
         
-        if let nowPlaying = nowPlaying {
+        if let nowPlaying = musicPlayer.nowPlayingItem {
             
             let albumTitle = nowPlaying.validAlbum
             let artistName = nowPlaying.validArtist
@@ -1330,7 +1567,6 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             if animated {
                 
                 UniversalMethods.performTransitions(withRelevantParameters:
-                    (albumArt, 0.3, { self.albumArt.image = albumImage }, nil),
                     (altAlbumArt, 0.3, { self.altAlbumArt.image = albumImage }, nil),
                     (songName, 0.3, { self.songName.text = songTitle }, nil),
                     (artistAndAlbum, 0.3, { self.artistAndAlbum.text = artistName + " — " + albumTitle }, nil)
@@ -1340,15 +1576,6 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
                 
                 UIView.animate(withDuration: 0.3, animations: {
                     
-                    if !useMicroPlayer {
-                        
-                        self.nowPlayingView.isHidden = false
-                        self.nowPlayingView.alpha = 1
-                        
-                    } else {
-                        
-                        self.nowPlayingView.superview?.layoutIfNeeded()
-                    }
                     
                 }, completion: { _ in
                     
@@ -1357,16 +1584,9 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
                 
             } else {
                 
-                albumArt.image = albumImage
                 altAlbumArt.image = albumImage
                 songName.text = songTitle
                 artistAndAlbum.text = artistName + " — " + albumTitle
-                
-                if !useMicroPlayer {
-                    
-                    nowPlayingView.isHidden = false
-                    nowPlayingView.alpha = 1
-                }
                 
                 verifyLibraryStatus(of: nowPlaying, itemProperty: .song, animated: false)
                 
@@ -1381,15 +1601,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
                 
                 UIView.animate(withDuration: 0.3, animations: {
                     
-                    if !useMicroPlayer {
-                        
-                        self.nowPlayingView.isHidden = true
-                        self.nowPlayingView.alpha = 0
-                        
-                    } else {
-                        
-                        self.nowPlayingView.superview?.layoutIfNeeded()
-                    }
+                    
                     
                 }, completion: { _ in
                         
@@ -1400,15 +1612,11 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
                 
             } else {
                 
-                if !useMicroPlayer {
-                    
-                    nowPlayingView.isHidden = true
-                    nowPlayingView.alpha = 0
-                }
-                
                 notifier.post(name: .resetInsets, object: nil)
             }
         }
+        
+        modifyQueueLabel()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -1481,8 +1689,6 @@ extension ContainerViewController: UIViewControllerPreviewingDelegate {
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
         
-        let queueButtonContainsLocation = upNextButton.bounds.contains(bottomEffectView.contentView.convert(location, to: upNextButton))
-        
         let nowPlayingButtonContainsLocation = nowPlayingButton.bounds.contains(bottomEffectView.contentView.convert(location, to: nowPlayingButton))
         
         let altNowPlayingButtonContainsLocation = altNowPlayingButton.bounds.contains(bottomEffectView.contentView.convert(location, to: altNowPlayingButton))
@@ -1499,22 +1705,11 @@ extension ContainerViewController: UIViewControllerPreviewingDelegate {
                 return collectorVC
             }
         
-        } else if queueButtonContainsLocation {
-            
-            if let queueVC = /*self.queueVC?.queueTVC ?? */presentedChilrenStoryboard.instantiateViewController(withIdentifier: "queueTVC") as? QueueViewController {
-                
-                queueVC.peeker = self
-                queueVC.modifyBackgroundView(forState: .visible)
-                previewingContext.sourceRect = bottomEffectView.convert(upNextButton.frame, from: nowPlayingView)
-                
-                return queueVC
-            }
-            
         } else if nowPlayingButtonContainsLocation || altNowPlayingButtonContainsLocation {
             
             if let nowPlaying = nowPlayingStoryboard.instantiateViewController(withIdentifier: "nowPlaying") as? NowPlayingViewController {
                 
-                previewingContext.sourceRect = altNowPlayingButtonContainsLocation ? bottomEffectView.convert(altNowPlayingViewSuperview.frame, from: tabView) : nowPlayingView.frame
+                previewingContext.sourceRect = altNowPlayingButtonContainsLocation ? bottomEffectView.convert(altNowPlayingViewSuperview.frame, from: tabView) : songTitlesStackView.frame
                 
                 return moveToNowPlaying(vc: nowPlaying, showingQueue: false, perform3DTouchActions: true)
             }
@@ -1553,18 +1748,13 @@ extension ContainerViewController: UIViewControllerPreviewingDelegate {
 
 extension ContainerViewController: UIGestureRecognizerDelegate {
     
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         
-        if gestureRecognizer.view == tabView {
-            
-            return useMicroPlayer
-        }
+        return gestureRecognizer is UIPanGestureRecognizer && otherGestureRecognizer is UIScreenEdgePanGestureRecognizer
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         
-        if gestureRecognizer is UITapGestureRecognizer {
-            
-            return filterShortcutEnabled
-        }
-        
-        return true
+        return gestureRecognizer is UIPanGestureRecognizer && otherGestureRecognizer is UISwipeGestureRecognizer && otherGestureRecognizer.view == gestureRecognizer.view
     }
 }

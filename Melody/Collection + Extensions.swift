@@ -120,6 +120,7 @@ extension MPMediaItemCollection {
         
         return items.first(where: { $0.albumArtist != nil || $0.albumArtist != "" })?.albumArtist ??? .unknownArtist
     }
+    @objc var sortAlbumArtistName: String { return albumArtist.diacritic }
     
     @objc var averageRating: Int {
         

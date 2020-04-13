@@ -11,8 +11,8 @@ import UIKit
 class PlaybackTableViewCell: UITableViewCell, TimerBased {
     
     @IBOutlet var playPauseButton: MELButton!
-    @IBOutlet var startTime: MELLabel?
-    @IBOutlet var stopTime: MELLabel?
+    @IBOutlet var startTime: MELLabel!
+    @IBOutlet var stopTime: MELLabel!
     @IBOutlet var timeSlider: MELSlider!
     @IBOutlet var shuffle: MELButton?
     @IBOutlet var repeatButton: MELButton?

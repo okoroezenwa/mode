@@ -15,6 +15,7 @@ class MELVisualEffectView: UIVisualEffectView {
     @objc var vibrantContaining = false
     @objc var light = false
     @objc var darkAlphaOverride: CGFloat = 0
+    @objc var darkPresentationAccomodation = false
     @objc var verticallyPresented = false
 
     override func awakeFromNib() {
@@ -64,8 +65,22 @@ class MELVisualEffectView: UIVisualEffectView {
         
         } else {
             
+            let dark: UIColor = {
+                
+                if light {
+                    
+                    return UIColor.white.withAlphaComponent(0.1)
+                    
+                } /*else if darkPresentationAccomodation {
+                    
+                    return UIColor.init(red: 100/255, green: 100/255, blue: 100/255, alpha: 0.3)
+                }*/
+                
+                return UIColor.darkGray.withAlphaComponent(darkAlphaOverride)
+            }()
+            
             effect = Themer.vibrancyContainingEffect
-            backgroundColor = darkTheme ? (light ? UIColor.white.withAlphaComponent(0.1) : UIColor.darkGray.withAlphaComponent(darkAlphaOverride)) : UIColor.white.withAlphaComponent((verticallyPresented ? 0.6 : 0.4) - alphaOverride)
+            backgroundColor = darkTheme ? dark : UIColor.white.withAlphaComponent((verticallyPresented ? 0.6 : 0.4) - alphaOverride)
         }
     }
 }

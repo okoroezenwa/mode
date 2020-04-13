@@ -119,7 +119,8 @@ class VerticalPresentationContainerViewController: UIViewController, PreviewTran
                 switch alertVC.context {
                     
                     case .show,
-                         .queue(title: _, kind: _, context: _): cell.isHighlighted = true
+                         .queue(title: _, kind: _, context: _),
+                         .other where segments.count == 1: cell.isHighlighted = true
                     
                     default: cell.isSelected = true
                 }
@@ -548,7 +549,8 @@ extension VerticalPresentationContainerViewController: UICollectionViewDataSourc
             switch alertVC.context {
                 
                 case .show,
-                     .queue(title: _, kind: _, context: _):
+                     .queue(title: _, kind: _, context: _),
+                     .other where segments.count == 1:
                 
                     self.collectionView(collectionView, didSelectItemAt: indexPath)
                     

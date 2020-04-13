@@ -104,6 +104,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             window?.tintColor = .black
         }
         
+        if prefs.bool(forKey: "sectionsAndFiltersReset").inverted {
+            
+            [String.filterProperties, .librarySections, .otherFilterProperties, .otherLibrarySections].forEach({ prefs.removeObject(forKey: $0) })
+            prefs.set(true, forKey: "sectionsAndFiltersReset")
+        }
+        
         performLaunchChecks()
         Settings.registerDefaults()
 //        Queue.shared.verifyQueue()

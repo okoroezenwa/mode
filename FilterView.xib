@@ -1,285 +1,121 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina4_7" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15510"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
-    <customFonts key="customFonts">
-        <array key="MyriadPro-Regular.otf">
-            <string>MyriadPro-Regular</string>
-        </array>
-    </customFonts>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view contentMode="scaleToFill" id="yf0-iH-lPr" customClass="FilterView" customModule="Mode" customModuleProvider="target">
-            <rect key="frame" x="0.0" y="0.0" width="375" height="88"/>
+            <rect key="frame" x="0.0" y="0.0" width="375" height="53"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <subviews>
-                <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Uiu-zh-bWi">
-                    <rect key="frame" x="0.0" y="0.0" width="375" height="36"/>
+                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="C6U-eg-l7Y">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="53"/>
                     <subviews>
-                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dfK-ax-aGh">
-                            <rect key="frame" x="0.0" y="0.0" width="65.5" height="36"/>
-                            <subviews>
-                                <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" horizontalCompressionResistancePriority="748" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9Lq-ss-h9i">
-                                    <rect key="frame" x="0.0" y="0.0" width="65.5" height="36"/>
-                                    <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                    <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                    <inset key="contentEdgeInsets" minX="10" minY="0.0" maxX="10" maxY="0.0"/>
-                                    <inset key="titleEdgeInsets" minX="3" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                    <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="3" maxY="2"/>
-                                    <state key="normal">
-                                        <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                    </state>
-                                    <connections>
-                                        <action selector="showCollector" destination="yf0-iH-lPr" eventType="touchUpInside" id="MvM-IA-KeN"/>
-                                    </connections>
-                                </button>
-                                <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qW4-Wz-lfk" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                    <rect key="frame" x="8" y="8" width="51.5" height="28"/>
-                                    <subviews>
-                                        <stackView opaque="NO" contentMode="scaleToFill" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="buh-HB-aRR">
-                                            <rect key="frame" x="8" y="0.0" width="35.5" height="28"/>
-                                            <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="252" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" image="Collected13" translatesAutoresizingMaskIntoConstraints="NO" id="c1S-gy-MVu" customClass="MELImageView" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="0.0" y="0.0" width="14" height="28"/>
-                                                </imageView>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="20" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="36a-cg-cog" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                    <rect key="frame" x="18" y="0.0" width="17.5" height="28"/>
-                                                    <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                        </stackView>
-                                    </subviews>
-                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                    <constraints>
-                                        <constraint firstAttribute="bottom" secondItem="buh-HB-aRR" secondAttribute="bottom" id="9wb-hu-n1C"/>
-                                        <constraint firstItem="buh-HB-aRR" firstAttribute="leading" secondItem="qW4-Wz-lfk" secondAttribute="leading" priority="900" constant="8" id="EZ1-fg-WYt"/>
-                                        <constraint firstItem="buh-HB-aRR" firstAttribute="top" secondItem="qW4-Wz-lfk" secondAttribute="top" id="FW9-3R-hIh"/>
-                                        <constraint firstAttribute="trailing" secondItem="buh-HB-aRR" secondAttribute="trailing" priority="900" constant="8" id="vt1-RS-PXt"/>
-                                    </constraints>
-                                    <userDefinedRuntimeAttributes>
-                                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                            <integer key="value" value="14"/>
-                                        </userDefinedRuntimeAttribute>
-                                    </userDefinedRuntimeAttributes>
-                                </view>
-                            </subviews>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lnX-Yc-XlV" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
+                            <rect key="frame" x="0.0" y="0.0" width="375" height="1"/>
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <constraints>
-                                <constraint firstAttribute="bottom" secondItem="9Lq-ss-h9i" secondAttribute="bottom" id="SDr-59-9h0"/>
-                                <constraint firstAttribute="trailing" secondItem="qW4-Wz-lfk" secondAttribute="trailing" priority="900" constant="6" id="Ue7-WY-djl"/>
-                                <constraint firstItem="9Lq-ss-h9i" firstAttribute="top" secondItem="dfK-ax-aGh" secondAttribute="top" id="b2X-T6-udy"/>
-                                <constraint firstAttribute="bottom" secondItem="qW4-Wz-lfk" secondAttribute="bottom" id="fE7-3W-zax"/>
-                                <constraint firstAttribute="trailing" secondItem="9Lq-ss-h9i" secondAttribute="trailing" id="kpa-zf-l1r"/>
-                                <constraint firstItem="9Lq-ss-h9i" firstAttribute="leading" secondItem="dfK-ax-aGh" secondAttribute="leading" id="uW3-d2-CC2"/>
-                                <constraint firstItem="qW4-Wz-lfk" firstAttribute="leading" secondItem="dfK-ax-aGh" secondAttribute="leading" priority="900" constant="8" id="zWQ-wF-tN9"/>
-                                <constraint firstItem="qW4-Wz-lfk" firstAttribute="top" secondItem="dfK-ax-aGh" secondAttribute="top" priority="900" constant="8" id="zou-Jm-LVW"/>
-                            </constraints>
-                            <userDefinedRuntimeAttributes>
-                                <userDefinedRuntimeAttribute type="boolean" keyPath="hidden" value="YES"/>
-                            </userDefinedRuntimeAttributes>
-                        </view>
-                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iWC-kT-eK1" customClass="GradientView" customModule="Mode" customModuleProvider="target">
-                            <rect key="frame" x="65.5" y="0.0" width="243.5" height="36"/>
-                            <subviews>
-                                <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="5EA-Lu-wOh" customClass="MELCollectionView" customModule="Mode" customModuleProvider="target">
-                                    <rect key="frame" x="0.0" y="0.0" width="243.5" height="36"/>
-                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                    <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="0.0" minimumInteritemSpacing="0.0" id="UoH-Gc-6pV">
-                                        <size key="itemSize" width="50" height="50"/>
-                                        <size key="headerReferenceSize" width="0.0" height="0.0"/>
-                                        <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                                        <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                    </collectionViewFlowLayout>
-                                    <userDefinedRuntimeAttributes>
-                                        <userDefinedRuntimeAttribute type="boolean" keyPath="shouldDismiss" value="NO"/>
-                                    </userDefinedRuntimeAttributes>
-                                    <connections>
-                                        <outlet property="dataSource" destination="yf0-iH-lPr" id="Qg0-ch-uJi"/>
-                                        <outlet property="delegate" destination="yf0-iH-lPr" id="Dgx-Vv-xtF"/>
-                                    </connections>
-                                </collectionView>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hold to Edit" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JW4-Nx-qqq" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                    <rect key="frame" x="10" y="14" width="223.5" height="17"/>
-                                    <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                    <nil key="textColor"/>
-                                    <nil key="highlightedColor"/>
-                                    <userDefinedRuntimeAttributes>
-                                        <userDefinedRuntimeAttribute type="boolean" keyPath="lightOverride" value="YES"/>
-                                        <userDefinedRuntimeAttribute type="boolean" keyPath="hidden" value="YES"/>
-                                    </userDefinedRuntimeAttributes>
-                                </label>
-                            </subviews>
-                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            <constraints>
-                                <constraint firstItem="JW4-Nx-qqq" firstAttribute="centerX" secondItem="iWC-kT-eK1" secondAttribute="centerX" id="9rR-Qp-mOJ"/>
-                                <constraint firstItem="JW4-Nx-qqq" firstAttribute="leading" secondItem="iWC-kT-eK1" secondAttribute="leading" constant="10" id="HsE-RT-agf"/>
-                                <constraint firstItem="5EA-Lu-wOh" firstAttribute="top" secondItem="iWC-kT-eK1" secondAttribute="top" id="cB0-i0-m7y"/>
-                                <constraint firstItem="5EA-Lu-wOh" firstAttribute="leading" secondItem="iWC-kT-eK1" secondAttribute="leading" id="irh-rc-YNC"/>
-                                <constraint firstAttribute="bottom" secondItem="5EA-Lu-wOh" secondAttribute="bottom" id="jLi-fM-Bem"/>
-                                <constraint firstAttribute="trailing" secondItem="5EA-Lu-wOh" secondAttribute="trailing" id="maF-dO-LFk"/>
-                                <constraint firstAttribute="trailing" secondItem="JW4-Nx-qqq" secondAttribute="trailing" constant="10" id="mi7-Qp-Xwf"/>
-                                <constraint firstAttribute="bottom" secondItem="JW4-Nx-qqq" secondAttribute="bottom" constant="5" id="n86-MN-HXQ"/>
-                            </constraints>
-                            <userDefinedRuntimeAttributes>
-                                <userDefinedRuntimeAttribute type="number" keyPath="midStart">
-                                    <real key="value" value="0.040000000000000001"/>
-                                </userDefinedRuntimeAttribute>
-                                <userDefinedRuntimeAttribute type="number" keyPath="midEnd">
-                                    <real key="value" value="0.95999999999999996"/>
-                                </userDefinedRuntimeAttribute>
-                            </userDefinedRuntimeAttributes>
-                        </view>
-                        <view contentMode="scaleToFill" horizontalHuggingPriority="999" translatesAutoresizingMaskIntoConstraints="NO" id="E3l-8I-VgJ">
-                            <rect key="frame" x="309" y="0.0" width="66" height="36"/>
-                            <subviews>
-                                <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="999" horizontalCompressionResistancePriority="749" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="a50-jF-sXp" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                    <rect key="frame" x="0.0" y="0.0" width="66" height="36"/>
-                                    <fontDescription key="fontDescription" name="AvenirNext-Regular" family="Avenir Next" pointSize="15"/>
-                                    <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                    <inset key="contentEdgeInsets" minX="14" minY="10" maxX="15" maxY="0.0"/>
-                                    <state key="normal" title="contains"/>
-                                    <userDefinedRuntimeAttributes>
-                                        <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
-                                            <integer key="value" value="1"/>
-                                        </userDefinedRuntimeAttribute>
-                                        <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="accessory"/>
-                                    </userDefinedRuntimeAttributes>
-                                    <connections>
-                                        <action selector="rightButtonTapped" destination="yf0-iH-lPr" eventType="touchUpInside" id="Pbs-TJ-emL"/>
-                                    </connections>
-                                </button>
-                                <view userInteractionEnabled="NO" alpha="0.05000000074505806" contentMode="scaleToFill" horizontalHuggingPriority="999" horizontalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="m2m-CS-c57" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                    <rect key="frame" x="6" y="8" width="52" height="28"/>
-                                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                    <constraints>
-                                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="28" id="qIA-dF-yfh"/>
-                                    </constraints>
-                                    <userDefinedRuntimeAttributes>
-                                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                            <integer key="value" value="14"/>
-                                        </userDefinedRuntimeAttribute>
-                                    </userDefinedRuntimeAttributes>
-                                </view>
-                            </subviews>
-                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                            <constraints>
-                                <constraint firstItem="a50-jF-sXp" firstAttribute="leading" secondItem="E3l-8I-VgJ" secondAttribute="leading" id="5GQ-YN-7ki"/>
-                                <constraint firstAttribute="trailing" secondItem="a50-jF-sXp" secondAttribute="trailing" id="7wj-zR-bme"/>
-                                <constraint firstAttribute="trailing" secondItem="m2m-CS-c57" secondAttribute="trailing" constant="8" id="B0x-eS-KHc"/>
-                                <constraint firstAttribute="bottom" secondItem="a50-jF-sXp" secondAttribute="bottom" id="L1a-kv-aaC"/>
-                                <constraint firstAttribute="bottom" secondItem="m2m-CS-c57" secondAttribute="bottom" id="Ndh-bM-gnf"/>
-                                <constraint firstItem="a50-jF-sXp" firstAttribute="top" secondItem="E3l-8I-VgJ" secondAttribute="top" id="edC-Ub-dpE"/>
-                                <constraint firstItem="m2m-CS-c57" firstAttribute="leading" secondItem="E3l-8I-VgJ" secondAttribute="leading" constant="6" id="j83-FF-aHb"/>
-                                <constraint firstItem="m2m-CS-c57" firstAttribute="top" secondItem="E3l-8I-VgJ" secondAttribute="top" constant="8" id="ywr-2z-RSD"/>
+                                <constraint firstAttribute="height" priority="899" constant="1" id="igV-47-URi"/>
                             </constraints>
                         </view>
-                    </subviews>
-                    <constraints>
-                        <constraint firstAttribute="height" priority="900" constant="36" id="ug3-p9-itM"/>
-                    </constraints>
-                </stackView>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ygA-zI-vhK">
-                    <rect key="frame" x="0.0" y="36" width="375" height="52"/>
-                    <subviews>
                         <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="79q-JG-wsT">
-                            <rect key="frame" x="0.0" y="0.0" width="375" height="52"/>
+                            <rect key="frame" x="0.0" y="1" width="375" height="52"/>
                             <subviews>
-                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uq7-EM-BPb">
-                                    <rect key="frame" x="0.0" y="0.0" width="36" height="52"/>
+                                <view hidden="YES" contentMode="scaleToFill" horizontalHuggingPriority="999" translatesAutoresizingMaskIntoConstraints="NO" id="E3l-8I-VgJ">
+                                    <rect key="frame" x="0.0" y="0.0" width="0.0" height="52"/>
                                     <subviews>
-                                        <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TYm-Lx-4zv" customClass="ActionsButton" customModule="Mode" customModuleProvider="target">
-                                            <rect key="frame" x="0.0" y="0.0" width="36" height="52"/>
-                                            <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                            <inset key="contentEdgeInsets" minX="8" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                        <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="999" horizontalCompressionResistancePriority="749" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="a50-jF-sXp" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                            <rect key="frame" x="0.0" y="0.0" width="0.0" height="52"/>
+                                            <fontDescription key="fontDescription" name="AvenirNext-Regular" family="Avenir Next" pointSize="15"/>
+                                            <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                            <inset key="contentEdgeInsets" minX="14" minY="10" maxX="15" maxY="0.0"/>
                                             <userDefinedRuntimeAttributes>
-                                                <userDefinedRuntimeAttribute type="boolean" keyPath="useSmallestImage" value="YES"/>
+                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                    <integer key="value" value="1"/>
+                                                </userDefinedRuntimeAttribute>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="accessory"/>
                                             </userDefinedRuntimeAttributes>
                                         </button>
-                                        <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uDx-CF-nMz" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                            <rect key="frame" x="10" y="14" width="24" height="24"/>
-                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <view userInteractionEnabled="NO" alpha="0.05000000074505806" contentMode="scaleToFill" horizontalHuggingPriority="999" horizontalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="m2m-CS-c57" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
+                                            <rect key="frame" x="-2" y="8" width="0.0" height="36"/>
+                                            <subviews>
+                                                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="xOh-lM-x43">
+                                                    <rect key="frame" x="-13" y="7" width="25" height="20.5"/>
+                                                    <subviews>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="251" horizontalCompressionResistancePriority="753" text="label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="APj-D8-3Wy" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
+                                                            <rect key="frame" x="0.0" y="0.0" width="25" height="20.5"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                            <nil key="textColor"/>
+                                                            <nil key="highlightedColor"/>
+                                                            <userDefinedRuntimeAttributes>
+                                                                <userDefinedRuntimeAttribute type="boolean" keyPath="greyOverride" value="YES"/>
+                                                            </userDefinedRuntimeAttributes>
+                                                        </label>
+                                                    </subviews>
+                                                </stackView>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                             <constraints>
-                                                <constraint firstAttribute="width" constant="24" id="qVs-LH-VvG"/>
-                                                <constraint firstAttribute="width" secondItem="uDx-CF-nMz" secondAttribute="height" multiplier="1:1" id="zzd-iI-qvF"/>
+                                                <constraint firstItem="xOh-lM-x43" firstAttribute="leading" secondItem="m2m-CS-c57" secondAttribute="leading" constant="-13" id="3o2-j0-6eY"/>
+                                                <constraint firstItem="xOh-lM-x43" firstAttribute="top" secondItem="m2m-CS-c57" secondAttribute="top" constant="7" id="G9k-vY-qt5"/>
+                                                <constraint firstAttribute="bottom" secondItem="xOh-lM-x43" secondAttribute="bottom" constant="8.5" id="Wzn-fm-BEj"/>
+                                                <constraint firstAttribute="trailing" secondItem="xOh-lM-x43" secondAttribute="trailing" constant="-12" id="dNn-Qa-bxG"/>
                                             </constraints>
                                             <userDefinedRuntimeAttributes>
                                                 <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                                    <integer key="value" value="12"/>
+                                                    <integer key="value" value="8"/>
                                                 </userDefinedRuntimeAttribute>
                                             </userDefinedRuntimeAttributes>
                                         </view>
                                     </subviews>
-                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                     <constraints>
-                                        <constraint firstItem="uDx-CF-nMz" firstAttribute="centerY" secondItem="uq7-EM-BPb" secondAttribute="centerY" id="3E9-Jh-ld5"/>
-                                        <constraint firstItem="TYm-Lx-4zv" firstAttribute="leading" secondItem="uq7-EM-BPb" secondAttribute="leading" id="7XJ-le-oK4"/>
-                                        <constraint firstAttribute="trailing" secondItem="TYm-Lx-4zv" secondAttribute="trailing" id="DLv-2Q-2lf"/>
-                                        <constraint firstAttribute="bottom" secondItem="TYm-Lx-4zv" secondAttribute="bottom" id="HrW-tb-ADj"/>
-                                        <constraint firstItem="uDx-CF-nMz" firstAttribute="centerX" secondItem="uq7-EM-BPb" secondAttribute="centerX" constant="4" id="Naf-z0-guu"/>
-                                        <constraint firstAttribute="width" constant="36" id="VVa-RQ-da0">
-                                            <userDefinedRuntimeAttributes>
-                                                <userDefinedRuntimeAttribute type="number" keyPath="constant">
-                                                    <integer key="value" value="0"/>
-                                                </userDefinedRuntimeAttribute>
-                                            </userDefinedRuntimeAttributes>
-                                        </constraint>
-                                        <constraint firstItem="TYm-Lx-4zv" firstAttribute="top" secondItem="uq7-EM-BPb" secondAttribute="top" id="mw3-tU-lTU"/>
+                                        <constraint firstItem="a50-jF-sXp" firstAttribute="leading" secondItem="E3l-8I-VgJ" secondAttribute="leading" id="5GQ-YN-7ki"/>
+                                        <constraint firstAttribute="trailing" secondItem="a50-jF-sXp" secondAttribute="trailing" id="7wj-zR-bme"/>
+                                        <constraint firstAttribute="trailing" secondItem="m2m-CS-c57" secondAttribute="trailing" constant="2" id="B0x-eS-KHc"/>
+                                        <constraint firstAttribute="bottom" secondItem="a50-jF-sXp" secondAttribute="bottom" id="L1a-kv-aaC"/>
+                                        <constraint firstAttribute="bottom" secondItem="m2m-CS-c57" secondAttribute="bottom" priority="900" constant="8" id="Ndh-bM-gnf"/>
+                                        <constraint firstItem="a50-jF-sXp" firstAttribute="top" secondItem="E3l-8I-VgJ" secondAttribute="top" id="edC-Ub-dpE"/>
+                                        <constraint firstItem="m2m-CS-c57" firstAttribute="leading" secondItem="E3l-8I-VgJ" secondAttribute="leading" priority="900" constant="10" id="j83-FF-aHb"/>
+                                        <constraint firstItem="m2m-CS-c57" firstAttribute="top" secondItem="E3l-8I-VgJ" secondAttribute="top" priority="900" constant="8" id="ywr-2z-RSD"/>
                                     </constraints>
-                                    <userDefinedRuntimeAttributes>
-                                        <userDefinedRuntimeAttribute type="number" keyPath="alpha">
-                                            <integer key="value" value="0"/>
-                                        </userDefinedRuntimeAttribute>
-                                    </userDefinedRuntimeAttributes>
                                 </view>
                                 <searchBar contentMode="redraw" searchBarStyle="minimal" translatesAutoresizingMaskIntoConstraints="NO" id="XlL-bv-YTu" customClass="MELSearchBar" customModule="Mode" customModuleProvider="target">
-                                    <rect key="frame" x="36" y="0.0" width="303" height="52"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="345" height="52"/>
                                     <textInputTraits key="textInputTraits"/>
                                 </searchBar>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JiW-Sc-FkO">
-                                    <rect key="frame" x="339" y="0.0" width="36" height="52"/>
+                                    <rect key="frame" x="345" y="0.0" width="30" height="52"/>
                                     <subviews>
                                         <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="r6L-7p-IbW" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                            <rect key="frame" x="0.0" y="0.0" width="36" height="52"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="30" height="52"/>
                                             <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="8" maxY="0.0"/>
-                                            <state key="normal" image="DismissNoBorder"/>
-                                            <connections>
-                                                <action selector="clearSearchBar:" destination="yf0-iH-lPr" eventType="touchUpInside" id="45q-aj-yD2"/>
-                                            </connections>
-                                        </button>
-                                        <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="P8V-YX-7k6" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                            <rect key="frame" x="2" y="14" width="24" height="24"/>
-                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                            <constraints>
-                                                <constraint firstAttribute="width" constant="24" id="jBN-tW-qxq"/>
-                                                <constraint firstAttribute="width" secondItem="P8V-YX-7k6" secondAttribute="height" multiplier="1:1" id="vB8-iu-fUH"/>
-                                            </constraints>
+                                            <state key="normal" title="MB"/>
                                             <userDefinedRuntimeAttributes>
-                                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                                    <integer key="value" value="12"/>
+                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                    <integer key="value" value="2"/>
                                                 </userDefinedRuntimeAttribute>
                                             </userDefinedRuntimeAttributes>
-                                        </view>
+                                            <connections>
+                                                <action selector="showRightButtonOptions:" destination="yf0-iH-lPr" eventType="touchUpInside" id="0Vx-Oj-2D2"/>
+                                            </connections>
+                                        </button>
                                     </subviews>
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <constraints>
-                                        <constraint firstItem="P8V-YX-7k6" firstAttribute="centerY" secondItem="JiW-Sc-FkO" secondAttribute="centerY" id="A0i-NF-8AG"/>
                                         <constraint firstAttribute="trailing" secondItem="r6L-7p-IbW" secondAttribute="trailing" id="EFj-oT-KLR"/>
+                                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="30" id="UEE-Ab-ICU"/>
                                         <constraint firstAttribute="bottom" secondItem="r6L-7p-IbW" secondAttribute="bottom" id="YA0-4D-ZC8"/>
                                         <constraint firstItem="r6L-7p-IbW" firstAttribute="leading" secondItem="JiW-Sc-FkO" secondAttribute="leading" id="a4Y-6q-WCc"/>
-                                        <constraint firstItem="P8V-YX-7k6" firstAttribute="centerX" secondItem="JiW-Sc-FkO" secondAttribute="centerX" constant="-4" id="puM-Ix-0e9"/>
                                         <constraint firstItem="r6L-7p-IbW" firstAttribute="top" secondItem="JiW-Sc-FkO" secondAttribute="top" id="ybO-yB-Okv"/>
-                                        <constraint firstAttribute="width" constant="36" id="zZg-Do-Cnv">
+                                        <constraint firstAttribute="width" priority="999" id="zZg-Do-Cnv">
                                             <userDefinedRuntimeAttributes>
                                                 <userDefinedRuntimeAttribute type="number" keyPath="constant">
                                                     <integer key="value" value="0"/>
@@ -296,51 +132,30 @@
                             </subviews>
                         </stackView>
                     </subviews>
-                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     <constraints>
-                        <constraint firstAttribute="height" priority="900" constant="52" id="KuV-oQ-2hX"/>
-                        <constraint firstItem="3IK-Wm-0A4" firstAttribute="trailing" secondItem="79q-JG-wsT" secondAttribute="trailing" id="b4k-d2-Q4z"/>
-                        <constraint firstItem="79q-JG-wsT" firstAttribute="top" secondItem="3IK-Wm-0A4" secondAttribute="top" id="h8c-fG-q58"/>
-                        <constraint firstItem="79q-JG-wsT" firstAttribute="leading" secondItem="3IK-Wm-0A4" secondAttribute="leading" id="ieO-rv-uXv"/>
-                        <constraint firstItem="79q-JG-wsT" firstAttribute="bottom" secondItem="3IK-Wm-0A4" secondAttribute="bottom" id="wzL-ch-fSp"/>
+                        <constraint firstAttribute="height" priority="900" constant="53" id="MyO-s5-IMg"/>
                     </constraints>
-                    <viewLayoutGuide key="safeArea" id="3IK-Wm-0A4"/>
-                </view>
+                </stackView>
             </subviews>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
             <constraints>
-                <constraint firstItem="hBG-lv-Csf" firstAttribute="bottom" secondItem="ygA-zI-vhK" secondAttribute="bottom" id="0vv-kX-Qvy"/>
-                <constraint firstItem="Uiu-zh-bWi" firstAttribute="top" secondItem="hBG-lv-Csf" secondAttribute="top" id="3k4-Ha-TP6"/>
-                <constraint firstItem="hBG-lv-Csf" firstAttribute="trailing" secondItem="Uiu-zh-bWi" secondAttribute="trailing" id="HxM-pR-Y8z"/>
-                <constraint firstItem="ygA-zI-vhK" firstAttribute="top" secondItem="Uiu-zh-bWi" secondAttribute="bottom" id="Rse-s3-a51"/>
-                <constraint firstItem="Uiu-zh-bWi" firstAttribute="leading" secondItem="hBG-lv-Csf" secondAttribute="leading" id="Tli-Fs-B6Q"/>
-                <constraint firstItem="hBG-lv-Csf" firstAttribute="trailing" secondItem="ygA-zI-vhK" secondAttribute="trailing" id="lrE-aj-3I5"/>
-                <constraint firstItem="ygA-zI-vhK" firstAttribute="leading" secondItem="hBG-lv-Csf" secondAttribute="leading" id="nF5-0b-t8D"/>
+                <constraint firstItem="hBG-lv-Csf" firstAttribute="bottom" secondItem="C6U-eg-l7Y" secondAttribute="bottom" id="JnH-Hu-WKt"/>
+                <constraint firstItem="hBG-lv-Csf" firstAttribute="trailing" secondItem="C6U-eg-l7Y" secondAttribute="trailing" id="Wnp-yp-7fe"/>
+                <constraint firstItem="C6U-eg-l7Y" firstAttribute="top" secondItem="hBG-lv-Csf" secondAttribute="top" id="idm-fb-aa5"/>
+                <constraint firstItem="C6U-eg-l7Y" firstAttribute="leading" secondItem="hBG-lv-Csf" secondAttribute="leading" id="lqN-F3-hLi"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <viewLayoutGuide key="safeArea" id="hBG-lv-Csf"/>
             <connections>
-                <outlet property="actionsButtonContainer" destination="uq7-EM-BPb" id="dwO-C9-Bko"/>
-                <outlet property="actionsButtonContainerWidthConstraint" destination="VVa-RQ-da0" id="wrb-LS-0Pk"/>
-                <outlet property="collectedLabel" destination="36a-cg-cog" id="IIE-sN-KeF"/>
-                <outlet property="collectedView" destination="dfK-ax-aGh" id="hib-uT-eux"/>
-                <outlet property="collectionView" destination="5EA-Lu-wOh" id="b4J-me-HRE"/>
-                <outlet property="editLabel" destination="JW4-Nx-qqq" id="q6h-fP-xMZ"/>
-                <outlet property="filterInputView" destination="ygA-zI-vhK" id="Uzp-7p-F9N"/>
-                <outlet property="filterInputViewBottomConstraint" destination="0vv-kX-Qvy" id="Jpy-AK-XvW"/>
-                <outlet property="filterInputViewHeightConstraint" destination="KuV-oQ-2hX" id="Uif-dU-pcV"/>
-                <outlet property="filterTestBorderView" destination="m2m-CS-c57" id="zvC-8e-fCS"/>
-                <outlet property="filterTestButton" destination="a50-jF-sXp" id="qyG-Wd-08T"/>
-                <outlet property="gradientView" destination="iWC-kT-eK1" id="SQi-fi-G8x"/>
+                <outlet property="filterInputViewBottomConstraint" destination="JnH-Hu-WKt" id="KVz-Cc-oj7"/>
+                <outlet property="filterInputViewHeightConstraint" destination="MyO-s5-IMg" id="TgI-wQ-CZu"/>
+                <outlet property="rightButton" destination="r6L-7p-IbW" id="rOV-uv-VD9"/>
+                <outlet property="rightButtonContainer" destination="JiW-Sc-FkO" id="ehE-i2-7df"/>
+                <outlet property="rightButtonContainerEqualityWidthConstraint" destination="UEE-Ab-ICU" id="YuT-i1-szv"/>
+                <outlet property="rightButtonContainerWidthConstraint" destination="zZg-Do-Cnv" id="81P-lj-9Iy"/>
                 <outlet property="searchBar" destination="XlL-bv-YTu" id="axo-Rg-8lj"/>
-                <outlet property="searchButtonContainer" destination="JiW-Sc-FkO" id="ehE-i2-7df"/>
-                <outlet property="searchButtonContainerWidthConstraint" destination="zZg-Do-Cnv" id="81P-lj-9Iy"/>
             </connections>
-            <point key="canvasLocation" x="81.5" y="55"/>
+            <point key="canvasLocation" x="80.799999999999997" y="73.763118440779621"/>
         </view>
     </objects>
-    <resources>
-        <image name="Collected13" width="14" height="13"/>
-        <image name="DismissNoBorder" width="10" height="10"/>
-    </resources>
 </document>

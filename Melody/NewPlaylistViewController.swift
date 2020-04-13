@@ -74,6 +74,11 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
         notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillHideNotification, object: nil)
         notifier.addObserver(tableView as Any, selector: #selector(UITableView.reloadData), name: .lineHeightsCalculated, object: nil)
         
+        let hold = UILongPressGestureRecognizer.init(target: self, action: #selector(performHold(_:)))
+        hold.minimumPressDuration = longPressDuration
+        tableView.addGestureRecognizer(hold)
+        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: hold))
+        
         let swipeRight = UISwipeGestureRecognizer.init(target: songManager, action: #selector(SongActionManager.toggleEditing(_:)))
         swipeRight.direction = .right
         tableView.addGestureRecognizer(swipeRight)
@@ -121,11 +126,36 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
         tableView.reloadRows(at: indexPaths, with: .none)
     }
     
+    @objc func performHold(_ sender: UILongPressGestureRecognizer) {
+        
+        switch sender.state {
+            
+            case .began:
+            
+                guard let indexPath = tableView.indexPathForRow(at: sender.location(in: tableView)), let cell = tableView.cellForRow(at: indexPath) as? EntityTableViewCell else { return }
+                
+                let location = sender.location(in: cell)
+                
+                if cell.mainView.convert(cell.infoButton.frame, to: cell).contains(location) {
+                    
+                    showDeleteConfirmation(from: indexPath)
+                }
+            
+            case .changed, .ended:
+            
+                guard let top = topViewController as? VerticalPresentationContainerViewController else { return }
+            
+                top.gestureActivated(sender)
+            
+            default: break
+        }
+    }
+    
     @objc func updateNowPlaying() {
         
         for cell in tableView.visibleCells {
             
-            guard let cell = cell as? SongTableViewCell, let indexPath = tableView.indexPath(for: cell) else { continue }
+            guard let cell = cell as? EntityTableViewCell, let indexPath = tableView.indexPath(for: cell) else { continue }
             
             if cell.playingView.isHidden.inverted && musicPlayer.nowPlayingItem != (manager?.queue ?? playlistItems)[indexPath.row] {
                 
@@ -526,14 +556,12 @@ extension NewPlaylistViewController: UITableViewDelegate, UITableViewDataSource 
         
         let song = (manager?.queue ?? playlistItems)[indexPath.row]
         
-        cell.prepare(with: song, songNumber: songCountVisible.inverted ? nil : indexPath.row + 1)
         cell.delegate = self
-        cell.swipeDelegate = self
+        cell.prepare(with: song, songNumber: songCountVisible.inverted ? nil : indexPath.row + 1)
         cell.preferredEditingStyle = preferredEditingStyle
         cell.playButton.isUserInteractionEnabled = false
-        cell.infoButton.isUserInteractionEnabled = false
-        cell.infoButton.alpha = 0
-        cell.optionsView.isHidden = true
+        cell.infoButton.setImage(#imageLiteral(resourceName: "Discard"), for: .normal)
+        
         updateImageView(using: song, in: cell, indexPath: indexPath, reusableView: tableView)
         
         for category in [SecondaryCategory.loved, .plays, .rating, .lastPlayed, .dateAdded, .genre, .year, .fileSize] {
@@ -623,12 +651,12 @@ extension NewPlaylistViewController: UITextFieldDelegate {
 
 extension NewPlaylistViewController: EntityCellDelegate {
     
-    func editButtonHeld(in cell: SongTableViewCell) {
+    func editButtonHeld(in cell: EntityTableViewCell) {
         
         Transitioner.shared.performDeepSelection(from: self, title: cell.nameLabel.text)
     }
     
-    func editButtonTapped(in cell: SongTableViewCell) {
+    func editButtonTapped(in cell: EntityTableViewCell) {
         
         guard let indexPath = tableView.indexPath(for: cell) else { return }
         
@@ -642,7 +670,7 @@ extension NewPlaylistViewController: EntityCellDelegate {
         }
     }
     
-    func artworkTapped(in cell: SongTableViewCell) {
+    func artworkTapped(in cell: EntityTableViewCell) {
         
         guard let indexPath = tableView.indexPath(for: cell) else { return }
         
@@ -651,22 +679,31 @@ extension NewPlaylistViewController: EntityCellDelegate {
         cell.setHighlighted(false, animated: true)
     }
     
-    func artworkHeld(in cell: SongTableViewCell) {
+    func artworkHeld(in cell: EntityTableViewCell) {
         
         
     }
     
-    func accessoryButtonTapped(in cell: SongTableViewCell) {
+    func accessoryButtonTapped(in cell: EntityTableViewCell) {
         
+        guard let indexPath = tableView.indexPath(for: cell) else { return }
         
+        showDeleteConfirmation(from: indexPath)
     }
     
-    func accessoryButtonHeld(in cell: SongTableViewCell) {
+    func showDeleteConfirmation(from indexPath: IndexPath) {
         
-        
+        showAlert(title: (manager?.queue ?? playlistItems)[indexPath.row].validTitle, with: AlertAction.init(title: "Clear", style: .destructive, handler: { [weak self] in self?.updateItems(at: [indexPath], for: .remove) }))
     }
     
-    func scrollViewTapped(in cell: SongTableViewCell) {
+    func accessoryButtonHeld(in cell: EntityTableViewCell) {
+        
+        guard let indexPath = tableView.indexPath(for: cell) else { return }
+        
+        showDeleteConfirmation(from: indexPath)
+    }
+    
+    func scrollViewTapped(in cell: EntityTableViewCell) {
         
         guard let indexPath = tableView.indexPath(for: cell) else { return }
         

@@ -61,6 +61,7 @@ class AlertTableViewController: UITableViewController, PreviewTransitionable {
         }
         
         verticalPresentedVC?.view.layoutIfNeeded()
+//        tableView.scrollIndicatorInsets.top = 15
         tableView.scrollIndicatorInsets.bottom = 15
         tableView.separatorInset.left = actions.first?.info.subtitle == nil && actions.first?.info.image == nil ? 0 : 54
         
@@ -72,7 +73,7 @@ class AlertTableViewController: UITableViewController, PreviewTransitionable {
             
             verticalPresentedVC?.selectedCollectionIndexPath = .init(item: 0, section: 0)
         
-        } else if case .other = context, verticalPresentedVC?.segments.isEmpty == false {
+        } else if case .other = context, let count = verticalPresentedVC?.segments.count, count > 1 {
             
             verticalPresentedVC?.selectedCollectionIndexPath = .init(item: 0, section: 0)
         }

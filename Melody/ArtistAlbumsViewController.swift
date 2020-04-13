@@ -440,7 +440,7 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, I
         
         for cell in tableView.visibleCells {
             
-            if let cell = cell as? SongTableViewCell, !cell.playingView.isHidden {
+            if let cell = cell as? EntityTableViewCell, !cell.playingView.isHidden {
                 
                 cell.indicator.state = musicPlayer.isPlaying ? .playing : .paused
             }
@@ -535,10 +535,10 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, I
             
             for cell in weakSelf.tableView.visibleCells {
                 
-                guard let entityCell = cell as? SongTableViewCell, let indexPath = weakSelf.tableView.indexPath(for: entityCell), let nowPlaying = musicPlayer.nowPlayingItem else {
+                guard let entityCell = cell as? EntityTableViewCell, let indexPath = weakSelf.tableView.indexPath(for: entityCell), let nowPlaying = musicPlayer.nowPlayingItem else {
                     
-                    (cell as? SongTableViewCell)?.playingView.isHidden = true
-                    (cell as? SongTableViewCell)?.indicator.state = .stopped
+                    (cell as? EntityTableViewCell)?.playingView.isHidden = true
+                    (cell as? EntityTableViewCell)?.indicator.state = .stopped
                     
                     continue
                 }
@@ -624,29 +624,29 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, I
                 return
             }
             
-            guard let song = album.representativeItem, entityVC?.kind != .artist else { return }
-            
-            let filterPredicates: Set<MPMediaPropertyPredicate> = showiCloudItems ? [.for(.artist, using: song.artistPersistentID)] : [.for(.artist, using: song.artistPersistentID), .offline]
-            
-            let query = MPMediaQuery.init(filterPredicates: filterPredicates)
-            query.groupingType = albumArtistsAvailable ? .albumArtist : .artist
-            
-            if let collections = query.collections, !collections.isEmpty {
-                
-                artistQuery = query
-                currentAlbum = album
-                
-                performSegue(withIdentifier: .artistUnwind, sender: nil)
-                
-            } else {
-                
-                artistQuery = nil
-                currentAlbum = nil
-                
-                let newBanner = Banner.init(title: showiCloudItems ? "This artist is not in your library" : "This artist is not available offline", subtitle: nil, image: nil, backgroundColor: .black, didTapBlock: nil)
-                newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
-                newBanner.show(duration: 0.7)
-            }
+//            guard let song = album.representativeItem, entityVC?.kind != .artist else { return }
+//
+//            let filterPredicates: Set<MPMediaPropertyPredicate> = showiCloudItems ? [.for(.artist, using: song.artistPersistentID)] : [.for(.artist, using: song.artistPersistentID), .offline]
+//
+//            let query = MPMediaQuery.init(filterPredicates: filterPredicates)
+//            query.groupingType = albumArtistsAvailable ? .albumArtist : .artist
+//
+//            if let collections = query.collections, !collections.isEmpty {
+//
+//                artistQuery = query
+//                currentAlbum = album
+//
+//                performSegue(withIdentifier: .artistUnwind, sender: nil)
+//
+//            } else {
+//
+//                artistQuery = nil
+//                currentAlbum = nil
+//
+//                let newBanner = Banner.init(title: showiCloudItems ? "This artist is not in your library" : "This artist is not available offline", subtitle: nil, image: nil, backgroundColor: .black, didTapBlock: nil)
+//                newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+//                newBanner.show(duration: 0.7)
+//            }
         }
     }
     

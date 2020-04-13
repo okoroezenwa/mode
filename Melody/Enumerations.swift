@@ -20,7 +20,7 @@ enum SortableKind: Int { case playlist, artistSongs, album, artistAlbums }
 
 enum AnimationDirection { case forward, reverse }
 
-enum PropertyTest: String { case isExactly, contains, beginsWith, endsWith, isOver, isUnder }
+enum PropertyTest: String, CaseIterable { case isExactly, contains, beginsWith, endsWith, isOver, isUnder }
 
 enum StartPoint: Int { case library, search }
 
@@ -213,7 +213,7 @@ enum EntityType: Int {
      
      - Returns: The title of the entity type.
      */
-    func title(albumArtistOverride: Bool = false, matchingPropertyName: Bool = false) -> String {
+    func title(/*albumArtistOverride: Bool = false, */matchingPropertyName: Bool = false) -> String {
         
         switch self {
             
@@ -221,7 +221,7 @@ enum EntityType: Int {
             
             case .artist: return "artist"
             
-            case .albumArtist: return albumArtistOverride ? (matchingPropertyName ? "albumArtist" : "album artist") : "artist"
+            case .albumArtist: return /*albumArtistOverride ? (*/matchingPropertyName ? "albumArtist" : "album artist"//) : "artist"
             
             case .composer: return "composer"
             
@@ -286,7 +286,7 @@ enum EntityType: Int {
             
             case .artist: return .artists
             
-            case .albumArtist: return .artists
+            case .albumArtist: return .albumArtists
             
             case .genre: return .genres
             
@@ -452,7 +452,9 @@ enum CollectionsKind {
             
             case .composer: return .composers
             
-            case .artist, .albumArtist: return .artists
+            case .artist: return .artists
+            
+            case .albumArtist: return .albumArtists
             
             case .genre: return .genres
             
@@ -463,7 +465,7 @@ enum CollectionsKind {
 
 enum LibrarySection: Int, PropertyStripPresented {
     
-    case songs, artists, albums, genres, composers, compilations, playlists
+    case songs, artists, albums, genres, composers, compilations, playlists, albumArtists
     
     var entityType: EntityType {
         
@@ -480,6 +482,8 @@ enum LibrarySection: Int, PropertyStripPresented {
             case .playlists: return .playlist
             
             case .songs: return .song
+            
+            case .albumArtists: return .albumArtist
         }
     }
     
@@ -493,7 +497,7 @@ enum LibrarySection: Int, PropertyStripPresented {
             
             case .composers: return #imageLiteral(resourceName: "Composers")
             
-            case .artists: return #imageLiteral(resourceName: "Artists")
+            case .artists, .albumArtists: return #imageLiteral(resourceName: "Artists")
             
             case .genres: return #imageLiteral(resourceName: "Genres")
             
@@ -513,7 +517,7 @@ enum LibrarySection: Int, PropertyStripPresented {
             
             case .composers: return #imageLiteral(resourceName: "ComposersSmall")
             
-            case .artists: return #imageLiteral(resourceName: "Artists16")
+            case .artists, .albumArtists: return #imageLiteral(resourceName: "Artists16")
             
             case .genres: return #imageLiteral(resourceName: "GenresSmall")
             
@@ -540,6 +544,8 @@ enum LibrarySection: Int, PropertyStripPresented {
             case .compilations: return "Compilations"
                 
             case .playlists: return "Playlists"
+            
+            case .albumArtists: return "Album Artists"
         }
     }
 }
@@ -628,7 +634,7 @@ enum CornerRadius: Int {
 
 enum Property: Int, PropertyStripPresented, CaseIterable {
     
-    case title, artist, album, dateAdded, lastPlayed, genre, composer, plays, duration, year, rating, status, size, trackCount, albumCount, isCloud, artwork, isExplicit, isCompilation
+    case title, artist, album, dateAdded, lastPlayed, genre, composer, plays, duration, year, rating, status, size, trackCount, albumCount, isCloud, artwork, isExplicit, isCompilation, albumArtist
     
     var title: String {
         
@@ -639,6 +645,8 @@ enum Property: Int, PropertyStripPresented, CaseIterable {
             case .albumCount: return "Albums"
             
             case .artist: return "Artist"
+            
+            case .albumArtist: return "Album Artist"
             
             case .artwork: return "Artwork"
             
@@ -675,6 +683,16 @@ enum Property: Int, PropertyStripPresented, CaseIterable {
     }
     
     var propertyImage: UIImage? { return nil }
+    
+    var canUseRightView: Bool {
+        
+        switch self {
+            
+            case .album, .albumCount, .albumArtist, .artist, .artwork, .composer, .genre, .isCloud, .isCompilation, .isExplicit, .plays, .rating, .trackCount, .title, .year, .status: return false
+            
+            case .dateAdded, .duration, .lastPlayed, .size: return true
+        }
+    }
 }
 
 enum Icon: String {
@@ -818,7 +836,7 @@ enum Icon: String {
 
 enum SearchCategory: Int {
     
-    case all, songs, artists, albums, playlists, genres, composers
+    case all, songs, artists, albums, playlists, genres, composers, albumArtists
 
     var title: String {
         
@@ -837,6 +855,8 @@ enum SearchCategory: Int {
             case .playlists: return "playlists"
             
             case .songs: return "songs"
+            
+            case .albumArtists: return "album artists"
         }
     }
 
@@ -848,7 +868,7 @@ enum SearchCategory: Int {
             
             case .albums: return #imageLiteral(resourceName: "Albums16")
             
-            case .artists: return #imageLiteral(resourceName: "Artists16")
+            case .artists, .albumArtists: return #imageLiteral(resourceName: "Artists16")
             
             case .composers: return #imageLiteral(resourceName: "Composers16")
             
@@ -866,6 +886,8 @@ enum SearchCategory: Int {
             
             case .artists: return .artist
             
+            case .albumArtists: return .albumArtist
+            
             case .genres: return .genre
             
             case .composers: return .composer
@@ -879,6 +901,8 @@ enum SearchCategory: Int {
         switch self {
             
             case .artists: return .artist
+            
+            case .albumArtists: return .albumArtist
             
             case .genres: return .genre
             
@@ -1015,47 +1039,47 @@ enum ArtworkType {
 
 enum FilterViewContext: Equatable {
     
-    case filter(filter: Filterable?, container: (FilterContainer & UIViewController)?), library
+    case library, filter
     
     enum Operation { case group(index: Int?), ungroup(index: Int?), hide, unhide }
 
-    static func ==(lhs: FilterViewContext, rhs: FilterViewContext) -> Bool {
-        
-        switch lhs {
-            
-            case .filter(let filter, _):
-            
-                switch rhs {
-                    
-                    case .filter(filter: let otherFilter, container: _): return filter == nil && otherFilter == nil
-                    
-                    default: return false
-                }
-            
-            case .library:
-            
-                switch rhs {
-                    
-                    case .library: return true
-                    
-                    default: return false
-                }
-        }
-    }
-    
-    static func ~=(lhs: FilterViewContext, rhs: FilterViewContext) -> Bool {
-        
-        switch lhs {
-            
-            case .filter:
-            
-                if case .filter = rhs { return true }
-            
-                return false
-            
-            case .library: return rhs == .library
-        }
-    }
+//    static func ==(lhs: FilterViewContext, rhs: FilterViewContext) -> Bool {
+//
+//        switch lhs {
+//
+//            case .filter(let filter, _):
+//
+//                switch rhs {
+//
+//                    case .filter(filter: let otherFilter, container: _): return filter == nil && otherFilter == nil
+//
+//                    default: return false
+//                }
+//
+//            case .library:
+//
+//                switch rhs {
+//
+//                    case .library: return true
+//
+//                    default: return false
+//                }
+//        }
+//    }
+//
+//    static func ~=(lhs: FilterViewContext, rhs: FilterViewContext) -> Bool {
+//
+//        switch lhs {
+//
+//            case .filter:
+//
+//                if case .filter = rhs { return true }
+//
+//                return false
+//
+//            case .library: return rhs == .library
+//        }
+//    }
 }
 
 enum BarBlurBehavour: Int, CaseIterable {
@@ -1103,7 +1127,7 @@ enum InfoSection: String, CaseIterable {
 
 enum SortCriteria: Int, CaseIterable {
     
-    case standard, title, artist, album, duration, plays, lastPlayed, rating, genre, dateAdded, year, random, songCount, albumCount, fileSize, albumName, albumYear
+    case standard, title, artist, album, duration, plays, lastPlayed, rating, genre, dateAdded, year, random, songCount, albumCount, fileSize, albumName, albumYear, albumArtist
     
     func title(from location: Location) -> String {
         
@@ -1123,6 +1147,8 @@ enum SortCriteria: Int, CaseIterable {
             case .album, .albumYear, .albumName: return "Album"
             
             case .artist: return "Artist"
+            
+            case .albumArtist: return "Album Artist"
             
             case .genre: return "Genre"
             
@@ -1180,25 +1206,27 @@ enum SortCriteria: Int, CaseIterable {
         
         switch location {
             
-            case .album: return [.duration, .artist, .album, .plays, .lastPlayed, .genre, .rating, .dateAdded, .title, .fileSize]
+            case .album: return [.duration, .albumArtist, .album, .plays, .lastPlayed, .genre, .rating, .dateAdded, .title, .fileSize]
             
-            case .playlist: return [.duration, .title, .artist, .album, .plays, .year, .lastPlayed, .genre, .rating, .dateAdded, .fileSize]
+            case .playlist: return [.duration, .title, .artist, .album, .plays, .year, .lastPlayed, .genre, .rating, .dateAdded, .fileSize, .albumArtist]
             
             case .collections(kind: let kind):
             
-                let set: Set<SortCriteria> = [.album, .duration, .year, .genre, .artist, .plays, .dateAdded, .fileSize, .songCount, .albumCount, .title]
+                let set: Set<SortCriteria> = [.album, .duration, .year, .genre, .artist, .plays, .dateAdded, .fileSize, .songCount, .albumCount, .title, .albumArtist]
                 
                 switch kind {
                     
-                    case .album: return set.subtracting([.albumCount])
+                    case .album: return set.subtracting([.albumCount, .artist])
                     
-                    case .compilation: return set.subtracting([.albumCount, .artist])
+                    case .compilation: return set.subtracting([.albumCount, .artist, .albumArtist])
                     
-                    case .artist, .albumArtist: return set.subtracting([.year, .genre, .title, .album])
+                    case .artist: return set.subtracting([.year, .genre, .title, .album, .albumArtist])
                     
-                    case .genre, .composer: return set.subtracting([.year, .genre, .artist, .album])
+                    case .albumArtist: return set.subtracting([.year, .genre, .title, .album, .artist])
                     
-                    case .playlist: return set.subtracting([.album, .year, .genre, .artist, .albumCount])
+                    case .genre, .composer: return set.subtracting([.year, .genre, .artist, .album, .albumArtist])
+                    
+                    case .playlist: return set.subtracting([.album, .year, .genre, .artist, .albumCount, .albumArtist])
                 }
             
             case .collection(kind: let kind, point: let point):
@@ -1207,11 +1235,13 @@ enum SortCriteria: Int, CaseIterable {
                     
                     case .songs:
                     
-                        let set: Set<SortCriteria> = [.duration, .artist, .album, .plays, .lastPlayed, .genre, .rating, .dateAdded, .title, .fileSize, .year, .albumName, .albumYear]
+                        let set: Set<SortCriteria> = [.duration, .artist, .album, .albumArtist, .plays, .lastPlayed, .genre, .rating, .dateAdded, .title, .fileSize, .year, .albumName, .albumYear]
                         
                         switch kind {
                             
-                            case .artist, .albumArtist: return set.subtracting([.artist])
+                            case .artist: return set.subtracting([.artist])
+                                
+                            case .albumArtist: return set.subtracting([.albumArtist])
                                 
                             case .genre: return set.subtracting([.genre, .albumName, .albumYear])
                             
@@ -1220,11 +1250,13 @@ enum SortCriteria: Int, CaseIterable {
                     
                     case .albums:
                     
-                        let set: Set<SortCriteria> = [.album, .duration, .year, .genre, .artist, .plays, .dateAdded, .fileSize, .songCount]
+                        let set: Set<SortCriteria> = [.album, .duration, .year, .genre, .artist, .plays, .dateAdded, .fileSize, .songCount, .albumArtist]
                         
                         switch kind {
                             
-                            case .artist, .albumArtist: return set.subtracting([.artist])
+                            case .artist: return set.subtracting([.artist])
+                            
+                            case .albumArtist: return set.subtracting([.albumArtist])
                             
                             case .genre: return set.subtracting([.genre])
                             

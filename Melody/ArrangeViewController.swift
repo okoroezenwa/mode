@@ -169,7 +169,7 @@ class ArrangeViewController: UIViewController {
                     
                     let temp = EntityType.collectionEntityDetails(for: details.location)
                     
-                    collectionSortCategories = collectionSortCategories?.appending(key: temp.type.title(albumArtistOverride: true, matchingPropertyName: true) + temp.startPoint.title, value: criteria.rawValue)
+                    collectionSortCategories = collectionSortCategories?.appending(key: temp.type.title(matchingPropertyName: true) + temp.startPoint.title, value: criteria.rawValue)
                     
                     notifier.post(name: .collectionSortChanged, object: nil, userInfo: ["index": index])
                     
@@ -338,7 +338,7 @@ extension ArrangeViewController: SegmentedResponder {
                 
                 let temp = EntityType.collectionEntityDetails(for: details.location)
                 
-                collectionSortOrders = collectionSortOrders?.appending(key: temp.type.title(albumArtistOverride: true, matchingPropertyName: true) + temp.startPoint.title, value: true)
+                collectionSortOrders = collectionSortOrders?.appending(key: temp.type.title(matchingPropertyName: true) + temp.startPoint.title, value: true)
                 
                 notifier.post(name: .collectionSortChanged, object: nil, userInfo: ["index": self.index])
                 
@@ -355,7 +355,7 @@ extension ArrangeViewController: SegmentedResponder {
                 
                 let temp = EntityType.collectionEntityDetails(for: details.location)
                 
-                collectionSortOrders = collectionSortOrders?.appending(key: temp.type.title(albumArtistOverride: true, matchingPropertyName: true) + temp.startPoint.title, value: false)
+                collectionSortOrders = collectionSortOrders?.appending(key: temp.type.title(matchingPropertyName: true) + temp.startPoint.title, value: false)
                 
                 notifier.post(name: .collectionSortChanged, object: nil, userInfo: ["index": self.index])
                 

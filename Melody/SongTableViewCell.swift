@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell {
+class EntityTableViewCell: UITableViewCell, ArtworkContainingCell {
     
     @IBOutlet var artworkImageView: UIImageView!
     @IBOutlet var nameLabel: MELLabel!
@@ -695,7 +695,7 @@ class SongTableViewCell: SwipeTableViewCell, ArtworkContainingCell {
     }
 }
 
-extension SongTableViewCell {
+extension EntityTableViewCell {
     
     override func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         
@@ -706,11 +706,11 @@ extension SongTableViewCell {
 protocol EntityCellDelegate: EditControlContaining {
     
     var tableView: MELTableView! { get set }
-    func artworkTapped(in cell: SongTableViewCell)
-    func artworkHeld(in cell: SongTableViewCell)
-    func scrollViewTapped(in cell: SongTableViewCell)
-    func accessoryButtonTapped(in cell: SongTableViewCell)
-    func accessoryButtonHeld(in cell: SongTableViewCell)
-    func editButtonTapped(in cell: SongTableViewCell)
-    func editButtonHeld(in cell: SongTableViewCell)
+    func artworkTapped(in cell: EntityTableViewCell)
+    func artworkHeld(in cell: EntityTableViewCell)
+    func scrollViewTapped(in cell: EntityTableViewCell)
+    func accessoryButtonTapped(in cell: EntityTableViewCell)
+    func accessoryButtonHeld(in cell: EntityTableViewCell)
+    func editButtonTapped(in cell: EntityTableViewCell)
+    func editButtonHeld(in cell: EntityTableViewCell)
 }

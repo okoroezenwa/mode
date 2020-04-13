@@ -125,7 +125,6 @@ class NowPlaying: NSObject {
         }
         
         timerBased?.playPauseButton.addTarget(self, action: #selector(changePlaybackState), for: .touchUpInside)
-        timerBased?.altPlayPauseButton??.addTarget(self, action: #selector(changePlaybackState), for: .touchUpInside)
         
         timerBased?.shuffle??.addTarget(self, action: #selector(changeShuffle(_:)), for: .touchUpInside)
         timerBased?.repeatButton??.addTarget(self, action: #selector(setRepeatMode(_:)), for: .touchUpInside)
@@ -133,14 +132,6 @@ class NowPlaying: NSObject {
         let gr = UILongPressGestureRecognizer.init(target: self, action: #selector(stop(_:)))
         gr.minimumPressDuration = 1.0
         timerBased?.playPauseButton.addGestureRecognizer(gr)
-        
-        timerBased?.altPlayPauseButton??.addGestureRecognizer({
-            
-            let gr = UILongPressGestureRecognizer.init(target: self, action: #selector(stop(_:)))
-            gr.minimumPressDuration = 1.0
-            
-            return gr
-        }())
     }
     
     @objc func setTimer() {

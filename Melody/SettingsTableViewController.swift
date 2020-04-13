@@ -122,7 +122,7 @@ class SettingsTableViewController: UITableViewController {
         
         let criteria: String? = {
             
-            if let rawValue = collectionSortCategories?[details.type.title(albumArtistOverride: true, matchingPropertyName: true) + details.startPoint.title], let criteria = SortCriteria(rawValue: rawValue) {
+            if let rawValue = collectionSortCategories?[details.type.title(matchingPropertyName: true) + details.startPoint.title], let criteria = SortCriteria(rawValue: rawValue) {
                 
                 return criteria.title(from: location) + criteria.subtitle(from: location).replacingOccurrences(of: "by ", with: " ")// + ", "
             }
@@ -137,7 +137,7 @@ class SettingsTableViewController: UITableViewController {
         
         let details = EntityType.collectionEntityDetails(for: location(for: index))
         
-        if let ascending = collectionSortOrders?[details.type.title(albumArtistOverride: true, matchingPropertyName: true) + details.startPoint.title] {
+        if let ascending = collectionSortOrders?[details.type.title(matchingPropertyName: true) + details.startPoint.title] {
 
             return #imageLiteral(resourceName: ascending ? "Save22" : "Upload22")
         }
@@ -324,7 +324,7 @@ class SettingsTableViewController: UITableViewController {
             
             let location = SettingsTableViewController.location(for: index)
             let details = EntityType.collectionEntityDetails(for: location)
-            let key = details.type.title(albumArtistOverride: true, matchingPropertyName: true) + details.startPoint.title
+            let key = details.type.title(matchingPropertyName: true) + details.startPoint.title
                     
             vc.title = "Select Default Sort"
             vc.segments = [.init(title: "Ascending", image: #imageLiteral(resourceName: "Save22")), .init(title: "Descending", image: #imageLiteral(resourceName: "Upload22"))]

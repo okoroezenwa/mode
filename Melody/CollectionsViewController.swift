@@ -197,7 +197,9 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
             
             case .album: return showRecentAlbums
             
-            case .artist, .albumArtist: return showRecentArtists
+            case .artist: return showRecentArtists
+            
+            case .albumArtist: return showRecentAlbumArtists
             
             case .compilation: return showRecentCompilations
             
@@ -237,7 +239,9 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
             
             case .album: return "Albums"
                 
-            case .artist, .albumArtist: return "Artists"
+            case .artist: return "Artists"
+            
+            case .albumArtist: return "Album Artists"
                 
             case .compilation: return "Compilations"
                 
@@ -254,7 +258,9 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
             
             case .album: return (.albumsSort, .albumsOrder, albumsCriteria, albumsOrder)
                 
-            case .artist, .albumArtist: return (.artistsSort, .artistsOrder, artistsCriteria, artistsOrder)
+            case .artist: return (.artistsSort, .artistsOrder, artistsCriteria, artistsOrder)
+            
+            case .albumArtist: return (.albumArtistsSort, .albumArtistsOrder, albumArtistsCriteria, albumArtistsOrder)
                 
             case .compilation: return (.compilationsSort, .compilationsOrder, compilationsCriteria, compilationsOrder)
                 
@@ -719,7 +725,7 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
         
         for cell in tableView.visibleCells {
             
-            if let cell = cell as? SongTableViewCell, !cell.playingView.isHidden {
+            if let cell = cell as? EntityTableViewCell, !cell.playingView.isHidden {
                 
                 cell.indicator.state = musicPlayer.isPlaying ? .playing : .paused
             }
@@ -816,7 +822,9 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
                 
                 case .album: return .albums
                     
-                case .artist, .albumArtist: return .artists
+                case .artist: return .artists
+                
+                case .albumArtist: return .albumArtists
                     
                 case .compilation: return .compilations
                     
@@ -998,7 +1006,9 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
                 
                 case .album: return .showRecentAlbumsChanged
                 
-                case .albumArtist, .artist: return .showRecentArtistsChanged
+                case .artist: return .showRecentArtistsChanged
+                
+                case .albumArtist: return .showRecentAlbumArtistsChanged
                 
                 case .playlist: return .showRecentPlaylistsChanged
                 
@@ -1032,10 +1042,10 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
                 
                 for cell in weakSelf.tableView.visibleCells {
                     
-                    guard let entityCell = cell as? SongTableViewCell, let indexPath = weakSelf.tableView.indexPath(for: entityCell), let nowPlaying = musicPlayer.nowPlayingItem else {
+                    guard let entityCell = cell as? EntityTableViewCell, let indexPath = weakSelf.tableView.indexPath(for: entityCell), let nowPlaying = musicPlayer.nowPlayingItem else {
                         
-                        (cell as? SongTableViewCell)?.playingView.isHidden = true
-                        (cell as? SongTableViewCell)?.indicator.state = .stopped
+                        (cell as? EntityTableViewCell)?.playingView.isHidden = true
+                        (cell as? EntityTableViewCell)?.indicator.state = .stopped
                         
                         continue
                     }
@@ -1078,7 +1088,9 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
                 
                 case .album: return .albums()
                     
-                case .artist, .albumArtist: return MPMediaQuery.value(forKey: "albumArtistsQuery") as? MPMediaQuery ?? .artists()
+                case .artist: return .artists()
+                
+                case .albumArtist: return .albumArtists//.value(forKey: "albumArtistsQuery") as? MPMediaQuery ?? .artists()
                     
                 case .compilation: return .compilations()
                     
@@ -1265,21 +1277,21 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
             
             guard let song = album.representativeItem else { return }
             
-            let query = MPMediaQuery.init(filterPredicates: [.for(albumArtistsAvailable ? .albumArtist : .artist, using: albumArtistsAvailable ? song.albumArtistPersistentID : song.artistPersistentID)]).cloud.grouped(by: albumArtistsAvailable ? .albumArtist : .artist)
+            let query = MPMediaQuery.init(filterPredicates: [.for(.albumArtist, using: song.albumArtistPersistentID)]).cloud.grouped(by: .albumArtist)
             
             if let collections = query.collections, !collections.isEmpty {
                 
-                albumArtistsAvailable ? (albumArtistQuery = query) : (artistQuery = query)
+                albumArtistQuery = query
                 currentAlbum = album
                 
-                performSegue(withIdentifier: albumArtistsAvailable ? .albumArtistUnwind : .artistUnwind, sender: nil)
+                performSegue(withIdentifier: .albumArtistUnwind, sender: nil)
                 
             } else {
                 
-                artistQuery = nil
+                albumArtistQuery = nil
                 currentAlbum = nil
                 
-                let newBanner = Banner.init(title: showiCloudItems ? "This artist is not in your library" : "This artist is not available offline", subtitle: nil, image: nil, backgroundColor: .black, didTapBlock: nil)
+                let newBanner = Banner.init(title: showiCloudItems ? "This album artist is not in your library" : "This album artist is not available offline", subtitle: nil, image: nil, backgroundColor: .black, didTapBlock: nil)
                 newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
                 newBanner.show(duration: 0.7)
             }

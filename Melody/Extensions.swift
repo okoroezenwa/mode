@@ -654,9 +654,9 @@ extension CGSize {
 // MARK: - UITableView
 extension UITableView {
     
-    func songCell(for indexPath: IndexPath) -> SongTableViewCell {
+    func songCell(for indexPath: IndexPath) -> EntityTableViewCell {
         
-        return dequeueReusableCell(withIdentifier: .songCell, for: indexPath) as! SongTableViewCell
+        return dequeueReusableCell(withIdentifier: .songCell, for: indexPath) as! EntityTableViewCell
     }
     
     func regularCell(for indexPath: IndexPath) -> MELTableViewCell {
@@ -796,6 +796,8 @@ extension MPMediaQuery {
         
         return self
     }
+    
+    class var albumArtists: MPMediaQuery { return MPMediaQuery.init(filterPredicates: [MPMediaPropertyPredicate.init(value: NSNumber.init(value: MPMediaType.music.rawValue), forProperty: MPMediaItemPropertyMediaType, comparisonType: .equalTo)]).grouped(by: .albumArtist) }
 }
 
 // MARK: - MPMediaEntity
@@ -982,7 +984,9 @@ extension Int {
             
                 case .album: return compilationOverride ? "compilation" : "album"
                 
-                case .artist, .albumArtist: return "artist"
+                case .artist: return "artist"
+                
+                case .albumArtist: return "album artist"
                 
                 case .playlist: return "playlist"
                 

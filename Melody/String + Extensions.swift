@@ -76,7 +76,7 @@ public extension String {
     static let arrangeButtonTitle = "Sort"
     
     // MARK: - Reusable
-    static let songCell = "SongCell"
+    static let songCell = "EntityCell"
     static let artistCell = "ArtistCell"
     static let playlistCell = "PlaylistCell"
     static let albumCell = "AlbumCell"

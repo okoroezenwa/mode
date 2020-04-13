@@ -8,6 +8,8 @@
 
 import UIKit
 
+var isQueueAvailable: Bool { if !useSystemPlayer, forceOldStyleQueue.inverted, #available(iOS 10.3, *), let _ = musicPlayer as? MPMusicPlayerApplicationController { return true } else { return false } }
+
 class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITableViewDataSource, UITableViewDelegate, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, GenreTransitionable, ComposerTransitionable, InfoLoading, BackgroundHideable, Dismissable, EntityContainer, CellAnimatable, Peekable, SingleItemActionable, IndexContaining, LargeActivityIndicatorContaining, EntityVerifiable, Detailing {
     
     @IBOutlet var tableView: MELTableView!
@@ -70,7 +72,6 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
     lazy var shouldReload = true
     lazy var shuffleMode = ShuffleMode.none
     var queueCount: Int { return isQueueAvailable ? queue.count : musicPlayer.queueCount() }
-    var isQueueAvailable: Bool { if !useSystemPlayer, forceOldStyleQueue.inverted, #available(iOS 10.3, *), let _ = musicPlayer as? MPMusicPlayerApplicationController { return true } else { return false } }
     var nowPlaying: MPMediaItem?
     @objc var queueExists: Bool { return musicPlayer.nowPlayingItem != nil }
     @objc var userScrolled = false
@@ -288,7 +289,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             
             case .began:
             
-                guard let indexPath = tableView.indexPathForRow(at: sender.location(in: tableView)), let cell = tableView.cellForRow(at: indexPath) as? SongTableViewCell, let item = getSong(from: indexPath) else { return }
+                guard let indexPath = tableView.indexPathForRow(at: sender.location(in: tableView)), let cell = tableView.cellForRow(at: indexPath) as? EntityTableViewCell, let item = getSong(from: indexPath) else { return }
                 
                 let location = sender.location(in: cell)
                 
@@ -557,6 +558,11 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                             
                             sender.modifyQueueLabel()
                         }
+                        
+                        if let sender = appDelegate.window?.rootViewController as? ContainerViewController {
+                            
+                            sender.modifyQueueLabel()
+                        }
                     })
                 
                 }, afterDelay: 0.01)
@@ -758,6 +764,11 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                 
                 sender.modifyQueueLabel()
             }
+            
+            if let sender = appDelegate.window?.rootViewController as? ContainerViewController {
+                
+                sender.modifyQueueLabel()
+            }
         })
     }
     
@@ -875,6 +886,11 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             weakSelf.shouldReload = true
             
             if let sender = weakSelf.presentingViewController as? NowPlayingViewController {
+                
+                sender.modifyQueueLabel()
+            }
+            
+            if let sender = appDelegate.window?.rootViewController as? ContainerViewController {
                 
                 sender.modifyQueueLabel()
             }
@@ -1096,7 +1112,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
     
     func getIndex(from indexPath: IndexPath) -> Int? {
         
-        guard let index = Queue.shared.indexToUse, tableView.cellForRow(at: indexPath) is SongTableViewCell else { return nil }
+        guard let index = Queue.shared.indexToUse, tableView.cellForRow(at: indexPath) is EntityTableViewCell else { return nil }
         
         if indexPath.section == 0 {
             
@@ -1417,7 +1433,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                     
                     let wasPlaying = musicPlayer.isPlaying
                     
-                    if self.isQueueAvailable {
+                    if /*self.*/isQueueAvailable {
                         
                         musicPlayer.setQueue(with: .init(items: self.queue))
                         musicPlayer.nowPlayingItem = item
@@ -1524,7 +1540,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         return cell
     }
     
-    @objc func songCell(at indexPath: IndexPath, with song: MPMediaItem?) -> SongTableViewCell {
+    @objc func songCell(at indexPath: IndexPath, with song: MPMediaItem?) -> EntityTableViewCell {
         
         let cell = tableView.songCell(for: indexPath)
         
@@ -1552,7 +1568,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             cell.prepare(with: song, songNumber: songNumber, hideOptionsView: presented ? true : !showInfoButtons)
 
             cell.delegate = self
-            cell.swipeDelegate = self
+//            cell.swipeDelegate = self
             cell.preferredEditingStyle = preferredEditingStyle
             cell.playButton.isUserInteractionEnabled = false
 
@@ -1964,7 +1980,7 @@ extension QueueViewController: Attributor {
 
 //extension QueueViewController: SongCellButtonDelegate {
 //    
-//    @objc func showOptionsForSong(in cell: SongTableViewCell) {
+//    @objc func showOptionsForSong(in cell: EntityTableViewCell) {
 //        
 //        guard let indexPath = tableView.indexPath(for: cell), let song = getSong(from: indexPath) else { return }
 //        
@@ -2043,12 +2059,12 @@ extension QueueViewController {
 
 extension QueueViewController: EntityCellDelegate {
     
-    func editButtonHeld(in cell: SongTableViewCell) {
+    func editButtonHeld(in cell: EntityTableViewCell) {
         
         Transitioner.shared.performDeepSelection(from: self, title: cell.nameLabel.text)
     }
     
-    func editButtonTapped(in cell: SongTableViewCell) {
+    func editButtonTapped(in cell: EntityTableViewCell) {
         
         guard let indexPath = tableView.indexPath(for: cell) else { return }
         
@@ -2062,7 +2078,7 @@ extension QueueViewController: EntityCellDelegate {
         }
     }
     
-    func artworkTapped(in cell: SongTableViewCell) {
+    func artworkTapped(in cell: EntityTableViewCell) {
         
         guard let indexPath = tableView.indexPath(for: cell), indexPath.section != 1 else { return }
         
@@ -2071,12 +2087,12 @@ extension QueueViewController: EntityCellDelegate {
         cell.setHighlighted(false, animated: true)
     }
     
-    func artworkHeld(in cell: SongTableViewCell) {
+    func artworkHeld(in cell: EntityTableViewCell) {
         
         
     }
     
-    func accessoryButtonTapped(in cell: SongTableViewCell) {
+    func accessoryButtonTapped(in cell: EntityTableViewCell) {
         
         guard let indexPath = tableView.indexPath(for: cell), let item = getSong(from: indexPath) else { return }
         
@@ -2090,14 +2106,14 @@ extension QueueViewController: EntityCellDelegate {
         showAlert(title: cell.nameLabel.text, with: actions)
     }
     
-    func accessoryButtonHeld(in cell: SongTableViewCell) {
+    func accessoryButtonHeld(in cell: EntityTableViewCell) {
         
         guard let indexPath = tableView.indexPath(for: cell), let action = self.tableView(tableView, editActionsForRowAt: indexPath, for: .right)?.first else { return }
         
         action.handler?(action, indexPath)
     }
     
-    func scrollViewTapped(in cell: SongTableViewCell) {
+    func scrollViewTapped(in cell: EntityTableViewCell) {
         
         guard let indexPath = tableView.indexPath(for: cell) else { return }
         

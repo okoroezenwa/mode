@@ -16,7 +16,7 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         
         didSet {
             
-            filterViewContainer.context = .filter(filter: sender, container: self)
+            filterViewContainer.filterInfo = (filter: sender, container: self)
         }
     }
     @IBOutlet var bottomViewBottomConstraint: NSLayoutConstraint!
@@ -93,6 +93,7 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
     @objc var unfilteredPoint = CGPoint.zero
     @objc var recentSearches = [RecentSearch]()
     lazy var category = { entities.category }()
+    var filterTitle: String? { (parent as? PresentedContainerViewController)?.prompt ?? sender?.filterEntities.entityType.title().capitalized }
     
     @objc lazy var refresher: Refresher = { Refresher.init(refreshable: self) }()
     
@@ -119,15 +120,7 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         return view
     }()
     
-    lazy var rightViewButton: MELButton = {
-        
-        let button = MELButton.init(frame: .init(x: 0, y: 0, width: 30, height: 30))
-        button.setTitle(nil, for: .normal)
-        button.addTarget(self, action: #selector(rightViewButtonTapped), for: .touchUpInside)
-        button.fontWeight = FontWeight.semibold.rawValue
-        
-        return button
-    }()
+    lazy var rightViewButton: MELButton = filterViewContainer.filterView.rightButton
     
     var activityIndicator = MELActivityIndicatorView.init()
     var arrangeButton: MELButton!
@@ -185,7 +178,6 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
     var applicableActions: [SongAction] { return actionable?.applicableActions ?? [] }
     var actionableSongs: [MPMediaItem] { return actionable?.actionableSongs ?? [] }
     lazy var songManager: SongActionManager = { return SongActionManager.init(actionable: self) }()
-    var rightViewSetUp = false
     var wasFirstResponder = false
     var filtering = false {
         
@@ -270,7 +262,7 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         searchBar.delegate = self
         searchBar.text = sender?.filterText
         filterViewContainer.filterView.filterTestButton.setTitle(sender?.testTitle, for: .normal)
-        filterViewContainer.filterView.showActionsButton = true
+//        filterViewContainer.filterView.showActionsButton = true
         sender?.updateKeyboard(with: self)
         searchBar(searchBar, textDidChange: searchBar.text ?? "")
         
@@ -282,6 +274,11 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillHideNotification, object: nil)
         notifier.addObserver(self, selector: #selector(updateCollectedView(_:)), name: .managerItemsChanged, object: nil)
         [Notification.Name.entityCountVisibilityChanged, .showExplicitnessChanged].forEach({ notifier.addObserver(self, selector: #selector(updateEntityCountVisibility), name: $0, object: nil) })
+        
+        searchBar?.textField?.leftView = filterViewContainer.filterView.leftView
+        searchBar.updateTextField(with: placeholder)
+        
+        updateRightView(animated: false)
         
         if case .collections(_, .playlist) = entities { } else {
             
@@ -338,7 +335,7 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
             
                 for cell in tableView.visibleCells {
                     
-                    guard let cell = cell as? SongTableViewCell, let indexPath = tableView.indexPath(for: cell) else { continue }
+                    guard let cell = cell as? EntityTableViewCell, let indexPath = tableView.indexPath(for: cell) else { continue }
                     
                     if cell.playingView.isHidden.inverted && musicPlayer.nowPlayingItem != songs[indexPath.row] {
                         
@@ -356,10 +353,10 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
             
                 for cell in tableView.visibleCells {
                     
-                    guard let entityCell = cell as? SongTableViewCell, let indexPath = tableView.indexPath(for: entityCell), let nowPlaying = musicPlayer.nowPlayingItem else {
+                    guard let entityCell = cell as? EntityTableViewCell, let indexPath = tableView.indexPath(for: entityCell), let nowPlaying = musicPlayer.nowPlayingItem else {
                         
-                        (cell as? SongTableViewCell)?.playingView.isHidden = true
-                        (cell as? SongTableViewCell)?.indicator.state = .stopped
+                        (cell as? EntityTableViewCell)?.playingView.isHidden = true
+                        (cell as? EntityTableViewCell)?.indicator.state = .stopped
                         
                         continue
                     }
@@ -380,12 +377,12 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
     
     @objc func updateCollectedView(_ sender: Any) {
         
-        guard let container = appDelegate.window?.rootViewController as? ContainerViewController else { return }
+//        guard let container = appDelegate.window?.rootViewController as? ContainerViewController else { return }
+//        
+//        let animated = sender is Notification
         
-        let animated = sender is Notification
-        
-        modifyCollectedView(forState: container.queue.isEmpty ? .dismissed : .invoked, animated: animated)
-        updateCollectedText(animated: animated)
+//        modifyCollectedView(forState: container.queue.isEmpty ? .dismissed : .invoked, animated: animated)
+//        updateCollectedText(animated: animated)
     }
     
     @objc func updateHeaderView(withCount count: Int = 0) {
@@ -432,22 +429,11 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
             tableContainer?.filteredEntities.reverse()
         }
         
-        filterViewContainer.context = .filter(filter: nil, container: nil)
+        filterViewContainer.filterInfo = (filter: nil, container: nil)
         tableContainer?.filterContainer = nil
         
         notifier.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
         notifier.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
-    }
-    
-    override func viewDidLayoutSubviews() {
-        
-        super.viewDidLayoutSubviews()
-        
-        if rightViewSetUp.inverted {
-            
-            searchBar.updateTextField(with: sender?.placeholder ?? "")
-            updateRightView()
-        }
     }
     
     @objc func adjustKeyboard(with notification: Notification) {
@@ -826,39 +812,39 @@ extension FilterViewController: UIGestureRecognizerDelegate {
     }
 }
 
-extension FilterViewController {
-    
-    @objc func rightViewButtonTapped() {
-        
-        updateRightViewButton()
-    }
-    
-    func modifyCollectedView(forState state: QueueViewState, animated: Bool = true) {
-        
-        UIView.animate(withDuration: animated ? 0.3 : 0, animations: {
-            
-            if state == .dismissed && self.filterViewContainer.filterView.collectedView.isHidden { } else {
-                
-                self.filterViewContainer.filterView.collectedView.isHidden = state == .dismissed
-            }
-            
-            self.filterViewContainer.filterView.collectedView.alpha = state == .dismissed ? 0 : 1
-            
-        }, completion: nil)
-    }
-    
-    @objc func updateCollectedText(animated: Bool = true) {
-        
-        guard let container = appDelegate.window?.rootViewController as? ContainerViewController else { return }
-        
-        UIView.transition(with: filterViewContainer.filterView.collectedLabel, duration: animated ? 0.3 : 0, options: .transitionCrossDissolve, animations: { self.filterViewContainer.filterView.collectedLabel.text = container.queue.count.formatted }, completion: nil)
-        
-        if animated {
-            
-            UIView.animate(withDuration: 0.3, animations: { self.view.layoutIfNeeded() })
-        }
-    }
-}
+//extension FilterViewController {
+//
+//    @objc func rightViewButtonTapped() {
+//
+//        showRightButtonOptions()
+//    }
+//
+//    func modifyCollectedView(forState state: QueueViewState, animated: Bool = true) {
+//
+//        UIView.animate(withDuration: animated ? 0.3 : 0, animations: {
+//
+//            if state == .dismissed && self.filterViewContainer.filterView.collectedView.isHidden { } else {
+//
+//                self.filterViewContainer.filterView.collectedView.isHidden = state == .dismissed
+//            }
+//
+//            self.filterViewContainer.filterView.collectedView.alpha = state == .dismissed ? 0 : 1
+//
+//        }, completion: nil)
+//    }
+//
+//    @objc func updateCollectedText(animated: Bool = true) {
+//
+//        guard let container = appDelegate.window?.rootViewController as? ContainerViewController else { return }
+//        
+//        UIView.transition(with: filterViewContainer.filterView.collectedLabel, duration: animated ? 0.3 : 0, options: .transitionCrossDissolve, animations: { self.filterViewContainer.filterView.collectedLabel.text = container.queue.count.formatted }, completion: nil)
+//        
+//        if animated {
+//            
+//            UIView.animate(withDuration: 0.3, animations: { self.view.layoutIfNeeded() })
+//        }
+//    }
+//}
 
 extension FilterViewController: UISearchBarDelegate {
     
@@ -875,8 +861,6 @@ extension FilterViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         
         filtering = searchText != ""
-        
-        filterViewContainer.filterView.updateClearButton(to: filtering ? .visible : .hidden)
         
         sender?.filterText = searchText
         
