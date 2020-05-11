@@ -8,72 +8,43 @@
 
 import UIKit
 
-let musicPlayer: MPMusicPlayerController = {
+var musicPlayer: MPMusicPlayerController {
     
     if #available(iOS 10.3, *), !sharedUseSystemPlayer {
+        
+        return applicationPlayer
+
+    } else {
+    
+        return systemPlayer
+    }
+}
+
+let systemPlayer = MPMusicPlayerController.systemMusicPlayer
+let applicationPlayer: MPMusicPlayerController = {
+    
+    if #available(iOS 10.3, *) {
         
         return .applicationQueuePlayer
 
     } else {
     
-        return .systemMusicPlayer
+        return .applicationMusicPlayer
     }
 }()
 
 let formatter = Formatter.shared
 
-//let itemWidth: CGFloat = {
-//    
-//    if #available(iOS 10, *) {
-//        
-//        return (UIScreen.main.bounds.width - 20) / 5
-//    }
-//    
-//    return UIScreen.main.bounds.width / 5
-//}()
-//
-//let itemSize: CGSize = {
-//    
-//    let width: CGFloat = {
-//        
-//        if #available(iOS 10, *) {
-//            
-//            return (UIScreen.main.bounds.width - 20) / 5
-//        }
-//        
-//        return UIScreen.main.bounds.width / 5
-//    }()
-//    
-//    return CGSize.init(width: width, height: width + (18 - (40/3)))
-//}()
-
-func getItemWidth(from view: UIView) -> CGFloat {
-    
-    if #available(iOS 10, *) {
-        
-        return (view.frame.width - 20) / 5
-    }
-    
-    return view.frame.width / 5
-}
+func getItemWidth(from view: UIView) -> CGFloat { view.frame.width / 5 }
 
 func getItemSize(from view: UIView) -> CGSize {
     
-    let width: CGFloat = {
-        
-        if #available(iOS 10, *) {
-            
-            return (view.frame.width - 20) / 5
-        }
-        
-        return view.frame.width / 5
-    }()
+    let width = getItemWidth(from: view)
     
-    return CGSize.init(width: width, height: width + (18 - (40/3)))
+    return CGSize.init(width: width, height: width + 10 - 12) // to keep the 1:1 ratio the difference between the left/right and top/bottom constraints are then added.
 }
 
 enum LikedState: Int { case none, liked = 2, disliked = 3 }
-enum Position { case leading, middle, trailing }
 
 enum CornerRadius: Int {
     

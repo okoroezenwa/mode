@@ -10,11 +10,12 @@ import UIKit
 
 class WidgetCollectionViewCell: UICollectionViewCell {
     
-    @IBOutlet var artworkImageView: UIImageView!
     @IBOutlet var artworkContainer: UIView!
     @IBOutlet var selectedView: UIView!
-    @IBOutlet var artworkImageViewLeadingConstraint: NSLayoutConstraint!
-    @IBOutlet var artworkImageViewTrailingConstraint: NSLayoutConstraint!
+    @IBOutlet var artworkContainerLeadingConstraint: NSLayoutConstraint!
+    @IBOutlet var artworkContainerTrailingConstraint: NSLayoutConstraint!
+    
+    lazy var artworkImageView = InvertIgnoringImageView.init(frame: .zero)
     
     override var isSelected: Bool {
         
@@ -48,6 +49,21 @@ class WidgetCollectionViewCell: UICollectionViewCell {
         
         super.awakeFromNib()
         
+        artworkImageView.clipsToBounds = true
+        artworkContainer.addSubview(artworkImageView)
+        
+        contentView.layoutMargins = .zero
+        
+        NSLayoutConstraint.activate([
+        
+            artworkImageView.topAnchor.constraint(equalTo: artworkContainer.topAnchor),
+            artworkImageView.leadingAnchor.constraint(equalTo: artworkContainer.leadingAnchor),
+            artworkImageView.trailingAnchor.constraint(equalTo: artworkContainer.trailingAnchor),
+            artworkImageView.bottomAnchor.constraint(equalTo: artworkContainer.bottomAnchor),
+        ])
+        
+        artworkContainer.bringSubviewToFront(selectedView)
+        
         updateCornersAndShadows()
     }
     
@@ -63,26 +79,24 @@ class WidgetCollectionViewCell: UICollectionViewCell {
         artworkContainer.addShadow(radius: 4, opacity: 0.3, shouldRasterise: true)
     }
     
-    func prepare(with item: MPMediaItem?, position: Position = .leading) {
-     
-        let insets: UIEdgeInsets = {
-            
-            let expression: CGFloat = (20/3) - 8
-            
-            switch position {
-                
-                case .leading: return .init(top: 0, left: 10 - 8, bottom: 10, right: (10/3) - 8)
-                    
-                case .middle: return .init(top: 0, left: expression, bottom: 10, right: expression)
-                    
-                case .trailing: return .init(top: 0, left: (10/3) - 8, bottom: 10, right: 10 - 8)
-            }
-        }()
+    func prepare(with item: MPMediaItem?, index: Int) {
         
-        artworkImageViewLeadingConstraint.constant = insets.left
-        artworkImageViewTrailingConstraint.constant = insets.right
+        // x = max spacing, i = index, and n = number of cells in a row
         
-        artworkImageView.image = item?.actualArtwork?.image(at: artworkContainer.frame.size) ?? #imageLiteral(resourceName: "NoSong75")
+        // formula for leading is ((no - index) / no) * max
+        // formula for trailing is max * (1 - ((no - (index + 1)) / no))
+        
+        let i = CGFloat(index)
+        let x: CGFloat = 10
+        let n: CGFloat = 5
+        
+        let leading = ((n - i) / n) * x
+        let trailing = (1 - ((n - (i + 1)) / n)) * x
+        
+        artworkContainerLeadingConstraint.constant = leading// - 8
+        artworkContainerTrailingConstraint.constant = trailing// - 8
+        
+        artworkImageView.image = item?.artwork?.image(at: artworkContainer.frame.size) ?? #imageLiteral(resourceName: "NoSong75")
         
         isUpdated = true
     }

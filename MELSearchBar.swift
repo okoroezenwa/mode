@@ -131,6 +131,11 @@ extension MELSearchBar: UITextFieldDelegate {
         text = nil
         delegate?.searchBar?(self, textDidChange: "")
         
+        if let container = delegate as? FilterContainer {
+            
+            container.requiredInputView?.pickerView.selectRow(0, inComponent: 0, animated: true)
+        }
+        
         return false
     }
 }

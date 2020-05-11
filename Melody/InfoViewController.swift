@@ -267,7 +267,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
         
         if case .song = context {
             
-            notifier.addObserver(self, selector: #selector(updateForGeneralChange), name: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer)
+            notifier.addObserver(self, selector: #selector(updateForGeneralChange), name: .MPMusicPlayerControllerNowPlayingItemDidChange, object: /*musicPlayer*/nil)
         }
         
         editButton.addTarget(songManager, action: #selector(SongActionManager.toggleEditing(_:)), for: .touchUpInside)
@@ -541,7 +541,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
                 
                 if !(base is NowPlayingViewController), let nowPlayingVC = container?.moveToNowPlaying(vc: nowPlayingStoryboard.instantiateViewController(withIdentifier: "nowPlaying"), showingQueue: false) as? NowPlayingViewController {
                     
-                    if isInDebugMode {
+                    if isInDebugMode, items[index] != musicPlayer.nowPlayingItem {
                         
                         nowPlayingVC.alternateItem = items[index]
                     }
@@ -773,7 +773,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
         if isInDebugMode, deinitBannersEnabled {
             
             let banner = UniversalMethods.banner(withTitle: "IVC going away...")
-            banner.titleLabel.font = .myriadPro(ofWeight: .light, size: 22)
+            banner.titleLabel.font = .font(ofWeight: .light, size: 22)
             banner.show(for: 0.3)
         }
     }
@@ -1917,7 +1917,7 @@ extension InfoViewController: MPMediaPickerControllerDelegate {
                 UniversalMethods.performInMain {
                     
                     let banner = Banner.init(title: "Unable to add \(mediaItemCollection.items.count.fullCountText(for: .song))", subtitle: nil, image: nil, backgroundColor: .red, didTapBlock: nil)
-                    banner.titleLabel.font = .myriadPro(ofWeight: .regular, size: 20)
+                    banner.titleLabel.font = .font(ofWeight: .regular, size: 20)
                     banner.show(duration: 0.5)
                     
                     (weakSelf.parent as? PresentedContainerViewController)?.activityIndicator.stopAnimating()
@@ -1929,8 +1929,8 @@ extension InfoViewController: MPMediaPickerControllerDelegate {
             UniversalMethods.performInMain {
                 
                 let banner = Banner.init(title: "\(playlist.name ??? "Untitled Playlist")", subtitle: "Added \(mediaItemCollection.items.count.fullCountText(for: .song))", image: nil, backgroundColor: .deepGreen, didTapBlock: nil)
-                banner.titleLabel.font = .myriadPro(ofWeight: .light, size: 25)
-                banner.detailLabel.font = .myriadPro(ofWeight: .light, size: 20)
+                banner.titleLabel.font = .font(ofWeight: .light, size: 25)
+                banner.detailLabel.font = .font(ofWeight: .light, size: 20)
                 banner.detailLabel.textColor = Themer.textColour(for: .subtitle)
                 banner.show(for: .bannerInterval)
                 

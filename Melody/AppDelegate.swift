@@ -12,17 +12,18 @@ import CoreData
 import NotificationCenter
 
 let appDelegate = UIApplication.shared.delegate as! AppDelegate
-public let musicPlayer: MPMusicPlayerController = {
-    
-    if #available(iOS 10.3, *), !useSystemPlayer {
 
+let systemPlayer = MPMusicPlayerController.systemMusicPlayer
+let applicationPlayer: MPMusicPlayerController = {
+    
+    if #available(iOS 10.3, *) {
+        
         return .applicationQueuePlayer
-    
-    } else {
-    
-        return .systemMusicPlayer
     }
+    
+    return .applicationMusicPlayer
 }()
+public var musicPlayer: MPMusicPlayerController { !useSystemPlayer ? applicationPlayer : systemPlayer }
 public let musicLibrary = MPMediaLibrary.default()
 
 @UIApplicationMain
@@ -78,31 +79,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self?.setLibraryTimerIfNeeded()
         })
         
-        if #available(iOS 13, *) {
-            
-            setTintColour()
-        
-            notifier.addObserver(forName: .themeChanged, object: nil, queue: nil, using: { [weak self] _ in
-                
-                self?.window?.overrideUserInterfaceStyle = {
-                
-                    switch appTheme {
-                        
-                        case .system: return .unspecified
-                        
-                        case .light: return .light
-                        
-                        case .dark: return .dark
-                    }
-                }()
-                
-                self?.setTintColour()
-            })
-        
-        } else {
-            
-            window?.tintColor = .black
-        }
+        prepareWindowColours()
         
         if prefs.bool(forKey: "sectionsAndFiltersReset").inverted {
             
@@ -173,6 +150,42 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        }
         
         return true
+    }
+    
+    func prepareWindowColours() {
+    
+        if #available(iOS 13, *) {
+            
+            setTintColour()
+        
+        } else {
+            
+            window?.tintColor = .black
+        }
+        
+        window?.backgroundColor = darkTheme ? .black : .white
+        
+        notifier.addObserver(forName: .themeChanged, object: nil, queue: nil, using: { [weak self] _ in
+            
+            if #available(iOS 13, *) {
+            
+                self?.window?.overrideUserInterfaceStyle = {
+                
+                    switch appTheme {
+                        
+                        case .system: return .unspecified
+                        
+                        case .light: return .light
+                        
+                        case .dark: return .dark
+                    }
+                }()
+                
+                self?.setTintColour()
+            }
+            
+            self?.window?.backgroundColor = darkTheme ? .black : .white
+        })
     }
     
     @available(iOS 13, *)

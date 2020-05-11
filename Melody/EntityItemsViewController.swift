@@ -8,7 +8,7 @@
 
 import UIKit
 
-class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkModifying, Contained, OptionsContaining, Peekable, ArtistTransitionable, AlbumArtistTransitionable, Navigatable, ChildContaining, HighlightedEntityContaining {
+class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkModifying, Contained, OptionsContaining, Peekable, ArtistTransitionable, AlbumArtistTransitionable, Navigatable, ChildContaining, HighlightedEntityContaining, CentreViewDisplaying {
 
     @IBOutlet var containerView: UIView!
     @IBOutlet var titleEffectView: MELVisualEffectView!
@@ -78,7 +78,7 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
     var oldArtwork: UIImage?
     var buttonDetails: NavigationBarButtonDetails {
         
-        get { return (.actions, query?.items?.isEmpty != false) }
+        get { (.actions, query?.items?.isEmpty != false) }
         
         set { }
     }
@@ -167,39 +167,51 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
     var playlistItemsVCLoaded = false
     var albumItemsVCLoaded = false
     
+    var centreViewGiantImage: UIImage?
+    var centreViewTitleLabelText: String?
+    var centreViewSubtitleLabelText: String?
+    var centreViewLabelsImage: UIImage?
+    var currentCentreView = CentreView.CurrentView.none
+    var centreView: CentreView? {
+        
+        get { container?.centreView }
+        
+        set { }
+    }
+    
     @objc lazy var artistSongsViewController: ArtistSongsViewController = {
         
         let vc = entityStoryboard.instantiateViewController(withIdentifier: "artistSongsVC") as!  ArtistSongsViewController
-        self.artistSongsVCLoaded = true
-        vc.ascending = self.ascending
-        vc.staticSortCriteria = self.sortCriteria
+        artistSongsVCLoaded = true
+        vc.ascending = ascending
+        vc.staticSortCriteria = sortCriteria
         return vc
     }()
     
     @objc lazy var artistAlbumsViewController: ArtistAlbumsViewController = {
         
         let vc = entityStoryboard.instantiateViewController(withIdentifier: "artistAlbumsVC") as!  ArtistAlbumsViewController
-        self.artistAlbumsVCLoaded = true
-        vc.ascending = self.albumAscending
-        vc.staticSortCriteria = self.albumSortCriteria
+        artistAlbumsVCLoaded = true
+        vc.ascending = albumAscending
+        vc.staticSortCriteria = albumSortCriteria
         return vc
     }()
     
     @objc lazy var playlistItemsViewController: PlaylistItemsViewController = {
         
         let vc = entityStoryboard.instantiateViewController(withIdentifier: "playlistItems") as!  PlaylistItemsViewController
-        self.playlistItemsVCLoaded = true
-        vc.ascending = self.ascending
-        vc.staticSortCriteria = self.sortCriteria
+        playlistItemsVCLoaded = true
+        vc.ascending = ascending
+        vc.staticSortCriteria = sortCriteria
         return vc
     }()
     
     @objc lazy var albumItemsViewController: AlbumItemsViewController = {
         
         let vc = entityStoryboard.instantiateViewController(withIdentifier: "albumItems") as! AlbumItemsViewController
-        self.albumItemsVCLoaded = true
-        vc.ascending = self.ascending
-        vc.staticSortCriteria = self.sortCriteria
+        albumItemsVCLoaded = true
+        vc.ascending = ascending
+        vc.staticSortCriteria = sortCriteria
         return vc
     }()
     
@@ -218,6 +230,12 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
                 case .playlist: return playlistItemsViewController
             }
         }()
+        
+//        if entityContainerType == .playlist {
+//
+//            container?.centreView.title = "Nothing Here"
+//            container?.centreView.subtitle = "Insert a song from your library"
+//        }
         
         updateActiveViewController()
         prepareLifetimeObservers()
@@ -422,7 +440,7 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
             }
             
             let banner = Banner.init(title: "This artist has no offline music", subtitle: nil, image: nil, backgroundColor: .red, didTapBlock: nil)
-            banner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+            banner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
             banner.show(duration: 1.5)
             
             _ = navigationController?.popViewController(animated: true)
@@ -507,7 +525,7 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
                 }
                 
                 let banner = Banner.init(title: "This entity is no longer in your library", subtitle: nil, image: nil, backgroundColor: .red, didTapBlock: nil)
-                banner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+                banner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
                 banner.show(duration: 1.5)
                 
                 _ = self?.navigationController?.popViewController(animated: true)
@@ -535,7 +553,7 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
                 }
                 
                 let banner = Banner.init(title: "This artist has no offline music", subtitle: nil, image: nil, backgroundColor: .red, didTapBlock: nil)
-                banner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+                banner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
                 banner.show(weakSelf.view, duration: 1.5)
                 
                 _ = weakSelf.navigationController?.popViewController(animated: true)
@@ -546,7 +564,7 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         
         if peeker != nil {
             
-            lifetimeObservers.insert(notifier.addObserver(forName: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer, queue: nil, using: { [weak self] _ in
+            lifetimeObservers.insert(notifier.addObserver(forName: .MPMusicPlayerControllerNowPlayingItemDidChange, object: /*musicPlayer*/nil, queue: nil, using: { [weak self] _ in
                 
                 guard let weakSelf = self else { return }
                 

@@ -189,7 +189,23 @@ class LyricsManager: NSObject {
                         
                         guard operation?.isCancelled == false else { return }
                         
-                        guard let hit = genius.response.hits.enumerated().first(where: { hit in Set(["Translations", "Tracklist", "[Credits]"]).contains(where: { hit.element.result.fullTitle.contains($0) }).inverted && (hit.element.result.title.similarityTo(title, fuzziness: 0.4) >= 0.5 || hit.element.result.artist.name.similarityTo(artist, fuzziness: 0.4) >= 0.5) }) else {
+                        let hits = genius.response.hits.filter({ hit in Set(["Translations", "Tracklist", "[Credits]"]).contains(where: { hit.result.fullTitle.contains($0) }).inverted }).sorted(by: {
+                            
+                            if $0.result.artist.name.similarityTo(artist, fuzziness: 0.4) > $1.result.artist.name.similarityTo(artist, fuzziness: 0.4) {
+                                
+                                return true
+                                
+                            } else if $0.result.artist.name.similarityTo(artist, fuzziness: 0.4) < $1.result.artist.name.similarityTo(artist, fuzziness: 0.4) {
+                                
+                                return false
+                                
+                            } else {
+                                
+                                return $0.result.title.similarityTo(title, fuzziness: 0.4) > $1.result.title.similarityTo(title, fuzziness: 0.4)
+                            }
+                        })
+                        
+                        guard let hit = hits.first else {
                             
                             self.displayMessage(.noLyrics, from: container)
                             
@@ -198,10 +214,8 @@ class LyricsManager: NSObject {
                         
                         guard operation?.isCancelled == false else { return }
                         
-                        var hits = genius.response.hits
-                        hits.insert(hits.remove(at: hit.offset), at: 0)
                         container.hits = hits
-                        container.currentObject.url = hit.element.result.url
+                        container.currentObject.url = hit.result.url
                         
                         if let detailer = container as? LyricsInfoViewController {
                             
@@ -210,7 +224,7 @@ class LyricsManager: NSObject {
                         
                         guard operation?.isCancelled == false else { return }
                         
-                        self.downloadHTML(from: hit.element.result.url, for: item, lyricsObjectContainer: container, operation: operation)
+                        self.downloadHTML(from: hit.result.url, for: item, lyricsObjectContainer: container, operation: operation)
                     }
                     
                 } catch let error {

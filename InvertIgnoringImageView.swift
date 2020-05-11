@@ -21,4 +21,22 @@ class InvertIgnoringImageView: UIImageView {
             accessibilityIgnoresInvertColors = true
         }
     }
+    
+    override init(frame: CGRect) {
+        
+        super.init(frame: frame)
+        
+        translatesAutoresizingMaskIntoConstraints = false
+        layer.setRadiusTypeIfNeeded()
+        
+        if #available(iOS 11, *) {
+            
+            accessibilityIgnoresInvertColors = true
+        }
+    }
+    
+    required init?(coder: NSCoder) {
+        
+        super.init(coder: coder)
+    }
 }

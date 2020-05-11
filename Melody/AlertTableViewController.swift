@@ -96,7 +96,7 @@ class AlertTableViewController: UITableViewController, PreviewTransitionable {
         if isInDebugMode, deinitBannersEnabled {
             
             let banner = UniversalMethods.banner(withTitle: "ATVC going away...")
-            banner.titleLabel.font = .myriadPro(ofWeight: .light, size: 22)
+            banner.titleLabel.font = .font(ofWeight: .light, size: 22)
             banner.show(for: 0.3)
         }
     }

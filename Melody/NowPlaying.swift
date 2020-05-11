@@ -48,7 +48,7 @@ class NowPlaying: NSObject {
         
         modifyTimerForNotification()
         
-        observers.insert(notifier.addObserver(forName: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer, queue: nil, using: { [weak self] _ in
+        observers.insert(notifier.addObserver(forName: .MPMusicPlayerControllerNowPlayingItemDidChange, object: /*musicPlayer*/nil, queue: nil, using: { [weak self] _ in
             
             guard let weakSelf = self else { return }
             
@@ -68,7 +68,7 @@ class NowPlaying: NSObject {
             
         }) as! NSObject)
         
-        observers.insert(notifier.addObserver(forName: .MPMusicPlayerControllerPlaybackStateDidChange, object: musicPlayer, queue: nil, using: { [weak self] _ in
+        observers.insert(notifier.addObserver(forName: .MPMusicPlayerControllerPlaybackStateDidChange, object: /*musicPlayer*/nil, queue: nil, using: { [weak self] _ in
             
             self?.registered.forEach({ $0?.modifyPlayPauseButton() })
             
@@ -263,11 +263,13 @@ class NowPlaying: NSObject {
             musicPlayer.setQueue(with: .init(items: []))
             musicPlayer.prepareToPlay()
             
-            if !useSystemPlayer {
-                
-                notifier.post(name: .playbackStopped, object: nil)
-            }
+//            if !useSystemPlayer {
+//
+//                notifier.post(name: .playbackStopped, object: nil)
+//            }
         }
+        
+        notifier.post(name: .playbackStopped, object: nil)
     }
     
     @objc func setRepeatMode(_ sender: MELButton) {

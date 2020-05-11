@@ -331,7 +331,7 @@ extension TableDelegate: UITableViewDelegate, UITableViewDataSource {
                 var expectedEntity: MPMediaEntity?
                 var query: MPMediaQuery?
                 
-                if let tableView = container?.tableView, let header = tableView.tableHeaderView as? HeaderView, header.frame.contains(sender.location(in: tableView)) {
+                if let tableView = container?.filterContainer?.tableView ?? container?.tableView, let header = tableView.tableHeaderView as? HeaderView, header.frame.contains(sender.location(in: tableView)) {
                     
                     if header.scrollView.convert(header.groupingView.frame, to: header).contains(sender.location(in: tableView)) {
                         
@@ -430,13 +430,18 @@ extension TableDelegate: UITableViewDelegate, UITableViewDataSource {
                         .show(title: name, context: infoContext(from: indexPath, collectionViewOverride: fromCollectionView, filtering: container?.filterContainer != nil), canDisplayInLibrary: canDisplayInLibrary() || fromCollectionView),
                         .queue(name: name, query: query),
                         .newPlaylist,
-                        .addTo,
+                        .addTo/*,
                         .search(unwinder: container?.filterContainer != nil ? { [weak topViewController] in topViewController?.children.first } : nil)
-                        ].map({ actionable.singleItemAlertAction(for: $0, entityType: entityType(), using: entity, from: vc) })
+                        */].map({ actionable.singleItemAlertAction(for: $0, entityType: entityType(), using: entity, from: vc) })
                             
                     if let item = entity as? MPMediaItem, item.existsInLibrary.inverted {
                         
                         actions.append(actionable.singleItemAlertAction(for: .library, entityType: .song, using: item, from: vc))
+                    }
+                    
+                    if let _ = container?.filterContainer {
+                        
+                        actions.append(actionable.singleItemAlertAction(for: .reveal(indexPath: indexPath), entityType: .song, using: entity, from: vc))
                     }
                     
                     vc.showAlert(title: name, with: actions)
@@ -1213,15 +1218,15 @@ extension TableDelegate: EntityCellDelegate {
         
         guard let container = container as? TableViewContainer & UIViewController, let tableView = container.filterContainer?.tableView ?? container.tableView, let indexPath = tableView.indexPath(for: cell) else { return }
         
-        let item = container.getEntity(at: indexPath, filtering: container.filterContainer != nil)
+        let entity = container.getEntity(at: indexPath, filtering: container.filterContainer != nil)
         
         guard let count: Int = {
             
-            if let _ = item as? MPMediaItem {
+            if let _ = entity as? MPMediaItem {
                 
                 return 1
                 
-            } else if let collection = item as? MPMediaItemCollection {
+            } else if let collection = entity as? MPMediaItemCollection {
                 
                 return collection.count
             }
@@ -1236,13 +1241,18 @@ extension TableDelegate: EntityCellDelegate {
             .queue(name: cell.nameLabel.text, query: query(at: indexPath, filtering: container.filterContainer != nil)),
             .newPlaylist,
             .addTo,
-            .show(title: cell.nameLabel.text, context: infoContext(from: indexPath, collectionViewOverride: false, filtering: container.filterContainer != nil), canDisplayInLibrary: canDisplayInLibrary()),
+            .show(title: cell.nameLabel.text, context: infoContext(from: indexPath, collectionViewOverride: false, filtering: container.filterContainer != nil), canDisplayInLibrary: canDisplayInLibrary())/*,
             .search(unwinder: container.filterContainer != nil ? { [weak topViewController] in topViewController?.children.first } : nil)
-        ].map({ actionable.singleItemAlertAction(for: $0, entityType: entityType(), using: item, from: vc) })
+        */].map({ actionable.singleItemAlertAction(for: $0, entityType: entityType(), using: entity, from: vc) })
         
-        if let item = item as? MPMediaItem, item.existsInLibrary.inverted {
+        if let item = entity as? MPMediaItem, item.existsInLibrary.inverted {
             
             actions.append(actionable.singleItemAlertAction(for: .library, entityType: .song, using: item, from: vc))
+        }
+        
+        if let _ = container.filterContainer {
+            
+            actions.append(actionable.singleItemAlertAction(for: .reveal(indexPath: indexPath), entityType: .song, using: entity, from: vc))
         }
         
         vc.showAlert(title: cell.nameLabel.text, with: actions)

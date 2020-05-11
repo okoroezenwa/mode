@@ -23,7 +23,7 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
     
     @objc lazy var headerView: HeaderView = {
         
-        let view = HeaderView.fresh
+        let view = HeaderView.instance
         self.actionsStackView = view.actionsStackView
         self.stackView = view.scrollStackView
         arrangeButton = view.sortButton
@@ -233,25 +233,25 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
     
     var collectionKind = CollectionsKind.artist
     @objc weak var libraryVC: LibraryViewController? { return parent as? LibraryViewController }
-    @objc var type: String {
-        
-        switch collectionKind {
-            
-            case .album: return "Albums"
-                
-            case .artist: return "Artists"
-            
-            case .albumArtist: return "Album Artists"
-                
-            case .compilation: return "Compilations"
-                
-            case .composer: return "Composers"
-                
-            case .genre: return "Genres"
-            
-            case .playlist: return "Playlists"
-        }
-    }
+//    @objc var type: String {
+//
+//        switch collectionKind {
+//
+//            case .album: return "Albums"
+//
+//            case .artist: return "Artists"
+//
+//            case .albumArtist: return "Album Artists"
+//
+//            case .compilation: return "Compilations"
+//
+//            case .composer: return "Composers"
+//
+//            case .genre: return "Genres"
+//
+//            case .playlist: return "Playlists"
+//        }
+//    }
     var settingsKeys: (criteria: String, order: String, sortPreference: Int, orderPreference: Bool) {
         
         switch collectionKind {
@@ -349,9 +349,9 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
                 
                 case .playlist: return [.artist, .genre, .isCompilation, .year]
                 
-                case .artist, .albumArtist: return [.artist, .genre, .isCompilation, .year, .status]
+                case .artist, .albumArtist: return [.artist, .genre, .isCompilation, .year, .affinity]
                 
-                case .composer, .genre: return [.artist, .genre, .artwork, .isCompilation, .year, .status]
+                case .composer, .genre: return [.artist, .genre, .artwork, .isCompilation, .year, .affinity]
             }
         }()
         
@@ -462,6 +462,8 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
             
             updateBottomView()
         }
+        
+        updateEmptyView(with: collectionsQuery.collections?.count ?? 0)
         
         prepareLifetimeObservers()
             
@@ -764,6 +766,21 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
         updateButtons()
     }
     
+    func updateEmptyView(with count: Int) {
+        
+        var text: String {
+            
+            guard collectionKind != .playlist else {
+                
+                return "Create a new playlist or use iTunes to create other types of playlists"
+            }
+            
+            return showiCloudItems ? "There are no \(collectionKind.title.lowercased()) in your library" : "There are no offline \(collectionKind.title.lowercased()) in your library"
+        }
+        
+        libraryVC?.updateEmptyLabel(withCount: count, text: text)
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         
         super.viewDidAppear(animated)
@@ -773,18 +790,8 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
         let count = collectionKind == .playlist ? collectionsQuery.collections?.value(given: collections.isEmpty)?.count ?? collections.count : (collectionsQuery.items ?? []).count
         
         updateHeaderView(withCount: count)
+        updateEmptyView(with: count)
         
-        var text: String {
-            
-            guard collectionKind != .playlist else {
-                
-                return "Create a new playlist or use iTunes to create other types of playlists"
-            }
-            
-            return showiCloudItems ? "There are no \(type.lowercased()) in your library" : "There are no offline \(type.lowercased()) in your library"
-        }
-        
-        libraryVC?.updateEmptyLabel(withCount: count, text: text)
         libraryVC?.setCurrentOptions()
         
         if count > 1 {
@@ -1036,38 +1043,41 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
         
         if collectionKind != .playlist {
             
-            lifetimeObservers.insert(notifier.addObserver(forName: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer, queue: nil, using: { [weak self] _ in
-                
-                guard let weakSelf = self else { return }
-                
-                for cell in weakSelf.tableView.visibleCells {
+            [Notification.Name.playerChanged, .MPMusicPlayerControllerNowPlayingItemDidChange].forEach({
+            
+                lifetimeObservers.insert(notifier.addObserver(forName: $0, object: /*musicPlayer*/nil, queue: nil, using: { [weak self] _ in
                     
-                    guard let entityCell = cell as? EntityTableViewCell, let indexPath = weakSelf.tableView.indexPath(for: entityCell), let nowPlaying = musicPlayer.nowPlayingItem else {
+                    guard let weakSelf = self else { return }
+                    
+                    for cell in weakSelf.tableView.visibleCells {
                         
-                        (cell as? EntityTableViewCell)?.playingView.isHidden = true
-                        (cell as? EntityTableViewCell)?.indicator.state = .stopped
+                        guard let entityCell = cell as? EntityTableViewCell, let indexPath = weakSelf.tableView.indexPath(for: entityCell), let nowPlaying = musicPlayer.nowPlayingItem else {
+                            
+                            (cell as? EntityTableViewCell)?.playingView.isHidden = true
+                            (cell as? EntityTableViewCell)?.indicator.state = .stopped
+                            
+                            continue
+                        }
                         
-                        continue
+                        if entityCell.playingView.isHidden.inverted && Set(weakSelf.getCollection(from: indexPath).items).contains(nowPlaying).inverted {
+                            
+                            entityCell.playingView.isHidden = true
+                            entityCell.indicator.state = .stopped
+                            
+                        } else if entityCell.playingView.isHidden && Set(weakSelf.getCollection(from: indexPath).items).contains(nowPlaying) {
+                            
+                            entityCell.playingView.isHidden = false
+                            UniversalMethods.performOnMainThread({ entityCell.indicator.state = musicPlayer.isPlaying ? .playing : .paused }, afterDelay: 0.1)
+                        
+                        } else {
+                            
+                            entityCell.playingView.isHidden = true
+                            entityCell.indicator.state = .stopped
+                        }
                     }
                     
-                    if entityCell.playingView.isHidden.inverted && Set(weakSelf.getCollection(from: indexPath).items).contains(nowPlaying).inverted {
-                        
-                        entityCell.playingView.isHidden = true
-                        entityCell.indicator.state = .stopped
-                        
-                    } else if entityCell.playingView.isHidden && Set(weakSelf.getCollection(from: indexPath).items).contains(nowPlaying) {
-                        
-                        entityCell.playingView.isHidden = false
-                        UniversalMethods.performOnMainThread({ entityCell.indicator.state = musicPlayer.isPlaying ? .playing : .paused }, afterDelay: 0.1)
-                    
-                    } else {
-                        
-                        entityCell.playingView.isHidden = true
-                        entityCell.indicator.state = .stopped
-                    }
-                }
-                
-            }) as! NSObject)
+                }) as! NSObject)
+            })
         }
         
         lifetimeObservers.insert(notifier.addObserver(forName: .headerHeightCalculated, object: nil, queue: nil, using: { [weak self] _ in
@@ -1292,7 +1302,7 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
                 currentAlbum = nil
                 
                 let newBanner = Banner.init(title: showiCloudItems ? "This album artist is not in your library" : "This album artist is not available offline", subtitle: nil, image: nil, backgroundColor: .black, didTapBlock: nil)
-                newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+                newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
                 newBanner.show(duration: 0.7)
             }
         }
@@ -1462,7 +1472,7 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
         
         guard selectedPlaylists.isEmpty.inverted else {
             
-            UniversalMethods.banner(withTitle: "Select a playlist", titleFont: .myriadPro(ofWeight: .semibold, size: 17)).show(for: 1)
+            UniversalMethods.banner(withTitle: "Select a playlist", titleFont: .font(ofWeight: .semibold, size: 17)).show(for: 1)
             
             return
         }
@@ -1508,8 +1518,8 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
                         }
                         
                         let newBanner = Banner.init(title: details.title, subtitle: details.subtitle, image: nil, backgroundColor: details.colour, didTapBlock: nil)
-                        newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
-                        newBanner.detailLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+                        newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
+                        newBanner.detailLabel.font = UIFont.font(ofWeight: .regular, size: 15)
                         newBanner.show(duration: 1.5)
                         
                         if let _ = weakSelf.manager {
@@ -1600,8 +1610,8 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
                     UniversalMethods.performInMain {
                         
                         let newBanner = Banner.init(title: "Unable to add \(array.count.fullCountText(for: .song)) to \(playlist.name ??? "Untitled Playlist")", subtitle: error?.localizedDescription, image: nil, backgroundColor: .red, didTapBlock: nil)
-                        newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
-                        newBanner.detailLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+                        newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
+                        newBanner.detailLabel.font = UIFont.font(ofWeight: .regular, size: 15)
                         newBanner.show(duration: 1)
                         
                         parent.activityIndicator.stopAnimating()
@@ -1619,7 +1629,7 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
                 UniversalMethods.performInMain {
                     
                     let newBanner = Banner.init(title: "\(array.count.fullCountText(for: .song)) added to \(playlist.name ??? "Untitled Playlist")", subtitle: nil, image: nil, backgroundColor: .deepGreen, didTapBlock: nil)
-                    newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+                    newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
                     newBanner.show(duration: 0.5)
                     
                     if let _ = weakSelf.manager {

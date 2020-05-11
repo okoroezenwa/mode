@@ -29,6 +29,8 @@ extension UIFont {
                     case .semibold: return "AvenirNext-DemiBold"
                     
                     case .bold: return "AvenirNext-Bold"
+                    
+                    case .black: return "AvenirNext-Heavy"
                 }
             
             case .myriadPro:
@@ -42,6 +44,23 @@ extension UIFont {
                     case .semibold: return "MyriadPro-SemiBold"
                     
                     case .bold: return "MyriadPro-Bold"
+                    
+                    case .black: return "MyriadPro-Black"
+                }
+            
+            case .museoSansRounded:
+            
+                switch weight {
+                    
+                    case .light: return "MuseoSansRounded-300"
+                    
+                    case .regular: return "MuseoSansRounded-500"
+                    
+                    case .semibold: return "MuseoSansRounded-700"
+                    
+                    case .bold: return "MuseoSansRounded-900"
+                    
+                    case .black: return "MuseoSansRounded-1000"
                 }
         }
     }
@@ -123,6 +142,8 @@ extension FontManager {
             case .system: return 3
             
             case .avenirNext: return 0
+            
+            case .museoSansRounded: return 0
         }
     }
     
@@ -135,6 +156,8 @@ extension FontManager {
             case .system: return 3
             
             case .avenirNext: return 6
+            
+            case .museoSansRounded: return 6
         }
     }
     
@@ -147,6 +170,8 @@ extension FontManager {
             case .system: return 5
             
             case .avenirNext: return 4
+            
+            case .museoSansRounded: return 6
         }
     }
     
@@ -173,6 +198,8 @@ extension FontManager {
             case .system: return 18 + 4
             
             case .avenirNext: return 20
+            
+            case .museoSansRounded: return 20
         }
     }
     
@@ -192,6 +219,8 @@ extension FontManager {
             case .system: return 0
             
             case .avenirNext: return 1
+            
+            case .museoSansRounded: return 1
         }
     }
     
@@ -204,6 +233,8 @@ extension FontManager {
             case .system: return 8
             
             case .avenirNext: return 6
+            
+            case .museoSansRounded: return 6
         }
     }
     
@@ -218,6 +249,8 @@ extension FontManager {
             case .system: return 1.08
             
             case .avenirNext: return 1
+            
+            case .museoSansRounded: return 1
         }
     }
     
@@ -230,6 +263,8 @@ extension FontManager {
             case .system: return 4
             
             case .avenirNext: return 2
+            
+            case .museoSansRounded: return 2
         }
     }
     
@@ -237,11 +272,13 @@ extension FontManager {
         
         switch activeFont {
             
+            case .myriadPro: return 0
+            
             case .system: return 2
             
             case .avenirNext: return 3
             
-            case .myriadPro: return 0
+            case .museoSansRounded: return 3
         }
     }
     

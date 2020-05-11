@@ -167,6 +167,8 @@ class VisualEffectNavigationBar: MELVisualEffectView {
                 case .avenirNext, .myriadPro: return 2
                 
                 case .system: return 0
+                
+                case .museoSansRounded: return 2
             }
         }
         
@@ -291,7 +293,11 @@ class VisualEffectNavigationBar: MELVisualEffectView {
     
     func location(from navigatable: Navigatable?) -> Location {
         
-        if let _ = navigatable as? EntityItemsViewController {
+        if let _ = navigatable as? FilterViewController {
+            
+            return .entity
+            
+        } else if let _ = navigatable as? EntityItemsViewController {
             
             return .entity
             
@@ -436,7 +442,11 @@ class VisualEffectNavigationBar: MELVisualEffectView {
             return
         }
         
-        guard let navigatable = navigatable, let view = navBarArtworkMode == .large ? artworkView : entityImageViewContainer.superview, let altView = navBarArtworkMode == .small ? artworkView : entityImageViewContainer.superview, let container = navBarArtworkMode == .large ? artworkContainer : entityImageViewContainer, let imageView = navBarArtworkMode == .large ? artworkImageView : entityImageView else { return }
+        guard let navigatable = navigatable,
+            let view = navBarArtworkMode == .large ? artworkView : entityImageViewContainer.superview,
+            let altView = navBarArtworkMode == .small ? artworkView : entityImageViewContainer.superview,
+            let container = navBarArtworkMode == .large ? artworkContainer : entityImageViewContainer,
+            let imageView = navBarArtworkMode == .large ? artworkImageView : entityImageView else { return }
         
         altView.isHidden = true
         view.isHidden = navigatable.artworkDetails == nil
@@ -469,11 +479,13 @@ class VisualEffectNavigationBar: MELVisualEffectView {
                 
                 self.containerView.layoutIfNeeded()
                 self.rightButton.alpha = navigatable.buttonDetails.hidden ? 0 : 1
+                self.clearBorderView.alpha = navigatable.buttonDetails.hidden ? 0 : 1
             })
             
         } else {
             
             rightButton.alpha = navigatable.buttonDetails.hidden ? 0 : 1
+            clearBorderView.alpha = navigatable.buttonDetails.hidden ? 0 : 1
         }
     }
     
@@ -505,15 +517,20 @@ class VisualEffectNavigationBar: MELVisualEffectView {
                 
                 child.songManager.showActionsForAll(child)
             }
-        }
-        
-        /*if let entityVC = containerVC?.activeViewController?.topViewController as? EntityItemsViewController, let child = entityVC.children.first as? SongActionable {
-            
-            child.songManager.showActionsForAll(child)
-            
-        }*/ else if let searchVC = containerVC?.activeViewController?.topViewController as? SearchViewController, searchVC.filtering.inverted, searchVC.recentSearches.isEmpty.inverted {
+        } else if let searchVC = containerVC?.activeViewController?.topViewController as? SearchViewController, searchVC.filtering.inverted, searchVC.recentSearches.isEmpty.inverted {
             
             searchVC.deleteRecentSearches()
+        
+        } else if let filterVC = containerVC?.activeViewController?.topViewController as? FilterViewController {
+            
+            if filterVC.filtering {
+                
+                filterVC.songManager.showActionsForAll(filterVC)
+                
+            } else if filterVC.recentSearches.isEmpty.inverted {
+            
+                filterVC.clearRecentSearches()
+            }
         }
     }
     

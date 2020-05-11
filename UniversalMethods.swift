@@ -74,7 +74,7 @@ class UniversalMethods: NSObject {
         }
     }
     
-    @objc class func banner(withTitle title: String?, subtitle: String? = nil, image: UIImage? = nil, backgroundColor: UIColor = .black, titleFont: UIFont = .myriadPro(ofWeight: .regular, size: 15), subtitleFont: UIFont = .myriadPro(ofWeight: .regular, size: 15), didTapBlock: (() -> ())? = nil) -> Banner {
+    @objc class func banner(withTitle title: String?, subtitle: String? = nil, image: UIImage? = nil, backgroundColor: UIColor = .black, titleFont: UIFont = .font(ofWeight: .regular, size: 15), subtitleFont: UIFont = .font(ofWeight: .regular, size: 15), didTapBlock: (() -> ())? = nil) -> Banner {
         
         let banner = Banner.init(title: title, subtitle: subtitle, image: image, backgroundColor: backgroundColor, didTapBlock: didTapBlock)
         banner.titleLabel.font = titleFont
@@ -268,7 +268,7 @@ class UniversalMethods: NSObject {
             try managedContext.save()
             
             let newBanner = Banner.init(title: "Saved Playlists Deleted", subtitle: nil, image: nil, backgroundColor: .azure, didTapBlock: nil)
-            newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+            newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
             newBanner.show(duration: 0.7)
             
         } catch _ {
@@ -282,7 +282,7 @@ class UniversalMethods: NSObject {
         guard let item = item, item.existsInLibrary.inverted/*persistentID = item?.persistentID, let items = MPMediaQuery.init(filterPredicates: [.for(.song, using: persistentID)]).items, items.isEmpty*/ else {
             
             let banner = Banner.init(title: "This song is already in your library", subtitle: nil, image: nil, backgroundColor: .deepGreen, didTapBlock: nil)
-            banner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+            banner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
             banner.show(duration: 0.5)
             completions.success()
             
@@ -290,7 +290,7 @@ class UniversalMethods: NSObject {
         }
         
         let banner = Banner.init(title: "Searching Apple Music...", subtitle: nil, image: nil, backgroundColor: .azure, didTapBlock: nil)
-        banner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+        banner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
         banner.show()
         
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
@@ -298,7 +298,7 @@ class UniversalMethods: NSObject {
         guard /*let item = item, */let songName = item.title, songName.isEmpty.inverted, let artist = item.artist, artist.isEmpty.inverted, let identifier = appDelegate.storeIdentifier else {
             
             let newBanner = Banner.init(title: "An error occurred", subtitle: nil, image: nil, backgroundColor: .red, didTapBlock: nil)
-            newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+            newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
             newBanner.show(duration: 0.5)
             completions.error()
             UIApplication.shared.isNetworkActivityIndicatorVisible = false
@@ -313,7 +313,7 @@ class UniversalMethods: NSObject {
         guard let url = trialURL else {
             
             let newBanner = Banner.init(title: "An error occurred", subtitle: nil, image: nil, backgroundColor: .red, didTapBlock: nil)
-            newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+            newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
             newBanner.show(duration: 0.5)
             completions.error()
             UIApplication.shared.isNetworkActivityIndicatorVisible = false
@@ -327,7 +327,7 @@ class UniversalMethods: NSObject {
             guard let obtainedData = data else {
                 
                 let newBanner = Banner.init(title: "An error occurred", subtitle: nil, image: nil, backgroundColor: .red, didTapBlock: nil)
-                newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+                newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
                 newBanner.show(duration: 0.5)
                 completions.error()
                 UIApplication.shared.isNetworkActivityIndicatorVisible = false
@@ -357,7 +357,7 @@ class UniversalMethods: NSObject {
                                 UniversalMethods.performInMain {
                                     
                                     let newBanner = Banner.init(title: sameSong ? "Added song to library" : "Added duplicate song to library", subtitle: nil, image: nil, backgroundColor: sameSong ? .deepGreen : .orange, didTapBlock: nil)
-                                    newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+                                    newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
                                     newBanner.show(duration: sameSong ? 0.5 : 1)
                                     
                                     if let sameSongAction = sameSongAction {
@@ -374,8 +374,8 @@ class UniversalMethods: NSObject {
                                 UniversalMethods.performInMain {
                                     
                                     let newBanner = Banner.init(title: "Unable to add song to library", subtitle: error?.localizedDescription, image: nil, backgroundColor: .red, didTapBlock: nil)
-                                    newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
-                                    newBanner.detailLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+                                    newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
+                                    newBanner.detailLabel.font = UIFont.font(ofWeight: .regular, size: 15)
                                     newBanner.show(duration: 0.5)
                                     
                                     completions.error()
@@ -390,7 +390,7 @@ class UniversalMethods: NSObject {
                     UniversalMethods.performInMain {
                         
                         let newBanner = Banner.init(title: "Couldn't obtain song information from Apple Music", subtitle: nil, image: nil, backgroundColor: .red, didTapBlock: nil)
-                        newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+                        newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
                         newBanner.show(duration: 0.5)
                         
                         banner.dismiss()
@@ -404,8 +404,8 @@ class UniversalMethods: NSObject {
                 UniversalMethods.performInMain {
                     
                     let newBanner = Banner.init(title: "Couldn't obtain song information from Apple Music", subtitle: error.localizedDescription, image: nil, backgroundColor: .red, didTapBlock: nil)
-                    newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
-                    newBanner.detailLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+                    newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
+                    newBanner.detailLabel.font = UIFont.font(ofWeight: .regular, size: 15)
                     newBanner.show(duration: 0.5)
                     
                     banner.dismiss()

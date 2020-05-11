@@ -13,7 +13,7 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
     @IBOutlet var tableView: MELTableView!
     lazy var headerView: HeaderView = {
         
-        let view = HeaderView.fresh
+        let view = HeaderView.instance
         self.actionsStackView = view.actionsStackView
         self.stackView = view.scrollStackView
         view.showRecents = showRecentSongs
@@ -203,7 +203,7 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
     }
     
     let applicableSortCriteria: Set<SortCriteria> = [.duration, .artist, .album, .plays, .lastPlayed, .genre, .rating, .dateAdded, .year, .title, .fileSize]
-    lazy var applicableFilterProperties: Set<Property> = { self.applicationItemFilterProperties }()
+    lazy var applicableFilterProperties: Set = self.applicationItemFilterProperties
     lazy var sorter: Sorter = { Sorter.init(operation: self.operation) }()
     
     var operations = ImageOperations()
@@ -254,6 +254,7 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
         adjustInsets(context: .container)
         
         updateTopLabels(setTitle: libraryVC?.shouldSetTitles == true)
+        updateEmptyView(with: songsQuery.items?.count ?? 0)
         
         prepareLifetimeObservers()
 
@@ -269,6 +270,8 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
         
         prepareSupplementaryInfo(animated: false)
         updateHeaderView(withCount: (songsQuery.items ?? []).count)
+        
+        libraryVC?.buttonDetails = (.actions, songsQuery.items?.isEmpty != false)
         
         prepareGestures()
         
@@ -384,6 +387,13 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
         updateButtons()
     }
     
+    func updateEmptyView(with count: Int) {
+        
+        let text = showiCloudItems ? "There are no songs in your library" : "There are no offline songs in your library"
+        
+        libraryVC?.updateEmptyLabel(withCount: count, text: text)
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         
         super.viewDidAppear(animated)
@@ -393,10 +403,8 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
         let count = (firstLaunch ? (songsQuery.items ?? []) : songs).count
         
         updateHeaderView(withCount: count)
+        updateEmptyView(with: count)
         
-        let text = showiCloudItems ? "There are no songs in your library" : "There are no offline songs in your library"
-        
-        libraryVC?.updateEmptyLabel(withCount: count, text: text)
         libraryVC?.setCurrentOptions()
         
         if firstLaunch {
@@ -470,7 +478,7 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
                 currentItem = nil
                 
                 let newBanner = Banner.init(title: showiCloudItems ? "This album is not in your library" : "This album is not available offline", subtitle: nil, image: nil, backgroundColor: .black, didTapBlock: nil)
-                newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+                newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
                 newBanner.show(duration: 0.7)
             }
         }
@@ -537,27 +545,30 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
         
         }) as! NSObject)
         
-        lifetimeObservers.insert(notifier.addObserver(forName: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer, queue: nil, using: { [weak self] _ in
-            
-            guard let weakSelf = self else { return }
+        [Notification.Name.playerChanged, .MPMusicPlayerControllerNowPlayingItemDidChange].forEach({
+        
+            lifetimeObservers.insert(notifier.addObserver(forName: $0, object: /*musicPlayer*/nil, queue: nil, using: { [weak self] _ in
                 
-            for cell in weakSelf.tableView.visibleCells {
-                
-                guard let cell = cell as? EntityTableViewCell, let indexPath = weakSelf.tableView.indexPath(for: cell) else { continue }
-                
-                if cell.playingView.isHidden.inverted && musicPlayer.nowPlayingItem != weakSelf.getSong(from: indexPath) {
+                guard let weakSelf = self else { return }
                     
-                    cell.playingView.isHidden = true
-                    cell.indicator.state = .stopped
-                
-                } else if cell.playingView.isHidden && musicPlayer.nowPlayingItem == weakSelf.getSong(from: indexPath) {
+                for cell in weakSelf.tableView.visibleCells {
                     
-                    cell.playingView.isHidden = false
-                    UniversalMethods.performOnMainThread({ cell.indicator.state = musicPlayer.isPlaying ? .playing : .paused }, afterDelay: 0.1)
+                    guard let cell = cell as? EntityTableViewCell, let indexPath = weakSelf.tableView.indexPath(for: cell) else { continue }
+                    
+                    if cell.playingView.isHidden.inverted && musicPlayer.nowPlayingItem != weakSelf.getSong(from: indexPath) {
+                        
+                        cell.playingView.isHidden = true
+                        cell.indicator.state = .stopped
+                    
+                    } else if cell.playingView.isHidden && musicPlayer.nowPlayingItem == weakSelf.getSong(from: indexPath) {
+                        
+                        cell.playingView.isHidden = false
+                        UniversalMethods.performOnMainThread({ cell.indicator.state = musicPlayer.isPlaying ? .playing : .paused }, afterDelay: 0.1)
+                    }
                 }
-            }
-            
-        }) as! NSObject)
+                
+            }) as! NSObject)
+        })
         
         lifetimeObservers.insert(notifier.addObserver(forName: .showUnaddedSongsChanged, object: nil, queue: nil, using: { [weak self] _ in
             

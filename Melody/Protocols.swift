@@ -205,8 +205,8 @@ extension PropertyStripPresented {
                     
                         guard let property = self as? Property, let arrayIndex = filterProperties.firstIndex(of: property), Set(otherFilterProperties).contains(property).inverted else { return }
                     
-                        prefs.set(filterProperties.removing(from: arrayIndex).map({ $0.rawValue }), forKey: .filterProperties)
-                        prefs.set(otherFilterProperties.inserting(property, at: index ?? otherFilterProperties.endIndex).map({ $0.rawValue }), forKey: .otherFilterProperties)
+                        prefs.set(filterProperties.removing(from: arrayIndex).map({ $0.oldRawValue }), forKey: .filterProperties)
+                        prefs.set(otherFilterProperties.inserting(property, at: index ?? otherFilterProperties.endIndex).map({ $0.oldRawValue }), forKey: .otherFilterProperties)
                     
                     case .library:
                     
@@ -224,8 +224,8 @@ extension PropertyStripPresented {
                         
                         guard let property = self as? Property, let arrayIndex = otherFilterProperties.firstIndex(of: property), Set(filterProperties).contains(property).inverted else { return }
                         
-                        prefs.set(otherFilterProperties.removing(from: arrayIndex).map({ $0.rawValue }), forKey: .otherFilterProperties)
-                        prefs.set(filterProperties.inserting(property, at: index ?? filterProperties.endIndex).map({ $0.rawValue }), forKey: .filterProperties)
+                        prefs.set(otherFilterProperties.removing(from: arrayIndex).map({ $0.oldRawValue }), forKey: .otherFilterProperties)
+                        prefs.set(filterProperties.inserting(property, at: index ?? filterProperties.endIndex).map({ $0.oldRawValue }), forKey: .filterProperties)
                     
                     case .library:
                         
@@ -243,7 +243,7 @@ extension PropertyStripPresented {
                     
                         guard let property = self as? Property, Set(hiddenFilterProperties).contains(property).inverted else { return }
                     
-                        prefs.set(hiddenFilterProperties.appending(property).map({ $0.rawValue }), forKey: .hiddenFilterProperties)
+                        prefs.set(hiddenFilterProperties.appending(property).map({ $0.oldRawValue }), forKey: .hiddenFilterProperties)
                     
                     case .library:
                     
@@ -260,7 +260,7 @@ extension PropertyStripPresented {
                     
                         guard let property = self as? Property, let index = hiddenFilterProperties.firstIndex(of: property) else { return }
                     
-                        prefs.set(hiddenFilterProperties.removing(from: index).map({ $0.rawValue }), forKey: .hiddenFilterProperties)
+                        prefs.set(hiddenFilterProperties.removing(from: index).map({ $0.oldRawValue }), forKey: .hiddenFilterProperties)
                     
                     case .library:
                     
@@ -356,7 +356,7 @@ extension TableViewContainer {
                             return "Create a new playlist or use iTunes to create other types of playlists"
                         }
                         
-                        return showiCloudItems ? "There are no \(collectionsVC.type.lowercased()) in your library" : "There are no offline \(collectionsVC.type.lowercased()) in your library"
+                        return showiCloudItems ? "There are no \(collectionsVC.collectionKind.title.lowercased()) in your library" : "There are no offline \(collectionsVC.collectionKind.title.lowercased()) in your library"
                     
                     } else {
                         
@@ -810,30 +810,6 @@ protocol OptionsContaining {
     var options: LibraryOptions { get }
 }
 
-protocol LargeActivityIndicatorContaining: TableViewContaining {
-    
-    var largeActivityIndicator: MELActivityIndicatorView! { get set }
-    var activityView: UIView! { get set }
-    var activityVisualEffectView: MELVisualEffectView! { get set }
-}
-
-extension LargeActivityIndicatorContaining {
-    
-    func updateLoadingViews(hidden: Bool) {
-        
-        if let queueVC = self as? QueueViewController {
-            
-            activityVisualEffectView.isHidden = queueVC.queueIsBeingEdited ? hidden : /*queueVC.*/isQueueAvailable ? hidden : queueVC.firstScroll
-        }
-        
-        tableView.isUserInteractionEnabled = hidden
-        
-        UIView.animate(withDuration: 0.2, animations: { self.activityView.alpha = hidden ? 0 : 1 })
-        
-        hidden ? largeActivityIndicator.stopAnimating() : largeActivityIndicator.startAnimating()
-    }
-}
-
 protocol TableViewContaining: class {
     
     var tableView: MELTableView! { get set }
@@ -932,4 +908,96 @@ extension LocationBroadcastable {
 protocol EditControlContaining: class {
     
     var preferredEditingStyle: EditingStyle { get set }
+}
+
+protocol CentreViewDisplaying: class {
+    
+    var centreView: CentreView? { get set }
+    var currentCentreView: CentreView.CurrentView { get set }
+    var centreViewGiantImage: UIImage? { get set }
+    var centreViewTitleLabelText: String? { get set }
+    var centreViewSubtitleLabelText: String? { get set }
+    var centreViewLabelsImage: UIImage? { get set }
+}
+
+extension CentreViewDisplaying {
+    
+    var shouldUpdateCentreView: Bool {
+        
+        if let contained = self as? Contained & UIViewController, let container = contained.container {
+            
+            return (container.activeViewController?.delegate as? NavigationAnimationController)?.animationInProgress != true && contained == container.activeViewController?.topViewController
+        
+        } else if let vc = self as? UIViewController, vc.parent is PresentedContainerViewController {
+            
+            return true
+        }
+        
+        return false
+    }
+    
+    func updateCurrentView(to view: CentreView.CurrentView, animated: Bool = true, setAlpha: Bool = true, alternateCentreView: CentreView? = nil, completion: (() -> ())? = nil) {
+        
+        let centreView = self.centreView ?? alternateCentreView
+        
+        if let tableContainer = self as? TableViewContaining {
+            
+            tableContainer.tableView?.isUserInteractionEnabled = view != .indicator
+        }
+        
+        updateViews(to: view, alternateCentreView: centreView)
+        
+        if currentCentreView != view {
+        
+            currentCentreView = view
+        }
+        
+        guard shouldUpdateCentreView else { return }
+
+        centreView?.updateCurrentView(to: currentCentreView, animated: animated, setAlpha: setAlpha, completion: completion)
+    }
+    
+    func updateViews(to view: CentreView.CurrentView, alternateCentreView: CentreView?) {
+        
+        let centreView = self.centreView ?? alternateCentreView
+        
+        switch view {
+            
+            case .none: break
+            
+            case .indicator:
+            
+                if let queueVC = self as? QueueViewController {
+                    
+                    centreView?.activityVisualEffectView.isHidden = queueVC.queueIsBeingEdited.inverted && isQueueAvailable.inverted && queueVC.firstScroll
+                }
+            
+            case .labels(components: let components):
+            
+                if components.contains(.title), let text = centreViewTitleLabelText {
+                    
+                    centreView?.titleLabel.text = text
+                    centreView?.titleLabel.attributes = [.init(name: .paragraphStyle, value: .other(NSMutableParagraphStyle.withLineHeight(1.2, alignment: .center)), range: text.nsRange())]
+                }
+                
+                if components.contains(.subtitle), let text = centreViewSubtitleLabelText {
+                        
+                    centreView?.subtitleLabel.text = text
+                    centreView?.subtitleLabel.attributes = [.init(name: .paragraphStyle, value: .other(NSMutableParagraphStyle.withLineHeight(1.2, alignment: .center)), range: text.nsRange())]
+                }
+                
+                if components.contains(.image) {
+                    
+                    centreView?.labelsImageView.image = centreViewLabelsImage
+                }
+            
+            case .image: break
+        }
+    }
+}
+
+protocol YAxisAnchorable {
+    
+    var topAnchor: NSLayoutYAxisAnchor { get }
+    var bottomAnchor: NSLayoutYAxisAnchor { get }
 }

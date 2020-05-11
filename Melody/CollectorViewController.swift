@@ -157,7 +157,7 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
         updateShuffleButton()
         updateHeaderView()
         
-        notifier.addObserver(self, selector: #selector(updateUpNextButton), name: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer)
+        [Notification.Name.playerChanged, .MPMusicPlayerControllerNowPlayingItemDidChange].forEach({ notifier.addObserver(self, selector: #selector(updateUpNextButton), name: $0, object: /*musicPlayer*/nil) })
         notifier.addObserver(self, selector: #selector(updateForChangedItems), name: .managerItemsChanged, object: nil)
         notifier.addObserver(tableView as Any, selector: #selector(UITableView.reloadData), name: .lineHeightsCalculated, object: nil)
         [Notification.Name.entityCountVisibilityChanged, .showExplicitnessChanged].forEach({ notifier.addObserver(self, selector: #selector(updateEntityCountVisibility), name: $0, object: nil) })
@@ -190,7 +190,7 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
                 
                 } else {
                     
-                    var actions = [SongAction.queue(name: cell.nameLabel.text, query: nil), .newPlaylist, .addTo, .show(title: cell.nameLabel.text, context: .song(location: .list, at: indexPath.row, within: manager.queue), canDisplayInLibrary: true), .search(unwinder: { [weak self] in self?.parent })].map({ singleItemAlertAction(for: $0, entityType: .song, using: item, from: self) })
+                    var actions = [SongAction.queue(name: cell.nameLabel.text, query: nil), .newPlaylist, .addTo, .show(title: cell.nameLabel.text, context: .song(location: .list, at: indexPath.row, within: manager.queue), canDisplayInLibrary: true), .remove(indexPath)/*, .search(unwinder: { [weak self] in self?.parent })*/].map({ singleItemAlertAction(for: $0, entityType: .song, using: item, from: self) })
                     
                     if item.existsInLibrary.inverted {
                         
@@ -735,7 +735,7 @@ extension CollectorViewController: EntityCellDelegate {
         
         let item = manager.queue[indexPath.row]
         
-        var actions = [SongAction.queue(name: cell.nameLabel.text, query: nil), .newPlaylist, .addTo, .show(title: cell.nameLabel.text, context: .song(location: .list, at: indexPath.row, within: manager.queue), canDisplayInLibrary: true), .search(unwinder: { [weak self] in self?.parent })].map({ singleItemAlertAction(for: $0, entityType: .song, using: item, from: self) })
+        var actions = [SongAction.queue(name: cell.nameLabel.text, query: nil), .newPlaylist, .addTo, .show(title: cell.nameLabel.text, context: .song(location: .list, at: indexPath.row, within: manager.queue), canDisplayInLibrary: true), .remove(indexPath)/*, .search(unwinder: { [weak self] in self?.parent })*/].map({ singleItemAlertAction(for: $0, entityType: .song, using: item, from: self) })
         
         if item.existsInLibrary.inverted {
             

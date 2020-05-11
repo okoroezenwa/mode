@@ -300,7 +300,7 @@ extension EntityVerifiable {
         if check.inverted {
             
             let newBanner = Banner.init(title: showiCloudItems ? "This \(title) is not in your library" : "This \(title) is not available offline", subtitle: nil, image: nil, backgroundColor: .black, didTapBlock: nil)
-            newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+            newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
             newBanner.show(duration: 1)
             
             completion?()

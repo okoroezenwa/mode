@@ -59,7 +59,7 @@ class FilterView: UIView {
 
         didSet {
             
-            filterInputViewHeightConstraint.constant = requiresSearchBar.inverted ? 0 : 53
+            filterInputViewBottomConstraint.constant = requiresSearchBar.inverted ? -53 : 0
         }
     }
     
@@ -99,6 +99,8 @@ class FilterView: UIView {
                 case .avenirNext, .system: return 3
                 
                 case .myriadPro: return 0
+                
+                case .museoSansRounded: return 3
             }
         }()
     }

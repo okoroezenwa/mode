@@ -28,8 +28,6 @@ enum StartPoint: Int { case library, search }
 
 @objc enum ItemStatus: Int { case present, absent }
 
-enum EmptyViewState { case completelyHidden, subLabelHidden, completelyVisible }
-
 enum Interval: Int { case pastHour, pastDay, pastWeek, pastMonth, pastThreeMonths, pastSixMonths }
 
 enum LikedState: Int { case none = 1, liked = 2, disliked = 3 }
@@ -461,6 +459,26 @@ enum CollectionsKind {
             case .playlist: return .playlists
         }
     }
+    
+    var title: String {
+        
+        switch self {
+            
+            case .album: return "Albums"
+                
+            case .artist: return "Artists"
+            
+            case .albumArtist: return "Album Artists"
+                
+            case .compilation: return "Compilations"
+                
+            case .composer: return "Composers"
+                
+            case .genre: return "Genres"
+            
+            case .playlist: return "Playlists"
+        }
+    }
 }
 
 enum LibrarySection: Int, PropertyStripPresented {
@@ -513,7 +531,7 @@ enum LibrarySection: Int, PropertyStripPresented {
             
             case .albums: return #imageLiteral(resourceName: "Albums17")
             
-             case .compilations: return #imageLiteral(resourceName: "CompilationsSmall")
+            case .compilations: return #imageLiteral(resourceName: "CompilationsSmall")
             
             case .composers: return #imageLiteral(resourceName: "ComposersSmall")
             
@@ -546,6 +564,26 @@ enum LibrarySection: Int, PropertyStripPresented {
             case .playlists: return "Playlists"
             
             case .albumArtists: return "Album Artists"
+        }
+    }
+    
+    var centreViewImage: UIImage {
+        
+        switch self {
+            
+            case .albums: return #imageLiteral(resourceName: "Albums100")
+            
+            case .compilations: return #imageLiteral(resourceName: "Compilations100")
+            
+            case .composers: return #imageLiteral(resourceName: "Composers100")
+            
+            case .artists, .albumArtists: return #imageLiteral(resourceName: "Artists100")
+            
+            case .genres: return #imageLiteral(resourceName: "Genres100")
+            
+            case .playlists: return #imageLiteral(resourceName: "Playlists100")
+            
+            case .songs: return #imageLiteral(resourceName: "Songs100")
         }
     }
 }
@@ -634,15 +672,17 @@ enum CornerRadius: Int {
 
 enum Property: Int, PropertyStripPresented, CaseIterable {
     
-    case title, artist, album, dateAdded, lastPlayed, genre, composer, plays, duration, year, rating, status, size, trackCount, albumCount, isCloud, artwork, isExplicit, isCompilation, albumArtist
+    case `default`, title, artist, album, duration, plays, lastPlayed, rating, genre, dateAdded, year, random, songCount, albumCount, size, albumName, albumYear, albumArtist, affinity, isCloud, artwork, composer, isExplicit, isCompilation
     
     var title: String {
         
         switch self {
             
-            case .album: return "Album"
+            case .default: return "Default"
             
-            case .albumCount: return "Albums"
+            case .album, .albumName, .albumYear: return "Album"
+            
+            case .albumCount: return "Album Count"
             
             case .artist: return "Artist"
             
@@ -672,13 +712,15 @@ enum Property: Int, PropertyStripPresented, CaseIterable {
             
             case .size: return "Size"
             
-            case .trackCount: return "Songs"
+            case .songCount: return "Song Count"
             
             case .title: return "Name"
             
             case .year: return "Year"
             
-            case .status: return "Affinity"
+            case .affinity: return "Affinity"
+            
+            case .random: return "Random"
         }
     }
     
@@ -688,9 +730,213 @@ enum Property: Int, PropertyStripPresented, CaseIterable {
         
         switch self {
             
-            case .album, .albumCount, .albumArtist, .artist, .artwork, .composer, .genre, .isCloud, .isCompilation, .isExplicit, .plays, .rating, .trackCount, .title, .year, .status: return false
+            case .default, .random, .album, .albumCount, .albumArtist, .artist, .artwork, .composer, .genre, .isCloud, .isCompilation, .isExplicit, .plays, .rating, .songCount, .title, .year, .affinity, .albumYear, .albumName, .dateAdded, .duration, .lastPlayed: return false
             
-            case .dateAdded, .duration, .lastPlayed, .size: return true
+            case /*.dateAdded, .duration, .lastPlayed, */.size: return true
+        }
+    }
+    
+    func subtitle(from location: Location) -> String {
+        
+        switch location {
+            
+            case .collection(kind: let kind, point: .songs) where Set([AlbumBasedCollectionKind.artist, .albumArtist]).contains(kind):
+            
+                switch self {
+            
+                    case .album: return "by Index"
+                    
+                    case .albumName: return "by Name"
+                    
+                    case .albumYear: return "by Year"
+                    
+                    default: return ""
+                }
+            
+            default: return ""
+        }
+    }
+    
+    static func sortResult(between first: Property, and second: Property, at location: Location) -> Bool {
+        
+        return (first.title/*(from: location)*/ + first.subtitle(from: location)) < (second.title/*(from: location)*/ + second.subtitle(from: location))
+    }
+    
+    static func applicableSortCriteria(for location: Location) -> Set<Property> {
+        
+        switch location {
+            
+            case .album: return [.duration, .albumArtist, .album, .plays, .lastPlayed, .genre, .rating, .dateAdded, .title, .size]
+            
+            case .playlist: return [.duration, .title, .artist, .album, .plays, .year, .lastPlayed, .genre, .rating, .dateAdded, .size, .albumArtist]
+            
+            case .collections(kind: let kind):
+            
+                let set: Set<Property> = [.album, .duration, .year, .genre, .artist, .plays, .dateAdded, .size, .songCount, .albumCount, .title, .albumArtist]
+                
+                switch kind {
+                    
+                    case .album: return set.subtracting([.albumCount, .artist])
+                    
+                    case .compilation: return set.subtracting([.albumCount, .artist, .albumArtist])
+                    
+                    case .artist: return set.subtracting([.year, .genre, .title, .album, .albumArtist])
+                    
+                    case .albumArtist: return set.subtracting([.year, .genre, .title, .album, .artist])
+                    
+                    case .genre, .composer: return set.subtracting([.year, .genre, .artist, .album, .albumArtist])
+                    
+                    case .playlist: return set.subtracting([.album, .year, .genre, .artist, .albumCount, .albumArtist])
+                }
+            
+            case .collection(kind: let kind, point: let point):
+            
+                switch point {
+                    
+                    case .songs:
+                    
+                        let set: Set<Property> = [.duration, .artist, .album, .albumArtist, .plays, .lastPlayed, .genre, .rating, .dateAdded, .title, .size, .year, .albumName, .albumYear]
+                        
+                        switch kind {
+                            
+                            case .artist: return set.subtracting([.artist])
+                                
+                            case .albumArtist: return set.subtracting([.albumArtist])
+                                
+                            case .genre: return set.subtracting([.genre, .albumName, .albumYear])
+                            
+                            case .composer: return set.subtracting([.albumName, .albumYear])
+                        }
+                    
+                    case .albums:
+                    
+                        let set: Set<Property> = [.album, .duration, .year, .genre, .artist, .plays, .dateAdded, .size, .songCount, .albumArtist]
+                        
+                        switch kind {
+                            
+                            case .artist: return set.subtracting([.artist])
+                            
+                            case .albumArtist: return set.subtracting([.albumArtist])
+                            
+                            case .genre: return set.subtracting([.genre])
+                            
+                            case .composer: return set
+                        }
+                }
+            
+            default: return []
+        }
+    }
+    
+    var oldRawValue: Int {
+        
+        switch self {
+            
+            case .default: return 20
+            
+            case .album: return 2
+                 
+            case .albumName: return 23
+                
+            case .albumYear: return 22
+            
+            case .albumCount: return 14
+            
+            case .artist: return 1
+            
+            case .albumArtist: return 19
+            
+            case .artwork: return 16
+            
+            case .composer: return 6
+            
+            case .dateAdded: return 3
+            
+            case .duration: return 8
+            
+            case .genre: return 5
+            
+            case .isCloud: return 15
+            
+            case .isCompilation: return 18
+            
+            case .isExplicit: return 17
+            
+            case .lastPlayed: return 4
+            
+            case .plays: return 7
+            
+            case .rating: return 10
+            
+            case .size: return 12
+            
+            case .songCount: return 13
+            
+            case .title: return 0
+            
+            case .year: return 9
+            
+            case .affinity: return 11
+            
+            case .random: return 21
+        }
+    }
+    
+    static func fromOldRawValue(_ rawValue: Int?) -> Property? {
+        
+        guard let rawValue = rawValue else { return nil }
+        
+        switch rawValue {
+            
+            case 20: return .default
+            
+            case 2: return .album
+                 
+            case 23: return .albumName
+                
+            case 22: return .albumYear
+            
+            case 14: return .albumCount
+            
+            case 1: return .artist
+            
+            case 19: return .albumArtist
+            
+            case 16: return .artwork
+            
+            case 6: return .composer
+            
+            case 3: return .dateAdded
+            
+            case 8: return .duration
+            
+            case 5: return .genre
+            
+            case 15: return .isCloud
+            
+            case 18: return .isCompilation
+            
+            case 17: return .isExplicit
+            
+            case 4: return .lastPlayed
+            
+            case 7: return .plays
+            
+            case 10: return .rating
+            
+            case 12: return .size
+            
+            case 13: return .songCount
+            
+            case 0: return .title
+            
+            case 9: return .year
+            
+            case 11: return .affinity
+            
+            case 21: return .random
+            
+            default: return nil
         }
     }
 }
@@ -859,6 +1105,16 @@ enum SearchCategory: Int {
             case .albumArtists: return "album artists"
         }
     }
+    
+    var indexTitle: String {
+        
+        switch self {
+            
+            case .albumArtists: return SearchCategory.artists.title
+            
+            default: return title
+        }
+    }
 
     var image: UIImage {
         
@@ -948,7 +1204,7 @@ enum LibraryRefreshInterval: Int {
 
 enum SongAction {
     
-    case collect, addTo, newPlaylist, remove, library, queue(name: String?, query: MPMediaQuery?), likedState, rate, insert(items: [MPMediaItem], completions: Completions?), show(title: String?, context: InfoViewController.Context, canDisplayInLibrary: Bool), info(context: InfoViewController.Context), reveal(indexPath: IndexPath), play(title: String?, completion: (() -> ())?), shuffle(mode: String.ShuffleSuffix, title: String?, completion: (() -> ())?), search(unwinder: (() -> UIViewController?)?)
+    case collect, addTo, newPlaylist, remove(IndexPath?), library, queue(name: String?, query: MPMediaQuery?), likedState, rate, insert(items: [MPMediaItem], completions: Completions?), show(title: String?, context: InfoViewController.Context, canDisplayInLibrary: Bool), info(context: InfoViewController.Context), reveal(indexPath: IndexPath), play(title: String?, completion: (() -> ())?), shuffle(mode: String.ShuffleSuffix, title: String?, completion: (() -> ())?), search(unwinder: (() -> UIViewController?)?)
     
     var icon: UIImage {
         
@@ -1152,9 +1408,9 @@ enum SortCriteria: Int, CaseIterable {
             
             case .genre: return "Genre"
             
-            case .albumCount: return "Albums"
+            case .albumCount: return "Album Count"
             
-            case .songCount: return "Songs"
+            case .songCount: return "Song Count"
             
             case .dateAdded: return "Added"
             

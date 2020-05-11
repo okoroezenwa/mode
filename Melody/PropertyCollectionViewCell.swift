@@ -50,6 +50,8 @@ class PropertyCollectionViewCell: UICollectionViewCell {
                 case .system: return 4
                 
                 case .myriadPro: return 5
+                
+                case .museoSansRounded: return 3
             }
         }()
     }

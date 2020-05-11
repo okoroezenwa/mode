@@ -13,7 +13,7 @@ class ItemsViewController: UIViewController {
     @IBOutlet var tableView: MELTableView!
     lazy var headerView: HeaderView = {
         
-        let view = HeaderView.fresh
+        let view = HeaderView.instance
 //        self.actionsStackView = view.actionsStackView
 //        self.stackView = view.scrollStackView
         view.showRecents = showRecentSongs

@@ -13,8 +13,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         
     @IBOutlet var label: MarqueeLabel?
     @IBOutlet var altLabel: UILabel?
-    @IBOutlet var artwork: UIImageView?
-    @IBOutlet var artworkContainer: UIView?
+    @IBOutlet var artworkContainer: UIView!
     @IBOutlet var likedStateButton: UIButton?
     @IBOutlet var shuffleButton: UIButton!
     @IBOutlet var repeatButton: UIButton!
@@ -23,10 +22,10 @@ class TodayViewController: UIViewController, NCWidgetProviding {
     @IBOutlet var repeatBorderView: UIView!
     @IBOutlet var infoBorderView: UIView!
     @IBOutlet var stackView: UIStackView!
+    @IBOutlet var stackViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet var expandedStackView: UIStackView!
     @IBOutlet var titlesStackView: UIStackView!
     @IBOutlet var nothingPlayingLabel: UILabel!
-    @IBOutlet var artworkConstraints: [NSLayoutConstraint]!
     @IBOutlet var buttons: [UIButton]!
     @IBOutlet var buttonsStackView: UIStackView!
     @IBOutlet var ratingStackView: UIStackView?
@@ -40,6 +39,16 @@ class TodayViewController: UIViewController, NCWidgetProviding {
     
     enum QueueLocation { case upNext, previous }
     
+    lazy var artwork = InvertIgnoringImageView.init(frame: .zero)
+    lazy var artworkConstraints = [
+    
+        artwork.topAnchor.constraint(equalTo: artworkContainer.topAnchor),
+        artwork.leadingAnchor.constraint(equalTo: artworkContainer.leadingAnchor),
+        artwork.trailingAnchor.constraint(equalTo: artworkContainer.trailingAnchor),
+        artwork.bottomAnchor.constraint(equalTo: artworkContainer.bottomAnchor)
+    ]
+    
+    let queueLimit = 1001
     @objc var loaded = false
     @objc var showingPlayControls = false
 //    @objc var timer: Timer?
@@ -47,6 +56,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
     lazy var formatter = Formatter.shared
     lazy var itemWidth: CGFloat = { getItemWidth(from: self.view) }()
     lazy var itemSize: CGSize = { getItemSize(from: self.view) }()
+    var maxHeight: CGFloat?
     var queueLocation = QueueLocation.upNext {
         
         didSet {
@@ -56,7 +66,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
             
             collectionView?.reloadData()
             
-            perform(#selector(animateCells), with: nil, afterDelay: 0.01)
+//            perform(#selector(animateCells), with: nil, afterDelay: 0.01)
             
             updatePreferredSize()
         }
@@ -118,28 +128,32 @@ class TodayViewController: UIViewController, NCWidgetProviding {
             return false
         }()
         
+        if #available(iOS 10, *), let height = extensionContext?.widgetMaximumSize(for: .compact).height {
+            
+            maxHeight = height
+            stackViewHeightConstraint.constant = height
+        }
+        
+        artwork.clipsToBounds = true
+        artworkContainer?.addSubview(artwork)
+        NSLayoutConstraint.activate(artworkConstraints)
+        
         NCWidgetController().setHasContent(hasContent, forWidgetWithBundleIdentifier: Bundle.main.bundleIdentifier ?? (ModeBuild.release.rawValue + ".Widget"))
         
         updateMaxSizes()
         updateNowPlayingLabel()
         
-        guard musicPlayer.nowPlayingItem != nil else {
-            
-            let tap = UITapGestureRecognizer.init(target: self, action: #selector(open(_:)))
-            view.addGestureRecognizer(tap)
-            
-            stackView.isHidden = true
-            expandedStackView.isHidden = true
-            return
-        }
+        let tap = UITapGestureRecognizer.init(target: self, action: #selector(open(_:)))
+        tap.delegate = self
+        view.addGestureRecognizer(tap)
         
         musicPlayer.beginGeneratingPlaybackNotifications()
         
-        nothingPlayingLabel.isHidden = true
+        updateViewVisibility()
         
-        NotificationCenter.default.addObserver(self, selector: #selector(update), name: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer)
+        NotificationCenter.default.addObserver(self, selector: #selector(update), name: .MPMusicPlayerControllerNowPlayingItemDidChange, object: /*musicPlayer*/nil)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(update), name: .MPMusicPlayerControllerPlaybackStateDidChange, object: musicPlayer)
+        NotificationCenter.default.addObserver(self, selector: #selector(update), name: .MPMusicPlayerControllerPlaybackStateDidChange, object: /*musicPlayer*/nil)
         
         prepareViewColours()
         
@@ -150,12 +164,28 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         
         update(self)
         
-        let tap = UITapGestureRecognizer.init(target: self, action: #selector(openQueue))
-        stackView.addGestureRecognizer(tap)
+        let queueTap = UITapGestureRecognizer.init(target: self, action: #selector(openQueue))
+        stackView.addGestureRecognizer(queueTap)
         
         let gr = UILongPressGestureRecognizer.init(target: self, action: #selector(open(_:)))
         gr.minimumPressDuration = 0.3
         playButton.addGestureRecognizer(gr)
+    }
+    
+    func updateViewVisibility() {
+        
+        if let _ = musicPlayer.nowPlayingItem {
+            
+            nothingPlayingLabel.isHidden = true
+            stackView.isHidden = false
+            expandedStackView.isHidden = false
+            
+        } else {
+            
+            stackView.isHidden = true
+            expandedStackView.isHidden = true
+            nothingPlayingLabel.isHidden = false
+        }
     }
     
     func prepareViewColours() {
@@ -191,38 +221,34 @@ class TodayViewController: UIViewController, NCWidgetProviding {
     
     func updatePreferredSize(activeDisplayMode: Any? = nil) {
         
+        let mainHeight = maxHeight ?? 110
+        
         guard let collectionView = collectionView else {
             
-            preferredContentSize = .init(width: view.frame.width, height: 110)
+            preferredContentSize = .init(width: view.frame.width, height: mainHeight)
             return
         }
         
-        guard #available(iOSApplicationExtension 10, *), let activeDisplayMode = (activeDisplayMode ?? displayMode) as? NCWidgetDisplayMode else {
-            
-            let test = (queueLocation == .upNext ? musicPlayer.queueCount() != musicPlayer.nowPlayingItemIndex + 1 : musicPlayer.nowPlayingItemIndex != 0) && musicPlayer.nowPlayingItemIndex != -1
-            
-            let collectionViewHeight: CGFloat = {
-                
-                guard test else { return 0 }
-                
-                return ((itemWidth + (20 - (40/3))) * (collectionView.numberOfItems(inSection: 0) > 5 ? 2 : 1))
-            }()
-            
-            preferredContentSize = .init(width: view.frame.width, height: 110 + 30 + (test ? 0 : 10) + collectionViewHeight + 0.001)
-            
-            return
-        }
-        
-        let test = (queueLocation == .upNext ? musicPlayer.queueCount() != musicPlayer.nowPlayingItemIndex + 1 : musicPlayer.nowPlayingItemIndex != 0) && musicPlayer.nowPlayingItemIndex != -1
+        let sectionIsPopulated = /*musicPlayer.queueCount() < queueLimit && */(queueLocation == .upNext ? musicPlayer.queueCount() != musicPlayer.nowPlayingItemIndex + 1 : musicPlayer.nowPlayingItemIndex != 0) && musicPlayer.nowPlayingItemIndex != -1
         
         let collectionViewHeight: CGFloat = {
             
-            guard test else { return 0 }
+            guard sectionIsPopulated else { return 0 }
             
-            return ((itemWidth + (20 - (40/3))) * (collectionView.numberOfItems(inSection: 0) > 5 ? 2 : 1))
+            return (itemSize.height * (collectionView.numberOfItems(inSection: 0) > 5 ? 2 : 1))
         }()
         
-        preferredContentSize = .init(width: UIScreen.main.bounds.width, height: activeDisplayMode == .compact ? 110 : 110 + 30 + (test ? 0 : 10) + collectionViewHeight + 0.001)
+        let bottomInset: CGFloat = sectionIsPopulated ? 0 : 2
+        let sectionTitleHeight: CGFloat = 38
+        
+        guard #available(iOSApplicationExtension 10, *), let activeDisplayMode = (activeDisplayMode ?? displayMode) as? NCWidgetDisplayMode else {
+            
+            preferredContentSize = .init(width: view.frame.width, height: mainHeight + sectionTitleHeight + bottomInset + collectionViewHeight + 0.001)
+            
+            return
+        }
+        
+        preferredContentSize = .init(width: UIScreen.main.bounds.width, height: activeDisplayMode == .compact ? mainHeight : mainHeight + sectionTitleHeight + bottomInset + collectionViewHeight + 0.001)
     }
     
     @objc func open(_ sender: UIGestureRecognizer) {
@@ -239,7 +265,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
     
     @objc func updateCornersAndShadows(updateShadow: Bool = true) {
         
-        guard let artwork = artwork else { return }
+//        guard let artwork = artwork else { return }
         
         let cornerRadius = CornerRadius(rawValue: sharedCornerRadius) ?? .large
         
@@ -277,6 +303,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         
         updateMaxSizes()
         updatePreferredSize()
+        updateViewVisibility()
         
         if sharedDefaults.bool(forKey: .quitWidget) {
             
@@ -329,69 +356,77 @@ class TodayViewController: UIViewController, NCWidgetProviding {
     
     @objc func update(_ sender: Any) {
         
-        label?.text = {
+        if let song = musicPlayer.nowPlayingItem {
             
-            let title = musicPlayer.nowPlayingItem?.title ??? .untitledSong
-            let artist = musicPlayer.nowPlayingItem?.artist ??? .unknownArtist
-            let album = musicPlayer.nowPlayingItem?.albumTitle ??? .untitledAlbum
+            label?.text = {
+                
+                let title = song.title ??? .untitledSong
+                let artist = song.artist ??? .unknownArtist
+                let album = song.albumTitle ??? .untitledAlbum
+                
+                return [title, artist, album].joined(separator: "  •  ")
+            }()
             
-            return [title, artist, album].joined(separator: "  •  ")
-        }()
-        
-        updateCountLabel()
-        
-        artwork?.image = {
+            updateCountLabel()
             
-            guard let imageView = self.artwork, let artwork = musicPlayer.nowPlayingItem?.artwork, artwork.bounds.size.width != 0 else { return #imageLiteral(resourceName: "NoSong75") }
+            artwork.image = {
+                
+                guard let artwork = musicPlayer.nowPlayingItem?.artwork, artwork.bounds.size.width != 0 else { return #imageLiteral(resourceName: "NoSong75") }
+                
+                return artwork.image(at: self.artwork.bounds.size)
+            }()
             
-            return artwork.image(at: imageView.bounds.size)
-        }()
-        
-        prepareLikedView()
-        prepareRatingView()
-        
-        timeLabel?.text = "/ " + (musicPlayer.nowPlayingItem?.playbackDuration.nowPlayingRepresentation ?? "--:--")
-        
-        if musicPlayer.isPlaying {
+            prepareLikedView()
+            prepareRatingView()
             
-            playTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateElapsedTime), userInfo: nil, repeats: true)
+            timeLabel?.text = "/ " + song.playbackDuration.nowPlayingRepresentation
+            
+            if musicPlayer.isPlaying {
+                
+                playTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateElapsedTime), userInfo: nil, repeats: true)
+                
+            } else {
+                
+                playTimer?.invalidate()
+                playTimer = nil
+                updateElapsedTime()
+            }
+            
+            updateQueueLabel()
+            updateCornersAndShadows()
+            
+            if let notification = sender as? Notification, let label = label {
+                
+                UIView.transition(with: label, duration: 0.3, options: .transitionCrossDissolve, animations: { label.font = UIFont.init(name: musicPlayer.isPlaying ? "MyriadPro-It" : "MyriadPro-Regular", size: 18) }, completion: nil)
+                artworkContainer?.animateShadowOpacity(to: musicPlayer.isPlaying ? 0.25 : 0, duration: 0.65)
+                
+                UIView.animate(withDuration: 0.65, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0, options: [.curveEaseInOut], animations: { self.artworkContainer?.transform = musicPlayer.isPlaying ? .identity : .init(scaleX: 35/45, y: 35/45) }, completion: nil)
+                
+                if notification.name == .MPMusicPlayerControllerNowPlayingItemDidChange {
+                    
+                    collectionView?.reloadData()
+//                    perform(#selector(animateCells), with: nil, afterDelay: 0.01)
+                }
+                
+                updatePreferredSize()
+            
+            } else {
+                
+                label?.font = UIFont.init(name: musicPlayer.isPlaying ? "MyriadPro-It" : "MyriadPro-Regular", size: 18)
+                artworkContainer?.transform = musicPlayer.isPlaying ? .identity : .init(scaleX: 35/45, y: 35/45)
+                artworkContainer?.layer.shadowOpacity = musicPlayer.isPlaying ? 0.25 : 0
+                
+                if sender is TodayViewController {
+                    
+                    collectionView?.reloadData()
+//                    perform(#selector(animateCells), with: nil, afterDelay: 0.01)
+                }
+            }
             
         } else {
             
-            playTimer?.invalidate()
-            playTimer = nil
-            updateElapsedTime()
-        }
-        
-        updateQueueLabel()
-        updateCornersAndShadows()
-        
-        if let notification = sender as? Notification, let label = label {
-            
-            UIView.transition(with: label, duration: 0.3, options: .transitionCrossDissolve, animations: { label.font = UIFont.init(name: musicPlayer.isPlaying ? "MyriadPro-It" : "MyriadPro-Regular", size: 18) }, completion: nil)
-            artworkContainer?.animateShadowOpacity(to: musicPlayer.isPlaying ? 0.25 : 0, duration: 0.65)
-            
-            UIView.animate(withDuration: 0.65, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0, options: [.curveEaseInOut], animations: { self.artworkContainer?.transform = musicPlayer.isPlaying ? .identity : .init(scaleX: 35/45, y: 35/45) }, completion: nil)
-            
-            if notification.name == .MPMusicPlayerControllerNowPlayingItemDidChange {
-                
-                collectionView?.reloadData()
-                perform(#selector(animateCells), with: nil, afterDelay: 0.01)
-            }
-            
+            updateViewVisibility()
             updatePreferredSize()
-        
-        } else {
-            
-            label?.font = UIFont.init(name: musicPlayer.isPlaying ? "MyriadPro-It" : "MyriadPro-Regular", size: 18)
-            artworkContainer?.transform = musicPlayer.isPlaying ? .identity : .init(scaleX: 35/45, y: 35/45)
-            artworkContainer?.layer.shadowOpacity = musicPlayer.isPlaying ? 0.25 : 0
-            
-            if sender is TodayViewController {
-                
-                collectionView?.reloadData()
-                perform(#selector(animateCells), with: nil, afterDelay: 0.01)
-            }
         }
     }
     
@@ -512,7 +547,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         updateQueueLabel()
         updatePreferredSize()
         collectionView?.reloadData()
-        perform(#selector(animateCells), with: nil, afterDelay: 0.01)
+//        perform(#selector(animateCells), with: nil, afterDelay: 0.01)
 //        UIView.transition(with: collectionView, duration: 0.3, options: .transitionCrossDissolve, animations: { self.collectionView.reloadData() }, completion: nil)
     }
     
@@ -560,10 +595,14 @@ extension TodayViewController: UICollectionViewDelegate, UICollectionViewDataSou
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         
+//        guard musicPlayer.queueCount() < queueLimit else { return 0 }
+        
         return 1
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        
+//        guard musicPlayer.queueCount() < queueLimit else { return 0 }
         
         guard musicPlayer.nowPlayingItemIndex != -1 else { return 0 }
         
@@ -576,21 +615,9 @@ extension TodayViewController: UICollectionViewDelegate, UICollectionViewDataSou
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! WidgetCollectionViewCell
         
-        let position: Position = {
-            
-            switch indexPath.row {
-                
-                case let x where x % 5 == 0: return .leading
-                
-                case let x where x % 5 == 4: return .trailing
-                
-                default: return .middle
-            }
-        }()
-        
         let index = queueLocation == .upNext ? musicPlayer.nowPlayingItemIndex + indexPath.row + 1 : musicPlayer.nowPlayingItemIndex - indexPath.row - 1
         
-        cell.prepare(with: musicPlayer.item(at: index), position: position)
+        cell.prepare(with: musicPlayer.item(at: index), index: indexPath.item % 5)
         
         return cell
     }
@@ -606,32 +633,36 @@ extension TodayViewController: UICollectionViewDelegate, UICollectionViewDataSou
         updatePreferredSize()
     }
     
-    @objc func animateCells() {
-            
-        guard let cells = collectionView?.visibleCells else { return }
-        
-        for cell in cells {
-            
-            cell.alpha = 0
-            cell.transform = .init(translationX: 40, y: 0)
-        }
-        
-        for cell in cells.enumerated() {
-            
-            UIView.animate(withDuration: 0.8, delay: 0, usingSpringWithDamping: 0.65, initialSpringVelocity: 20, options: [.curveLinear, .allowUserInteraction], animations: {
-                
-                cell.element.alpha = 1
-                cell.element.transform = .identity
-                
-            }, completion: nil)
-        }
-    }
+//    @objc func animateCells() {
+//
+//        guard let cells = collectionView?.visibleCells else { return }
+//        
+//        for cell in cells { cell.alpha = 0 }
+//
+//        for cell in cells.enumerated() {
+//
+//            UIView.animate(withDuration: 0.3, delay: 0, options: [.curveLinear, .allowUserInteraction], animations: { cell.element.alpha = 1 }, completion: nil)
+//        }
+//    }
 }
 
 extension TodayViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        return itemSize
+        itemSize
+    }
+}
+
+extension TodayViewController: UIGestureRecognizerDelegate {
+    
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        
+        if gestureRecognizer is UITapGestureRecognizer, musicPlayer.nowPlayingItem != nil {
+            
+            return false
+        }
+        
+        return true
     }
 }

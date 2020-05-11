@@ -1,18 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
-    <device id="retina4_7" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
-    <customFonts key="customFonts">
-        <array key="MyriadPro-Light.otf">
-            <string>MyriadPro-Light</string>
-        </array>
-    </customFonts>
     <scenes>
         <!--Album Items View Controller-->
         <scene sceneID="etb-gH-YHe">
@@ -27,7 +20,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" alwaysBounceVertical="YES" keyboardDismissMode="onDrag" dataMode="prototypes" style="grouped" separatorStyle="none" allowsSelectionDuringEditing="YES" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" contentViewInsetsToSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DI1-f9-GN0" customClass="MELTableView" customModule="Mode" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="boolean" keyPath="header" value="YES"/>
@@ -71,11 +64,11 @@
                         <viewControllerLayoutGuide type="bottom" id="2yl-7X-Ce7"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="vUz-cM-mig">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <visualEffectView hidden="YES" opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0hI-sm-GlF" customClass="MELVisualEffectView" customModule="Mode" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="20" width="375" height="0.0"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="0.0"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="aOx-gm-OMq">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="0.0"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -106,7 +99,7 @@
                                 <blurEffect style="light"/>
                             </visualEffectView>
                             <containerView opaque="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mer-vT-hgh">
-                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                             </containerView>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -149,7 +142,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" alwaysBounceVertical="YES" keyboardDismissMode="onDrag" dataMode="prototypes" style="grouped" separatorStyle="none" allowsSelectionDuringEditing="YES" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" contentViewInsetsToSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DTZ-hX-wal" customClass="MELTableView" customModule="Mode" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <userDefinedRuntimeAttributes>
@@ -197,7 +190,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" alwaysBounceVertical="YES" keyboardDismissMode="onDrag" dataMode="prototypes" style="grouped" separatorStyle="none" allowsSelectionDuringEditing="YES" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" contentViewInsetsToSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="49f-ea-o7d" customClass="MELTableView" customModule="Mode" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <userDefinedRuntimeAttributes>
@@ -243,32 +236,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView hidden="YES" opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="LqJ-G0-38I">
-                                <rect key="frame" x="16" y="296" width="343" height="75"/>
-                                <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Nothing Here . . ." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="e98-gS-Rlt" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="343" height="21"/>
-                                        <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="21"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="K9I-iP-4Ew">
-                                        <rect key="frame" x="0.0" y="33" width="343" height="42"/>
-                                        <attributedString key="attributedText">
-                                            <fragment content="You can add songs by tapping the artwork above.">
-                                                <attributes>
-                                                    <color key="NSColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <font key="NSFont" size="18" name="MyriadPro-Light"/>
-                                                    <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" lineSpacing="6" tighteningFactorForTruncation="0.0"/>
-                                                </attributes>
-                                            </fragment>
-                                        </attributedString>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                </subviews>
-                            </stackView>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" verticalCompressionResistancePriority="751" insetsLayoutMarginsFromSafeArea="NO" alwaysBounceVertical="YES" keyboardDismissMode="onDrag" dataMode="prototypes" style="grouped" separatorStyle="none" allowsSelectionDuringEditing="YES" rowHeight="57" sectionHeaderHeight="18" sectionFooterHeight="18" contentViewInsetsToSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GYF-qq-MwZ" customClass="MELTableView" customModule="Mode" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <userDefinedRuntimeAttributes>
@@ -281,18 +250,11 @@
                         <constraints>
                             <constraint firstItem="GYF-qq-MwZ" firstAttribute="top" secondItem="VhU-By-d83" secondAttribute="bottom" id="3ET-7p-dES"/>
                             <constraint firstItem="aLn-G4-Fxk" firstAttribute="top" secondItem="GYF-qq-MwZ" secondAttribute="bottom" id="Geo-hJ-g0P"/>
-                            <constraint firstItem="LqJ-G0-38I" firstAttribute="centerY" secondItem="pN1-BK-VYM" secondAttribute="centerY" id="JhJ-dt-8Pe"/>
                             <constraint firstItem="GYF-qq-MwZ" firstAttribute="leading" secondItem="pN1-BK-VYM" secondAttribute="leading" id="UZ0-GK-1ab"/>
                             <constraint firstAttribute="trailing" secondItem="GYF-qq-MwZ" secondAttribute="trailing" id="gMA-Mk-nou"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="LqJ-G0-38I" secondAttribute="trailing" id="khF-gC-1nz"/>
-                            <constraint firstItem="LqJ-G0-38I" firstAttribute="centerX" secondItem="pN1-BK-VYM" secondAttribute="centerX" id="pCS-yJ-AUQ"/>
-                            <constraint firstItem="LqJ-G0-38I" firstAttribute="leading" secondItem="pN1-BK-VYM" secondAttribute="leadingMargin" id="z9R-8y-srI"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="emptyLabel" destination="e98-gS-Rlt" id="GXZ-UO-eUH"/>
-                        <outlet property="emptyStackView" destination="LqJ-G0-38I" id="XGK-Va-E5s"/>
-                        <outlet property="emptySubLabel" destination="K9I-iP-4Ew" id="vb1-ut-DyB"/>
                         <outlet property="tableView" destination="GYF-qq-MwZ" id="aBG-l9-TC8"/>
                         <segue destination="3B0-Cn-F4s" kind="unwind" identifier="toAlbumUnwind" unwindAction="albumUnwind:" id="wIq-fB-ETh"/>
                         <segue destination="3B0-Cn-F4s" kind="unwind" identifier="toArtistUnwind" unwindAction="artistUnwind:" id="rkx-Ds-juw"/>

@@ -12,11 +12,14 @@ class NavigationAnimationController: NSObject, UIViewControllerAnimatedTransitio
     
     var direction: AnimationDirection
     @objc var interactor: InteractionController
+    var animationInProgress: Bool
+    var disregardViewLayoutDuringKeyboardPresentation = false
 
     override init() {
         
         direction = .forward
         interactor = InteractionController()
+        animationInProgress = false
         
         super.init()
     }
@@ -28,6 +31,7 @@ class NavigationAnimationController: NSObject, UIViewControllerAnimatedTransitio
     
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
         
+        animationInProgress = true
         modalIndex = 0
         
         guard let fromVC = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.from),
@@ -36,6 +40,12 @@ class NavigationAnimationController: NSObject, UIViewControllerAnimatedTransitio
         
         let containerView = transitionContext.containerView
         let duration = transitionDuration(using: transitionContext)
+        let keyboardWasActive = container.filterViewContainer.filterView.searchBar.isFirstResponder
+        
+        var centreViewSnapshot: UIView?
+        var requiresCentreView = false
+        
+        UIView.setAnimationsEnabled(false)
         
         toVC.view.frame.origin.x += direction == .forward ? 40 : -40
         toVC.view.alpha = 0
@@ -45,9 +55,25 @@ class NavigationAnimationController: NSObject, UIViewControllerAnimatedTransitio
         
         toVC.view.layoutIfNeeded()
         
+        if let first = fromVC as? CentreViewDisplaying, let second = toVC as? CentreViewDisplaying {
+                    
+            if first.currentCentreView == .none { } else if let snapshot = container.centreView.snapshotView(afterScreenUpdates: false) {
+                
+                centreViewSnapshot = snapshot
+                container.view.addSubview(snapshot)
+                centreViewSnapshot?.frame = container.centreView.frame
+            }
+              
+            requiresCentreView = second.centreView != .none
+            
+            container.centreView.alpha = 0
+            second.updateViews(to: second.currentCentreView, alternateCentreView: container.centreView)
+            container.centreView.updateCurrentView(to: second.currentCentreView, animated: false, setAlpha: false)
+            container.centreView.transform = .init(translationX: direction == .forward ? 40 : -40, y: 0)
+        }
+        
         if let first = fromVC as? Navigatable, let second = toVC as? Navigatable {
             
-            container.view.layoutIfNeeded()
             container.visualEffectNavigationBar.animateViews(direction: direction, section: .preparation, with: first, and: second)
         }
         
@@ -59,7 +85,7 @@ class NavigationAnimationController: NSObject, UIViewControllerAnimatedTransitio
         }()
         
         if needsToUpdateBottomBar {
-                
+            
             container.filterViewContainer.filterView.requiresSearchBar = !container.filterViewContainer.filterView.requiresSearchBar
         }
         
@@ -69,6 +95,14 @@ class NavigationAnimationController: NSObject, UIViewControllerAnimatedTransitio
             container.altImageView.alpha = 1
             container.imageView.alpha = 0
             container.imageView.image = final.artworkType.image
+        }
+        
+        UIView.setAnimationsEnabled(true)
+        
+        if keyboardWasActive {
+
+            container.filterViewContainer.filterView.filterInputViewBottomConstraint.constant = -53
+            container.filterViewContainer.filterView.searchBar.delegate?.searchBarTextDidEndEditing?(container.filterViewContainer.filterView.searchBar)
         }
         
         UIView.animateKeyframes(withDuration: duration, delay: 0, options: .calculationModeCubic, animations: {
@@ -81,6 +115,12 @@ class NavigationAnimationController: NSObject, UIViewControllerAnimatedTransitio
                 if let first = fromVC as? Navigatable, let second = toVC as? Navigatable {
                     
                     container.visualEffectNavigationBar.animateViews(direction: self.direction, section: .firstHalf, with: first, and: second)
+                }
+                
+                if let snapshot = centreViewSnapshot {
+                    
+                    snapshot.frame.origin.x += (self.direction == .forward ? -40 : 40)
+                    snapshot.alpha = 0
                 }
             })
             
@@ -98,6 +138,12 @@ class NavigationAnimationController: NSObject, UIViewControllerAnimatedTransitio
                     fromVC.view.frame.origin.x = 0
                 }
                 
+                if requiresCentreView {
+                    
+                    container.centreView.transform = .identity
+                    container.centreView.alpha = 1
+                }
+                
                 toVC.view.alpha = 1
             })
             
@@ -105,40 +151,34 @@ class NavigationAnimationController: NSObject, UIViewControllerAnimatedTransitio
                     
                 container.imageView.alpha = 1
                 container.altImageView.alpha = 0
-                container.view.layoutIfNeeded()
-            })
-            
-            if needsToUpdateBottomBar, let filterView = container.filterViewContainer?.filterView {
+                container.tabBarPassthroughView.layoutIfNeeded()
                 
-                UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 1, animations: {
-                    
+                if needsToUpdateBottomBar || keyboardWasActive, let filterView = container.filterViewContainer?.filterView {
+                
                     filterView.alpha = filterView.requiresSearchBar ? 1 : 0
-                    container.view.layoutIfNeeded()
-                })
-            }
+                }
+            })
             
         }, completion: { [weak self] _ in
             
-            transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
+            let completed = transitionContext.transitionWasCancelled.inverted
+            transitionContext.completeTransition(completed)
+            
+            self?.animationInProgress = false
             
             if let weakSelf = self, let first = fromVC as? Navigatable, let second = toVC as? Navigatable {
-                
-                container.visualEffectNavigationBar.animateViews(direction: weakSelf.direction, section: .end(completed: !transitionContext.transitionWasCancelled), with: first, and: second)
+
+                container.visualEffectNavigationBar.animateViews(direction: weakSelf.direction, section: .end(completed: completed), with: first, and: second)
             }
             
             if let initial = fromVC as? ArtworkModifying, let final = toVC as? ArtworkModifying {
                 
                 container.altImageView.alpha = 0
                 container.imageView.alpha = 1
-                container.imageView.image = transitionContext.transitionWasCancelled.inverted ? final.artworkType.image : initial.artworkType.image
+                container.imageView.image = completed ? final.artworkType.image : initial.artworkType.image
             }
             
-            if !transitionContext.transitionWasCancelled {
-                
-                if self?.direction == .reverse {
-                    
-                    fromVC.view.removeFromSuperview()
-                }
+            if completed {
                 
                 if needsToUpdateBottomBar {
                     
@@ -147,7 +187,36 @@ class NavigationAnimationController: NSObject, UIViewControllerAnimatedTransitio
                 
                 toVC.view.alpha = 1
                 
+                if self?.direction == .reverse {
+                    
+                    fromVC.view.removeFromSuperview()
+                }
+                
+                if let filterVC = toVC as? FilterViewController, filterVC.searchBar.text?.isEmpty == true {
+
+                    filterVC.searchBar.becomeFirstResponder()
+                }
+                
+                if let second = toVC as? CentreViewDisplaying {
+
+                    if second.centreView != .none {
+
+                        second.updateViews(to: second.currentCentreView, alternateCentreView: container.centreView)
+                        container.centreView.updateCurrentView(to: second.currentCentreView, animated: true)
+
+                    } else {
+
+                        container.centreView.alpha = 0
+                        container.centreView.isUserInteractionEnabled = false
+                    }
+                    
+                    container.centreView.transform = .identity
+                }
+                
             } else {
+                
+                self?.disregardViewLayoutDuringKeyboardPresentation = true
+                UIView.setAnimationsEnabled(false)
                 
                 if needsToUpdateBottomBar, let filterView = container.filterViewContainer?.filterView {
                     
@@ -155,8 +224,34 @@ class NavigationAnimationController: NSObject, UIViewControllerAnimatedTransitio
                     filterView.alpha = filterView.requiresSearchBar ? 1 : 0
                 }
                 
+                if keyboardWasActive {
+
+                    container.filterViewContainer.filterView.searchBar.becomeFirstResponder()
+                }
+                
                 fromVC.view.alpha = 1
+                
+                if let first = fromVC as? CentreViewDisplaying {
+
+                    if first.centreView != .none {
+
+                        first.updateViews(to: first.currentCentreView, alternateCentreView: container.centreView)
+                        container.centreView.updateCurrentView(to: first.currentCentreView, animated: false)
+
+                    } else {
+
+                        container.centreView.alpha = 0
+                        container.centreView.isUserInteractionEnabled = false
+                    }
+                    
+                    container.centreView.transform = .identity
+                }
+                
+                self?.disregardViewLayoutDuringKeyboardPresentation = false
+                UIView.setAnimationsEnabled(true)
             }
+            
+            centreViewSnapshot?.removeFromSuperview()
         })
     }
 }

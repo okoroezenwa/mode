@@ -13,14 +13,12 @@ import StoreKit
 class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, AlbumTransitionable, AlbumArtistTransitionable, GenreTransitionable, ComposerTransitionable, ArtistTransitionable, InfoLoading, QueryUpdateable, CellAnimatable, SingleItemActionable, PillButtonContaining, Refreshable, EntityVerifiable, TopScrollable, EntityContainer {
 
     @IBOutlet var tableView: MELTableView!
-    @IBOutlet var emptyStackView: UIStackView!
-    @IBOutlet var emptyLabel: UILabel!
-    @IBOutlet var emptySubLabel: UILabel!
     @objc lazy var headerView: HeaderView = {
         
-        let view = HeaderView.fresh
+        let view = HeaderView.instance
         self.actionsStackView = view.actionsStackView
         self.stackView = view.scrollStackView
+        view.tapDelegate = self
         view.showTextView = true
         view.showLoved = true
         view.showInfo = true
@@ -229,7 +227,7 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
     }
     var sortLocation: SortLocation = .playlist
     let applicableSortCriteria: Set<SortCriteria> = [.duration, .title, .artist, .album, .plays, .year, .lastPlayed, .genre, .rating, .dateAdded, .fileSize]
-    lazy var applicableFilterProperties: Set<Property> = { self.applicationItemFilterProperties }()
+    lazy var applicableFilterProperties: Set = self.applicationItemFilterProperties
     @objc var transientObservers = Set<NSObject>()
     @objc var lifetimeObservers = Set<NSObject>()
     
@@ -282,6 +280,8 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
         
         adjustInsets(context: .container)
         updateTopInset()
+        
+        entityVC?.centreViewTitleLabelText = "Empty Playlist"
         
         tableView.delegate = tableDelegate
         tableView.dataSource = tableDelegate
@@ -463,25 +463,6 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
         return true
     }
     
-    func updateEmptyView(forState state: EmptyViewState, subLabelText: String?) {
-        
-        switch state {
-            
-            case .completelyHidden: emptyStackView.isHidden = true
-                
-            case .subLabelHidden:
-                
-                emptyStackView.isHidden = false
-                emptySubLabel.isHidden = true
-                
-            case .completelyVisible:
-                
-                emptyStackView.isHidden = false
-                emptySubLabel.isHidden = false
-                emptySubLabel.attributedText = NSAttributedString.init(string: subLabelText ?? "")
-        }
-    }
-    
     @objc func updateEmptyLabel(withCount count: Int) {
         
         if count < 1 {
@@ -500,15 +481,31 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
                     
                 } else {
                     
-                    return "You can add songs by tapping the artwork above"
+                    return "You can add songs by tapping the insert button"
                 }
             }()
             
-            updateEmptyView(forState: .completelyVisible, subLabelText: text)
+            entityVC?.centreViewLabelsImage = {
+                
+                if playlist?.playlistAttributes == .genius {
+                    
+                    return #imageLiteral(resourceName: "GeniusPlaylist100")
+                    
+                } else if playlist?.playlistAttributes == .smart {
+                    
+                    return #imageLiteral(resourceName: "SmartPlaylist100")
+                    
+                } else {
+                    
+                    return #imageLiteral(resourceName: "Playlists100")
+                }
+            }()
+            entityVC?.centreViewSubtitleLabelText = text
+            entityVC?.updateCurrentView(to: .labels(components: [.image, .title, .subtitle]))
             
         } else {
             
-            updateEmptyView(forState: .completelyHidden, subLabelText: nil)
+            entityVC?.updateCurrentView(to: .none)
         }
     }
     
@@ -684,7 +681,7 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
                 currentItem = nil
                 
                 let newBanner = Banner.init(title: showiCloudItems ? "This album is not in your library" : "This album is not available offline", subtitle: nil, image: nil, backgroundColor: .black, didTapBlock: nil)
-                newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+                newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
                 newBanner.show(duration: 0.7)
             }
         }
@@ -723,27 +720,30 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
         
         notifier.addObserver(self, selector: #selector(prepareDescriptionText), name: .themeChanged, object: nil)
         
-        lifetimeObservers.insert(notifier.addObserver(forName: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer, queue: nil, using: { [weak self] _ in
+        [Notification.Name.playerChanged, .MPMusicPlayerControllerNowPlayingItemDidChange].forEach({
             
-            guard let weakSelf = self else { return }
-            
-            for cell in weakSelf.tableView.visibleCells {
+            lifetimeObservers.insert(notifier.addObserver(forName: $0, object: /*musicPlayer*/nil, queue: nil, using: { [weak self] _ in
                 
-                guard let cell = cell as? EntityTableViewCell, let indexPath = weakSelf.tableView.indexPath(for: cell) else { continue }
+                guard let weakSelf = self else { return }
                 
-                if cell.playingView.isHidden.inverted && musicPlayer.nowPlayingItem != weakSelf.getSong(from: indexPath) {
+                for cell in weakSelf.tableView.visibleCells {
                     
-                    cell.playingView.isHidden = true
-                    cell.indicator.state = .stopped
+                    guard let cell = cell as? EntityTableViewCell, let indexPath = weakSelf.tableView.indexPath(for: cell) else { continue }
                     
-                } else if cell.playingView.isHidden && musicPlayer.nowPlayingItem == weakSelf.getSong(from: indexPath) {
-                    
-                    cell.playingView.isHidden = false
-                    UniversalMethods.performOnMainThread({ cell.indicator.state = musicPlayer.isPlaying ? .playing : .paused }, afterDelay: 0.1)
+                    if cell.playingView.isHidden.inverted && musicPlayer.nowPlayingItem != weakSelf.getSong(from: indexPath) {
+                        
+                        cell.playingView.isHidden = true
+                        cell.indicator.state = .stopped
+                        
+                    } else if cell.playingView.isHidden && musicPlayer.nowPlayingItem == weakSelf.getSong(from: indexPath) {
+                        
+                        cell.playingView.isHidden = false
+                        UniversalMethods.performOnMainThread({ cell.indicator.state = musicPlayer.isPlaying ? .playing : .paused }, afterDelay: 0.1)
+                    }
                 }
-            }
-            
-        }) as! NSObject)
+                
+            }) as! NSObject)
+        })
         
         lifetimeObservers.insert(notifier.addObserver(forName: .showExplicitnessChanged, object: nil, queue: nil, using: { [weak self] _ in
             
@@ -854,7 +854,7 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
             }
             
             let banner = Banner.init(title: "This playlist has no offline songs", subtitle: nil, image: nil, backgroundColor: .orange, didTapBlock: nil)
-            banner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+            banner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
             banner.show(view, duration: 1.5)
             
             sortAllItems()
@@ -1099,7 +1099,7 @@ extension PlaylistItemsViewController: MPMediaPickerControllerDelegate {
                 UniversalMethods.performInMain {
                     
                     let banner = Banner.init(title: "Unable to add \(mediaItemCollection.items.count.fullCountText(for: .song))", subtitle: nil, image: nil, backgroundColor: .red, didTapBlock: nil)
-                    banner.titleLabel.font = .myriadPro(ofWeight: .regular, size: 20)
+                    banner.titleLabel.font = .font(ofWeight: .regular, size: 20)
                     banner.show(duration: 0.5)
                     
                     (weakSelf.parent as? PresentedContainerViewController)?.activityIndicator.stopAnimating()
@@ -1111,8 +1111,8 @@ extension PlaylistItemsViewController: MPMediaPickerControllerDelegate {
             UniversalMethods.performInMain {
                 
                 let banner = Banner.init(title: playlist.validName, subtitle: "Added \(mediaItemCollection.items.count.fullCountText(for: .song))", image: nil, backgroundColor: .deepGreen, didTapBlock: nil)
-                banner.titleLabel.font = .myriadPro(ofWeight: .semibold, size: 22)
-                banner.detailLabel.font = .myriadPro(ofWeight: .regular, size: 17)
+                banner.titleLabel.font = .font(ofWeight: .semibold, size: 22)
+                banner.detailLabel.font = .font(ofWeight: .regular, size: 17)
                 banner.detailLabel.textColor = Themer.textColour(for: .subtitle)
                 banner.show(for: .bannerInterval)
                 
@@ -1126,5 +1126,34 @@ extension PlaylistItemsViewController: MPMediaPickerControllerDelegate {
     func mediaPickerDidCancel(_ mediaPicker: MPMediaPickerController) {
         
         mediaPicker.dismiss(animated: true, completion: nil)
+    }
+}
+
+extension PlaylistItemsViewController: HeaderViewTextViewTapDelegate {
+    
+    func textViewTapped() {
+        
+        headerView.textViewMinimised.toggle()
+        updateHeaderView(withCount: songs.count)
+        
+        /*
+         
+         Works for UILabel only, which I should consider changing this to.
+        
+        guard let headerView = tableView.tableHeaderView as? HeaderView else { return }
+        
+        headerView.textViewMinimised.toggle()
+
+        headerView.setNeedsLayout()
+        headerView.layoutIfNeeded()
+
+        let height = headerView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
+        var frame = headerView.frame
+        frame.size.height = height
+        headerView.frame = frame
+
+        tableView.tableHeaderView = headerView
+ 
+        */
     }
 }

@@ -143,8 +143,10 @@ class SettingsTableViewCell: UITableViewCell {
         }()
         
         titleLabel.textAlignment = preferredAlignment
+        titleLabel.attributes = setting.attributesInfo?.titleAttributes
         subtitleLabel.text = setting.subtitle
         subtitleLabel.isHidden = setting.subtitle == nil
+        subtitleLabel.attributes = setting.attributesInfo?.subtitleAttributes
         updateTertiaryText(with: setting)
         tertiaryLabel.superview?.isHidden = isAlert || setting.tertiaryDetail == nil
         tertiaryLabelTrailingConstraint.constant = {
@@ -260,6 +262,7 @@ class SettingsTableViewCell: UITableViewCell {
     func updateTertiaryText(with setting: Setting) {
         
         tertiaryLabel.text = setting.tertiaryDetail?()
+        tertiaryLabel.attributes = setting.attributesInfo?.tertiaryAttributes
     }
     
     func updateAccessoryButtonDetails(with setting: Setting, type: Setting.AccessoryType.ButtonType) {
@@ -270,11 +273,13 @@ class SettingsTableViewCell: UITableViewCell {
                 
                 accessoryButton.setImage(image(), for: .normal)
                 accessoryButton.setTitle(nil, for: .normal)
+                accessoryButton.attributes = nil
             
             case .text(let text):
             
                 accessoryButton.setImage(nil, for: .normal)
                 accessoryButton.setTitle(text, for: .normal)
+                accessoryButton.attributes = setting.attributesInfo?.accessoryButtonAttributes
         }
     }
     
@@ -305,6 +310,7 @@ struct Setting {
     let subtitle: String?
     let tertiaryDetail: (() -> String?)?
     let accessoryType: Setting.AccessoryType
+    let attributesInfo: SettingsAttributesInfo?
     let image: UIImage?
     let inactive: (() -> Bool)
     let textAlignment: NSTextAlignment
@@ -353,7 +359,7 @@ struct Setting {
         }
     }
     
-    init(title: String, subtitle: String? = nil, image: UIImage? = nil, tertiaryDetail: (() -> String?)? = nil, accessoryType: AccessoryType, textAlignment alignment: NSTextAlignment = .left, borderVisibility: BorderVisibility = .none, inactive inactiveCondition: @escaping (() -> Bool) = { false }) {
+    init(title: String, subtitle: String? = nil, attributesInfo: SettingsAttributesInfo? = nil, image: UIImage? = nil, tertiaryDetail: (() -> String?)? = nil, accessoryType: AccessoryType, textAlignment alignment: NSTextAlignment = .left, borderVisibility: BorderVisibility = .none, inactive inactiveCondition: @escaping (() -> Bool) = { false }) {
         
         self.title = title
         self.subtitle = subtitle
@@ -363,6 +369,7 @@ struct Setting {
         self.inactive = inactiveCondition
         self.textAlignment = alignment
         self.borderVisibility = borderVisibility
+        self.attributesInfo = attributesInfo
     }
 }
 
@@ -424,4 +431,12 @@ extension AlertAction {
     static var stop = AlertAction.init(info: AlertInfo.init(title: "Stop Playback", accessoryType: .none, textAlignment: .center), context: .alert(.destructive), requiresDismissalFirst: true, handler: NowPlaying.shared.stopPlayback)
     
     var systemAction: UIAlertAction { return .init(title: info.title, style: context.alertStyle, handler: { _ in self.handler?() })}
+}
+
+struct SettingsAttributesInfo {
+    
+    var titleAttributes: [Attributes]?
+    var subtitleAttributes: [Attributes]?
+    var tertiaryAttributes: [Attributes]?
+    var accessoryButtonAttributes: [Attributes]?
 }

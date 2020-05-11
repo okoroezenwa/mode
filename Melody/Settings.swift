@@ -96,9 +96,9 @@ var usePlaylistCustomBackground: Bool { return prefs.bool(forKey: .usePlaylistCu
 var useArtistCustomBackground: Bool { return prefs.bool(forKey: .useArtistCustomBackground) }
 var primarySizeSuffix: Int { return prefs.integer(forKey: .primarySizeSuffix) }
 var secondarySizeSuffix: Int { return prefs.integer(forKey: .secondarySizeSuffix) }
-var filterProperties: [Property] { return prefs.array(forKey: .filterProperties)?.compactMap({ Property.from($0 as? Property.RawValue) }) ?? [] }
+var filterProperties: [Property] { return prefs.array(forKey: .filterProperties)?.compactMap({ Property.fromOldRawValue($0 as? Property.RawValue) }) ?? [] }
 var librarySections: [LibrarySection]{ return prefs.array(forKey: .librarySections)?.compactMap({ LibrarySection.from($0 as? LibrarySection.RawValue) }) ?? [] }
-var otherFilterProperties: [Property] { return prefs.array(forKey: .otherFilterProperties)?.compactMap({ Property.from($0 as? Property.RawValue) }) ?? [] }
+var otherFilterProperties: [Property] { return prefs.array(forKey: .otherFilterProperties)?.compactMap({ Property.fromOldRawValue($0 as? Property.RawValue) }) ?? [] }
 var otherLibrarySections: [LibrarySection]{ return prefs.array(forKey: .otherLibrarySections)?.compactMap({ LibrarySection.from($0 as? LibrarySection.RawValue) }) ?? [] }
 var useCompactCollector: Bool { return prefs.bool(forKey: .useCompactCollector) }
 var cornerRadius: CornerRadius { return CornerRadius(rawValue: prefs.integer(forKey: .cornerRadius)) ?? .automatic }
@@ -313,6 +313,17 @@ var showTabBarLabels: Bool {
     }
 }
 
+var useQueuePositionMiniPlayerTitle: Bool {
+    
+    get { prefs.bool(forKey: .useQueuePositionMiniPlayerTitle) }
+    
+    set {
+        
+        prefs.set(newValue, forKey: .useQueuePositionMiniPlayerTitle)
+        notifier.post(name: .useQueuePositionMiniPlayerTitleChanged, object: nil)
+    }
+}
+
 class Settings {
     
     class var isInDebugMode: Bool {
@@ -417,7 +428,7 @@ class Settings {
             .primarySizeSuffix: Int64.FileSize.megabyte.rawValue,
             .secondarySizeSuffix: Int64.FileSize.megabyte.rawValue,
             .cornerRadius: CornerRadius.automatic.rawValue,
-            .filterProperties: Property.allCases.map({ $0.rawValue }),
+            .filterProperties: standardProperties.map({ $0.oldRawValue }),
             .librarySections: defaultLibrarySections.map({ $0.rawValue }),
             .useCompactCollector: false,
             .otherFilterProperties: [Int](),
@@ -480,7 +491,8 @@ class Settings {
             .defaultCollectionSortOrders: defaultSortDetails.orders,
             .useExpandedSlider: false,
             .showMiniPlayerSongTitles: false,
-            .showTabBarLabels: true
+            .showTabBarLabels: true,
+            .useQueuePositionMiniPlayerTitle: true
         ])
         
         sharedDefaults.register(defaults: [
@@ -490,6 +502,8 @@ class Settings {
             .widgetCornerRadius: CornerRadius.large.rawValue
         ])
     }
+    
+    static let standardProperties = [Property.title, .artist, .album, .dateAdded, .lastPlayed, .genre, .composer, .plays, .duration, .year, .rating, .affinity, .size, .songCount, .albumCount, .isCloud, .artwork, .isExplicit, .isCompilation, .albumArtist]
     
     class func resetDefaults() {
         
@@ -782,6 +796,7 @@ extension String {
     static let useExpandedSlider = "useExpandedSlider"
     static let showMiniPlayerSongTitles = "showMiniPlayerSongTitles"
     static let showTabBarLabels = "showTabBarLabels"
+    static let useQueuePositionMiniPlayerTitle = "useQueuePositionMiniPlayerTitle"
 }
 
 // MARK: - Notification Settings Constants
@@ -851,6 +866,7 @@ extension NSNotification.Name {
     static let useExpandedSliderChanged = nameByAppending(to: .useExpandedSlider)
     static let showMiniPlayerSongTitlesChanged = nameByAppending(to: .showMiniPlayerSongTitles)
     static let showTabBarLabelsChanged = nameByAppending(to: .showTabBarLabels)
+    static let useQueuePositionMiniPlayerTitleChanged = nameByAppending(to: .useQueuePositionMiniPlayerTitle)
     
     static func nameByAppending(to text: String) -> Notification.Name {
         

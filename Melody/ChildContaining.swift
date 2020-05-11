@@ -64,6 +64,24 @@ extension ChildContaining where Self: UIViewController {
             } else if let containerVC = self as? ContainerViewController {
                 
                 containerVC.visualEffectNavigationBar.titleLabel.text = (containerVC.activeViewController?.topViewController as? Navigatable)?.title
+                
+                if let displayer = container.activeViewController?.topViewController as? CentreViewDisplaying {
+                    
+                    displayer.updateCurrentView(to: displayer.currentCentreView, animated: false)
+                }
+                
+                if let container = containerVC.activeViewController?.topViewController as? FilterContainer & UIViewController {
+
+                    container.filterViewContainer = containerVC.filterViewContainer
+                    container.searchBar.delegate = container
+                    container.searchBar.text = container.sender?.filterText
+                    container.filterViewContainer.filterView.propertyButton.setTitle(container.sender?.filterProperty.title, for: .normal)
+                    container.filterViewContainer.filterView.filterTestButton.setTitle(container.sender?.testTitle, for: .normal)
+                    container.sender?.updateKeyboard(with: container)
+                    container.searchBar?.textField?.leftView = container.filterViewContainer.filterView.leftView
+                    container.searchBar.updateTextField(with: container.placeholder)
+                    container.updateRightView(animated: false)
+                }
             }
             
             completion?()
@@ -77,6 +95,20 @@ extension ChildContaining where Self: UIViewController {
         containerView.transform = .init(translationX: 0, y: verticalTranslation)
         viewControllerSnapshot = snapshot
         
+        let centreViewSnapshot: UIView? = {
+
+            if let snapshot = container.centreView.snapshotView(afterScreenUpdates: false) {
+
+                container.view.addSubview(snapshot)
+                snapshot.frame = container.centreView.frame
+                container.centreView.alpha = 0
+
+                return snapshot
+            }
+
+            return nil
+        }()
+        
         removeInactiveViewController(inactiveViewController: vc)
         updateActiveViewController()
         
@@ -85,13 +117,22 @@ extension ChildContaining where Self: UIViewController {
         
         if let libraryVC = self as? LibraryViewController {
             
+            UIView.setAnimationsEnabled(false)
+            
             oldVC = libraryVC.temporary
             (activeChildViewController as? LibrarySectionContainer)?.updateTopLabels(setTitle: false)
             newVC = libraryVC.temporary
             
+            libraryVC.updateCurrentView(to: libraryVC.currentCentreView, animated: false, setAlpha: false)
+            container.centreView.transform = .init(translationX: 0, y: verticalTranslation)
+            
             container.visualEffectNavigationBar.animateViews(direction: .forward, section: .preparation, with: oldVC, and: newVC, preferVerticalTransition: true)
+            
+            UIView.setAnimationsEnabled(true)
         
         } else if let containerVC = self as? ContainerViewController {
+            
+            UIView.setAnimationsEnabled(false)
             
             containerVC.view.layoutIfNeeded()
             
@@ -100,7 +141,15 @@ extension ChildContaining where Self: UIViewController {
             
             containerVC.filterViewContainer.filterView.requiresSearchBar = containerVC.activeViewController?.topViewController is FilterContainer
             
+            if let displayer = container.activeViewController?.topViewController as? CentreViewDisplaying/*, displayer.currentCentreView != .none*/ {
+                
+                displayer.updateCurrentView(to: displayer.currentCentreView, animated: false, setAlpha: false)
+                container.centreView.transform = .init(translationX: 0, y: verticalTranslation)
+            }
+            
             container.visualEffectNavigationBar.animateViews(direction: .forward, section: .preparation, with: oldVC, and: newVC, preferVerticalTransition: true)
+            
+            UIView.setAnimationsEnabled(true)
             
             UIView.transition(with: containerVC.imageView, duration: animated ? 0.3 : 0, options: .transitionCrossDissolve, animations: { containerVC.imageView.image = (containerVC.activeViewController?.topViewController as? ArtworkModifying)?.artworkType.image }, completion: nil)
         }
@@ -112,6 +161,12 @@ extension ChildContaining where Self: UIViewController {
                 snapshot.transform = .init(translationX: 0, y: self.verticalTranslation)
                 snapshot.alpha = 0
                 
+                if let snapshot = centreViewSnapshot {
+                    
+                    snapshot.frame.origin.y += self.verticalTranslation
+                    snapshot.alpha = 0
+                }
+                
                 guard (self is EntityItemsViewController).inverted else { return }
                 
                 container.visualEffectNavigationBar.animateViews(direction: .forward, section: .firstHalf, with: oldVC, and: newVC, preferVerticalTransition: true)
@@ -121,6 +176,12 @@ extension ChildContaining where Self: UIViewController {
                 
                 self.containerView.transform = .identity
                 self.containerView.alpha = 1
+                
+                if let displayer = container.activeViewController?.topViewController as? CentreViewDisplaying, displayer.currentCentreView != .none {
+
+                    container.centreView.alpha = 1
+                    container.centreView.transform = .identity
+                }
                 
                 guard (self is EntityItemsViewController).inverted else { return }
                 
@@ -140,7 +201,36 @@ extension ChildContaining where Self: UIViewController {
             
             self?.viewControllerSnapshot?.removeFromSuperview()
             self?.viewControllerSnapshot = nil
+            centreViewSnapshot?.removeFromSuperview()
             self?.containerView.alpha = 1
+            
+            if let displayer = container.activeViewController?.topViewController as? CentreViewDisplaying {
+                
+                if displayer.currentCentreView != .none {
+                    
+                    displayer.updateCurrentView(to: displayer.currentCentreView, animated: true)
+                    
+                } else {
+                    
+                    container.centreView.alpha = 0
+                    container.centreView.isUserInteractionEnabled = false
+                }
+                
+                container.centreView.transform = .identity
+            }
+            
+            if let containerVC = self as? ContainerViewController, let container = containerVC.activeViewController?.topViewController as? FilterContainer & UIViewController {
+
+                container.filterViewContainer = containerVC.filterViewContainer
+                container.searchBar.delegate = container
+                container.searchBar.text = container.sender?.filterText
+                container.filterViewContainer.filterView.propertyButton.setTitle(container.sender?.filterProperty.title, for: .normal)
+                container.filterViewContainer.filterView.filterTestButton.setTitle(container.sender?.testTitle, for: .normal)
+                container.sender?.updateKeyboard(with: container)
+                container.searchBar?.textField?.leftView = container.filterViewContainer.filterView.leftView
+                container.searchBar.updateTextField(with: container.placeholder)
+                container.updateRightView(animated: true)
+            }
             
             completion?()
             

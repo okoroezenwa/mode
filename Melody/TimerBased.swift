@@ -68,7 +68,7 @@ extension TimerBased {
         
         playButtonLabel??.text = {
 
-            if let _ = musicPlayer.nowPlayingItem {
+            if let _ = musicPlayer.nowPlayingItem, musicPlayer.playbackState != .stopped {
 
                 return musicPlayer.isPlaying ? "Playing" : "Paused"
 

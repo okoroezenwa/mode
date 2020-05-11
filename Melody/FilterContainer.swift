@@ -9,7 +9,7 @@
 import UIKit
 import CoreData
 
-protocol FilterContainer: LargeActivityIndicatorContaining, UISearchBarDelegate, InfoLoading {
+protocol FilterContainer: UISearchBarDelegate, InfoLoading, CentreViewDisplaying, TableViewContaining {
     
     var requiredInputView: InputView? { get set }
     var filterViewContainer: FilterViewContainer! { get set }
@@ -76,7 +76,7 @@ extension FilterContainer where Self: UIViewController {
                 container?.alpha = canUseRightView.inverted ? 0 : 1
                 container?.superview?.layoutIfNeeded()
             
-            }, completion: { _ in self.filterViewContainer.filterView.leftView.translatesAutoresizingMaskIntoConstraints = true })
+            }, completion: { _ in self.filterViewContainer?.filterView.leftView.translatesAutoresizingMaskIntoConstraints = true })
             
         } else {
             
@@ -91,11 +91,11 @@ extension FilterContainer where Self: UIViewController {
         
         switch sender.filterProperty {
             
-            case .album, .albumCount, .artist, .albumArtist, .artwork, .composer, .genre, .isCloud, .isCompilation, .isExplicit, .plays, .rating, .trackCount, .title, .year, .status: break
+            case .album, .albumCount, .artist, .albumArtist, .artwork, .composer, .genre, .isCloud, .isCompilation, .isExplicit, .plays, .rating, .songCount, .title, .year, .affinity, .default, .random, .albumName, .albumYear, .duration, .dateAdded, .lastPlayed: break
             
-            case .duration: rightViewButton.setTitle("s", for: .normal)
-            
-            case .dateAdded, .lastPlayed: rightViewButton.setTitle("d ago", for: .normal)
+//            case .duration: rightViewButton.setTitle("s", for: .normal)
+//
+//            case .dateAdded, .lastPlayed: rightViewButton.setTitle("d ago", for: .normal)
                  
             case .size:
             
@@ -141,7 +141,7 @@ extension FilterContainer where Self: UIViewController {
     
     func saveRecentSearch(withTitle title: String?, resignFirstResponder resign: Bool) {
         
-        guard let recentSearchEntity = NSEntityDescription.entity(forEntityName: "RecentSearch", in: managedContext) else { print("Couldn't get recent searches"); return }
+        guard let recentSearchEntity = NSEntityDescription.entity(forEntityName: "RecentSearch", in: managedContext) else { print("Couldn't get recent \(self is FilterViewController ? "filters" : "searches")"); return }
         
         guard let title = title, title.isEmpty.inverted, let sender = sender else { return }
         
@@ -153,7 +153,7 @@ extension FilterContainer where Self: UIViewController {
         let recentSearch = RecentSearch(entity: recentSearchEntity, insertInto: managedContext)
         recentSearch.title = title
         recentSearch.category = Int16(category.rawValue)
-        recentSearch.property = Int16(sender.filterProperty.rawValue)
+        recentSearch.property = Int16(sender.filterProperty.oldRawValue)
         recentSearch.propertyTest = sender.propertyTest.rawValue
         recentSearch.id = NSNumber.init(value: sender.id)
         recentSearch.uniqueID = sender.uniqueID(with: category, searchBar: searchBar)
@@ -192,6 +192,8 @@ extension FilterContainer where Self: UIViewController {
                 self.updateDeleteButton()
             }
             
+            updateCurrentView(to: recentSearches.isEmpty ? .labels(components: [.image, .title, .subtitle]) : .none)
+            
             if filtering.inverted {
                 
                 tableView.reloadData()
@@ -209,7 +211,11 @@ extension FilterContainer where Self: UIViewController {
         if let searchVC = self as? SearchViewController {
             
             searchVC.buttonDetails = (.clear, filtering ? true : recentSearches.isEmpty)
-            searchVC.emptyStackView.isHidden = filtering ? true : !recentSearches.isEmpty
+//            searchVC.emptyStackView.isHidden = filtering ? true : !recentSearches.isEmpty
+            
+        } else if let filterVC = self as? FilterViewController, let _ = filterVC.container {
+            
+            filterVC.buttonDetails = (filtering ? .actions : .clear, filtering ? filterVC.tableContainer?.filteredEntities.isEmpty == true : recentSearches.isEmpty)
             
         } else if let filterVC = self as? FilterViewController, let parent = filterVC.parent as? PresentedContainerViewController {
             #warning("Need to properly manage the state of the button image depending on filter operation status")
@@ -236,7 +242,7 @@ extension FilterContainer where Self: UIViewController {
         
         sender?.ignorePropertyChange = true
         
-        if let property = Property(rawValue: property), let sender = sender {
+        if let property = Property.fromOldRawValue(property), let sender = sender {
             
             sender.propertyTest = {
                 
@@ -400,7 +406,7 @@ extension FilterContainer where Self: UIViewController {
         guard let indexPath = tableView.indexPath(for: cell), let filter = sender else { return }
         
         let search = recentSearches[indexPath.row]
-        let property = Property(rawValue: Int(search.property)) ?? .title
+        let property = Property.fromOldRawValue(Int(search.property)) ?? .title
         let test = PropertyTest(rawValue: search.propertyTest ?? "") ?? filter.initialPropertyTest(for: property)
         let alertTitle = property.title + " " + filter.title(for: test, property: property)
         

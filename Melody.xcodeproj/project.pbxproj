@@ -199,6 +199,24 @@
 		BE7D96DE2104784E00A0F5D4 /* PropertiesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7D96DD2104784E00A0F5D4 /* PropertiesViewController.swift */; };
 		BE7DE706214BACE30032FCBD /* PropertiesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7DE705214BACE30032FCBD /* PropertiesTableViewController.swift */; };
 		BE7E73B720ADF7B2008A52B7 /* ActionsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7E73B620ADF7B2008A52B7 /* ActionsManager.swift */; };
+		BE828DF124647F5300DD67E4 /* MyriadPro-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE828DEB24647F4600DD67E4 /* MyriadPro-Bold.otf */; };
+		BE828DF224647F5400DD67E4 /* MyriadPro-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE828DEB24647F4600DD67E4 /* MyriadPro-Bold.otf */; };
+		BE828DF324647F5400DD67E4 /* MyriadPro-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE828DEC24647F4800DD67E4 /* MyriadPro-Regular.otf */; };
+		BE828DF424647F5400DD67E4 /* MyriadPro-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE828DEC24647F4800DD67E4 /* MyriadPro-Regular.otf */; };
+		BE828DF524647F5400DD67E4 /* MyriadPro-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE828DED24647F4C00DD67E4 /* MyriadPro-Black.otf */; };
+		BE828DF624647F5400DD67E4 /* MyriadPro-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE828DED24647F4C00DD67E4 /* MyriadPro-Black.otf */; };
+		BE828DF724647F5400DD67E4 /* MyriadPro-It.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE828DEE24647F4E00DD67E4 /* MyriadPro-It.otf */; };
+		BE828DF824647F5400DD67E4 /* MyriadPro-It.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE828DEE24647F4E00DD67E4 /* MyriadPro-It.otf */; };
+		BE828DF924647F5400DD67E4 /* MyriadPro-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE828DEF24647F5000DD67E4 /* MyriadPro-Light.otf */; };
+		BE828DFA24647F5400DD67E4 /* MyriadPro-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE828DEF24647F5000DD67E4 /* MyriadPro-Light.otf */; };
+		BE828DFB24647F5400DD67E4 /* MyriadPro-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE828DF024647F5300DD67E4 /* MyriadPro-Semibold.otf */; };
+		BE828DFC24647F5400DD67E4 /* MyriadPro-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE828DF024647F5300DD67E4 /* MyriadPro-Semibold.otf */; };
+		BE828E032464815E00DD67E4 /* MuseoSansRounded900.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE828DFD2464815800DD67E4 /* MuseoSansRounded900.otf */; };
+		BE828E052464815E00DD67E4 /* MuseoSansRounded1000.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE828DFE2464815900DD67E4 /* MuseoSansRounded1000.otf */; };
+		BE828E072464815E00DD67E4 /* MuseoSansRounded100.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE828DFF2464815B00DD67E4 /* MuseoSansRounded100.otf */; };
+		BE828E092464815E00DD67E4 /* MuseoSansRounded500.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE828E002464815C00DD67E4 /* MuseoSansRounded500.otf */; };
+		BE828E0B2464815E00DD67E4 /* MuseoSansRounded300.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE828E012464815D00DD67E4 /* MuseoSansRounded300.otf */; };
+		BE828E0D2464815E00DD67E4 /* MuseoSansRounded700.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE828E022464815E00DD67E4 /* MuseoSansRounded700.otf */; };
 		BE8328651D8B4D38001F015E /* NewPlaylistViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8328641D8B4D38001F015E /* NewPlaylistViewController.swift */; };
 		BE89790E1E30C22B008634E6 /* NowPlaying.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE89790D1E30C22B008634E6 /* NowPlaying.swift */; };
 		BE8B6A6420D5963000A823A1 /* SharedTypeAliases.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8B6A6320D5963000A823A1 /* SharedTypeAliases.swift */; };
@@ -211,6 +229,7 @@
 		BE9EA2D21DBF9AC5001F8C85 /* NoAccessView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BE9EA2D11DBF9AC5001F8C85 /* NoAccessView.xib */; };
 		BEA013FC1E63984400BC3C1D /* MELTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA013FB1E63984400BC3C1D /* MELTableView.swift */; };
 		BEA013FE1E6399AA00BC3C1D /* MELTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA013FD1E6399AA00BC3C1D /* MELTableViewCell.swift */; };
+		BEA29A7C2450131F000E8789 /* PassthroughView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA29A7B2450120E000E8789 /* PassthroughView.swift */; };
 		BEA9E5672118A52600D3095D /* LyricsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA9E5662118A52600D3095D /* LyricsViewController.swift */; };
 		BEA9E5692118A5F000D3095D /* LyricsViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BEA9E5682118A5F000D3095D /* LyricsViewController.storyboard */; };
 		BEAEF61C1D5DB09D00156271 /* CollectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEAEF61B1D5DB09D00156271 /* CollectorViewController.swift */; };
@@ -229,10 +248,6 @@
 		BEBF0E74204616BC001C29CC /* RecentSearchCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = BEBF0E73204616BC001C29CC /* RecentSearchCell.xib */; };
 		BEBF0E7620461B2F001C29CC /* RecentSearchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEBF0E7520461B2F001C29CC /* RecentSearchTableViewCell.swift */; };
 		BEC04BFD1D300FBD0095D856 /* UniversalMethods.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC04BFC1D300FBD0095D856 /* UniversalMethods.swift */; };
-		BEC04C041D30257B0095D856 /* MyriadPro-It.otf in Resources */ = {isa = PBXBuildFile; fileRef = BEC04BFE1D30257B0095D856 /* MyriadPro-It.otf */; };
-		BEC04C051D30257B0095D856 /* MyriadPro-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = BEC04BFF1D30257B0095D856 /* MyriadPro-Light.otf */; };
-		BEC04C071D30257B0095D856 /* MyriadPro-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = BEC04C011D30257B0095D856 /* MyriadPro-Regular.otf */; };
-		BEC04C081D30257B0095D856 /* MyriadPro-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = BEC04C021D30257B0095D856 /* MyriadPro-Semibold.otf */; };
 		BEC0B1512021C05E008CBEB5 /* IconSelectionTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC0B1502021C05E008CBEB5 /* IconSelectionTableViewController.swift */; };
 		BEC0B1542021D46D008CBEB5 /* Dark App Icon Wide@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BEC0B1522021D46C008CBEB5 /* Dark App Icon Wide@3x.png */; };
 		BEC0B1552021D46D008CBEB5 /* Dark App Icon Wide@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BEC0B1532021D46C008CBEB5 /* Dark App Icon Wide@2x.png */; };
@@ -247,10 +262,6 @@
 		BEC0B16A2021D506008CBEB5 /* Light App Icon Medium@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BEC0B1642021D504008CBEB5 /* Light App Icon Medium@2x.png */; };
 		BEC0B16B2021D506008CBEB5 /* Light App Icon Thin@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BEC0B1652021D505008CBEB5 /* Light App Icon Thin@3x.png */; };
 		BEC1110A1ED9493E00A6C338 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BE0F5C2D1D2D663F00C9E8A1 /* Assets.xcassets */; };
-		BEC1110C1ED959D300A6C338 /* MyriadPro-It.otf in Resources */ = {isa = PBXBuildFile; fileRef = BEC04BFE1D30257B0095D856 /* MyriadPro-It.otf */; };
-		BEC1110D1ED959D800A6C338 /* MyriadPro-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = BEC04BFF1D30257B0095D856 /* MyriadPro-Light.otf */; };
-		BEC1110F1ED959D800A6C338 /* MyriadPro-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = BEC04C011D30257B0095D856 /* MyriadPro-Regular.otf */; };
-		BEC111101ED959D800A6C338 /* MyriadPro-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = BEC04C021D30257B0095D856 /* MyriadPro-Semibold.otf */; };
 		BEC933D21F6D9B0800FB5984 /* SwipeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC933D01F6D99CB00FB5984 /* SwipeExtensions.swift */; };
 		BEC933D31F6D9B1300FB5984 /* SwipeInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BEC933D11F6D99CB00FB5984 /* SwipeInfo.plist */; };
 		BEC933D41F6D9B1700FB5984 /* Swipeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC933BF1F6D996A00FB5984 /* Swipeable.swift */; };
@@ -276,6 +287,8 @@
 		BED2C2BD2043401C009BB73F /* LibraryRefreshTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED2C2BC2043401C009BB73F /* LibraryRefreshTableViewController.swift */; };
 		BED2F92E1DAA50660041A054 /* Sortable+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED2F92C1DAA50660041A054 /* Sortable+CoreDataClass.swift */; };
 		BED2F92F1DAA50660041A054 /* Sortable+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED2F92D1DAA50660041A054 /* Sortable+CoreDataProperties.swift */; };
+		BED6860B2456F7CB007D06E1 /* CentreView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BED6860A2456F7CB007D06E1 /* CentreView.xib */; };
+		BED6860D2456F882007D06E1 /* CentreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED6860C2456F882007D06E1 /* CentreView.swift */; };
 		BED9566D1F9B2A6B00980DF4 /* Image + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED9566C1F9B2A6B00980DF4 /* Image + Extensions.swift */; };
 		BED985BD240BC95400011FFC /* Sequence + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED985BC240BC95400011FFC /* Sequence + Extensions.swift */; };
 		BED9BBFF202D96F2007FEC65 /* Switch.xib in Resources */ = {isa = PBXBuildFile; fileRef = BED9BBFE202D96F2007FEC65 /* Switch.xib */; };
@@ -308,20 +321,11 @@
 		BEFA282A1D3426E500DE7018 /* UIDevice+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEFA28291D3426E500DE7018 /* UIDevice+Extensions.swift */; };
 		BEFB93CC2124421900590993 /* PlaybackCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = BEFB93CB2124421900590993 /* PlaybackCell.xib */; };
 		BEFB93CE21244E6C00590993 /* PlaybackTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEFB93CD21244E6C00590993 /* PlaybackTableViewCell.swift */; };
-		BEFF5565212740A7006CBAEE /* MyriadPro-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = BEFF556321272586006CBAEE /* MyriadPro-Bold.otf */; };
-		BEFF556821284F1B006CBAEE /* MyriadPro-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = BEFF556321272586006CBAEE /* MyriadPro-Bold.otf */; };
 		BEFF556A212873A5006CBAEE /* VisualEffectNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEFF5569212873A5006CBAEE /* VisualEffectNavigationBar.swift */; };
 		BEFF556C212874F0006CBAEE /* VisualEffectNavigationBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = BEFF556B212874F0006CBAEE /* VisualEffectNavigationBar.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		BE0CE5A11ED8473E00D8DF6D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BE0F5C191D2D663F00C9E8A1 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = BE0CE5961ED8473E00D8DF6D;
-			remoteInfo = ModeWidget;
-		};
 		BE0F5C381D2D663F00C9E8A1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BE0F5C191D2D663F00C9E8A1 /* Project object */;
@@ -335,6 +339,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = BE0F5C201D2D663F00C9E8A1;
 			remoteInfo = Melody;
+		};
+		BE877B9B24674A340039464C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BE0F5C191D2D663F00C9E8A1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BE0CE5961ED8473E00D8DF6D;
+			remoteInfo = ModeWidget;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -567,6 +578,18 @@
 		BE7D96DD2104784E00A0F5D4 /* PropertiesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertiesViewController.swift; sourceTree = "<group>"; };
 		BE7DE705214BACE30032FCBD /* PropertiesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertiesTableViewController.swift; sourceTree = "<group>"; };
 		BE7E73B620ADF7B2008A52B7 /* ActionsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionsManager.swift; sourceTree = "<group>"; };
+		BE828DEB24647F4600DD67E4 /* MyriadPro-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MyriadPro-Bold.otf"; sourceTree = "<group>"; };
+		BE828DEC24647F4800DD67E4 /* MyriadPro-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MyriadPro-Regular.otf"; sourceTree = "<group>"; };
+		BE828DED24647F4C00DD67E4 /* MyriadPro-Black.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MyriadPro-Black.otf"; sourceTree = "<group>"; };
+		BE828DEE24647F4E00DD67E4 /* MyriadPro-It.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MyriadPro-It.otf"; sourceTree = "<group>"; };
+		BE828DEF24647F5000DD67E4 /* MyriadPro-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MyriadPro-Light.otf"; sourceTree = "<group>"; };
+		BE828DF024647F5300DD67E4 /* MyriadPro-Semibold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MyriadPro-Semibold.otf"; sourceTree = "<group>"; };
+		BE828DFD2464815800DD67E4 /* MuseoSansRounded900.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = MuseoSansRounded900.otf; sourceTree = "<group>"; };
+		BE828DFE2464815900DD67E4 /* MuseoSansRounded1000.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = MuseoSansRounded1000.otf; sourceTree = "<group>"; };
+		BE828DFF2464815B00DD67E4 /* MuseoSansRounded100.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = MuseoSansRounded100.otf; sourceTree = "<group>"; };
+		BE828E002464815C00DD67E4 /* MuseoSansRounded500.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = MuseoSansRounded500.otf; sourceTree = "<group>"; };
+		BE828E012464815D00DD67E4 /* MuseoSansRounded300.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = MuseoSansRounded300.otf; sourceTree = "<group>"; };
+		BE828E022464815E00DD67E4 /* MuseoSansRounded700.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = MuseoSansRounded700.otf; sourceTree = "<group>"; };
 		BE8328641D8B4D38001F015E /* NewPlaylistViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewPlaylistViewController.swift; sourceTree = "<group>"; };
 		BE89790D1E30C22B008634E6 /* NowPlaying.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NowPlaying.swift; sourceTree = "<group>"; };
 		BE8B6A6320D5963000A823A1 /* SharedTypeAliases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedTypeAliases.swift; sourceTree = "<group>"; };
@@ -578,6 +601,7 @@
 		BE9EA2D11DBF9AC5001F8C85 /* NoAccessView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = NoAccessView.xib; path = Melody/NoAccessView.xib; sourceTree = "<group>"; };
 		BEA013FB1E63984400BC3C1D /* MELTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MELTableView.swift; sourceTree = "<group>"; };
 		BEA013FD1E6399AA00BC3C1D /* MELTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MELTableViewCell.swift; sourceTree = "<group>"; };
+		BEA29A7B2450120E000E8789 /* PassthroughView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassthroughView.swift; sourceTree = "<group>"; };
 		BEA9E5662118A52600D3095D /* LyricsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsViewController.swift; sourceTree = "<group>"; };
 		BEA9E5682118A5F000D3095D /* LyricsViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LyricsViewController.storyboard; sourceTree = "<group>"; };
 		BEAEF61B1D5DB09D00156271 /* CollectorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectorViewController.swift; sourceTree = "<group>"; };
@@ -597,10 +621,6 @@
 		BEBF0E73204616BC001C29CC /* RecentSearchCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RecentSearchCell.xib; sourceTree = "<group>"; };
 		BEBF0E7520461B2F001C29CC /* RecentSearchTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentSearchTableViewCell.swift; sourceTree = "<group>"; };
 		BEC04BFC1D300FBD0095D856 /* UniversalMethods.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UniversalMethods.swift; path = ../UniversalMethods.swift; sourceTree = "<group>"; };
-		BEC04BFE1D30257B0095D856 /* MyriadPro-It.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MyriadPro-It.otf"; sourceTree = "<group>"; };
-		BEC04BFF1D30257B0095D856 /* MyriadPro-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MyriadPro-Light.otf"; sourceTree = "<group>"; };
-		BEC04C011D30257B0095D856 /* MyriadPro-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MyriadPro-Regular.otf"; sourceTree = "<group>"; };
-		BEC04C021D30257B0095D856 /* MyriadPro-Semibold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MyriadPro-Semibold.otf"; sourceTree = "<group>"; };
 		BEC0B1502021C05E008CBEB5 /* IconSelectionTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconSelectionTableViewController.swift; sourceTree = "<group>"; };
 		BEC0B1522021D46C008CBEB5 /* Dark App Icon Wide@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Dark App Icon Wide@3x.png"; sourceTree = "<group>"; };
 		BEC0B1532021D46C008CBEB5 /* Dark App Icon Wide@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Dark App Icon Wide@2x.png"; sourceTree = "<group>"; };
@@ -640,6 +660,8 @@
 		BED2C2BC2043401C009BB73F /* LibraryRefreshTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryRefreshTableViewController.swift; sourceTree = "<group>"; };
 		BED2F92C1DAA50660041A054 /* Sortable+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Sortable+CoreDataClass.swift"; sourceTree = "<group>"; };
 		BED2F92D1DAA50660041A054 /* Sortable+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Sortable+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		BED6860A2456F7CB007D06E1 /* CentreView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CentreView.xib; sourceTree = "<group>"; };
+		BED6860C2456F882007D06E1 /* CentreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CentreView.swift; sourceTree = "<group>"; };
 		BED9566C1F9B2A6B00980DF4 /* Image + Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Image + Extensions.swift"; sourceTree = "<group>"; };
 		BED985BC240BC95400011FFC /* Sequence + Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sequence + Extensions.swift"; sourceTree = "<group>"; };
 		BED9BBFE202D96F2007FEC65 /* Switch.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = Switch.xib; sourceTree = "<group>"; };
@@ -673,7 +695,6 @@
 		BEFA28291D3426E500DE7018 /* UIDevice+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIDevice+Extensions.swift"; sourceTree = "<group>"; };
 		BEFB93CB2124421900590993 /* PlaybackCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PlaybackCell.xib; sourceTree = "<group>"; };
 		BEFB93CD21244E6C00590993 /* PlaybackTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackTableViewCell.swift; sourceTree = "<group>"; };
-		BEFF556321272586006CBAEE /* MyriadPro-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MyriadPro-Bold.otf"; sourceTree = "<group>"; };
 		BEFF5569212873A5006CBAEE /* VisualEffectNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualEffectNavigationBar.swift; sourceTree = "<group>"; };
 		BEFF556B212874F0006CBAEE /* VisualEffectNavigationBar.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = VisualEffectNavigationBar.xib; sourceTree = "<group>"; };
 		CEFDA6C7BA080EA500DCD005 /* Pods_Mode.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Mode.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -721,11 +742,18 @@
 		BE06B17C1D2E59FF007457E7 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
-				BEC04BFE1D30257B0095D856 /* MyriadPro-It.otf */,
-				BEC04BFF1D30257B0095D856 /* MyriadPro-Light.otf */,
-				BEC04C011D30257B0095D856 /* MyriadPro-Regular.otf */,
-				BEC04C021D30257B0095D856 /* MyriadPro-Semibold.otf */,
-				BEFF556321272586006CBAEE /* MyriadPro-Bold.otf */,
+				BE828DED24647F4C00DD67E4 /* MyriadPro-Black.otf */,
+				BE828DEB24647F4600DD67E4 /* MyriadPro-Bold.otf */,
+				BE828DEE24647F4E00DD67E4 /* MyriadPro-It.otf */,
+				BE828DEF24647F5000DD67E4 /* MyriadPro-Light.otf */,
+				BE828DEC24647F4800DD67E4 /* MyriadPro-Regular.otf */,
+				BE828DF024647F5300DD67E4 /* MyriadPro-Semibold.otf */,
+				BE828DFF2464815B00DD67E4 /* MuseoSansRounded100.otf */,
+				BE828E012464815D00DD67E4 /* MuseoSansRounded300.otf */,
+				BE828E002464815C00DD67E4 /* MuseoSansRounded500.otf */,
+				BE828E022464815E00DD67E4 /* MuseoSansRounded700.otf */,
+				BE828DFD2464815800DD67E4 /* MuseoSansRounded900.otf */,
+				BE828DFE2464815900DD67E4 /* MuseoSansRounded1000.otf */,
 			);
 			name = Fonts;
 			sourceTree = "<group>";
@@ -1061,6 +1089,8 @@
 		BE27153B1D5A8265001F01FF /* View Subclasses */ = {
 			isa = PBXGroup;
 			children = (
+				BED6860C2456F882007D06E1 /* CentreView.swift */,
+				BEA29A7B2450120E000E8789 /* PassthroughView.swift */,
 				BE1171902427D48500D01FD9 /* SearchLeftView.swift */,
 				BE2715351D5A7584001F01FF /* Table View Cells */,
 				BEB3AC721DD881F200682854 /* Collection View Cells */,
@@ -1260,6 +1290,7 @@
 		BEB3AC711DD881B900682854 /* XIBS */ = {
 			isa = PBXGroup;
 			children = (
+				BED6860A2456F7CB007D06E1 /* CentreView.xib */,
 				BE37EDF822E5E14200AF1F6F /* LoginDetailsCell.xib */,
 				BEDB79A72191BC870013F9A9 /* InfoLyricsCell.xib */,
 				BE381D5320DA7B6A00D6C2F3 /* SettingsCell.xib */,
@@ -1395,8 +1426,8 @@
 			buildPhases = (
 				11F3A20D550703D30EBDDE54 /* [CP] Check Pods Manifest.lock */,
 				BE0CE5931ED8473E00D8DF6D /* Sources */,
-				BE0CE5941ED8473E00D8DF6D /* Frameworks */,
 				BE0CE5951ED8473E00D8DF6D /* Resources */,
+				BE0CE5941ED8473E00D8DF6D /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1412,17 +1443,17 @@
 			buildConfigurationList = BE0F5C4B1D2D663F00C9E8A1 /* Build configuration list for PBXNativeTarget "Mode" */;
 			buildPhases = (
 				08043B4DCD05580AC0421D86 /* [CP] Check Pods Manifest.lock */,
-				BE0F5C1D1D2D663F00C9E8A1 /* Sources */,
-				BE0F5C1E1D2D663F00C9E8A1 /* Frameworks */,
-				BE0F5C1F1D2D663F00C9E8A1 /* Resources */,
 				BE0CE5A71ED8473E00D8DF6D /* Embed App Extensions */,
+				BE0F5C1D1D2D663F00C9E8A1 /* Sources */,
+				BE0F5C1F1D2D663F00C9E8A1 /* Resources */,
+				BE0F5C1E1D2D663F00C9E8A1 /* Frameworks */,
 				BE4AA8891F29161900F52E84 /* Embed Frameworks */,
 				F3BC29C8473895C12E5480AF /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				BE0CE5A21ED8473E00D8DF6D /* PBXTargetDependency */,
+				BE877B9C24674A340039464C /* PBXTargetDependency */,
 			);
 			name = Mode;
 			productName = Melody;
@@ -1546,13 +1577,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BEC1110F1ED959D800A6C338 /* MyriadPro-Regular.otf in Resources */,
-				BEC1110C1ED959D300A6C338 /* MyriadPro-It.otf in Resources */,
-				BEFF556821284F1B006CBAEE /* MyriadPro-Bold.otf in Resources */,
-				BEC111101ED959D800A6C338 /* MyriadPro-Semibold.otf in Resources */,
+				BE828DFC24647F5400DD67E4 /* MyriadPro-Semibold.otf in Resources */,
+				BE828DF824647F5400DD67E4 /* MyriadPro-It.otf in Resources */,
 				BEC1110A1ED9493E00A6C338 /* Assets.xcassets in Resources */,
-				BEC1110D1ED959D800A6C338 /* MyriadPro-Light.otf in Resources */,
+				BE828DFA24647F5400DD67E4 /* MyriadPro-Light.otf in Resources */,
 				BE0CE59F1ED8473E00D8DF6D /* MainInterface.storyboard in Resources */,
+				BE828DF624647F5400DD67E4 /* MyriadPro-Black.otf in Resources */,
+				BE828DF424647F5400DD67E4 /* MyriadPro-Regular.otf in Resources */,
+				BE828DF224647F5400DD67E4 /* MyriadPro-Bold.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1564,6 +1596,7 @@
 				BE381D5420DA7B6A00D6C2F3 /* SettingsCell.xib in Resources */,
 				BE2A69271F1D561300DEE878 /* VolumeView.xib in Resources */,
 				BEC0B16A2021D506008CBEB5 /* Light App Icon Medium@2x.png in Resources */,
+				BE828DF924647F5400DD67E4 /* MyriadPro-Light.otf in Resources */,
 				BE573CF31E669E0B0021DCBD /* Popovers.storyboard in Resources */,
 				BEC0B1662021D506008CBEB5 /* Light App Icon Medium@3x.png in Resources */,
 				BE14559E237FF4B90016CAE8 /* Dark Rainbow App Icon Thin@2x.png in Resources */,
@@ -1574,22 +1607,26 @@
 				BE1455A8237FF4C80016CAE8 /* Light Rainbow App Icon Wide@3x.png in Resources */,
 				BE28088A1FC97F3200D3AB1C /* PropertyCollectionViewCell.xib in Resources */,
 				BE34C96D21A9C40A00236BAE /* GestureSelectableCell.xib in Resources */,
+				BE828E0B2464815E00DD67E4 /* MuseoSansRounded300.otf in Resources */,
 				BEC0B1592021D47E008CBEB5 /* Dark App Icon Medium@2x.png in Resources */,
 				BE7624F22426884D00462E62 /* SearchLeftView.xib in Resources */,
 				BE73B1E31D96708C0059D084 /* EntityCell.xib in Resources */,
 				BE14559F237FF4B90016CAE8 /* Dark Rainbow App Icon Wide@2x.png in Resources */,
 				BEC0B16B2021D506008CBEB5 /* Light App Icon Thin@3x.png in Resources */,
+				BE828DF524647F5400DD67E4 /* MyriadPro-Black.otf in Resources */,
 				BEBC4E321FB2DAE200F18E06 /* InputView.xib in Resources */,
 				BE37EDF922E5E14200AF1F6F /* LoginDetailsCell.xib in Resources */,
 				BE7B39032380001D00CB7A86 /* Dark Trans App Icon Medium@2x.png in Resources */,
-				BEC04C081D30257B0095D856 /* MyriadPro-Semibold.otf in Resources */,
 				BE21DB001F229EF600441BF6 /* TableFooterView.xib in Resources */,
 				BE5BB4FF22E3176500F03322 /* LastFMTableViewController.storyboard in Resources */,
+				BED6860B2456F7CB007D06E1 /* CentreView.xib in Resources */,
 				BE0F5C311D2D663F00C9E8A1 /* LaunchScreen.storyboard in Resources */,
 				BEDAA11622D8FC520082EC3E /* SavedLyricsViewController.storyboard in Resources */,
+				BE828E0D2464815E00DD67E4 /* MuseoSansRounded700.otf in Resources */,
 				BEFF556C212874F0006CBAEE /* VisualEffectNavigationBar.xib in Resources */,
 				BEC0B1582021D47E008CBEB5 /* Dark App Icon Medium@3x.png in Resources */,
 				BEC0B15C2021D4A0008CBEB5 /* Dark App Icon Thin@2x.png in Resources */,
+				BE828DFB24647F5400DD67E4 /* MyriadPro-Semibold.otf in Resources */,
 				BE56D13E1DD4C96D00BBF64B /* PlaylistCollectionCell.xib in Resources */,
 				BEA9E5692118A5F000D3095D /* LyricsViewController.storyboard in Resources */,
 				BE573CF11E669D8E0021DCBD /* EntityChildren.storyboard in Resources */,
@@ -1602,15 +1639,18 @@
 				BE0F5C2E1D2D663F00C9E8A1 /* Assets.xcassets in Resources */,
 				BE1455A9237FF4C80016CAE8 /* Light Rainbow App Icon Medium@3x.png in Resources */,
 				BE7B39012380001D00CB7A86 /* Dark Trans App Icon Wide@3x.png in Resources */,
-				BEC04C041D30257B0095D856 /* MyriadPro-It.otf in Resources */,
 				BE7314EE1E2635FA0050A46B /* PillButtonView.xib in Resources */,
-				BEC04C071D30257B0095D856 /* MyriadPro-Regular.otf in Resources */,
+				BE828E092464815E00DD67E4 /* MuseoSansRounded500.otf in Resources */,
 				BEC933D31F6D9B1300FB5984 /* SwipeInfo.plist in Resources */,
 				BEB3AC701DD881AD00682854 /* SmallPlaylistCollectionCell.xib in Resources */,
 				BE1455AC237FF4C80016CAE8 /* Light Rainbow App Icon Thin@2x.png in Resources */,
+				BE828E072464815E00DD67E4 /* MuseoSansRounded100.otf in Resources */,
 				BE573CF71E669E970021DCBD /* Settings.storyboard in Resources */,
+				BE828DF724647F5400DD67E4 /* MyriadPro-It.otf in Resources */,
+				BE828DF124647F5300DD67E4 /* MyriadPro-Bold.otf in Resources */,
 				BEFB93CC2124421900590993 /* PlaybackCell.xib in Resources */,
 				BE573CF91E669F300021DCBD /* Tips.storyboard in Resources */,
+				BE828DF324647F5400DD67E4 /* MyriadPro-Regular.otf in Resources */,
 				BE573D041E66A1760021DCBD /* LibraryChildren.storyboard in Resources */,
 				BEBF0E74204616BC001C29CC /* RecentSearchCell.xib in Resources */,
 				BE25606C1E74428E00858C02 /* HeaderView.xib in Resources */,
@@ -1619,10 +1659,8 @@
 				BEC0B1682021D506008CBEB5 /* Light App Icon Wide@3x.png in Resources */,
 				BE2808881FC973A500D3AB1C /* FilterView.xib in Resources */,
 				BE7B39052380001D00CB7A86 /* Dark Trans App Icon Thin@3x.png in Resources */,
-				BEFF5565212740A7006CBAEE /* MyriadPro-Bold.otf in Resources */,
 				BE573D011E66A1290021DCBD /* MainChildren.storyboard in Resources */,
 				BE1455A7237FF4C80016CAE8 /* Light Rainbow App Icon Thin@3x.png in Resources */,
-				BEC04C051D30257B0095D856 /* MyriadPro-Light.otf in Resources */,
 				BE1455AA237FF4C80016CAE8 /* Light Rainbow App Icon Wide@2x.png in Resources */,
 				BE14559C237FF4B90016CAE8 /* Dark Rainbow App Icon Medium@3x.png in Resources */,
 				BE10508D211AFFB000F5DC78 /* LyricsInfoViewController.storyboard in Resources */,
@@ -1637,7 +1675,9 @@
 				BEC0B1542021D46D008CBEB5 /* Dark App Icon Wide@3x.png in Resources */,
 				BECDEC001EF024BE0037892B /* RateShareView.xib in Resources */,
 				BE51B719230945620039C790 /* BorderedButtonView.xib in Resources */,
+				BE828E032464815E00DD67E4 /* MuseoSansRounded900.otf in Resources */,
 				BEC0B1552021D46D008CBEB5 /* Dark App Icon Wide@2x.png in Resources */,
+				BE828E052464815E00DD67E4 /* MuseoSansRounded1000.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1774,6 +1814,7 @@
 				BEE173841DA6C1BD00559C05 /* ArrangeViewController.swift in Sources */,
 				BE7DE706214BACE30032FCBD /* PropertiesTableViewController.swift in Sources */,
 				BE6CB7251D9D603700328C19 /* NowPlayingAnimationController.swift in Sources */,
+				BED6860D2456F882007D06E1 /* CentreView.swift in Sources */,
 				BE42A62D21357A850094DD0C /* SoundEffect.swift in Sources */,
 				BE34A4901DDEDCCF0023A0EB /* CollectionsViewController.swift in Sources */,
 				BE606B98239A98FF0025478E /* SharedEnumerations.swift in Sources */,
@@ -1834,6 +1875,7 @@
 				BE42A62C21357A850094DD0C /* HapticFeedback.swift in Sources */,
 				BE0136A8211DCED600D7588A /* TextViewTableViewCell.swift in Sources */,
 				BE573D061E66A2AD0021DCBD /* Globals.swift in Sources */,
+				BEA29A7C2450131F000E8789 /* PassthroughView.swift in Sources */,
 				BE036EDA1D4A775300BBF1C3 /* NowPlayingInteractionController.swift in Sources */,
 				BE29230E1DE8908B005BE059 /* ArtistSongsViewController.swift in Sources */,
 				BE75DDEB1E4EF5500045BEA3 /* PopoverDelegate.swift in Sources */,
@@ -1963,11 +2005,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		BE0CE5A21ED8473E00D8DF6D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = BE0CE5961ED8473E00D8DF6D /* ModeWidget */;
-			targetProxy = BE0CE5A11ED8473E00D8DF6D /* PBXContainerItemProxy */;
-		};
 		BE0F5C391D2D663F00C9E8A1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = BE0F5C201D2D663F00C9E8A1 /* Mode */;
@@ -1977,6 +2014,11 @@
 			isa = PBXTargetDependency;
 			target = BE0F5C201D2D663F00C9E8A1 /* Mode */;
 			targetProxy = BE0F5C431D2D663F00C9E8A1 /* PBXContainerItemProxy */;
+		};
+		BE877B9C24674A340039464C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BE0CE5961ED8473E00D8DF6D /* ModeWidget */;
+			targetProxy = BE877B9B24674A340039464C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -2064,7 +2106,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MARKETING_VERSION = "$(sharedVersionNumber)";
-				PRODUCT_BUNDLE_IDENTIFIER = com.okoroezenwa.modeplayer.dev.Widget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.okoroezenwa.modeplayer.stable.Widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2093,7 +2135,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MARKETING_VERSION = "$(sharedVersionNumber)";
-				PRODUCT_BUNDLE_IDENTIFIER = com.okoroezenwa.modeplayer.dev.Widget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.okoroezenwa.modeplayer.stable.Widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2156,7 +2198,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				sharedBuildNumber = 19727;
+				sharedBuildNumber = 22060;
 				sharedVersionNumber = 1.2;
 			};
 			name = Debug;
@@ -2208,7 +2250,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				VALIDATE_PRODUCT = YES;
-				sharedBuildNumber = 19727;
+				sharedBuildNumber = 22060;
 				sharedVersionNumber = 1.2;
 			};
 			name = Release;
@@ -2230,7 +2272,7 @@
 				INFOPLIST_FILE = Melody/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_SWIFT_FLAGS = "-DDEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = com.okoroezenwa.modeplayer.dev;
+				PRODUCT_BUNDLE_IDENTIFIER = com.okoroezenwa.modeplayer.stable;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2258,7 +2300,7 @@
 				INFOPLIST_FILE = Melody/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_SWIFT_FLAGS = "-DRELEASE";
-				PRODUCT_BUNDLE_IDENTIFIER = com.okoroezenwa.modeplayer.dev;
+				PRODUCT_BUNDLE_IDENTIFIER = com.okoroezenwa.modeplayer.stable;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";

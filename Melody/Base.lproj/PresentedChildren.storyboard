@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina3_5" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15510"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -192,6 +192,7 @@
                         <outlet property="activityView" destination="vOc-6V-gOn" id="UAd-bE-cZe"/>
                         <outlet property="activityVisualEffectView" destination="o9E-Td-iCq" id="HMI-2n-xPO"/>
                         <outlet property="bottomView" destination="hBh-VU-5Af" id="Qnq-WN-AkN"/>
+                        <outlet property="clearButton" destination="nGO-rE-wF6" id="wSd-a4-N7h"/>
                         <outlet property="editButton" destination="6SX-E3-8Yx" id="6bE-XB-8Pw"/>
                         <outlet property="largeActivityIndicator" destination="n91-GM-jJz" id="L4D-Ey-xRy"/>
                         <outlet property="queueStackView" destination="RV3-bT-ZXA" id="aZF-lv-4bg"/>
@@ -2010,7 +2011,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" alwaysBounceVertical="YES" keyboardDismissMode="onDrag" dataMode="prototypes" style="grouped" separatorStyle="none" allowsSelectionDuringEditing="YES" allowsMultipleSelectionDuringEditing="YES" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" contentViewInsetsToSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Q8w-g7-skU" customClass="MELTableView" customModule="Mode" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="392"/>
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="boolean" keyPath="header" value="YES"/>
@@ -2021,65 +2022,34 @@
                                     <outlet property="delegate" destination="Xxp-fE-2RI" id="qlk-Iq-VAp"/>
                                 </connections>
                             </tableView>
-                            <view clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VWy-NB-FHx">
-                                <rect key="frame" x="130" y="210" width="60" height="60"/>
+                            <view contentMode="scaleToFill" placeholderIntrinsicWidth="320" placeholderIntrinsicHeight="53" translatesAutoresizingMaskIntoConstraints="NO" id="X67-KL-9Xe" customClass="FilterViewContainer" customModule="Mode" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="427" width="320" height="53"/>
                                 <subviews>
-                                    <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ohJ-Gt-zOd" customClass="MELVisualEffectView" customModule="Mode" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="60" height="60"/>
-                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="yZZ-P8-6rL">
-                                            <rect key="frame" x="0.0" y="0.0" width="60" height="60"/>
+                                    <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1xh-JD-OQD" customClass="MELVisualEffectView" customModule="Mode" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="53"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="CgS-cG-l9F">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="53"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                        <blurEffect style="light"/>
-                                        <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="boolean" keyPath="light" value="YES"/>
-                                            <userDefinedRuntimeAttribute type="number" keyPath="alphaOverride">
-                                                <real key="value" value="0.40000000000000002"/>
-                                            </userDefinedRuntimeAttribute>
-                                        </userDefinedRuntimeAttributes>
+                                        <blurEffect style="regular"/>
                                     </visualEffectView>
-                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="8Q7-Az-h8d" customClass="MELActivityIndicatorView" customModule="Mode" customModuleProvider="target">
-                                        <rect key="frame" x="11.5" y="11.5" width="37" height="37"/>
-                                    </activityIndicatorView>
-                                </subviews>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="VWy-NB-FHx" secondAttribute="height" multiplier="1:1" id="Gr2-Bp-se7"/>
-                                    <constraint firstItem="ohJ-Gt-zOd" firstAttribute="leading" secondItem="VWy-NB-FHx" secondAttribute="leading" id="Mjh-yY-Eq2"/>
-                                    <constraint firstItem="8Q7-Az-h8d" firstAttribute="centerY" secondItem="VWy-NB-FHx" secondAttribute="centerY" id="RTx-99-I5v"/>
-                                    <constraint firstAttribute="width" constant="60" id="UTf-5m-cdv"/>
-                                    <constraint firstAttribute="trailing" secondItem="ohJ-Gt-zOd" secondAttribute="trailing" id="dMN-GQ-PSw"/>
-                                    <constraint firstItem="ohJ-Gt-zOd" firstAttribute="top" secondItem="VWy-NB-FHx" secondAttribute="top" id="hzE-v3-1w1"/>
-                                    <constraint firstAttribute="bottom" secondItem="ohJ-Gt-zOd" secondAttribute="bottom" id="m7D-II-aPB"/>
-                                    <constraint firstItem="8Q7-Az-h8d" firstAttribute="centerX" secondItem="VWy-NB-FHx" secondAttribute="centerX" id="uIA-pA-XUX"/>
-                                </constraints>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                        <integer key="value" value="8"/>
-                                    </userDefinedRuntimeAttribute>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="alpha">
-                                        <integer key="value" value="0"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
-                            </view>
-                            <view contentMode="scaleToFill" placeholderIntrinsicWidth="320" placeholderIntrinsicHeight="88" translatesAutoresizingMaskIntoConstraints="NO" id="X67-KL-9Xe" customClass="FilterViewContainer" customModule="Mode" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="392" width="320" height="88"/>
-                                <subviews>
-                                    <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="18b-f2-HJ1" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
+                                    <view hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="18b-f2-HJ1" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="320" height="1"/>
                                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.050000000000000003" colorSpace="calibratedRGB"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="1" id="lw1-w3-CRi"/>
+                                            <constraint firstAttribute="height" priority="900" constant="1" id="lw1-w3-CRi"/>
                                         </constraints>
                                     </view>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="18b-f2-HJ1" secondAttribute="trailing" id="GAt-Ac-8lq"/>
+                                    <constraint firstAttribute="trailing" secondItem="1xh-JD-OQD" secondAttribute="trailing" id="Ne9-TG-DOO"/>
                                     <constraint firstItem="18b-f2-HJ1" firstAttribute="leading" secondItem="X67-KL-9Xe" secondAttribute="leading" id="STk-jp-oZE"/>
+                                    <constraint firstItem="1xh-JD-OQD" firstAttribute="leading" secondItem="X67-KL-9Xe" secondAttribute="leading" id="fNf-DU-ZJO"/>
+                                    <constraint firstItem="1xh-JD-OQD" firstAttribute="top" secondItem="X67-KL-9Xe" secondAttribute="top" id="lwU-A1-dmK"/>
                                     <constraint firstItem="18b-f2-HJ1" firstAttribute="top" secondItem="X67-KL-9Xe" secondAttribute="top" id="pv0-Xf-Q6Z"/>
+                                    <constraint firstAttribute="bottom" secondItem="1xh-JD-OQD" secondAttribute="bottom" id="qt7-0S-Jqa"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -2087,23 +2057,16 @@
                         <constraints>
                             <constraint firstItem="X67-KL-9Xe" firstAttribute="leading" secondItem="o4c-z8-Uyv" secondAttribute="leading" id="2Ee-RZ-pPJ"/>
                             <constraint firstItem="Q8w-g7-skU" firstAttribute="leading" secondItem="o4c-z8-Uyv" secondAttribute="leading" id="A35-7H-RxG"/>
-                            <constraint firstItem="X67-KL-9Xe" firstAttribute="top" secondItem="Q8w-g7-skU" secondAttribute="bottom" id="CPi-fV-7AL"/>
-                            <constraint firstItem="VWy-NB-FHx" firstAttribute="width" secondItem="VWy-NB-FHx" secondAttribute="height" multiplier="1:1" id="Fgd-mJ-Em6"/>
-                            <constraint firstItem="VWy-NB-FHx" firstAttribute="centerX" secondItem="o4c-z8-Uyv" secondAttribute="centerX" id="Fhk-XX-bMe"/>
+                            <constraint firstItem="gE3-Su-59m" firstAttribute="top" secondItem="Q8w-g7-skU" secondAttribute="bottom" id="I8Y-wO-Y8A"/>
                             <constraint firstAttribute="trailing" secondItem="Q8w-g7-skU" secondAttribute="trailing" id="M2j-sm-ytC"/>
-                            <constraint firstItem="VWy-NB-FHx" firstAttribute="centerY" secondItem="o4c-z8-Uyv" secondAttribute="centerY" id="bcT-Mf-QoE"/>
                             <constraint firstAttribute="trailing" secondItem="X67-KL-9Xe" secondAttribute="trailing" id="loJ-ew-dqf"/>
                             <constraint firstItem="gE3-Su-59m" firstAttribute="top" secondItem="X67-KL-9Xe" secondAttribute="bottom" id="mDX-6T-cRJ"/>
                             <constraint firstItem="Q8w-g7-skU" firstAttribute="top" secondItem="FkR-ox-ejt" secondAttribute="bottom" id="pxO-eP-at7"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="activityView" destination="VWy-NB-FHx" id="W0B-Qy-XlO"/>
-                        <outlet property="activityViewVerticalCenterConstraint" destination="bcT-Mf-QoE" id="OXY-0s-Jay"/>
-                        <outlet property="activityVisualEffectView" destination="ohJ-Gt-zOd" id="JXQ-YR-6SQ"/>
                         <outlet property="bottomViewBottomConstraint" destination="mDX-6T-cRJ" id="FeS-EC-0MY"/>
                         <outlet property="filterViewContainer" destination="X67-KL-9Xe" id="28j-ed-zeK"/>
-                        <outlet property="largeActivityIndicator" destination="8Q7-Az-h8d" id="oYW-uG-5oS"/>
                         <outlet property="tableView" destination="Q8w-g7-skU" id="Yum-6r-xDR"/>
                         <segue destination="XSw-Fd-637" kind="unwind" identifier="toAlbumArtistUnwind" unwindAction="albumArtistUnwind:" id="ULt-Ae-492"/>
                         <segue destination="XSw-Fd-637" kind="unwind" identifier="toAlbumUnwind" unwindAction="albumUnwind:" id="0cU-tP-dYz"/>
@@ -2483,6 +2446,7 @@
             <point key="canvasLocation" x="-1313" y="906"/>
         </scene>
     </scenes>
+    <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
     <resources>
         <image name="Add" width="13" height="13"/>
         <image name="AddNoBorder11" width="12" height="12"/>
@@ -2490,7 +2454,7 @@
         <image name="BackArrow12" width="7" height="12"/>
         <image name="Check" width="11" height="8"/>
         <image name="Discard" width="9" height="13"/>
-        <image name="EditNoBorder13" width="14" height="13"/>
+        <image name="EditNoBorder13" width="13" height="9"/>
         <image name="ForwardArrow12" width="7" height="12"/>
         <image name="More13" width="13" height="3"/>
         <image name="NoSong300" width="300" height="300"/>
@@ -2498,5 +2462,4 @@
         <image name="Playlists10" width="10" height="12"/>
         <image name="Shuffle14" width="17" height="14"/>
     </resources>
-    <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
 </document>

@@ -10,31 +10,26 @@ import UIKit
 import CoreData
 import Foundation
 
-class SearchViewController: UIViewController, Filterable, DynamicSections, AlbumTransitionable, Contained, InfoLoading, ArtistTransitionable, GenreTransitionable, ComposerTransitionable, AlbumArtistTransitionable, PlaylistTransitionable, EntityContainer, OptionsContaining, CellAnimatable, IndexContaining, FilterContainer, SingleItemActionable, EntityVerifiable, TopScrollable, Detailing, Navigatable, ArtworkModifying, PillButtonContaining {
+class SearchViewController: UIViewController, Filterable, DynamicSections, AlbumTransitionable, Contained, InfoLoading, ArtistTransitionable, GenreTransitionable, ComposerTransitionable, AlbumArtistTransitionable, PlaylistTransitionable, EntityContainer, OptionsContaining, CellAnimatable, IndexContaining, FilterContainer, SingleItemActionable, EntityVerifiable, TopScrollable, Detailing, Navigatable, ArtworkModifying, PillButtonContaining, CentreViewDisplaying {
 
     @IBOutlet var tableView: MELTableView!
-    @IBOutlet var emptyStackView: UIStackView!
-    @IBOutlet var largeActivityIndicator: MELActivityIndicatorView!
-    @IBOutlet var activityView: UIView!
-    @IBOutlet var activityVisualEffectView: MELVisualEffectView!
-    @IBOutlet var activityViewVerticalCenterConstraint: NSLayoutConstraint!
-    @IBOutlet var emptySubLabel: MELLabel! {
-        
-        didSet {
-            
-            guard let text = emptySubLabel.text else { return }
-            
-            let style = NSMutableParagraphStyle.init()
-            style.alignment = .center
-            style.lineHeightMultiple = 1.2
-            
-            emptySubLabel.attributes = [Attributes.init(name: .paragraphStyle, value: .other(style), range: text.nsRange())]
-        }
-    }
+//    @IBOutlet var emptySubLabel: MELLabel! {
+//
+//        didSet {
+//
+//            guard let text = emptySubLabel.text else { return }
+//
+//            let style = NSMutableParagraphStyle.init()
+//            style.alignment = .center
+//            style.lineHeightMultiple = 1.2
+//
+//            emptySubLabel.attributes = [Attributes.init(name: .paragraphStyle, value: .other(style), range: text.nsRange())]
+//        }
+//    }
     
     lazy var headerView: HeaderView = {
         
-        let view = HeaderView.fresh
+        let view = HeaderView.instance
         self.actionsStackView = view.actionsStackView
         view.scrollStackViewHeightConstraint.constant = 0
         
@@ -69,7 +64,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
     var category = SearchCategory.all
     var entityCount = 0
     @objc var unfilteredPoint = CGPoint.zero
-    lazy var applicableFilterProperties: Set<Property> = { applicationItemFilterProperties.union(applicableCollectionFilterProperties) }()
+    lazy var applicableFilterProperties: Set = applicationItemFilterProperties.union(applicableCollectionFilterProperties)
     lazy var filterEntities = { FilterViewController.FilterEntities.songs([]) }()
     @objc var lifetimeObservers = Set<NSObject>()
     @objc var transientObservers = Set<NSObject>()
@@ -98,7 +93,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         
         get { return self }
         
-        set { }
+        set { filterViewContainer.filterInfo = (filter: sender, container: self) }
     }
     @objc lazy var wasFiltering = false
     var emptyCondition: Bool { return filtering ? itemCount < 1 : recentSearches.isEmpty }
@@ -150,6 +145,19 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
     lazy var preferredTitle: String? = "Search"
     var activeChildViewController: UIViewController?
     
+    var centreViewGiantImage: UIImage?
+    var centreViewTitleLabelText: String?
+    var centreViewSubtitleLabelText: String?
+    var centreViewLabelsImage: UIImage?
+    var currentCentreView = CentreView.CurrentView.none
+    var centreView: CentreView? {
+        
+        get { container?.centreView }
+        
+        set { }
+    }
+    let components: Set<CentreView.CurrentView.LabelStackViewComponent> = [.image, .title, .subtitle]
+    
     @objc lazy var songs = [MPMediaItem]()
     @objc lazy var playlists = [MPMediaPlaylist]()
     @objc lazy var playlistCounts = [Int]()
@@ -170,7 +178,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         
         get { return container?.filterViewContainer }
         
-        set { }
+        set { newValue.filterInfo = (self, self) }
     }
     weak var searchBar: MELSearchBar! {
         
@@ -269,12 +277,16 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         navigationController?.delegate = presenter
         presenter.interactor.add(to: navigationController)
         
+        centreViewLabelsImage = #imageLiteral(resourceName: "Search100")
+        centreViewTitleLabelText = "Nothing Here..."
+        centreViewSubtitleLabelText = "Searches acted upon are added here"
+        
         prepareLifetimeObservers()
         
         adjustInsets(context: .container)
         searchBar?.delegate = self
+        filterViewContainer.filterView.alpha = 1
         filterViewContainer.filterView.filterTestButton.setTitle(testTitle, for: .normal)
-        filterViewContainer.filterInfo = (self, self)
         
         tableView.register(UINib.init(nibName: "RecentSearchCell", bundle: nil), forCellReuseIdentifier: .recentCell)
         updateTopInset()
@@ -361,8 +373,8 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
                         .queue(name: cell.nameLabel.text, query: nil),
                         .newPlaylist,
                         .addTo,
-                        .show(title: cell.nameLabel.text, context: context(from: indexPath), canDisplayInLibrary: true),
-                        .search(unwinder: nil)].map({ singleItemAlertAction(for: $0, entityType: sectionDetails[indexPath.section].category.entityType, using: entity, from: self) })
+                        .show(title: cell.nameLabel.text, context: context(from: indexPath), canDisplayInLibrary: true)/*,
+                        .search(unwinder: nil)*/].map({ singleItemAlertAction(for: $0, entityType: sectionDetails[indexPath.section].category.entityType, using: entity, from: self) })
                     
                     if let item = entity as? MPMediaItem, item.existsInLibrary.inverted {
                         
@@ -437,12 +449,38 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         imageCache.removeAllObjects()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        
+        super.viewWillAppear(animated)
+        
+        for cell in tableView.visibleCells {
+            
+            if let cell = cell as? EntityTableViewCell, !cell.playingView.isHidden {
+                
+                cell.indicator.state = musicPlayer.isPlaying ? .playing : .paused
+            }
+        }
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         
         super.viewDidAppear(animated)
         
         notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+        
+        if searchBar?.delegate == nil, let container = container {
+            
+            self.filterViewContainer = container.filterViewContainer
+            self.searchBar.delegate = self
+            self.searchBar.text = self.sender?.filterText
+            self.filterViewContainer.filterView.propertyButton.setTitle(self.sender?.filterProperty.title, for: .normal)
+            self.filterViewContainer.filterView.filterTestButton.setTitle(self.sender?.testTitle, for: .normal)
+            self.sender?.updateKeyboard(with: self)
+            self.searchBar?.textField?.leftView = self.filterViewContainer.filterView.leftView
+            self.searchBar.updateTextField(with: self.placeholder)
+            self.updateRightView(animated: true)
+        }
         
         container?.visualEffectNavigationBar.entityTypeLabel.superview?.isHidden = true
         
@@ -509,7 +547,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
                         currentItem = nil
                         
                         let newBanner = Banner.init(title: showiCloudItems ? "This album is not in your library" : "This album is not available offline", subtitle: nil, image: nil, backgroundColor: .black, didTapBlock: nil)
-                        newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+                        newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
                         newBanner.show(duration: 0.7)
                     }
                     
@@ -548,7 +586,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
                         currentAlbum = nil
                         
                         let newBanner = Banner.init(title: showiCloudItems ? "This artist is not in your library" : "This artist is not available offline", subtitle: nil, image: nil, backgroundColor: .black, didTapBlock: nil)
-                        newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+                        newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
                         newBanner.show(duration: 0.7)
                     }
                     
@@ -571,7 +609,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
                 return
             }
             
-            weakSelf.highlightSearchBar(withText: weakSelf.searchBar?.text, property: weakSelf.filterProperty.rawValue, propertyTest: weakSelf.propertyTest.rawValue, setFirstResponder: true)
+            weakSelf.highlightSearchBar(withText: weakSelf.searchBar?.text, property: weakSelf.filterProperty.oldRawValue, propertyTest: weakSelf.propertyTest.rawValue, setFirstResponder: true)
         })
         
         transientObservers.insert(secondaryObserver as! NSObject)
@@ -606,11 +644,16 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
     
     @objc func adjustKeyboard(with notification: Notification) {
         
-        guard let keyboardHeightAtEnd = ((notification as NSNotification).userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.size.height, searchBar?.isFirstResponder == true, let container = container else { return }
+        guard let keyboardHeightAtEnd = ((notification as NSNotification).userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.size.height/*, searchBar?.isFirstResponder == true*/, let container = container else { return }
         
         let keyboardWillShow = notification.name == UIResponder.keyboardWillShowNotification
         
         filterViewContainer.filterView.filterInputViewBottomConstraint.constant = keyboardWillShow ? keyboardHeightAtEnd - 51 - container.collectedViewHeight - container.sliderHeight - container.titlesHeight : 0
+        
+//        if let controller = navigationController?.delegate as? NavigationAnimationController, controller.disregardViewLayoutDuringKeyboardPresentation.inverted {
+//
+//            return
+//        }
         
         UIView.animate(withDuration: 0.3, animations: {
             
@@ -648,49 +691,52 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         
         lifetimeObservers.insert(iCloudObserver as! NSObject)
         
-        lifetimeObservers.insert(notifier.addObserver(forName: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer, queue: nil, using: { [weak self] _ in
-            
-            guard let weakSelf = self else { return }
-            
-            for cell in weakSelf.tableView.visibleCells where weakSelf.tableView.indexPath(for: cell)?.section != SearchCategory.playlists.rawValue {
+        [Notification.Name.playerChanged, .MPMusicPlayerControllerNowPlayingItemDidChange].forEach({
+        
+            lifetimeObservers.insert(notifier.addObserver(forName: $0, object: /*musicPlayer*/nil, queue: nil, using: { [weak self] _ in
                 
-                guard let entityCell = cell as? EntityTableViewCell, let indexPath = weakSelf.tableView.indexPath(for: entityCell), let nowPlaying = musicPlayer.nowPlayingItem else {
+                guard let weakSelf = self else { return }
+                
+                for cell in weakSelf.tableView.visibleCells where weakSelf.tableView.indexPath(for: cell)?.section != SearchCategory.playlists.rawValue {
                     
-                    (cell as? EntityTableViewCell)?.playingView.isHidden = true
-                    (cell as? EntityTableViewCell)?.indicator.state = .stopped
+                    guard let entityCell = cell as? EntityTableViewCell, let indexPath = weakSelf.tableView.indexPath(for: entityCell), let nowPlaying = musicPlayer.nowPlayingItem else {
+                        
+                        (cell as? EntityTableViewCell)?.playingView.isHidden = true
+                        (cell as? EntityTableViewCell)?.indicator.state = .stopped
+                        
+                        continue
+                    }
                     
-                    continue
+                    if let song = weakSelf.getEntity(at: indexPath) as? MPMediaItem {
+                        
+                        if entityCell.playingView.isHidden.inverted && musicPlayer.nowPlayingItem != song {
+                            
+                            entityCell.playingView.isHidden = true
+                            entityCell.indicator.state = .stopped
+                            
+                        } else if entityCell.playingView.isHidden && musicPlayer.nowPlayingItem == song {
+                            
+                            entityCell.playingView.isHidden = false
+                            UniversalMethods.performOnMainThread({ entityCell.indicator.state = musicPlayer.isPlaying ? .playing : .paused }, afterDelay: 0.1)
+                        }
+                    
+                    } else if let collection = weakSelf.getEntity(at: indexPath) as? MPMediaItemCollection {
+                        
+                        if entityCell.playingView.isHidden.inverted && Set(collection.items).contains(nowPlaying).inverted {
+                            
+                            entityCell.playingView.isHidden = true
+                            entityCell.indicator.state = .stopped
+                            
+                        } else if entityCell.playingView.isHidden && Set(collection.items).contains(nowPlaying) {
+                            
+                            entityCell.playingView.isHidden = false
+                            UniversalMethods.performOnMainThread({ entityCell.indicator.state = musicPlayer.isPlaying ? .playing : .paused }, afterDelay: 0.1)
+                        }
+                    }
                 }
                 
-                if let song = weakSelf.getEntity(at: indexPath) as? MPMediaItem {
-                    
-                    if entityCell.playingView.isHidden.inverted && musicPlayer.nowPlayingItem != song {
-                        
-                        entityCell.playingView.isHidden = true
-                        entityCell.indicator.state = .stopped
-                        
-                    } else if entityCell.playingView.isHidden && musicPlayer.nowPlayingItem == song {
-                        
-                        entityCell.playingView.isHidden = false
-                        UniversalMethods.performOnMainThread({ entityCell.indicator.state = musicPlayer.isPlaying ? .playing : .paused }, afterDelay: 0.1)
-                    }
-                
-                } else if let collection = weakSelf.getEntity(at: indexPath) as? MPMediaItemCollection {
-                    
-                    if entityCell.playingView.isHidden.inverted && Set(collection.items).contains(nowPlaying).inverted {
-                        
-                        entityCell.playingView.isHidden = true
-                        entityCell.indicator.state = .stopped
-                        
-                    } else if entityCell.playingView.isHidden && Set(collection.items).contains(nowPlaying) {
-                        
-                        entityCell.playingView.isHidden = false
-                        UniversalMethods.performOnMainThread({ entityCell.indicator.state = musicPlayer.isPlaying ? .playing : .paused }, afterDelay: 0.1)
-                    }
-                }
-            }
-            
-        }) as! NSObject)
+            }) as! NSObject)
+        })
         
         lifetimeObservers.insert(notifier.addObserver(forName: .entityCountVisibilityChanged, object: nil, queue: nil, using: { [weak self] _ in
             
@@ -722,7 +768,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         filtering = false
         updateHeaderView()
         tableView.reloadData()
-        updateLoadingViews(hidden: true)
+        updateCurrentView(to: .none)
         
         if !filtering {
             
@@ -765,7 +811,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         updateTitleLabel()
         updateHeaderView()
         tableView.reloadData()
-        updateLoadingViews(hidden: true)
+        updateCurrentView(to: .none)
         
         if !filtering {
             
@@ -896,9 +942,8 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
     
     @objc func filter(with searchText: String) {
         
-        updateLoadingViews(hidden: false)
+        updateCurrentView(to: .indicator)
         
-//        filterOperation?.cancel()
         filterOperationQueue.cancelAllOperations()
         filterOperation = BlockOperation()
         filterOperation?.qualityOfService = .userInitiated
@@ -906,16 +951,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
             
             let text = searchText
         
-            guard let weakSelf = self, let operation = filterOperation else {
-                
-                UniversalMethods.performInMain { self?.updateLoadingViews(hidden: true) }
-                
-                return
-            }
-            
-            guard operation.isCancelled.inverted else { return }
-            
-            UniversalMethods.performInMain { weakSelf.updateLoadingViews(hidden: false) }
+            guard let weakSelf = self, let operation = filterOperation, operation.isCancelled.inverted else { return }
             
             var songs = [MPMediaItem]()
             var artists = [MPMediaItemCollection]()
@@ -929,98 +965,82 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
             songsQuery.showAll()
             songs = weakSelf.getResults(for: songsQuery.items ?? [], against: searchText)
             
-            if weakSelf.filterOperation == nil { UniversalMethods.performInMain{ weakSelf.updateLoadingViews(hidden: true) }; return }
             if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
             
             artists = weakSelf.getResults(for: MPMediaQuery.artists().cloud.collections ?? [], of: .artist, against: searchText)
             
-            if weakSelf.filterOperation == nil { UniversalMethods.performInMain{ weakSelf.updateLoadingViews(hidden: true) }; return }
             if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
             
             albumArtists = weakSelf.getResults(for: MPMediaQuery.albumArtists.cloud.collections ?? [], of: .albumArtist, against: searchText)
             
-            if weakSelf.filterOperation == nil { UniversalMethods.performInMain{ weakSelf.updateLoadingViews(hidden: true) }; return }
             if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
             
             albums = weakSelf.getResults(for: MPMediaQuery.albums().cloud.collections ?? [], of: .album, against: searchText)
             
-            if weakSelf.filterOperation == nil { UniversalMethods.performInMain{ weakSelf.updateLoadingViews(hidden: true) }; return }
             if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
             
             genres = weakSelf.getResults(for: MPMediaQuery.genres().cloud.collections ?? [], of: .genre, against: searchText)
             
-            if weakSelf.filterOperation == nil { UniversalMethods.performInMain{ weakSelf.updateLoadingViews(hidden: true) }; return }
             if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
             
             composers = weakSelf.getResults(for: MPMediaQuery.composers().cloud.collections ?? [], of: .composer, against: searchText)
             
-            if weakSelf.filterOperation == nil { UniversalMethods.performInMain{ weakSelf.updateLoadingViews(hidden: true) }; return }
             if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
             
             playlists = weakSelf.getResults(for: MPMediaQuery.playlists().cloud.playlistsExtracted(showCloudItems: showiCloudItems || weakSelf.onlineOverride), of: .playlist, against: searchText) as? [MPMediaPlaylist] ?? []
             
             OperationQueue.main.addOperation({
             
-                if weakSelf.filterOperation == nil { weakSelf.updateLoadingViews(hidden: true); return }
                 if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
                 
                 weakSelf.songs = songs
                 
-                if weakSelf.filterOperation == nil { weakSelf.updateLoadingViews(hidden: true); return }
                 if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
                 
                 weakSelf.playlists = playlists
                 
-                if weakSelf.filterOperation == nil { weakSelf.updateLoadingViews(hidden: true); return }
                 if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
                 
                 weakSelf.artists = artists
                 
-                if weakSelf.filterOperation == nil { weakSelf.updateLoadingViews(hidden: true); return }
                 if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
                 
                 weakSelf.albumArtists = albumArtists
                 
-                if weakSelf.filterOperation == nil { weakSelf.updateLoadingViews(hidden: true); return }
                 if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
                 
                 weakSelf.albums = albums
                 
-                if weakSelf.filterOperation == nil { weakSelf.updateLoadingViews(hidden: true); return }
                 if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
                 
                 weakSelf.genres = genres
                 
-                if weakSelf.filterOperation == nil { weakSelf.updateLoadingViews(hidden: true); return }
                 if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
                 
                 weakSelf.composers = composers
                 
-                if weakSelf.filterOperation == nil { weakSelf.updateLoadingViews(hidden: true); return }
                 if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
                 
+                UIView.setAnimationsEnabled(false)
                 weakSelf.updateTitleLabel()
+                UIView.setAnimationsEnabled(true)
                 
-                if weakSelf.filterOperation == nil { weakSelf.updateLoadingViews(hidden: true); return }
                 if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
                 
                 weakSelf.tableView.contentOffset = .init(x: 0, y: -weakSelf.inset)
                 
-                if weakSelf.filterOperation == nil { weakSelf.updateLoadingViews(hidden: true); return }
                 if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
                 
                 weakSelf.updateHeaderView()
                 
-                if weakSelf.filterOperation == nil { weakSelf.updateLoadingViews(hidden: true); return }
                 if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
                 
                 weakSelf.tableView.reloadData()
                 
-                if weakSelf.filterOperation == nil { weakSelf.updateLoadingViews(hidden: true); return }
                 if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
                 
+                weakSelf.updateCurrentView(to: .none)
                 weakSelf.animateCells(direction: .vertical)
-                weakSelf.updateLoadingViews(hidden: true)
             })
         })
         
@@ -1034,13 +1054,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         searchBar?.updateTextField(with: "Performing Empty Search...")
         filtering = true
         
-        emptyStackView.isHidden = true
-        
-//        topView.layoutIfNeeded()
-//
-//        clearButtonTrailingConstraint.constant = -44
-//
-//        UIView.animate(withDuration: 0.3, animations: { self.topView.layoutIfNeeded() })
+        updateCurrentView(to: recentSearches.isEmpty ? .labels(components: components) : .none)
         
         filter(with: "")
     }
@@ -1200,7 +1214,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
             cell.backgroundColor = .clear
             cell.searchCategoryImageView.image = category.image
             
-            let property = Property(rawValue: Int(search.property)) ?? .title
+            let property = Property.fromOldRawValue(Int(search.property)) ?? .title
             let test = PropertyTest(rawValue: search.propertyTest ?? "") ?? initialPropertyTest(for: property)
             
             cell.criteriaLabel.text = property.title + " " + title(for: test, property: property)
@@ -1400,7 +1414,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
     
     func sectionIndexTitles(for tableView: UITableView) -> [String]? {
         
-        return filtering || self.numberOfSections(in: tableView) > 1 ? sectionDetails.map({ String($0.0.prefix(2)).capitalized }) : nil
+        return filtering || self.numberOfSections(in: tableView) > 1 ? sectionDetails.map({ String($0.2.indexTitle.prefix(2)).capitalized }) : nil
     }
     
     func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
@@ -1447,12 +1461,9 @@ extension SearchViewController: UISearchBarDelegate {
         if !filtering {
 
             updateTitleLabel()
-//            UIView.transition(with: titleLabel, duration: 0.2, options: .transitionCrossDissolve, animations: { self.updateTitleLabel() } , completion: nil)
         }
         
         searchBar.resignFirstResponder()
-        
-        emptyStackView.isHidden = filtering || recentSearches.count > 0
         
         updateDeleteButton()
         
@@ -1463,19 +1474,25 @@ extension SearchViewController: UISearchBarDelegate {
         
         filtering = searchText != ""
         
-//        filterViewContainer.filterView.updateClearButton(to: filtering ? .visible : .hidden)
+        filterText = searchText
         
         if filtering {
             
             updateDeleteButton()
             
             filter(with: searchText)
+            
+            if searchText.isEmpty {
+                
+                requiredInputView?.pickerView.selectRow(0, inComponent: 0, animated: true)
+            }
         
         } else {
             
+            filterOperation?.cancel()
             filterOperation = nil
             updateTitleLabel()
-            emptyStackView.isHidden = recentSearches.count > 0
+            updateCurrentView(to: recentSearches.isEmpty ? .labels(components: components) : .none)
             updateHeaderView()
             tableView.reloadData()
             tableView.contentOffset = unfilteredPoint
@@ -1688,8 +1705,8 @@ extension SearchViewController: EntityCellDelegate {
             .queue(name: cell.nameLabel.text, query: nil),
             .newPlaylist,
             .addTo,
-            .show(title: cell.nameLabel.text, context: context(from: indexPath), canDisplayInLibrary: true),
-            .search(unwinder: nil)].map({ singleItemAlertAction(for: $0, entityType: sectionDetails[indexPath.section].category.entityType, using: entity, from: self) })
+            .show(title: cell.nameLabel.text, context: context(from: indexPath), canDisplayInLibrary: true)/*,
+            .search(unwinder: nil)*/].map({ singleItemAlertAction(for: $0, entityType: sectionDetails[indexPath.section].category.entityType, using: entity, from: self) })
         
         if let item = entity as? MPMediaItem, item.existsInLibrary.inverted {
             

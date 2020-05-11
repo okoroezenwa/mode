@@ -9,24 +9,9 @@
 import UIKit
 import StoreKit
 
-class LibraryViewController: UIViewController, Contained, OptionsContaining, Navigatable, ArtworkModifying, ChildContaining, HighlightedEntityContaining {
+class LibraryViewController: UIViewController, Contained, OptionsContaining, Navigatable, ArtworkModifying, ChildContaining, HighlightedEntityContaining, CentreViewDisplaying {
     
     @IBOutlet var containerView: UIView!
-    @IBOutlet var emptyStackView: UIStackView!
-    @IBOutlet var emptyLabel: MELLabel!
-    @IBOutlet var emptySubLabel: MELLabel! {
-        
-        didSet {
-            
-            guard let text = emptySubLabel.text else { return }
-            
-            let style = NSMutableParagraphStyle.init()
-            style.alignment = .center
-            style.lineHeightMultiple = 1.2
-            
-            emptySubLabel.attributes = [Attributes.init(name: .paragraphStyle, value: .other(style), range: text.nsRange())]
-        }
-    }
     
     @objc let presenter = NavigationAnimationController()
     @objc var transientObservers = Set<NSObject>()
@@ -158,6 +143,18 @@ class LibraryViewController: UIViewController, Contained, OptionsContaining, Nav
     }
     var inset: CGFloat { return VisualEffectNavigationBar.Location.main.total }
     lazy var preferredTitle: String? = title
+    
+    var centreViewGiantImage: UIImage?
+    var centreViewTitleLabelText: String?
+    var centreViewSubtitleLabelText: String?
+    var centreViewLabelsImage: UIImage?
+    var currentCentreView = CentreView.CurrentView.none
+    var centreView: CentreView? {
+        
+        get { container?.centreView }
+        
+        set { }
+    }
 
     override func viewDidLoad() {
         
@@ -374,35 +371,20 @@ class LibraryViewController: UIViewController, Contained, OptionsContaining, Nav
         unregisterAll(from: transientObservers)
     }
     
-    func updateEmptyView(forState state: EmptyViewState, subLabelText: String?) {
-        
-        switch state {
-            
-        case .completelyHidden: emptyStackView.isHidden = true
-            
-        case .subLabelHidden:
-            
-            emptyStackView.isHidden = false
-            emptySubLabel.isHidden = true
-            
-        case .completelyVisible:
-            
-            emptyStackView.isHidden = false
-            emptySubLabel.isHidden = false
-            emptySubLabel.attributedText = NSAttributedString.init(string: subLabelText ?? "")
-        }
-    }
-    
     @objc func updateEmptyLabel(withCount count: Int, text: String) {
         
-        if count < 1 {
+        centreViewTitleLabelText = {
             
-            updateEmptyView(forState: .completelyVisible, subLabelText: text)
+            if let collectionsVC = children.first as? CollectionsViewController {
+                
+                return "No \(collectionsVC.collectionKind.title)"
+            }
             
-        } else {
-            
-            updateEmptyView(forState: .completelyHidden, subLabelText: nil)
-        }
+            return "No Songs"
+        }()
+        centreViewSubtitleLabelText = text
+        centreViewLabelsImage = section.centreViewImage
+        updateCurrentView(to: count < 1 ? .labels(components: [.image, .title, .subtitle]) : .none)
     }
     
     func updateViews(inSection section: LibrarySection, count: Int, setTitle: Bool) {

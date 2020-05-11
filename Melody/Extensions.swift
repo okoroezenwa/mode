@@ -866,7 +866,7 @@ extension MPMediaEntity {
             
             case .song: return #imageLiteral(resourceName: "NoSong75")
             
-            case .album: return (self as? MPMediaItemCollection)?.representativeItem?.isCompilation == true ? #imageLiteral(resourceName: "NoAlbum75") : #imageLiteral(resourceName: "NoCompilation75")
+            case .album: return (self as? MPMediaItemCollection)?.representativeItem?.isCompilation == true ? #imageLiteral(resourceName: "NoCompilation75") : #imageLiteral(resourceName: "NoAlbum75")
             
             case .artist, .albumArtist: return #imageLiteral(resourceName: "NoArtist75")
             
@@ -1171,5 +1171,24 @@ extension UIViewControllerPreviewingDelegate where Self: UIViewController {
             container.visualEffectNavigationBar.prepareArtwork(for: vc)
             container.visualEffectNavigationBar.rightView.alpha = 1
         }
+        
+        guard let container = appDelegate.window?.rootViewController as? ContainerViewController else { return }
+        
+        if let _ = viewControllerToCommit as? NowPlayingViewController {
+            
+            container.centreView.alpha = 0
+            
+        } else if let displayer = viewControllerToCommit as? CentreViewDisplaying {
+
+            displayer.updateCurrentView(to: displayer.currentCentreView, animated: false)
+            container.centreView.transform = .identity
+        }
     }
+}
+
+extension UIView: YAxisAnchorable { }
+extension UIViewController: YAxisAnchorable {
+    
+    var topAnchor: NSLayoutYAxisAnchor { bottomLayoutGuide.topAnchor }
+    var bottomAnchor: NSLayoutYAxisAnchor { topLayoutGuide.bottomAnchor }
 }

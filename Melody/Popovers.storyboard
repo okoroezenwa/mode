@@ -377,7 +377,7 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="256" height="54"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Folders" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eVQ-0E-aLa" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                <rect key="frame" x="38" y="0.0" width="57" height="54"/>
+                                                                <rect key="frame" x="38" y="0.0" width="51.5" height="54"/>
                                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                                 <nil key="textColor"/>
                                                                 <nil key="highlightedColor"/>
@@ -426,7 +426,7 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="256" height="54"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Bold Text" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0bz-HI-DRh" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                <rect key="frame" x="38" y="0.0" width="71.5" height="54"/>
+                                                                <rect key="frame" x="38" y="0.0" width="65" height="54"/>
                                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                                 <nil key="textColor"/>
                                                                 <nil key="highlightedColor"/>
@@ -487,7 +487,7 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="256" height="54"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Empty Playlists" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="huI-x5-W7N" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                <rect key="frame" x="38" y="0.0" width="116" height="54"/>
+                                                                <rect key="frame" x="38" y="0.0" width="106" height="54"/>
                                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                                 <nil key="textColor"/>
                                                                 <nil key="highlightedColor"/>
@@ -548,7 +548,7 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="256" height="54"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Prevent Duplicates" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8nn-XC-lcQ" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                <rect key="frame" x="38" y="0.0" width="143" height="54"/>
+                                                                <rect key="frame" x="38" y="0.0" width="133" height="54"/>
                                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                                 <nil key="textColor"/>
                                                                 <nil key="highlightedColor"/>
@@ -609,7 +609,7 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="256" height="54"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Mix Status Bar" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="emV-Ry-1hK" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                <rect key="frame" x="38" y="0.0" width="112.5" height="54"/>
+                                                                <rect key="frame" x="38" y="0.0" width="100" height="54"/>
                                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                                 <nil key="textColor"/>
                                                                 <nil key="highlightedColor"/>
@@ -689,7 +689,7 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="256" height="54"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Show Unadded Songs" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0ey-L3-Uk8" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                <rect key="frame" x="38" y="0.0" width="171.5" height="54"/>
+                                                                <rect key="frame" x="38" y="0.0" width="156.5" height="54"/>
                                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                                 <nil key="textColor"/>
                                                                 <nil key="highlightedColor"/>
@@ -784,7 +784,7 @@
                                                                         </userDefinedRuntimeAttributes>
                                                                     </view>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Playlists" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HoM-UR-gLw" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                        <rect key="frame" x="0.0" y="32" width="80" height="14"/>
+                                                                        <rect key="frame" x="0.0" y="33" width="80" height="12"/>
                                                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="12"/>
                                                                         <nil key="textColor"/>
                                                                         <nil key="highlightedColor"/>
@@ -844,7 +844,7 @@
                                                                         </userDefinedRuntimeAttributes>
                                                                     </view>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Songs" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="isp-9x-giC" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                        <rect key="frame" x="0.0" y="32" width="80" height="14"/>
+                                                                        <rect key="frame" x="0.0" y="33" width="80" height="12"/>
                                                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="12"/>
                                                                         <nil key="textColor"/>
                                                                         <nil key="highlightedColor"/>
@@ -904,7 +904,7 @@
                                                                         </userDefinedRuntimeAttributes>
                                                                     </view>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Artists" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fhz-eP-BUJ" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                        <rect key="frame" x="0.0" y="32" width="80" height="14"/>
+                                                                        <rect key="frame" x="0.0" y="33" width="80" height="12"/>
                                                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="12"/>
                                                                         <nil key="textColor"/>
                                                                         <nil key="highlightedColor"/>
@@ -964,7 +964,7 @@
                                                                         </userDefinedRuntimeAttributes>
                                                                     </view>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Album Artists" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="E5H-GT-OOX" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                        <rect key="frame" x="0.0" y="32" width="80" height="14"/>
+                                                                        <rect key="frame" x="0.0" y="33" width="80" height="12"/>
                                                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="12"/>
                                                                         <nil key="textColor"/>
                                                                         <nil key="highlightedColor"/>
@@ -1045,7 +1045,7 @@
                                                                                 </userDefinedRuntimeAttributes>
                                                                             </view>
                                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Albums" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fRu-g2-9oy" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                                <rect key="frame" x="0.0" y="32" width="80" height="14"/>
+                                                                                <rect key="frame" x="0.0" y="33" width="80" height="12"/>
                                                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="12"/>
                                                                                 <nil key="textColor"/>
                                                                                 <nil key="highlightedColor"/>
@@ -1105,7 +1105,7 @@
                                                                                 </userDefinedRuntimeAttributes>
                                                                             </view>
                                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Genres" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ogD-3o-Tdf" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                                <rect key="frame" x="0.0" y="32" width="80" height="14"/>
+                                                                                <rect key="frame" x="0.0" y="33" width="80" height="12"/>
                                                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="12"/>
                                                                                 <nil key="textColor"/>
                                                                                 <nil key="highlightedColor"/>
@@ -1165,7 +1165,7 @@
                                                                                 </userDefinedRuntimeAttributes>
                                                                             </view>
                                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Compilations" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="A2j-ke-x7Y" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                                <rect key="frame" x="0.0" y="32" width="80" height="14"/>
+                                                                                <rect key="frame" x="0.0" y="33" width="80" height="12"/>
                                                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="12"/>
                                                                                 <nil key="textColor"/>
                                                                                 <nil key="highlightedColor"/>
@@ -1225,7 +1225,7 @@
                                                                                 </userDefinedRuntimeAttributes>
                                                                             </view>
                                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Composers" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Drb-XU-efZ" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                                <rect key="frame" x="0.0" y="32" width="80" height="14"/>
+                                                                                <rect key="frame" x="0.0" y="33" width="80" height="12"/>
                                                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="12"/>
                                                                                 <nil key="textColor"/>
                                                                                 <nil key="highlightedColor"/>

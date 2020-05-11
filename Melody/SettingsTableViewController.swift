@@ -419,7 +419,7 @@ class SettingsTableViewController: UITableViewController {
                     })
                 ]
                 
-                if #available(iOS 13, *) { } else { alerts.remove(at: 0) }
+                if #available(iOS 13, *) { } else { alerts.remove(at: alerts.endIndex - 1) }
                 
                 showAlert(title: "Theme", with: alerts)
                 

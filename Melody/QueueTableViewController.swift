@@ -18,7 +18,7 @@ class QueueTableViewController: UITableViewController {
     
     lazy var sections: SectionDictionary = [
 
-        0: ("active queue", self.firstSectionFooter),
+        0: ("active player", self.firstSectionFooter),
         1: (nil, "When enabled, a confirmation alert will be shown for the selected criteria before the queue is modified."),
         2: ("show alert on...", nil)
     ]
@@ -39,14 +39,14 @@ class QueueTableViewController: UITableViewController {
         
         if #available(iOS 12.2, *) {
             
-            return "The Today widget is unavailable when using Mode's queue."
+            return "The Today widget is unavailable when using Mode's player."
             
         } else if #available(iOS 11, *) {
             
-            return "Using Mode's queue is not advised due to multiple bugs."
+            return "Using Mode's player is not advised due to multiple bugs."
         }
         
-        return "Using the Music app's queue will result in a worse experience when editing or adding to the queue."
+        return "Playing via the Music app will result in a worse experience when editing or adding to the queue."
     }()
     
     override func viewDidLoad() {
@@ -60,32 +60,33 @@ class QueueTableViewController: UITableViewController {
         
         guard (row == 0 && useSystemPlayer) || (row == 1 && !useSystemPlayer) else { return }
         
-        let alert = UIAlertAction.init(title: "Quit", style: .destructive, handler: { _ in
-            
-            let newPreference = !useSystemPlayer
-            
-            prefs.set(newPreference, forKey: .systemPlayer)
-            sharedDefaults.set(newPreference, forKey: .systemPlayer)
-            sharedDefaults.set(true, forKey: .quitWidget)
-            sharedDefaults.synchronize()
-            
-            let hasContent: Bool = {
-                
-                if #available(iOS 10, *) {
-                    
-                    return newPreference
-                }
-                
-                return false
-            }()
-            
-            #warning("Update for Mode App Store release")
-            NCWidgetController().setHasContent(hasContent, forWidgetWithBundleIdentifier: (Bundle.main.bundleIdentifier ?? ModeBuild.stable.rawValue) + ".Widget")
-            
-            fatalError()
-        })
+//        let alert = UIAlertAction.init(title: "Quit", style: .destructive, handler: { _ in
         
-        present(UIAlertController.withTitle("Relaunch Required", message: "Mode must quit and be relaunched for this to take effect.", style: .alert, actions: alert, .cancel()), animated: true, completion: nil)
+        if musicPlayer.isPlaying { musicPlayer.pause() }
+            
+        let newPreference = !useSystemPlayer
+        
+        prefs.set(newPreference, forKey: .systemPlayer)
+        sharedDefaults.set(newPreference, forKey: .systemPlayer)
+        sharedDefaults.set(true, forKey: .quitWidget)
+        sharedDefaults.synchronize()
+        
+        let hasContent: Bool = {
+            
+            if #available(iOS 10, *) {
+                
+                return newPreference
+            }
+            
+            return false
+        }()
+        
+        NCWidgetController().setHasContent(hasContent, forWidgetWithBundleIdentifier: (Bundle.main.bundleIdentifier ?? ModeBuild.release.rawValue) + ".Widget")
+        
+        notifier.post(name: .playerChanged, object: nil)
+//        })
+        
+//        present(UIAlertController.withTitle("Relaunch Required", message: "Mode must quit and be relaunched for this to take effect.", style: .alert, actions: alert, .cancel()), animated: true, completion: nil)
     }
     
     func toggleQueueGuard(_ sender: Any? = nil) {
@@ -244,6 +245,7 @@ class QueueTableViewController: UITableViewController {
         if indexPath.section == 0 {
             
             prepareQueueImageView(at: indexPath.row)
+            tableView.reloadSections(indexPath.indexSet, with: .fade)
         }
         
         tableView.deselectRow(at: indexPath, animated: true)

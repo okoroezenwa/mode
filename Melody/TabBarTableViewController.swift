@@ -27,6 +27,7 @@ class TabBarTableViewController: UITableViewController {
         .init(1, 3): .init(title: "Return, then Scroll to Top", accessoryType: .check({ tabBarTapBehaviour == .returnThenScroll })),
         .init(2, 0): .init(title: "Show Song Titles", accessoryType: .onOff(isOn: { showMiniPlayerSongTitles }, action: { showMiniPlayerSongTitles.toggle() })),
         .init(2, 1): .init(title: "Show Full Scrubber", accessoryType: .onOff(isOn: { useExpandedSlider }, action: { useExpandedSlider.toggle() })),
+        .init(2, 2): .init(title: "Prefer Queue Position", subtitle: "Replaces the static mini player title with the current position in the queue.", attributesInfo: .init(subtitleAttributes: [.init(name: .paragraphStyle, value: .other(NSMutableParagraphStyle.withLineHeight(1.2, alignment: .left)), range: "Replaces the \"Queue\" label title with the current position in the queue.".nsRange())]), accessoryType: .onOff(isOn: { useQueuePositionMiniPlayerTitle }, action: { useQueuePositionMiniPlayerTitle.toggle() })),
         .init(3, 0): .init(title: "Compact", accessoryType: .onOff(isOn: { useCompactCollector }, action: { [weak self] in self?.toggleCompactCollector() })),
         .init(3, 1): .init(title: "Prevent Duplicates", accessoryType: .onOff(isOn: { collectorPreventsDuplicates }, action: { [weak self] in self?.toggleDuplicates() })),
     ]
@@ -68,6 +69,11 @@ class TabBarTableViewController: UITableViewController {
         if let setting = settings[indexPath.settingsSection] {
             
             cell.prepare(with: setting)
+            
+            if cell.subtitleLabel.numberOfLines > 0 {
+                
+                cell.subtitleLabel.numberOfLines = 0
+            }
         }
         
         return cell
@@ -145,9 +151,14 @@ class TabBarTableViewController: UITableViewController {
         return footer
     }
     
+    override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        
+        settings[indexPath.settingsSection]?.subtitle?.isEmpty == false ? 54 : 0
+    }
+    
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
-        return 54
+        settings[indexPath.settingsSection]?.subtitle?.isEmpty == false ? UITableView.automaticDimension : 54
     }
     
     override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {

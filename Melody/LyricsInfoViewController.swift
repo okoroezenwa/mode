@@ -139,7 +139,7 @@ class LyricsInfoViewController: UIViewController, TableViewContaining {
         if isInDebugMode, deinitBannersEnabled {
             
             let banner = UniversalMethods.banner(withTitle: "LIVC going away...")
-            banner.titleLabel.font = .myriadPro(ofWeight: .light, size: 22)
+            banner.titleLabel.font = .font(ofWeight: .light, size: 22)
             banner.show(for: 0.3)
         }
         
@@ -232,7 +232,7 @@ extension LyricsInfoViewController: UITableViewDelegate, UITableViewDataSource {
                     
                     cell.titleLabel.attributes = nil
                     cell.prepare(with: Setting.init(title: lyrics, accessoryType: .none))
-                    cell.titleLabel.attributes = [.init(name: .paragraphStyle, value: .other(NSMutableParagraphStyle.withLineHeight(1.2, alignment: .left)), range: lyrics.nsRange())]
+                    cell.titleLabel.attributes = [.init(name: .paragraphStyle, value: .other(NSMutableParagraphStyle.withLineHeight(1.2)), range: lyrics.nsRange())]
                     cell.titleLabel.numberOfLines = 0
                     cell.backgroundColor = .clear
                     

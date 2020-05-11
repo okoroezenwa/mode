@@ -154,7 +154,7 @@ class PropertiesTableViewController: UITableViewController {
                     
                         guard let properties = (sourceIndexPath.section == 0 ? arrays.dynamic : arrays.other) as? [Property] else { return }
                         
-                        prefs.set(properties.moving(from: sourceIndexPath.row, to: destinationIndexPath.row).map({ $0.rawValue }), forKey: (sourceIndexPath.section == 0 ? .filterProperties : .otherFilterProperties))
+                        prefs.set(properties.moving(from: sourceIndexPath.row, to: destinationIndexPath.row).map({ $0.oldRawValue }), forKey: (sourceIndexPath.section == 0 ? .filterProperties : .otherFilterProperties))
                 }
             
                 prepareSections()

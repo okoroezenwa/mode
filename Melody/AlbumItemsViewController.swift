@@ -14,7 +14,7 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Inf
 
     @objc lazy var headerView: HeaderView = {
         
-        let view = HeaderView.fresh
+        let view = HeaderView.instance
         self.actionsStackView = view.actionsStackView
         self.stackView = view.scrollStackView
         arrangeButton = view.sortButton
@@ -133,7 +133,7 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Inf
     var filterText: String?
     var entityCount: Int { return songs.count }
     @objc weak var peeker: UIViewController?
-    lazy var applicableFilterProperties: Set<Property> = { self.applicationItemFilterProperties.subtracting( self.album?.representativeItem?.isCompilation == true ? [] : [.artist]) }()
+    lazy var applicableFilterProperties: Set = self.applicationItemFilterProperties.subtracting( self.album?.representativeItem?.isCompilation == true ? [] : [.artist])
     @objc var ignoreKeyboardForInset = true
     @objc lazy var wasFiltering = false
     @objc var lifetimeObservers = Set<NSObject>()
@@ -466,7 +466,7 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Inf
         
         guard let artist = getArtist(from: album?.representativeItem) else { return }
         
-        var array = [SongAction.collect, .newPlaylist, .search(unwinder: nil), .show(title: artistButton.title(for: .normal), context: InfoViewController.Context.collection(kind: .albumArtist, at: 0, within: [artist]), canDisplayInLibrary: true), .addTo].map({ singleItemAlertAction(for: $0, entityType: .albumArtist, using: artist, from: self, useAlternateTitle: false) })
+        var array = [SongAction.collect, .newPlaylist, /*.search(unwinder: nil), */.show(title: artistButton.title(for: .normal), context: InfoViewController.Context.collection(kind: .albumArtist, at: 0, within: [artist]), canDisplayInLibrary: true), .addTo].map({ singleItemAlertAction(for: $0, entityType: .albumArtist, using: artist, from: self, useAlternateTitle: false) })
         
         let info = AlertAction.init(title: "Get Info", style: .default, requiresDismissalFirst: true, handler: { [weak self] in
             
@@ -531,7 +531,7 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Inf
             }
             
             let banner = Banner.init(title: "This album has no offline songs", subtitle: nil, image: nil, backgroundColor: .red, didTapBlock: nil)
-            banner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+            banner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
             banner.show(duration: 1.5)
             
             _ = navigationController?.popViewController(animated: true)
@@ -608,27 +608,30 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Inf
         
         lifetimeObservers.insert(insetsObserver as! NSObject)
         
-        lifetimeObservers.insert(notifier.addObserver(forName: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer, queue: nil, using: { [weak self] _ in
-            
-            guard let weakSelf = self else { return }
-            
-            for cell in weakSelf.tableView.visibleCells {
+        [Notification.Name.playerChanged, .MPMusicPlayerControllerNowPlayingItemDidChange].forEach({
+        
+            lifetimeObservers.insert(notifier.addObserver(forName: $0, object: /*musicPlayer*/nil, queue: nil, using: { [weak self] _ in
                 
-                guard let cell = cell as? EntityTableViewCell, let indexPath = weakSelf.tableView.indexPath(for: cell) else { continue }
+                guard let weakSelf = self else { return }
                 
-                if cell.playingView.isHidden.inverted && musicPlayer.nowPlayingItem != weakSelf.getSong(from: indexPath) {
+                for cell in weakSelf.tableView.visibleCells {
                     
-                    cell.playingView.isHidden = true
-                    cell.indicator.state = .stopped
+                    guard let cell = cell as? EntityTableViewCell, let indexPath = weakSelf.tableView.indexPath(for: cell) else { continue }
                     
-                } else if cell.playingView.isHidden && musicPlayer.nowPlayingItem == weakSelf.getSong(from: indexPath) {
-                    
-                    cell.playingView.isHidden = false
-                    UniversalMethods.performOnMainThread({ cell.indicator.state = musicPlayer.isPlaying ? .playing : .paused }, afterDelay: 0.1)
+                    if cell.playingView.isHidden.inverted && musicPlayer.nowPlayingItem != weakSelf.getSong(from: indexPath) {
+                        
+                        cell.playingView.isHidden = true
+                        cell.indicator.state = .stopped
+                        
+                    } else if cell.playingView.isHidden && musicPlayer.nowPlayingItem == weakSelf.getSong(from: indexPath) {
+                        
+                        cell.playingView.isHidden = false
+                        UniversalMethods.performOnMainThread({ cell.indicator.state = musicPlayer.isPlaying ? .playing : .paused }, afterDelay: 0.1)
+                    }
                 }
-            }
-            
-        }) as! NSObject)
+                
+            }) as! NSObject)
+        })
         
         lifetimeObservers.insert(notifier.addObserver(forName: .showExplicitnessChanged, object: nil, queue: nil, using: { [weak self] _ in
             

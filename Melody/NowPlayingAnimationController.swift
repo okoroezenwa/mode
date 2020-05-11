@@ -74,6 +74,9 @@ class NowPlayingAnimationController: NSObject, UIViewControllerAnimatedTransitio
                         let inset = (fromVC.activeViewController?.topViewController as? Navigatable)?.inset ?? (10 + 34 + 10)
                         fromVC.visualEffectNavigationBar.transform = .init(translationX: 0, y: -(inset + (UIApplication.shared.statusBarFrame.height == 40 ? 0 : UIApplication.shared.statusBarFrame.height)))
                         fromVC.bottomEffectView.transform = .init(translationX: 0, y: fromVC.inset + bottomInset)
+                        
+                        fromVC.centreView.transform = .init(scaleX: 0.5, y: 0.5)
+                        fromVC.centreView.alpha = 0
                     })
                     
                     UIView.addKeyframe(withRelativeStartTime: 2.4/5, relativeDuration: 2.6/5, animations: {
@@ -96,6 +99,8 @@ class NowPlayingAnimationController: NSObject, UIViewControllerAnimatedTransitio
                     fromVC.containerView.alpha = 0
                     fromVC.containerView.transform = .identity
                     
+                    fromVC.centreView.transform = .identity
+                    
                     fromVC.altImageView.alpha = 0
                     fromVC.imageView.alpha = 1
                     fromVC.imageView.image = transitionContext.transitionWasCancelled.inverted ? toVC.artworkType.image : fromVC.modifier?.artworkType.image
@@ -108,6 +113,9 @@ class NowPlayingAnimationController: NSObject, UIViewControllerAnimatedTransitio
                 let containerView = transitionContext.containerView
                 
                 toVC.view.frame = .init(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height - (isiPhoneX ? 0 : UIApplication.shared.statusBarFrame.height - 20))
+                
+                toVC.centreView.transform = .init(scaleX: 0.5, y: 0.5)
+                toVC.centreView.alpha = 0
                 
                 if useAlternateAnimation {
                     
@@ -163,10 +171,20 @@ class NowPlayingAnimationController: NSObject, UIViewControllerAnimatedTransitio
                             toVC.imageView.alpha = 1
                             toVC.imageView.image = toVC.modifier?.artworkType.image
                         }
+                        
+                        toVC.centreView.transform = .identity
+                        
+                        if let displayer = toVC.activeViewController?.topViewController as? CentreViewDisplaying {
+                            
+                            displayer.updateCurrentView(to: displayer.currentCentreView, animated: true)
+                        }
                     
                     } else {
                         
                         toVC.containerView.alpha = 0
+                        
+                        toVC.centreView.transform = .init(scaleX: 0.5, y: 0.5)
+                        toVC.centreView.alpha = 0
                         
                         if useAlternateAnimation.inverted {
                             
@@ -202,6 +220,12 @@ class NowPlayingAnimationController: NSObject, UIViewControllerAnimatedTransitio
                         UIView.addKeyframe(withRelativeStartTime: 1/5, relativeDuration: 4/5, animations: {
                             
                             toVC.containerView.alpha = 1
+                            toVC.centreView.transform = .identity
+                            
+                            if let displayer = toVC.activeViewController?.topViewController as? CentreViewDisplaying, displayer.currentCentreView != .none {
+                                
+                                toVC.centreView.alpha = 1
+                            }
                         })
                         
                     }, completion: completion)
@@ -223,6 +247,13 @@ class NowPlayingAnimationController: NSObject, UIViewControllerAnimatedTransitio
                             
                             toVC.visualEffectNavigationBar.transform = .identity
                             toVC.bottomEffectView.transform = .identity
+                            
+                            toVC.centreView.transform = .identity
+                            
+                            if let displayer = toVC.activeViewController?.topViewController as? CentreViewDisplaying, displayer.currentCentreView != .none {
+                                
+                                toVC.centreView.alpha = 1
+                            }
                         })
                         
                         UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 1, animations: {

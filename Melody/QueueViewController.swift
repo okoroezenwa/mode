@@ -10,10 +10,11 @@ import UIKit
 
 var isQueueAvailable: Bool { if !useSystemPlayer, forceOldStyleQueue.inverted, #available(iOS 10.3, *), let _ = musicPlayer as? MPMusicPlayerApplicationController { return true } else { return false } }
 
-class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITableViewDataSource, UITableViewDelegate, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, GenreTransitionable, ComposerTransitionable, InfoLoading, BackgroundHideable, Dismissable, EntityContainer, CellAnimatable, Peekable, SingleItemActionable, IndexContaining, LargeActivityIndicatorContaining, EntityVerifiable, Detailing {
+class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITableViewDataSource, UITableViewDelegate, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, GenreTransitionable, ComposerTransitionable, InfoLoading, BackgroundHideable, Dismissable, EntityContainer, CellAnimatable, Peekable, SingleItemActionable, IndexContaining, EntityVerifiable, Detailing, CentreViewDisplaying {
     
     @IBOutlet var tableView: MELTableView!
     @IBOutlet var bottomView: UIView!
+    @IBOutlet var clearButton: MELButton!
     @IBOutlet var queueStackView: UIStackView!
     @IBOutlet var queueStackViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet var activityIndicator: MELActivityIndicatorView!
@@ -95,11 +96,18 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
     }
     var oldArtwork: UIImage?
     
+    var centreViewGiantImage: UIImage?
+    var centreViewTitleLabelText: String? = "Empty Queue"
+    var centreViewSubtitleLabelText: String? = "Play a song or two to show the queue"
+    var centreViewLabelsImage: UIImage? = #imageLiteral(resourceName: "Queue100")
+    lazy var centreView: CentreView? = .instance
+    var currentCentreView = CentreView.CurrentView.none
+    
     var manager: QueueManager?
     var sectionIndexViewController: SectionIndexViewController?
     var navigatable: Navigatable?
     let requiresLargerTrailingConstraint = true
-    lazy var notificationName = isQueueAvailable ? Notification.Name.indexUpdated : .nowPlayingItemChanged
+//    lazy var notificationName = isQueueAvailable ? Notification.Name.indexUpdated : .nowPlayingItemChanged
     
     @objc var actionableSongs: [MPMediaItem] { return queue }
     let applicableActions = [SongAction.collect, .newPlaylist, .addTo]
@@ -168,11 +176,15 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         
         shouldReturnToContainer = false
         
+        centreView?.add(to: view, below: self, above: bottomView)
+        updateCentreView()
+        updateSideButtonsForPlayback()
+        
         notifier.addObserver(self, selector: #selector(applicationChangedState(_:)), name: UIApplication.willEnterForegroundNotification, object: UIApplication.shared)
         
         notifier.addObserver(self, selector: #selector(applicationChangedState(_:)), name: UIApplication.didEnterBackgroundNotification, object: UIApplication.shared)
         
-        notifier.addObserver(self, selector: #selector(reload(_:)), name: notificationName, object: musicPlayer)
+        [(applicationPlayer, Notification.Name.indexUpdated), (systemPlayer, .nowPlayingItemChanged), (applicationPlayer, .nowPlayingItemChanged)].forEach({ notifier.addObserver(self, selector: #selector(reload(_:)), name: $0.1, object: $0.0) })
         
         notifier.addObserver(self, selector: #selector(reload), name: .shuffleInvoked, object: nil)
         
@@ -201,7 +213,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         } else {
             
             queueStackViewHeightConstraint.constant = 44
-            
+            tableView.allowsMultipleSelectionDuringEditing = true
             tableView.register(UINib.init(nibName: "PlaybackCell", bundle: nil), forCellReuseIdentifier: "cell")
             
             let swipeRight = UISwipeGestureRecognizer.init(target: songManager, action: #selector(SongActionManager.toggleEditing(_:)))
@@ -237,6 +249,11 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         updateQueue()
     }
     
+    func updateCentreView() {
+        
+        updateCurrentView(to: musicPlayer.nowPlayingItem == nil ? .labels(components: [.image, .title, .subtitle]) : .none)
+    }
+    
     @objc func updateExplicitVisibility() {
         
         guard let indexPaths = tableView.indexPathsForVisibleRows else { return }
@@ -266,7 +283,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
 //        
 //        guard !useSystemPlayer, forceOldStyleQueue.inverted, #available(iOS 10.3, *), let musicPlayer = musicPlayer as? MPMusicPlayerApplicationController else { return }
 //
-//        updateLoadingViews(hidden: false)
+//        updateCurrentView(to: .indicator)
 //
 //        musicPlayer.perform(queueTransaction: { _ in }, completionHandler: { [weak self] controller, _ in
 //
@@ -278,7 +295,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
 //                weakSelf.tableView.reloadData()
 ////            if weakSelf.presented { weakSelf.animateCells() }
 //
-//                weakSelf.updateLoadingViews(hidden: true)
+//                weakSelf.updateCurrentView(to: .none)
 //            }
 //        })
     }
@@ -303,11 +320,16 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                 
                 } else {
                     
-                    var actions = [SongAction.collect, .info(context: context(from: indexPath)), .newPlaylist, .addTo, .show(title: cell.nameLabel.text, context: context(from: indexPath), canDisplayInLibrary: true), .search(unwinder: { [weak self] in self?.parent })].map({ singleItemAlertAction(for: $0, entityType: .song, using: item, from: self) })
+                    var actions = [SongAction.collect, .info(context: context(from: indexPath)), .newPlaylist, .addTo, .show(title: cell.nameLabel.text, context: context(from: indexPath), canDisplayInLibrary: true)/*, .search(unwinder: { [weak self] in self?.parent })*/].map({ singleItemAlertAction(for: $0, entityType: .song, using: item, from: self) })
                     
                     if item.existsInLibrary.inverted {
                         
                         actions.append(singleItemAlertAction(for: .library, entityType: .song, using: item, from: self))
+                    }
+                    
+                    if indexPath.section != 1 {
+                        
+                        actions.append(singleItemAlertAction(for: .remove(indexPath), entityType: .song, using: item, from: self))
                     }
                     
                     showAlert(title: cell.nameLabel.text, with: actions)
@@ -384,6 +406,8 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         
         if isQueueAvailable, queue.isEmpty { return }
         
+        guard musicPlayer.nowPlayingItem != nil else { return }
+        
         if let index = Queue.shared.indexToUse, index == 0 {
             
             tableView.scrollToRow(at: IndexPath.init(row: 0, section: 1), at: .top, animated: true)
@@ -401,7 +425,21 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         dismiss(animated: true, completion: nil)
     }
     
+    func updateSideButtonsForPlayback() {
+        
+        [clearButton, editButton].forEach({
+            
+            $0?.lightOverride = musicPlayer.nowPlayingItem == nil
+            $0?.isUserInteractionEnabled = musicPlayer.nowPlayingItem != nil
+        })
+    }
+    
     @objc func reload(_ sender: Any) {
+        
+        if sender is Notification, musicPlayer.nowPlayingItem == nil { return }
+        
+        updateCentreView()
+        updateSideButtonsForPlayback()
         
         if useSystemPlayer || forceOldStyleQueue {
             
@@ -410,16 +448,20 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         
         guard let _ = musicPlayer.nowPlayingItem else {
             
-            if presentedViewController == nil {
-                
-                guard !(presentingViewController is NowPlayingViewController), useSystemPlayer else { return }
-                
-                dismiss(animated: true, completion: nil)
-                
-            } else {
-                
-                needsDismissal = true
-            }
+            tableView.reloadData()
+            presenter?.prepare(animated: true, updateConstraintsAndButtons: false)
+            presenter?.updateRightButton(true)
+            
+//            if presentedViewController == nil {
+//
+//                guard !(presentingViewController is NowPlayingViewController), useSystemPlayer else { return }
+//
+//                dismiss(animated: true, completion: nil)
+//
+//            } else {
+//
+//                needsDismissal = true
+//            }
             
             return
         }
@@ -447,6 +489,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         }
         
         presenter?.prepare(animated: true, updateConstraintsAndButtons: false)
+        presenter?.updateRightButton(true)
     }
     
     @objc func viewSections() {
@@ -537,7 +580,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             } else if queueIsBeingEdited {
                 
                 shouldReload = false
-                updateLoadingViews(hidden: false)
+                updateCurrentView(to: .indicator)
                 
                 UniversalMethods.performOnMainThread({ [weak self] in
                     
@@ -551,7 +594,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                         weakSelf.toggleEditing(false)
                         weakSelf.snapToNowPlaying()
                         weakSelf.presenter?.prepare(animated: true, updateConstraintsAndButtons: false)
-                        weakSelf.updateLoadingViews(hidden: true)
+                        weakSelf.updateCurrentView(to: .none)
                         weakSelf.shouldReload = true
                         
                         if let sender = weakSelf.presentingViewController as? NowPlayingViewController {
@@ -597,7 +640,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                 currentItem = nil
                 
                 let newBanner = Banner.init(title: showiCloudItems ? "This album is not in your library" : "This album is not available offline", subtitle: nil, image: nil, backgroundColor: .black, didTapBlock: nil)
-                newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+                newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
                 newBanner.show(duration: 0.7)
             }
         }
@@ -646,7 +689,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         guard let indexPaths = tableView.indexPathsForSelectedRows else {
             
             let banner = Banner.init(title: "No songs selected", subtitle: nil, image: nil, backgroundColor: .azure, didTapBlock: nil)
-            banner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+            banner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
             banner.show(duration: 0.5)
             
             return
@@ -664,7 +707,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                 
                 musicPlayer.perform(queueTransaction: { controller in
                     
-                    self?.updateLoadingViews(hidden: false)
+                    self?.updateCurrentView(to: .indicator)
                     
                     let subtracted = controller.items.filter({ !set.contains($0) })
                     
@@ -691,7 +734,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                         notifier.post(name: .queueModified, object: nil, userInfo: [.queueChange: true])
                     }))
                     
-                    self?.updateLoadingViews(hidden: true)
+                    self?.updateCurrentView(to: .none)
                     
 //                    notifier.post(name: .saveQueue, object: musicPlayer, userInfo: [String.queueItems: controller.items])
 //                    weakSelf.queue = controller.items
@@ -779,7 +822,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         guard let indexPaths = sender as? [IndexPath] ?? tableView.indexPathsForSelectedRows else {
             
             let banner = Banner.init(title: "No songs selected", subtitle: nil, image: nil, backgroundColor: .azure, didTapBlock: nil)
-            banner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+            banner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
             banner.show(duration: 0.5)
             
             return
@@ -793,7 +836,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                 
                 var removedItems = [MPMediaItem]()
                 
-                self?.updateLoadingViews(hidden: false)
+                self?.updateCurrentView(to: .indicator)
                 
                 musicPlayer.perform(queueTransaction: { controller in
                     
@@ -823,7 +866,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                             notifier.post(name: .queueModified, object: nil, userInfo: [.queueChange: true])
                         }))
                         
-                        self?.updateLoadingViews(hidden: true)
+                        self?.updateCurrentView(to: .none)
                         
 //                        notifier.post(name: .saveQueue, object: musicPlayer, userInfo: [String.queueItems: controller.items])
 //                        weakSelf.queue = controller.items
@@ -950,7 +993,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                 
                 guard let weakSelf = self else { return }
                 
-                self?.updateLoadingViews(hidden: false)
+                self?.updateCurrentView(to: .indicator)
                 
                 for song in weakSelf.queue.enumerated() where song.offset != index {
                     
@@ -976,7 +1019,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                     weakSelf.presenter?.prepare(animated: true, updateConstraintsAndButtons: false)
                 })
                 
-                self?.updateLoadingViews(hidden: true)
+                self?.updateCurrentView(to: .none)
                 
 //                notifier.post(name: .saveQueue, object: musicPlayer, userInfo: [String.queueItems: controller.items])
 //                notifier.post(name: .queueModified, object: nil)
@@ -1061,6 +1104,8 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         if firstScroll {
 
             if #available(iOS 11.3, *), !useSystemPlayer, forceOldStyleQueue.inverted, queue.isEmpty { return }
+            
+            guard musicPlayer.nowPlayingItem != nil else { return }
 
             tableView.scrollToRow(at: IndexPath.init(row: 0, section: presented ? 2 : 1), at: .top, animated: false)
 //            tableView.tableHeaderView?.isHidden = false
@@ -1137,7 +1182,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
 //
 //        activityVisualEffectView.isHidden = queueIsBeingEdited ? hidden : firstScroll
 //        activityView.isHidden = hidden
-//        hidden ? largeActivityIndicator.stopAnimating() : largeActivityIndicator.startAnimating()
+//        hidden ? activityIndicator.stopAnimating() : activityIndicator.startAnimating()
 //    }
     
     deinit {
@@ -1159,10 +1204,14 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
 
     func numberOfSections(in tableView: UITableView) -> Int {
         
+        guard musicPlayer.nowPlayingItem != nil else { return 0 }
+        
         return queueIsBeingEdited ? 1 : 3
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        guard musicPlayer.nowPlayingItem != nil else { return 0 }
             
         if isQueueAvailable {
             
@@ -1689,7 +1738,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             
             musicPlayer.perform(queueTransaction: { controller in
                 
-                self.updateLoadingViews(hidden: false)
+                self.updateCurrentView(to: .indicator)
                 
                 let itemBefore: MPMediaItem? = {
                     
@@ -1770,7 +1819,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
 //                    notifier.post(name: .queueModified, object: nil, userInfo: [.queueChange: true])
 //                })
                 
-                self?.updateLoadingViews(hidden: true)
+                self?.updateCurrentView(to: .none)
                 
 //                weakSelf.queue.remove(at: indexToRemove)
 //                weakSelf.queue.insert(relevantItem, at: indexToAdd)
@@ -1790,7 +1839,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                 
             } else {
                 
-                updateLoadingViews(hidden: false)
+                updateCurrentView(to: .indicator)
                 
                 UniversalMethods.performOnMainThread({ [weak self] in
                     
@@ -1839,7 +1888,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                         }
                     }
                     
-                    weakSelf.updateLoadingViews(hidden: true)
+                    weakSelf.updateCurrentView(to: .none)
                 
                 }, afterDelay: 0.01)
             }
@@ -1874,7 +1923,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
     
 //    @available(iOS 13, *)
 //    func tableView(_ tableView: UITableView, didBeginMultipleSelectionInteractionAt indexPath: IndexPath) {
-//        print("yo")
+//
 //        songManager.toggleEditing(self)
 //    }
 //
@@ -2009,7 +2058,7 @@ extension QueueViewController {
                 
                 if !useSystemPlayer, forceOldStyleQueue.inverted, #available(iOS 10.3, *), let musicPlayer = musicPlayer as? MPMusicPlayerApplicationController, let index = Queue.shared.indexToUse, let vc = vc as? QueueViewController, vc.queue.filter({ $0 == nowPlaying }).count < 2 {
                     
-                    self?.updateLoadingViews(hidden: false)
+                    self?.updateCurrentView(to: .indicator)
                     
                     musicPlayer.perform(queueTransaction: { controller in
                         
@@ -2030,13 +2079,13 @@ extension QueueViewController {
                             notifier.post(name: .queueModified, object: nil, userInfo: [.queueChange: true])
                         })
                         
-                        self?.updateLoadingViews(hidden: true)
+                        self?.updateCurrentView(to: .none)
                         
 //                        notifier.post(name: .saveQueue, object: musicPlayer, userInfo: [String.queueItems: controller.items])
 //                        notifier.post(name: .queueModified, object: nil)
                         
                         let banner = UniversalMethods.banner(withTitle: "Queue Cleared")
-                        banner.titleLabel.font = .myriadPro(ofWeight: .light, size: 25)
+                        banner.titleLabel.font = .font(ofWeight: .light, size: 25)
                         banner.show(for: 0.5)
                     })
                     
@@ -2096,11 +2145,16 @@ extension QueueViewController: EntityCellDelegate {
         
         guard let indexPath = tableView.indexPath(for: cell), let item = getSong(from: indexPath) else { return }
         
-        var actions = [SongAction.collect, .info(context: context(from: indexPath)), .newPlaylist, .addTo, .show(title: cell.nameLabel.text, context: context(from: indexPath), canDisplayInLibrary: true), .search(unwinder: { [weak self] in self?.parent })].map({ singleItemAlertAction(for: $0, entityType: .song, using: item, from: self) })
+        var actions = [SongAction.collect, .info(context: context(from: indexPath)), .newPlaylist, .addTo, .show(title: cell.nameLabel.text, context: context(from: indexPath), canDisplayInLibrary: true)/*, .search(unwinder: { [weak self] in self?.parent })*/].map({ singleItemAlertAction(for: $0, entityType: .song, using: item, from: self) })
         
         if item.existsInLibrary.inverted {
             
             actions.append(singleItemAlertAction(for: .library, entityType: .song, using: item, from: self))
+        }
+        
+        if indexPath.section != 1 {
+            
+            actions.append(singleItemAlertAction(for: .remove(indexPath), entityType: .song, using: item, from: self))
         }
         
         showAlert(title: cell.nameLabel.text, with: actions)

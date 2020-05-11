@@ -522,7 +522,7 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
                     
                 case .playlists: return "Add \((self.manager?.queue ?? self.itemsToAdd).count.fullCountText(for: .song)) to..."
                     
-                case .queue: return "Queue" + musicPlayer.fullQueueCount(withInitialSpace: true)
+                case .queue: return "Queue" + (musicPlayer.nowPlayingItem == nil ? "" : musicPlayer.fullQueueCount(withInitialSpace: true))
                     
                 case .settings: return "Settings"
                     
@@ -546,7 +546,7 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
                 
                 case .background: return "Background"
                 
-                case .filter: return "Previous Searches"
+                case .filter: return "Previous Filters"
                 
                 case .artwork: return "Artwork"
                 
@@ -652,6 +652,14 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
             case .queue:
                 
                 if updateConstraintsAndButtons {
+                    
+                    if musicPlayer.nowPlayingItem == nil {
+                        
+                        rightButton.isHidden = true
+                        rightBorderView.isHidden = true
+                        
+                        return
+                    }
                     
                     rightButton.isHidden = false
                     rightBorderView.isHidden = false

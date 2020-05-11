@@ -167,7 +167,7 @@ class HeaderView: UIView, InfoLoading {
         }
     }
     
-    @objc class var fresh: HeaderView {
+    @objc class var instance: HeaderView {
         
         let view = Bundle.main.loadNibNamed("HeaderView", owner: nil, options: nil)?.first as! HeaderView
         
@@ -237,7 +237,6 @@ class HeaderView: UIView, InfoLoading {
         let queue = OperationQueue()
         queue.name = "Image Operation Queue"
         
-        
         return queue
     }()
     @objc let imageCache: ImageCache = {
@@ -248,6 +247,15 @@ class HeaderView: UIView, InfoLoading {
         
         return cache
     }()
+    
+    weak var tapDelegate: HeaderViewTextViewTapDelegate?
+    var textViewMinimised = true {
+        
+        didSet {
+            
+            descriptionTextView.textContainer.maximumNumberOfLines = textViewMinimised ? 2 : 0
+        }
+    }
     
     weak var viewController: UIViewController? {
         
@@ -274,8 +282,19 @@ class HeaderView: UIView, InfoLoading {
         updateScrollStackView()
         updateSpacing(self)
         
+        descriptionTextView.textContainer.maximumNumberOfLines = textViewMinimised ? 2 : 0
+        descriptionTextView.textContainer.lineBreakMode = .byTruncatingTail
+        
+        let gr = UITapGestureRecognizer.init(target: self, action: #selector(changeTextView))
+        descriptionTextView.addGestureRecognizer(gr)
+        
         notifier.addObserver(self, selector: #selector(updateSpacing), name: .lineHeightsCalculated, object: nil)
         notifier.addObserver(self, selector: #selector(updateCell(_:)), name: .playlistSelected, object: nil)
+    }
+    
+    @objc func changeTextView() {
+        
+        tapDelegate?.textViewTapped()
     }
     
     func updateScrollStackView() {
@@ -329,6 +348,11 @@ class HeaderView: UIView, InfoLoading {
                 }
         }
     }
+    
+//    override func layoutSubviews() {
+//
+//            super.layoutSubviews()
+//    }
 }
 
 extension HeaderView: UICollectionViewDelegate, UICollectionViewDataSource {
@@ -699,9 +723,9 @@ extension HeaderView: PlaylistCollectionCellDelegate {
             .queue(name: cell.nameLabel.text, query: .init(filterPredicates: [.for(entityType, using: entity)])),
             .show(title: cell.nameLabel.text, context: context.infoContext(at: indexPath), canDisplayInLibrary: true),
             .newPlaylist,
-            .addTo,
+            .addTo/*,
             .search(unwinder: nil)
-        ].map({ vc.singleItemAlertAction(for: $0, entityType: entityType, using: entity, from: vc) })
+        */].map({ vc.singleItemAlertAction(for: $0, entityType: entityType, using: entity, from: vc) })
         
 //        actions.insert(vc.singleItemAlertAction(for: .show(title: cell.nameLabel.text, context: context.infoContext(at: indexPath), canDisplayInLibrary: true), entity: entityType, using: item, from: vc, useAlternateTitle: true), at: 1)
         
@@ -712,4 +736,9 @@ extension HeaderView: PlaylistCollectionCellDelegate {
         
         vc.showAlert(title: cell.nameLabel.text, with: actions)
     }
+}
+
+protocol HeaderViewTextViewTapDelegate: class {
+    
+    func textViewTapped()
 }

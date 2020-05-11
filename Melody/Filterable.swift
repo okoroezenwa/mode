@@ -26,9 +26,9 @@ protocol Filterable: FilterContaining {
 
 extension Filterable {
     
-    var applicationItemFilterProperties: Set<Property> { return [.title, .artist, .album, .genre, .composer, .plays, .year, .isCloud, .artwork, .isCompilation, .isExplicit, .rating, .status, .size, .lastPlayed, .dateAdded] }
+    var applicationItemFilterProperties: Set<Property> { return [.title, .artist, .album, .genre, .composer, .plays, .year, .isCloud, .artwork, .isCompilation, .isExplicit, .rating, .affinity, .size, .lastPlayed, .dateAdded] }
     
-    var applicableCollectionFilterProperties: Set<Property> { return [.title, .artist, .genre, .plays, .year, .isCloud, .artwork, .isCompilation, .trackCount, .albumCount, .size, .status, .dateAdded] }
+    var applicableCollectionFilterProperties: Set<Property> { return [.title, .artist, .genre, .plays, .year, .isCloud, .artwork, .isCompilation, .songCount, .albumCount, .size, .affinity, .dateAdded] }
     
     var id: MPMediaEntityPersistentID {
         
@@ -98,7 +98,7 @@ extension Filterable {
         
         switch filterProperty {
             
-            case .album, .artist, .title, .composer, .genre, .trackCount, .albumCount, .plays, .year, .size, .albumArtist: return []
+            case .album, .artist, .title, .composer, .genre, .songCount, .albumCount, .plays, .year, .size, .albumArtist, .default, .albumName, .albumYear, .random: return []
             
             case .rating: return [nil] + {
                 
@@ -118,7 +118,7 @@ extension Filterable {
             
             case .isCompilation, .isExplicit: return [nil, FilterPickerViewOptions.yes.rawValue, FilterPickerViewOptions.no.rawValue]
             
-            case .status: return [nil, FilterPickerViewOptions.neutral.rawValue, FilterPickerViewOptions.liked.rawValue, FilterPickerViewOptions.disliked.rawValue]
+            case .affinity: return [nil, FilterPickerViewOptions.neutral.rawValue, FilterPickerViewOptions.liked.rawValue, FilterPickerViewOptions.disliked.rawValue]
             
             case .artwork: return [nil, FilterPickerViewOptions.available.rawValue, FilterPickerViewOptions.unavailable.rawValue]
             
@@ -164,9 +164,9 @@ extension Filterable {
             
             case .size: return song.fileSize
             
-            case .albumCount, .trackCount: return nil
+            case .albumCount, .songCount, .default, .albumName, .albumYear, .random: return nil
             
-            case .status: return song.likedState.rawValue
+            case .affinity: return song.likedState.rawValue
         }
     }
     
@@ -210,15 +210,6 @@ extension Filterable {
                 }
             
             case .artwork: return collection.customArtwork(for: kind.entityType) != nil
-            
-                /*switch kind {
-                    
-                    case .playlist: return collection.customArtwork(for: .playlist) != nil
-                    
-                    case .
-                    
-                    default: return nil
-                }*/
             
             case .dateAdded:
             
@@ -266,7 +257,7 @@ extension Filterable {
             
             case .size: return collection.totalSize
             
-            case .trackCount: return collection.items.count
+            case .songCount: return collection.items.count
             
             case .albumCount:
             
@@ -285,9 +276,7 @@ extension Filterable {
             
             case .composer where self is SearchViewController && kind == .composer: return collection.representativeItem?.validComposer.lowercased().folded
             
-            case .rating, .lastPlayed, .isExplicit, .composer, .album: return nil
-            
-            case .status:
+            case .affinity:
             
                 switch kind {
                     
@@ -295,6 +284,8 @@ extension Filterable {
                     
                     default: return nil
                 }
+            
+            case .rating, .lastPlayed, .isExplicit, .composer, .album, .default, .albumName, .albumYear, .random: return nil
         }
     }
     
@@ -304,11 +295,13 @@ extension Filterable {
             
             case .album, .artist, .title, .composer, .genre, .albumArtist: return [.isExactly, .contains, .beginsWith, .endsWith]
                 
-            case .trackCount, .albumCount, .plays, .rating, .year, .size: return [.isExactly, .isOver, .isUnder]
+            case .songCount, .albumCount, .plays, .rating, .year, .size: return [.isExactly, .isOver, .isUnder]
                 
-            case .isCloud, .isCompilation, .artwork, .isExplicit, .status: return [.isExactly]
+            case .isCloud, .isCompilation, .artwork, .isExplicit, .affinity: return [.isExactly]
                 
             case .lastPlayed, .dateAdded, .duration: return [.isExactly, .isOver, .isUnder]
+            
+            case .default, .albumName, .albumYear, .random: return []
         }
     }
     
@@ -320,13 +313,15 @@ extension Filterable {
             
             case .album, .artist, .title, .composer, .genre, .albumArtist: return .contains
             
-            case .trackCount, .albumCount, .plays, .year, .size: return .isOver
+            case .songCount, .albumCount, .plays, .year, .size: return .isOver
             
             case .rating: return .isExactly
             
-            case .isCloud, .isCompilation, .artwork, .isExplicit, .status: return .isExactly
+            case .isCloud, .isCompilation, .artwork, .isExplicit, .affinity: return .isExactly
             
             case .lastPlayed, .dateAdded, .duration: return .isOver
+            
+            case .default, .albumName, .albumYear, .random: fatalError("None of these should be available to Filterable objects")
         }
     }
     
@@ -336,7 +331,7 @@ extension Filterable {
             
             case .album, .artist, .title, .composer, .genre: return .default
             
-            case .trackCount, .albumCount, .plays, .rating, .year: return .numberPad
+            case .songCount, .albumCount, .plays, .rating, .year: return .numberPad
             
             case .size, .lastPlayed, .dateAdded, .duration: return .decimalPad
             
@@ -348,9 +343,9 @@ extension Filterable {
         
         switch filterProperty {
             
-            case .album, .artist, .title, .composer, .genre, .trackCount, .albumCount, .plays, .year, .size, .lastPlayed, .dateAdded, .duration, .albumArtist: return nil
+            case .album, .artist, .title, .composer, .genre, .songCount, .albumCount, .plays, .year, .size, .lastPlayed, .dateAdded, .duration, .albumArtist, .default, .albumName, .albumYear, .random: return nil
             
-            case .isCloud, .isCompilation, .artwork, .isExplicit, .rating, .status: return filterContainer?.requiredInputView
+            case .isCloud, .isCompilation, .artwork, .isExplicit, .rating, .affinity: return filterContainer?.requiredInputView
         }
     }
     
@@ -382,13 +377,13 @@ extension Filterable {
             
                 switch propertyTest {
                     
-                    case .isExactly: return items.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return filterTerm(from: $0) as? String == (term as? String)?.lowercased().folded })
+                    case .isExactly: return items.filter({ filterTerm(from: $0) as? String == (term as? String)?.lowercased().folded }, until: { filterOperation?.isCancelled == true })
                     
-                    case .contains: return items.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return ((filterTerm(from: $0) as? String)?.score(word: (term as? String ?? "").lowercased().folded, fuzziness: 1 - filterFuzziness) ?? 0) >= 0.5 || (filterTerm(from: $0) as? String)?.range(of: (term as? String ?? "").lowercased().folded) != nil })
+                    case .contains: return items.filter({ ((filterTerm(from: $0) as? String)?.score(word: (term as? String ?? "").lowercased().folded, fuzziness: 1 - filterFuzziness) ?? 0) >= 0.5 || (filterTerm(from: $0) as? String)?.range(of: (term as? String ?? "").lowercased().folded) != nil }, until: { filterOperation?.isCancelled == true })
                     
-                    case .beginsWith: return items.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return (filterTerm(from: $0) as? String)?.hasPrefix((term as? String ?? "").lowercased().folded) == true })
+                    case .beginsWith: return items.filter({ (filterTerm(from: $0) as? String)?.hasPrefix((term as? String ?? "").lowercased().folded) == true }, until: { filterOperation?.isCancelled == true })
                     
-                    case .endsWith: return items.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return (filterTerm(from: $0) as? String)?.hasSuffix((term as? String ?? "").lowercased().folded) == true })
+                    case .endsWith: return items.filter({ (filterTerm(from: $0) as? String)?.hasSuffix((term as? String ?? "").lowercased().folded) == true }, until: { filterOperation?.isCancelled == true })
                     
                     default: return []
                 }
@@ -399,11 +394,11 @@ extension Filterable {
             
                 switch propertyTest {
                     
-                    case .isExactly: return items.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return filterTerm(from: $0) as? Int == number })
+                    case .isExactly: return items.filter({ filterTerm(from: $0) as? Int == number }, until: { filterOperation?.isCancelled == true })
                     
-                    case .isOver: return items.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return (filterTerm(from: $0) as? Int ?? 0) > number })
+                    case .isOver: return items.filter({ (filterTerm(from: $0) as? Int ?? 0) > number }, until: { filterOperation?.isCancelled == true })
                     
-                    case .isUnder: return items.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return (filterTerm(from: $0) as? Int ?? 0) < number })
+                    case .isUnder: return items.filter({ (filterTerm(from: $0) as? Int ?? 0) < number }, until: { filterOperation?.isCancelled == true })
                     
                     default: return []
                 }
@@ -414,9 +409,9 @@ extension Filterable {
             
                 switch location {
                     
-                    case .iCloud: return items.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return filterTerm(from: $0) as? Bool == true })
+                    case .iCloud: return items.filter({ filterTerm(from: $0) as? Bool == true }, until: { filterOperation?.isCancelled == true })
                     
-                    case .device: return items.filter({  guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return filterTerm(from: $0) as? Bool == false })
+                    case .device: return items.filter({  filterTerm(from: $0) as? Bool == false }, until: { filterOperation?.isCancelled == true })
                     
                     default: return []
                 }
@@ -427,9 +422,9 @@ extension Filterable {
                 
                 switch location {
                     
-                    case .available: return items.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return filterTerm(from: $0) as? Bool == true })
+                    case .available: return items.filter({ filterTerm(from: $0) as? Bool == true }, until: { filterOperation?.isCancelled == true })
                     
-                    case .unavailable: return items.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return filterTerm(from: $0) as? Bool == false })
+                    case .unavailable: return items.filter({ filterTerm(from: $0) as? Bool == false }, until: { filterOperation?.isCancelled == true })
                     
                     default: return []
                 }
@@ -440,9 +435,9 @@ extension Filterable {
             
                 switch location {
                     
-                    case .yes: return items.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return filterTerm(from: $0) as? Bool == true })
+                    case .yes: return items.filter({ filterTerm(from: $0) as? Bool == true }, until: { filterOperation?.isCancelled == true })
                     
-                    case .no: return items.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return filterTerm(from: $0) as? Bool == false })
+                    case .no: return items.filter({ filterTerm(from: $0) as? Bool == false }, until: { filterOperation?.isCancelled == true })
                     
                     default: return []
                 }
@@ -453,11 +448,11 @@ extension Filterable {
             
                 switch propertyTest {
                     
-                    case .isExactly: return items.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return $0.fileSize == number.applyMultiplier(of: primarySuffix) })
+                    case .isExactly: return items.filter({ $0.fileSize == number.applyMultiplier(of: primarySuffix) }, until: { filterOperation?.isCancelled == true })
                         
-                    case .isOver: return items.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return $0.fileSize > number.applyMultiplier(of: primarySuffix) })
+                    case .isOver: return items.filter({ $0.fileSize > number.applyMultiplier(of: primarySuffix) }, until: { filterOperation?.isCancelled == true })
                         
-                    case .isUnder: return items.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return $0.fileSize < number.applyMultiplier(of: primarySuffix) })
+                    case .isUnder: return items.filter({ $0.fileSize < number.applyMultiplier(of: primarySuffix) }, until: { filterOperation?.isCancelled == true })
                         
                     default: return []
                 }
@@ -466,11 +461,11 @@ extension Filterable {
             
                 switch propertyTest {
                     
-                    case .isExactly: return items.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return $0.playbackDuration == term as? TimeInterval })
+                    case .isExactly: return items.filter({ $0.playbackDuration == term as? TimeInterval }, until: { filterOperation?.isCancelled == true })
                         
-                    case .isOver: return items.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return $0.playbackDuration > (term as? TimeInterval ?? 0) })
+                    case .isOver: return items.filter({ $0.playbackDuration > (term as? TimeInterval ?? 0) }, until: { filterOperation?.isCancelled == true })
                         
-                    case .isUnder: return items.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return $0.playbackDuration < (term as? TimeInterval ?? 0) })
+                    case .isUnder: return items.filter({ $0.playbackDuration < (term as? TimeInterval ?? 0) }, until: { filterOperation?.isCancelled == true })
                         
                     default: return []
                 }
@@ -485,11 +480,11 @@ extension Filterable {
             
                 switch propertyTest {
                     
-                    case .isExactly: return items.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return $0.validLastPlayed == date })
+                    case .isExactly: return items.filter({ $0.validLastPlayed == date }, until: { filterOperation?.isCancelled == true })
                         
-                    case .isOver: return items.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return $0.validLastPlayed > date })
+                    case .isOver: return items.filter({ $0.validLastPlayed > date }, until: { filterOperation?.isCancelled == true })
                         
-                    case .isUnder: return items.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return $0.validLastPlayed < date })
+                    case .isUnder: return items.filter({ $0.validLastPlayed < date }, until: { filterOperation?.isCancelled == true })
                         
                     default: return []
                 }
@@ -504,31 +499,31 @@ extension Filterable {
             
                 switch propertyTest {
                     
-                    case .isExactly: return items.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return $0.validDateAdded == date })
+                    case .isExactly: return items.filter({ $0.validDateAdded == date }, until: { filterOperation?.isCancelled == true })
                         
-                    case .isOver: return items.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return $0.validDateAdded > date })
+                    case .isOver: return items.filter({ $0.validDateAdded > date }, until: { filterOperation?.isCancelled == true })
                         
-                    case .isUnder: return items.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return $0.validDateAdded < date })
+                    case .isUnder: return items.filter({ $0.validDateAdded < date }, until: { filterOperation?.isCancelled == true })
                         
                     default: return []
                 }
             
-            case .status:
+            case .affinity:
             
                 guard let string = term as? String, let status = FilterPickerViewOptions(rawValue: string) else { return [] }
                 
                 switch status {
                     
-                    case .neutral: return items.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return filterTerm(from: $0) as? Int == LikedState.none.rawValue })
+                    case .neutral: return items.filter({ filterTerm(from: $0) as? Int == LikedState.none.rawValue }, until: { filterOperation?.isCancelled == true })
                     
-                    case .liked: return items.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return filterTerm(from: $0) as? Int == LikedState.liked.rawValue })
+                    case .liked: return items.filter({ filterTerm(from: $0) as? Int == LikedState.liked.rawValue }, until: { filterOperation?.isCancelled == true })
                     
-                    case .disliked: return items.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return filterTerm(from: $0) as? Int == LikedState.disliked.rawValue })
+                    case .disliked: return items.filter({ filterTerm(from: $0) as? Int == LikedState.disliked.rawValue }, until: { filterOperation?.isCancelled == true })
                     
                     default: return []
                 }
             
-            case .trackCount, .albumCount: return []
+            case .songCount, .albumCount, .default, .albumName, .albumYear, .random: return []
         }
     }
     
@@ -542,28 +537,28 @@ extension Filterable {
             
                 switch propertyTest {
                     
-                    case .isExactly: return collections.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return filterTerm(from: $0, kind: kind) as? String == (term as? String)?.lowercased().folded })
+                    case .isExactly: return collections.filter({ filterTerm(from: $0, kind: kind) as? String == (term as? String)?.lowercased().folded }, until: { filterOperation?.isCancelled == true })
                     
                     case .contains: return collections.filter({ ((filterTerm(from: $0, kind: kind) as? String)?.score(word: (term as? String ?? "").lowercased().folded, fuzziness: 1 - filterFuzziness) ?? 0) >= 0.5 || (filterTerm(from: $0, kind: kind) as? String)?.range(of: (term as? String ?? "").lowercased().folded) != nil }, until: { filterOperation?.isCancelled == true })
                             
-                    case .beginsWith: return collections.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return (filterTerm(from: $0, kind: kind) as? String)?.hasPrefix((term as? String ?? "").lowercased().folded) == true })
+                    case .beginsWith: return collections.filter({ (filterTerm(from: $0, kind: kind) as? String)?.hasPrefix((term as? String ?? "").lowercased().folded) == true }, until: { filterOperation?.isCancelled == true })
                     
-                    case .endsWith: return collections.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return (filterTerm(from: $0, kind: kind) as? String)?.hasSuffix((term as? String ?? "").lowercased().folded) == true })
+                    case .endsWith: return collections.filter({ (filterTerm(from: $0, kind: kind) as? String)?.hasSuffix((term as? String ?? "").lowercased().folded) == true }, until: { filterOperation?.isCancelled == true })
                     
                     default: return []
                 }
             
-            case .plays, .year, .trackCount, .albumCount:
+            case .plays, .year, .songCount, .albumCount:
                 
                 guard let string = term as? String, let number = Int(string) else { return [] }
             
                 switch propertyTest {
                     
-                    case .isExactly: return collections.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return filterTerm(from: $0, kind: kind) as? Int == number })
+                    case .isExactly: return collections.filter({ filterTerm(from: $0, kind: kind) as? Int == number }, until: { filterOperation?.isCancelled == true })
                     
-                    case .isOver: return collections.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return (filterTerm(from: $0, kind: kind) as? Int ?? 0) > number })
+                    case .isOver: return collections.filter({ (filterTerm(from: $0, kind: kind) as? Int ?? 0) > number }, until: { filterOperation?.isCancelled == true })
                     
-                    case .isUnder: return collections.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return (filterTerm(from: $0, kind: kind) as? Int ?? 0) < number })
+                    case .isUnder: return collections.filter({ (filterTerm(from: $0, kind: kind) as? Int ?? 0) < number }, until: { filterOperation?.isCancelled == true })
                     
                     default: return []
                 }
@@ -574,9 +569,9 @@ extension Filterable {
             
                 switch location {
                     
-                    case .iCloud: return collections.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return filterTerm(from: $0, kind: kind) as? Bool == true })
+                    case .iCloud: return collections.filter({ filterTerm(from: $0, kind: kind) as? Bool == true }, until: { filterOperation?.isCancelled == true })
                     
-                    case .device: return collections.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return filterTerm(from: $0, kind: kind) as? Bool == false })
+                    case .device: return collections.filter({ filterTerm(from: $0, kind: kind) as? Bool == false }, until: { filterOperation?.isCancelled == true })
                     
                     default: return []
                 }
@@ -587,9 +582,9 @@ extension Filterable {
                 
                 switch location {
                     
-                    case .available: return collections.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return filterTerm(from: $0, kind: kind) as? Bool == true })
+                    case .available: return collections.filter({ filterTerm(from: $0, kind: kind) as? Bool == true }, until: { filterOperation?.isCancelled == true })
                     
-                    case .unavailable: return collections.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return filterTerm(from: $0, kind: kind) as? Bool == false })
+                    case .unavailable: return collections.filter({ filterTerm(from: $0, kind: kind) as? Bool == false }, until: { filterOperation?.isCancelled == true })
                     
                     default: return []
                 }
@@ -600,9 +595,9 @@ extension Filterable {
             
                 switch location {
                     
-                    case .yes: return collections.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return filterTerm(from: $0, kind: kind) as? Bool == true })
+                    case .yes: return collections.filter({ filterTerm(from: $0, kind: kind) as? Bool == true }, until: { filterOperation?.isCancelled == true })
                     
-                    case .no: return collections.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return filterTerm(from: $0, kind: kind) as? Bool == false })
+                    case .no: return collections.filter({ filterTerm(from: $0, kind: kind) as? Bool == false }, until: { filterOperation?.isCancelled == true })
                     
                     default: return []
                 }
@@ -613,11 +608,11 @@ extension Filterable {
             
                 switch propertyTest {
                     
-                    case .isExactly: return collections.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return $0.totalSize == number.applyMultiplier(of: primarySuffix) })
+                    case .isExactly: return collections.filter({ $0.totalSize == number.applyMultiplier(of: primarySuffix) }, until: { filterOperation?.isCancelled == true })
                     
-                    case .isOver: return collections.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return $0.totalSize > number.applyMultiplier(of: primarySuffix) })
+                    case .isOver: return collections.filter({ $0.totalSize > number.applyMultiplier(of: primarySuffix) }, until: { filterOperation?.isCancelled == true })
                     
-                    case .isUnder: return collections.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return $0.totalSize < number.applyMultiplier(of: primarySuffix) })
+                    case .isUnder: return collections.filter({ $0.totalSize < number.applyMultiplier(of: primarySuffix) }, until: { filterOperation?.isCancelled == true })
                     
                     default: return []
                 }
@@ -626,11 +621,11 @@ extension Filterable {
             
                 switch propertyTest {
                     
-                    case .isExactly: return collections.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return $0.totalDuration == term as? TimeInterval })
+                    case .isExactly: return collections.filter({ $0.totalDuration == term as? TimeInterval }, until: { filterOperation?.isCancelled == true })
                     
-                    case .isOver: return collections.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return $0.totalDuration > (term as? TimeInterval ?? 0) })
+                    case .isOver: return collections.filter({ $0.totalDuration > (term as? TimeInterval ?? 0) }, until: { filterOperation?.isCancelled == true })
                     
-                    case .isUnder: return collections.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return $0.totalDuration < (term as? TimeInterval ?? 0) })
+                    case .isUnder: return collections.filter({ $0.totalDuration < (term as? TimeInterval ?? 0) }, until: { filterOperation?.isCancelled == true })
                     
                     default: return []
                 }
@@ -645,31 +640,31 @@ extension Filterable {
             
                 switch propertyTest {
                     
-                    case .isExactly: return collections.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled, let dateAdded = filterTerm(from: $0, kind: kind) as? Date else { return false }; return dateAdded == date })
+                    case .isExactly: return collections.filter({ guard let dateAdded = filterTerm(from: $0, kind: kind) as? Date else { return false }; return dateAdded == date }, until: { filterOperation?.isCancelled == true })
                     
-                    case .isOver: return collections.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled, let dateAdded = filterTerm(from: $0, kind: kind) as? Date else { return false }; return dateAdded > date })
+                    case .isOver: return collections.filter({ guard let dateAdded = filterTerm(from: $0, kind: kind) as? Date else { return false }; return dateAdded > date }, until: { filterOperation?.isCancelled == true })
                     
-                    case .isUnder: return collections.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled, let dateAdded = filterTerm(from: $0, kind: kind) as? Date else { return false }; return dateAdded < date })
+                    case .isUnder: return collections.filter({ guard let dateAdded = filterTerm(from: $0, kind: kind) as? Date else { return false }; return dateAdded < date }, until: { filterOperation?.isCancelled == true })
                     
                     default: return []
                 }
             
-            case .rating, .lastPlayed, .isExplicit: return []
-            
-            case .status:
+            case .affinity:
             
                 guard let string = term as? String, let status = FilterPickerViewOptions(rawValue: string) else { return [] }
                 
                 switch status {
                     
-                    case .neutral: return collections.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return filterTerm(from: $0, kind: kind) as? Int == LikedState.none.rawValue })
+                    case .neutral: return collections.filter({ filterTerm(from: $0, kind: kind) as? Int == LikedState.none.rawValue }, until: { filterOperation?.isCancelled == true })
                     
-                    case .liked: return collections.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return filterTerm(from: $0, kind: kind) as? Int == LikedState.liked.rawValue })
+                    case .liked: return collections.filter({ filterTerm(from: $0, kind: kind) as? Int == LikedState.liked.rawValue }, until: { filterOperation?.isCancelled == true })
                     
-                    case .disliked: return collections.filter({ guard let filterOperation = filterOperation, !filterOperation.isCancelled else { return false }; return filterTerm(from: $0, kind: kind) as? Int == LikedState.disliked.rawValue })
+                    case .disliked: return collections.filter({ filterTerm(from: $0, kind: kind) as? Int == LikedState.disliked.rawValue }, until: { filterOperation?.isCancelled == true })
                     
                     default: return []
                 }
+            
+            case .rating, .lastPlayed, .isExplicit, .default, .albumName, .albumYear, .random: return []
         }
     }
     
@@ -683,7 +678,7 @@ extension Filterable {
                     
                     case .album, .artist, .title, .composer, .genre: return "matches"
                     
-//                    case .trackCount, .albumCount, .plays: return "equal"
+//                    case .songCount, .albumCount, .plays: return "equal"
 //
 //                    case .rating, .size, .duration: return "equals"
                     
@@ -702,9 +697,9 @@ extension Filterable {
             
                 switch property {
                     
-                case .album, .artist, .title, .composer, .genre, .isCloud, .isCompilation, .artwork, .isExplicit, .status, .albumArtist: return ""
+                case .album, .artist, .title, .composer, .genre, .isCloud, .isCompilation, .artwork, .isExplicit, .affinity, .albumArtist, .default, .albumName, .albumYear, .random: return ""
                     
-                    case .trackCount, .albumCount, .plays, .rating, .size, .duration: return "over"
+                    case .songCount, .albumCount, .plays, .rating, .size, .duration: return "over"
                     
                     case .lastPlayed, .dateAdded, .year: return "after"
                 }
@@ -713,9 +708,9 @@ extension Filterable {
             
                 switch property {
                     
-                    case .album, .artist, .title, .composer, .genre, .isCloud, .isCompilation, .artwork, .isExplicit, .status, .albumArtist: return ""
+                    case .album, .artist, .title, .composer, .genre, .isCloud, .isCompilation, .artwork, .isExplicit, .affinity, .albumArtist, .default, .albumName, .albumYear, .random: return ""
                     
-                    case .trackCount, .albumCount, .plays, .rating, .size, .duration: return "under"
+                    case .songCount, .albumCount, .plays, .rating, .size, .duration: return "under"
                     
                     case .lastPlayed, .dateAdded, .year: return "before"
                 }
@@ -733,14 +728,24 @@ extension Filterable {
             
             searchVC.searchBar?.becomeFirstResponder()
             
-        } else if let filter = self as? (UIViewController & Filterable), let vc = presentedStoryboard.instantiateViewController(withIdentifier: "presentedVC") as? PresentedContainerViewController {
+        } else if let filter = self as? (UIViewController & Filterable) {
             
-            vc.context = .filter
-            vc.filterVC.sender = filter
-            vc.filterVC.entities = filter.filterEntities
-            vc.prompt = ((appDelegate.window?.rootViewController as? ContainerViewController)?.activeViewController?.topViewController as? Navigatable)?.preferredTitle
+            if let collectionsVC = filter as? CollectionsViewController, collectionsVC.presented, let vc = presentedStoryboard.instantiateViewController(withIdentifier: "presentedVC") as? PresentedContainerViewController {
+                
+                vc.context = .filter
+                vc.filterVC.sender = collectionsVC
+                vc.filterVC.entities = collectionsVC.filterEntities
+                vc.prompt = ((appDelegate.window?.rootViewController as? ContainerViewController)?.activeViewController?.topViewController as? Navigatable)?.preferredTitle
+                
+                collectionsVC.present(vc, animated: true, completion: nil)
             
-            filter.present(vc, animated: true, completion: nil)
+            } else if let vc = presentedChilrenStoryboard.instantiateViewController(withIdentifier: "FilterViewController") as? FilterViewController, let container = appDelegate.window?.rootViewController as? ContainerViewController {
+                
+                vc.sender = filter
+                vc.entities = filterEntities
+                vc.backLabelText = (container.activeViewController?.topViewController as? Navigatable)?.preferredTitle
+                container.activeViewController?.pushViewController(vc, animated: true)
+            }
         }
     }
     
@@ -769,7 +774,7 @@ extension Filterable {
         
         switch property {
             
-            case .trackCount, .albumCount, .plays, .rating, .year:
+            case .songCount, .albumCount, .plays, .rating, .year:
                 
                 guard let text = container.searchBar.text, let int = Int(text) else {
                     
@@ -810,7 +815,7 @@ extension Filterable {
                     container.searchBar.text = nil
                 }
             
-            case .lastPlayed, .dateAdded, .duration, .isCloud, .artwork, .status:
+            case .lastPlayed, .dateAdded, .duration, .isCloud, .artwork, .affinity:
                 
                 container.searchBar.text = nil
                 container.requiredInputView?.pickerView.selectRow(0, inComponent: 0, animated: true)

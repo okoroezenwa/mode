@@ -8,7 +8,7 @@
 
 import UIKit
 
-class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer, SingleItemActionable {
+class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer, SingleItemActionable/*, CentreViewDisplaying*/ {
 
     @IBOutlet var tableView: MELTableView!
     @IBOutlet var bottomView: UIView!
@@ -20,8 +20,15 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
     var preferredEditingStyle = EditingStyle.select
     
     @objc var actionableSongs: [MPMediaItem] { return manager?.queue ?? playlistItems }
-    let applicableActions = [SongAction.remove]
+    let applicableActions = [SongAction.remove(nil)]
     @objc lazy var songManager: SongActionManager = { return SongActionManager.init(actionable: self) }()
+    
+//    var centreViewGiantImage: UIImage?
+//    var centreViewTitleLabelText: String?
+//    var centreViewSubtitleLabelText: String?
+//    var centreViewLabelsImage: UIImage?
+//    lazy var centreView: CentreView? = CentreView.instance
+//    var currentCentreView = CentreView.CurrentView.none
     
     lazy var ignoreManager = false
     
@@ -74,6 +81,11 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
         notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillHideNotification, object: nil)
         notifier.addObserver(tableView as Any, selector: #selector(UITableView.reloadData), name: .lineHeightsCalculated, object: nil)
         
+//        centreView?.add(to: view, below: self, above: bottomView)
+//        centreViewLabelsImage = #imageLiteral(resourceName: "AddToPlaylist100")
+//        centreViewTitleLabelText = "Nothing Here..."
+//        centreViewSubtitleLabelText = "Filters acted upon are added here"
+        
         let hold = UILongPressGestureRecognizer.init(target: self, action: #selector(performHold(_:)))
         hold.minimumPressDuration = longPressDuration
         tableView.addGestureRecognizer(hold)
@@ -88,7 +100,7 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
         tableView.addGestureRecognizer(swipeLeft)
         
         [Notification.Name.entityCountVisibilityChanged, .showExplicitnessChanged].forEach({ notifier.addObserver(self, selector: #selector(updateEntityCountVisibility), name: $0, object: nil) }) 
-        notifier.addObserver(self, selector: #selector(updateNowPlaying), name: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer)
+        [Notification.Name.playerChanged, .MPMusicPlayerControllerNowPlayingItemDidChange].forEach({ notifier.addObserver(self, selector: #selector(updateNowPlaying), name: $0, object: /*musicPlayer*/nil) })
         
         nameTextField.becomeFirstResponder()
         
@@ -252,7 +264,7 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
         guard nameTextField.text?.isEmpty == false else {
             
             let newBanner = Banner.init(title: "Your playlist must have a name", subtitle: nil, image: nil, backgroundColor: .red, didTapBlock: nil)
-            newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+            newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
             newBanner.show(duration: 0.6)
             
             return
@@ -282,7 +294,7 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
                     if (weakSelf.manager?.queue ?? weakSelf.playlistItems).isEmpty {
                         
                         let newBanner = Banner.init(title: "Playlist Created", subtitle: nil, image: nil, backgroundColor: .deepGreen, didTapBlock: nil)
-                        newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+                        newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
                         newBanner.show(duration: 0.6)
                         
                         if weakSelf.fromQueue, let _ = weakSelf.manager {
@@ -317,7 +329,7 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
                                     if error == nil {
                                         
                                         let newBanner = Banner.init(title: "Playlist created with \(array.count) \(array.count == 1 ? "song" : "songs")", subtitle: nil, image: nil, backgroundColor: .deepGreen, didTapBlock: nil)
-                                        newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+                                        newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
                                         newBanner.show(duration: 0.5)
                                         
                                         notifier.post(name: .songsAddedToPlaylists, object: nil, userInfo: [String.addedPlaylists: [playlist?.persistentID ?? 0], String.addedSongs: array])
@@ -338,7 +350,7 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
                                     } else {
                                         
                                         let newBanner = Banner.init(title: "Unable to add \(array.count) \(array.count == 1 ? "song" : "songs") to created playlist", subtitle: nil, image: nil, backgroundColor: .orange, didTapBlock: nil)
-                                        newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+                                        newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
                                         newBanner.show(duration: 1)
                                         
                                         if weakSelf.fromQueue {
@@ -363,7 +375,7 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
                 } else {
                     
                     let newBanner = Banner.init(title: "Unable to create playlist", subtitle: nil, image: nil, backgroundColor: .red, didTapBlock: nil)
-                    newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+                    newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
                     newBanner.show(duration: 0.6)
                     
                     parent.updateIndicator(to: .hidden)
@@ -426,7 +438,7 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
         
         var array = [AlertAction]()
         
-        let clearAll = alertAction(for: .remove, from: self, using: manager?.queue ?? playlistItems)
+        let clearAll = alertAction(for: .remove(nil), from: self, using: manager?.queue ?? playlistItems)
         array.append(clearAll)
         
         if let indexPaths = tableView.indexPathsForSelectedRows, !indexPaths.isEmpty {

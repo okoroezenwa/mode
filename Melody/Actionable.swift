@@ -194,7 +194,7 @@ extension SongActionable {
                         guard let addable = self as? EntityVerifiable, addable.verifyLibraryStatus(of: item, itemProperty: .song) == .absent else {
                 
                             let banner = Banner.init(title: "This song is already in your library", subtitle: nil, image: nil, backgroundColor: .deepGreen, didTapBlock: nil)
-                            banner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+                            banner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
                             banner.show(duration: 0.5)
                 
                             (self as? EntityVerifiable)?.updateAddButton(hidden: true, animated: true)
@@ -331,7 +331,7 @@ class SongActionManager: NSObject {
                     collectionActionable.actionableActivityIndicator.startAnimating()
                     collectionActionable.shouldFillActionableSongs = true
                     collectionActionable.showActionsAfterFilling = true
-                    (collectionActionable.editButton.superview as? PillButtonView)?.stackView?.alpha = 0
+                    (collectionActionable.editButton?.superview as? PillButtonView)?.stackView?.alpha = 0
                     
                     if collectionActionable.actionableSongs.isEmpty {
                         
@@ -405,19 +405,19 @@ class SongActionManager: NSObject {
                 
                 let details: (title: String?, image: UIImage) = (editButtonHasTitle ? .inactiveEditButtonTitle : nil, editButtonHasTitle ? .inactiveEditImage : .inactiveEditBorderlessImage)
                 
-                if let superview = actionable.editButton.superview as? PillButtonView {
+                if let superview = actionable.editButton?.superview as? PillButtonView {
                     
                     superview.animateChange(title: details.title, image: details.image)
                 
-                } else if let snapshot = actionable.editButton.snapshotView(afterScreenUpdates: false) {
+                } else if let button = actionable.editButton, let snapshot = button.snapshotView(afterScreenUpdates: false) {
                     
-                    actionable.editButton.superview?.superview?.addSubview(snapshot)
-                    snapshot.frame = actionable.editButton.frame
-                    actionable.editButton.alpha = 0
-                    actionable.editButton.transform = .init(scaleX: 0.2, y: 0.2)
+                    button.superview?.superview?.addSubview(snapshot)
+                    snapshot.frame = button.frame
+                    button.alpha = 0
+                    button.transform = .init(scaleX: 0.2, y: 0.2)
                     
-                    actionable.editButton.setTitle(details.title, for: .normal)
-                    actionable.editButton.setImage(details.image, for: .normal)
+                    button.setTitle(details.title, for: .normal)
+                    button.setImage(details.image, for: .normal)
                     
                     UIView.animateKeyframes(withDuration: 0.3, delay: 0, options: .calculationModeCubic, animations: {
                         
@@ -429,19 +429,19 @@ class SongActionManager: NSObject {
                         
                         UIView.addKeyframe(withRelativeStartTime: 1/2, relativeDuration: 1/2, animations: {
                             
-                            actionable.editButton.transform = .identity
-                            actionable.editButton.alpha = 1
+                            button.transform = .identity
+                            button.alpha = 1
                         })
                         
                     }, completion: { _ in snapshot.removeFromSuperview() })
                 }
             }
             
-            if sender is UIAlertAction, isEditing {
+            if sender is UIAlertAction, isEditing, let button = actionable.editButton {
                 
-                container.handleLeftSwipe(actionable.editButton as Any)
+                container.handleLeftSwipe(button)
                 
-            } else if sender is UIButton || sender is UITapGestureRecognizer, !(container is CollectorViewController || container is NewPlaylistViewController), isEditing {
+            } else if sender is UIButton || sender is UITapGestureRecognizer, !(container is CollectorViewController || container is NewPlaylistViewController), isEditing, let button = actionable.editButton {
                 
                 if let filterVC = actionable as? FilterViewController, filterVC.filtering.inverted {
                     
@@ -449,7 +449,7 @@ class SongActionManager: NSObject {
                     
                 } else {
                     
-                    container.handleLeftSwipe(actionable.editButton as Any)
+                    container.handleLeftSwipe(button)
                 }
                 
             } else {
@@ -468,19 +468,19 @@ class SongActionManager: NSObject {
                     vc.nameTextField.resignFirstResponder()
                 }
                 
-                if let superview = actionable.editButton.superview as? PillButtonView {
+                if let superview = actionable.editButton?.superview as? PillButtonView {
                     
                     superview.animateChange(title: details.title, image: details.image)
                 
-                } else if let snapshot = actionable.editButton.snapshotView(afterScreenUpdates: false) {
+                } else if  let button = actionable.editButton, let snapshot = button.snapshotView(afterScreenUpdates: false) {
                     
-                    actionable.editButton.superview?.superview?.addSubview(snapshot)
-                    snapshot.frame = actionable.editButton.frame
-                    actionable.editButton.alpha = 0
-                    actionable.editButton.transform = .init(scaleX: 0.2, y: 0.2)
+                    button.superview?.superview?.addSubview(snapshot)
+                    snapshot.frame = button.frame
+                    button.alpha = 0
+                    button.transform = .init(scaleX: 0.2, y: 0.2)
                     
-                    actionable.editButton.setTitle(details.title, for: .normal)
-                    actionable.editButton.setImage(details.image, for: .normal)
+                    button.setTitle(details.title, for: .normal)
+                    button.setImage(details.image, for: .normal)
                     
                     UIView.animateKeyframes(withDuration: 0.3, delay: 0, options: .calculationModeCubic, animations: {
                         
@@ -492,8 +492,8 @@ class SongActionManager: NSObject {
                         
                         UIView.addKeyframe(withRelativeStartTime: 1/2, relativeDuration: 1/2, animations: {
                             
-                            actionable.editButton.transform = .identity
-                            actionable.editButton.alpha = 1
+                            button.transform = .identity
+                            button.alpha = 1
                         })
                         
                     }, completion: { _ in snapshot.removeFromSuperview() })
@@ -561,7 +561,7 @@ extension SingleItemActionable {
      
      - Returns: A UIAlertAction object.
     */
-    func singleItemSystemAlertAction(for action: SongAction, entityType: EntityType, using entity: MPMediaEntity, from vc: UIViewController, useAlternateTitle: Bool = false) -> UIAlertAction {
+    func singleItemSystemAlertAction(for action: SongAction, entityType: EntityType, using entity: MPMediaEntity, at indexPath: IndexPath? = nil, from vc: UIViewController, useAlternateTitle: Bool = false) -> UIAlertAction {
         
         let details = singleItemActionDetails(for: action, entityType: entityType, using: entity, from: vc, useAlternateTitle: useAlternateTitle)
         
@@ -581,11 +581,27 @@ extension SingleItemActionable {
      
      - Returns: An AlertAction object.
     */
-    func singleItemAlertAction(for action: SongAction, entityType: EntityType, using entity: MPMediaEntity, from vc: UIViewController, useAlternateTitle: Bool = false) -> AlertAction {
+    func singleItemAlertAction(for action: SongAction, entityType: EntityType, using entity: MPMediaEntity, at indexPath: IndexPath? = nil, from vc: UIViewController, useAlternateTitle: Bool = false) -> AlertAction {
         
         let details = singleItemActionDetails(for: action, entityType: entityType, using: entity, from: vc, useAlternateTitle: useAlternateTitle)
         
-        return AlertAction.init(title: details.title, style: details.style, requiresDismissalFirst: action.requiresDismissalFirst, handler: details.handler)
+        let requiresDismissalFirst: Bool = {
+            
+            switch action {
+                
+                case .remove(_): return vc is QueueViewController
+                
+                case .reveal(indexPath: _):
+                
+                    if let container = (self as? Contained & UIViewController)?.container, container.filterViewContainer.filterView.searchBar.isFirstResponder { return true }
+                
+                    return false
+                
+                default: return action.requiresDismissalFirst
+            }
+        }()
+        
+        return AlertAction.init(title: details.title, style: details.style, requiresDismissalFirst: requiresDismissalFirst, handler: details.handler)
     }
     
     /**
@@ -714,39 +730,54 @@ extension SingleItemActionable {
                     }
                 })
             
-            case .remove:
+            case .remove(let indexPath):
             
-                return (action: action, title: "Remove All", style: .destructive, handler: {
+                return (action: action, title: "Remove", style: .destructive, handler: {
                     
-                    guard let vc = vc as? NewPlaylistViewController, let parent = vc.parent as? PresentedContainerViewController else { return }
+                    guard let indexPath = indexPath else { return }
                     
-                    if let _ = vc.manager {
+                    if let vc = vc as? QueueViewController {
                         
-                        vc.manager?.queue = []
-                        vc.tableView.reloadData()//deleteRows(at: vc.tableView.indexPathsForVisibleRows ?? [], with: .none)
+                        vc.removeSelected([indexPath])
+                    
+                    } else if let vc = vc as? CollectorViewController {
                         
-                        notifier.post(name: .endQueueModification, object: nil)
+                        vc.tableView(vc.tableView, commit: .delete, forRowAt: indexPath)
+                    
+                    } else if let vc = vc as? NewPlaylistViewController {
                         
-                        parent.prepare(animated: true)
-                        
-                        if let presenter = parent.presentingViewController as? PresentedContainerViewController {
-                            
-                            presenter.prepare(animated: false)
-                            presenter.queueVC.tableView.reloadData()
-                        }
-                        
-                        if vc.tableView.isEditing { vc.toggleEditing(false) }
-                        
-                    } else {
-                        
-                        vc.playlistItems = []
-                        parent.itemsToAdd = []
-                        vc.tableView.reloadData()//deleteRows(at: vc.tableView.indexPathsForVisibleRows ?? [], with: .none)
-                        
-                        parent.prepare(animated: true)
-                        
-                        if vc.tableView.isEditing { vc.toggleEditing(false) }
+                        vc.updateItems(at: [indexPath], for: .remove)
                     }
+                    
+//                    guard let vc = vc as? NewPlaylistViewController, let parent = vc.parent as? PresentedContainerViewController else { return }
+//
+//                    if let _ = vc.manager {
+//
+//                        vc.manager?.queue = []
+//                        vc.tableView.reloadData()//deleteRows(at: vc.tableView.indexPathsForVisibleRows ?? [], with: .none)
+//
+//                        notifier.post(name: .endQueueModification, object: nil)
+//
+//                        parent.prepare(animated: true)
+//
+//                        if let presenter = parent.presentingViewController as? PresentedContainerViewController {
+//
+//                            presenter.prepare(animated: false)
+//                            presenter.queueVC.tableView.reloadData()
+//                        }
+//
+//                        if vc.tableView.isEditing { vc.toggleEditing(false) }
+//
+//                    } else {
+//
+//                        vc.playlistItems = []
+//                        parent.itemsToAdd = []
+//                        vc.tableView.reloadData()//deleteRows(at: vc.tableView.indexPathsForVisibleRows ?? [], with: .none)
+//
+//                        parent.prepare(animated: true)
+//
+//                        if vc.tableView.isEditing { vc.toggleEditing(false) }
+//                    }
                 })
             
             case .library:
@@ -760,7 +791,7 @@ extension SingleItemActionable {
                         guard let addable = self as? EntityVerifiable, addable.verifyLibraryStatus(of: item, itemProperty: .song) == .absent else {
                 
                             let banner = Banner.init(title: "This song is already in your library", subtitle: nil, image: nil, backgroundColor: .deepGreen, didTapBlock: nil)
-                            banner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+                            banner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
                             banner.show(duration: 0.5)
                 
                             (self as? EntityVerifiable)?.updateAddButton(hidden: true, animated: true)
@@ -882,7 +913,7 @@ extension SingleItemActionable {
                         let collection = verifiedEntityType.collection(from: entity)
                         parameters.append((collection, verifiedEntityType))
                         
-                        if entityType == .song, useSystemAlerts.inverted, isInDebugMode {
+                        if entityType == .song, let song = entity as? MPMediaItem, useSystemAlerts.inverted, isInDebugMode {
                             
                             topAction = { vPVC in
                                 
@@ -890,7 +921,10 @@ extension SingleItemActionable {
                                 
                                 if !(base is NowPlayingViewController), let nowPlayingVC = (appDelegate.window?.rootViewController as? ContainerViewController)?.moveToNowPlaying(vc: nowPlayingStoryboard.instantiateViewController(withIdentifier: "nowPlaying"), showingQueue: false) as? NowPlayingViewController {
                                     
-                                    nowPlayingVC.alternateItem = entity as? MPMediaItem
+                                    if isInDebugMode, song != musicPlayer.nowPlayingItem {
+                                    
+                                        nowPlayingVC.alternateItem = song
+                                    }
                                     
                                     base?.dismiss(animated: false, completion: { topViewController?.present(nowPlayingVC, animated: true, completion: nil) })
                                 
@@ -1067,8 +1101,8 @@ extension SingleItemActionable {
                             return .bar
                         }(),
                         with: actions,
-                        segmentDetails: (canDisplay ? [.init(title: "Show in Library")/*\(2.countText(for: entityType, compilationOverride: song.isCompilation, capitalised: true))")*/] : [], canDisplay ? [{ alertVC in verifiable.showInLibrary(entity: entity, type: entityType, unwinder: alertVC) }] : []),
-                        leftAction: { [weak self] _, unwinder in self?.singleItemActionDetails(for: .search(unwinder: { unwinder.children.first }), entityType: entityType, using: entity, from: vc, useAlternateTitle: useAlternateTitle).handler() },
+                        segmentDetails: (canDisplay ? [.init(title: "Show in Library")/*\(2.countText(for: entityType, compilationOverride: song.isCompilation, capitalised: true))")*/] : [], canDisplay ? [{ alertVC in verifiable.showInLibrary(entity: entity, type: entityType, unwinder: alertVC) }] : [])/*,
+                        leftAction: { [weak self] _, unwinder in self?.singleItemActionDetails(for: .search(unwinder: { unwinder.children.first }), entityType: entityType, using: entity, from: vc, useAlternateTitle: useAlternateTitle).handler() }*/,
                         rightAction: { [weak self] _, presenter in presenter.dismiss(animated: true, completion: { self?.singleItemActionDetails(for: .info(context: context), entityType: entityType, using: entity, from: vc, useAlternateTitle: useAlternateTitle).handler() }) },
                         topAction: topAction,
                         topPreviewAction: topPreviewAction,
@@ -1098,7 +1132,6 @@ extension SingleItemActionable {
                         if shouldSetProperties, searchVC.filterProperty != .title {
                             
                             searchVC.filterProperty = .title
-//                            container.filterViewContainer.filterView.collectionView.reloadData()
                         }
                         
                         if shouldSetProperties, searchVC.propertyTest != .contains {
@@ -1180,7 +1213,7 @@ extension SingleItemActionable {
             
                 return (action: action, title: "Like...", style: .default, {
                     
-                    guard let settable = entity as? Settable else { return }
+                    guard let settable = entity as? Settable, let title = entity.title(for: entityType, basedOn: entityType) else { return }
                     
                     let actions = [.none, LikedState.liked, .disliked].map({ value -> AlertAction in
                         
@@ -1206,17 +1239,19 @@ extension SingleItemActionable {
                             }
                         })
                     })
+                    
+                    vc.showAlert(title: title, subtitle: "Set Affinity as...", with: actions)
                 })
             
             case .reveal(indexPath: let indexPath):
             
                 return (action: action, title: "Reveal", style: .default, {
                     
-                    guard let container = vc as? FilterContaining & FilterContextDiscoverable else { return }
+                    guard let filterVC = vc as? FilterViewController, let container = filterVC.tableContainer as? FilterContaining & FilterContextDiscoverable else { return }
                     
                     container.filterContainer?.saveRecentSearch(withTitle: container.filterContainer?.searchBar?.text, resignFirstResponder: false)
                     _ = container.filterContainer?.searchBar.resignFirstResponder
-                    container.filterContainer?.dismiss(animated: true, completion: nil)
+                    container.filterContainer?.navigationController?.popViewController(animated: true)//dismiss(animated: true, completion: nil)
                     container.revealEntity(indexPath)
                 })
             
@@ -1232,7 +1267,7 @@ extension SingleItemActionable {
                             
                             UniversalMethods.performInMain {
                                 
-                                UniversalMethods.banner(withTitle: "Unable to add \(items.count.fullCountText(for: .song))", subtitle: nil, image: nil, backgroundColor: .red, titleFont: .myriadPro(ofWeight: .light, size: 20), didTapBlock: nil).show(duration: .bannerInterval)
+                                UniversalMethods.banner(withTitle: "Unable to add \(items.count.fullCountText(for: .song))", subtitle: nil, image: nil, backgroundColor: .red, titleFont: .font(ofWeight: .light, size: 20), didTapBlock: nil).show(duration: .bannerInterval)
                                 
                                 completions?.error()
                             }
@@ -1242,7 +1277,7 @@ extension SingleItemActionable {
                         
                         UniversalMethods.performInMain {
                             
-                            UniversalMethods.banner(withTitle: "\(playlist.name ??? "Untitled Playlist")", subtitle: "Added \(items.count.fullCountText(for: .song))", image: nil, backgroundColor: .deepGreen, titleFont: .myriadPro(ofWeight: .light, size: 25), subtitleFont: .myriadPro(ofWeight: .light, size: 20), didTapBlock: nil).show(duration: .bannerInterval)
+                            UniversalMethods.banner(withTitle: "\(playlist.name ??? "Untitled Playlist")", subtitle: "Added \(items.count.fullCountText(for: .song))", image: nil, backgroundColor: .deepGreen, titleFont: .font(ofWeight: .light, size: 25), subtitleFont: .font(ofWeight: .light, size: 20), didTapBlock: nil).show(duration: .bannerInterval)
                             
                             notifier.post(name: .songsAddedToPlaylists, object: nil, userInfo: [String.addedPlaylists: [playlist.persistentID], String.addedSongs: items])
                             completions?.success()

@@ -184,11 +184,18 @@
 	<string>Mode needs permission to save artwork to your photo library.</string>
 	<key>UIAppFonts</key>
 	<array>
-		<string>MyriadPro-Semibold.otf</string>
-		<string>MyriadPro-Regular.otf</string>
+		<string>MuseoSansRounded100.otf</string>
+		<string>MuseoSansRounded300.otf</string>
+		<string>MuseoSansRounded500.otf</string>
+		<string>MuseoSansRounded700.otf</string>
+		<string>MuseoSansRounded900.otf</string>
+		<string>MuseoSansRounded1000.otf</string>
 		<string>MyriadPro-It.otf</string>
 		<string>MyriadPro-Light.otf</string>
+		<string>MyriadPro-Regular.otf</string>
+		<string>MyriadPro-Semibold.otf</string>
 		<string>MyriadPro-Bold.otf</string>
+		<string>MyriadPro-Black.otf</string>
 	</array>
 	<key>UIApplicationShortcutItems</key>
 	<array>

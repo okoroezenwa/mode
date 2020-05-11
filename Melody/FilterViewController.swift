@@ -9,7 +9,7 @@
 import UIKit
 import CoreData
 
-class FilterViewController: UIViewController, InfoLoading, SingleItemActionable, CellAnimatable, FilterContainer, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, GenreTransitionable, ComposerTransitionable, PlaylistTransitionable, EntityVerifiable, Arrangeable, Refreshable, PillButtonContaining {
+class FilterViewController: UIViewController, InfoLoading, SingleItemActionable, CellAnimatable, FilterContainer, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, GenreTransitionable, ComposerTransitionable, PlaylistTransitionable, EntityVerifiable, Arrangeable, Refreshable, PillButtonContaining, Navigatable, Contained, ArtworkModifying, TopScrollable, CentreViewDisplaying {
     
     @IBOutlet var tableView: MELTableView!
     @IBOutlet var filterViewContainer: FilterViewContainer! {
@@ -20,14 +20,10 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         }
     }
     @IBOutlet var bottomViewBottomConstraint: NSLayoutConstraint!
-    @IBOutlet var largeActivityIndicator: MELActivityIndicatorView!
-    @IBOutlet var activityView: UIView!
-    @IBOutlet var activityVisualEffectView: MELVisualEffectView!
-    @IBOutlet var activityViewVerticalCenterConstraint: NSLayoutConstraint!
     
     lazy var headerView: HeaderView = {
         
-        let view = HeaderView.fresh
+        let view = HeaderView.instance
         self.actionsStackView = view.actionsStackView
 //        self.stackView = view.scrollStackView
         view.scrollStackViewHeightConstraint.constant = 0
@@ -82,7 +78,62 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         }
     }
     
-    var searchBar: MELSearchBar! { return filterViewContainer.filterView.searchBar }
+    var backLabelText: String?
+    var preferredTitle: String? {
+        
+        get { ("Filter" ?+ (backLabelText?.isEmpty == true ? nil : ": ")) ?+ backLabelText }
+        
+        set { }
+    }
+    var inset: CGFloat { return VisualEffectNavigationBar.Location.entity.inset }
+    var activeChildViewController: UIViewController?
+    var artworkDetails: NavigationBarArtworkDetails?
+    var buttonDetails: NavigationBarButtonDetails = (.clear, true) {
+        
+        didSet {
+            
+            guard animateClearButton else {
+                
+                animateClearButton = true
+                
+                return
+            }
+            
+            let shouldAnimate: Bool = {
+                
+                if let _ = container, let controller = navigationController?.delegate as? NavigationAnimationController, controller.disregardViewLayoutDuringKeyboardPresentation {
+                    
+                    return false
+                }
+                
+                return true
+            }()
+            
+            container?.visualEffectNavigationBar.prepareRightButton(for: self, animated: shouldAnimate)
+        }
+    }
+    var artwork: UIImage? {
+        
+        get { (sender?.parent as? ArtworkModifying)?.artwork }
+        
+        set { }
+    }
+    
+    var centreViewGiantImage: UIImage?
+    var centreViewTitleLabelText: String?
+    var centreViewSubtitleLabelText: String?
+    var centreViewLabelsImage: UIImage?
+    lazy var internalCentreView = CentreView.instance
+    var currentCentreView = CentreView.CurrentView.none
+    var centreView: CentreView? {
+        
+        get { parent is PresentedContainerViewController ? internalCentreView : container?.centreView }
+        
+        set { }
+    }
+    let components: Set<CentreView.CurrentView.LabelStackViewComponent> = [.image, .title, .subtitle]
+    
+    var searchBar: MELSearchBar! { filterViewContainer.filterView.searchBar }
     
     weak var sender: (UIViewController & Filterable)?
     var tableContainer: TableViewContainer? { return sender as? TableViewContainer }
@@ -93,7 +144,12 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
     @objc var unfilteredPoint = CGPoint.zero
     @objc var recentSearches = [RecentSearch]()
     lazy var category = { entities.category }()
-    var filterTitle: String? { (parent as? PresentedContainerViewController)?.prompt ?? sender?.filterEntities.entityType.title().capitalized }
+    var filterTitle: String? { (parent as? PresentedContainerViewController)?.prompt ?? backLabelText ?? sender?.filterEntities.entityType.title().capitalized }
+    
+    var sectionIndexViewController: SectionIndexViewController?
+    var requiresLargerTrailingConstraint = false
+    
+    var navigatable: Navigatable? { return self }
     
     @objc lazy var refresher: Refresher = { Refresher.init(refreshable: self) }()
     
@@ -121,6 +177,7 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
     }()
     
     lazy var rightViewButton: MELButton = filterViewContainer.filterView.rightButton
+    var animateClearButton = false
     
     var activityIndicator = MELActivityIndicatorView.init()
     var arrangeButton: MELButton!
@@ -174,6 +231,8 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
     lazy var applicableSortCriteria: Set<SortCriteria> = { sorter?.applicableSortCriteria ?? [] }()
     lazy var sortLocation: SortLocation = { sorter?.sortLocation ?? .songs }()
     
+    @objc var ignoreKeyboardForInset = true
+    
     var borderedButtons = [PillButtonView?]()
     var applicableActions: [SongAction] { return actionable?.applicableActions ?? [] }
     var actionableSongs: [MPMediaItem] { return actionable?.actionableSongs ?? [] }
@@ -188,6 +247,9 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
             tableView.allowsMultipleSelectionDuringEditing = filtering.inverted
         }
     }
+    
+    @objc var lifetimeObservers = Set<NSObject>()
+    @objc var transientObservers = Set<NSObject>()
     
     @objc var operations = ImageOperations()
     @objc var infoOperations = InfoOperations()
@@ -239,10 +301,40 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         sender?.filtering = true
         tableContainer?.filterContainer = self
         
+        if let container = container {
+            
+            filterViewContainer.removeFromSuperview()
+            filterViewContainer = container.filterViewContainer
+        
+        } else {
+            
+            internalCentreView.add(to: view, below: self, above: filterViewContainer)
+            
+            filterViewContainer.filterView.alpha = 1
+            tableView.scrollIndicatorInsets.bottom = 53
+            tableView.contentInset.bottom = 53
+        }
+        
+        centreViewLabelsImage = #imageLiteral(resourceName: "Filter100")
+        centreViewTitleLabelText = "Nothing Here..."
+        centreViewSubtitleLabelText = "Filters acted upon are added here"
+        
+        adjustInsets(context: .container)
+        updateTopInset()
+        
+        let swipeRight = UISwipeGestureRecognizer.init(target: songManager, action: #selector(SongActionManager.toggleEditing(_:)))
+        swipeRight.direction = .right
+        tableView.addGestureRecognizer(swipeRight)
+        
+        let swipeLeft = UISwipeGestureRecognizer.init(target: songManager, action: #selector(SongActionManager.toggleEditing(_:)))
+        swipeLeft.direction = .left
+        tableView.addGestureRecognizer(swipeLeft)
+        
         let hold = UILongPressGestureRecognizer.init(target: tableContainer?.tableDelegate, action: #selector(TableDelegate.performHold(_:)))
         hold.minimumPressDuration = longPressDuration
         hold.delegate = self
-        tableView?.addGestureRecognizer(hold)
+        tableView.addGestureRecognizer(hold)
+        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: hold))
         
 //        let refreshControl = MELRefreshControl.init()
 //        refreshControl.addTarget(refresher, action: #selector(Refresher.refresh(_:)), for: .valueChanged)
@@ -261,19 +353,26 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         
         searchBar.delegate = self
         searchBar.text = sender?.filterText
+        filterViewContainer.filterView.propertyButton.setTitle(sender?.filterProperty.title, for: .normal)
         filterViewContainer.filterView.filterTestButton.setTitle(sender?.testTitle, for: .normal)
-//        filterViewContainer.filterView.showActionsButton = true
         sender?.updateKeyboard(with: self)
-        searchBar(searchBar, textDidChange: searchBar.text ?? "")
+        searchBar(searchBar, textDidChange: "")
         
-        updateCollectedView(self)
+        if let _ = container {
+            
+            tableView.contentOffset = .init(x: 0, y: -inset)
+        
+        } else {
+            
+            notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+            notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+        }
+        
+//        updateCollectedView(self)
         
 //        updateHeaderView(with: tableContainer?.filteredEntities.count ?? 0)
-       
-        notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-        notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillHideNotification, object: nil)
-        notifier.addObserver(self, selector: #selector(updateCollectedView(_:)), name: .managerItemsChanged, object: nil)
-        [Notification.Name.entityCountVisibilityChanged, .showExplicitnessChanged].forEach({ notifier.addObserver(self, selector: #selector(updateEntityCountVisibility), name: $0, object: nil) })
+        
+        prepareLifetimeObservers()
         
         searchBar?.textField?.leftView = filterViewContainer.filterView.leftView
         searchBar.updateTextField(with: placeholder)
@@ -282,7 +381,7 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         
         if case .collections(_, .playlist) = entities { } else {
             
-            notifier.addObserver(self, selector: #selector(updateNowPlaying), name: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer)
+            [Notification.Name.playerChanged, .MPMusicPlayerControllerNowPlayingItemDidChange].forEach({ notifier.addObserver(self, selector: #selector(updateNowPlaying), name: $0, object: /*musicPlayer*/nil) })
         }
         
         (parent as? PresentedContainerViewController)?.transitionStart = { [weak self] in
@@ -309,9 +408,60 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
             weakSelf.wasFirstResponder = false
         }
         
-        if searchBar.text?.isEmpty == true {
+        if searchBar.text?.isEmpty == true, container == nil {
         
             searchBar.becomeFirstResponder()
+        }
+    }
+    
+    @objc func prepareLifetimeObservers() {
+        
+        notifier.addObserver(self, selector: #selector(updateCollectedView(_:)), name: .managerItemsChanged, object: nil)
+        
+        [Notification.Name.entityCountVisibilityChanged, .showExplicitnessChanged].forEach({ notifier.addObserver(self, selector: #selector(updateEntityCountVisibility), name: $0, object: nil) })
+        
+        let insetsObserver = notifier.addObserver(forName: .resetInsets, object: nil, queue: nil, using: { [weak self] _ in self?.adjustInsets(context: .container) })
+        
+        lifetimeObservers.insert(insetsObserver as! NSObject)
+    }
+    
+    @objc func prepareTransientObservers() {
+        
+        transientObservers.insert(notifier.addObserver(forName: .scrollCurrentViewToTop, object: navigationController, queue: nil, using: { [weak self] _ in
+            
+            guard let weakSelf = self else { return }
+            
+            weakSelf.scrollToTop()
+            
+        }) as! NSObject)
+    }
+    
+    func updateTopInset() {
+        
+        guard let _ = container else { return }
+        
+        tableView.contentInset.top = inset
+        tableView.scrollIndicatorInsets.top = inset
+    }
+    
+    func adjustInsets(context: InsetContext) {
+        
+        guard let _ = container else { return }
+        
+        switch context {
+            
+            case .filter(let inset):
+                
+                tableView.scrollIndicatorInsets.bottom = inset
+                tableView.contentInset.bottom = inset
+                
+            case .container:
+                
+                if let container = container, ignoreKeyboardForInset {
+                    
+                    tableView.scrollIndicatorInsets.bottom = container.inset
+                    tableView.contentInset.bottom = container.inset
+                }
         }
     }
     
@@ -329,49 +479,52 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
     
     @objc func updateNowPlaying() {
         
-        switch entities {
+        for cell in tableView.visibleCells {
+
+            guard let entityCell = cell as? EntityTableViewCell, let indexPath = tableView.indexPath(for: entityCell), let nowPlaying = musicPlayer.nowPlayingItem else {
+
+                (cell as? EntityTableViewCell)?.playingView.isHidden = true
+                (cell as? EntityTableViewCell)?.indicator.state = .stopped
+
+                continue
+            }
             
-            case .songs(let songs):
-            
-                for cell in tableView.visibleCells {
-                    
-                    guard let cell = cell as? EntityTableViewCell, let indexPath = tableView.indexPath(for: cell) else { continue }
-                    
-                    if cell.playingView.isHidden.inverted && musicPlayer.nowPlayingItem != songs[indexPath.row] {
-                        
-                        cell.playingView.isHidden = true
-                        cell.indicator.state = .stopped
-                        
-                    } else if cell.playingView.isHidden && musicPlayer.nowPlayingItem == songs[indexPath.row] {
-                        
-                        cell.playingView.isHidden = false
-                        UniversalMethods.performOnMainThread({ cell.indicator.state = musicPlayer.isPlaying ? .playing : .paused }, afterDelay: 0.1)
-                    }
+            if entityCell.playingView.isHidden.inverted && {
+
+                switch entities {
+
+                    case .songs: return nowPlaying != (tableContainer?.filteredEntities as? [MPMediaItem])?[indexPath.row]
+
+                    case .collections(_, kind: let kind):
+
+                        guard kind != .playlist, let collections = tableContainer?.filteredEntities as? [MPMediaItemCollection] else { return true }
+
+                        return Set(collections[indexPath.row].items).contains(nowPlaying).inverted
                 }
-            
-            case .collections(let collections, kind: _):
-            
-                for cell in tableView.visibleCells {
-                    
-                    guard let entityCell = cell as? EntityTableViewCell, let indexPath = tableView.indexPath(for: entityCell), let nowPlaying = musicPlayer.nowPlayingItem else {
-                        
-                        (cell as? EntityTableViewCell)?.playingView.isHidden = true
-                        (cell as? EntityTableViewCell)?.indicator.state = .stopped
-                        
-                        continue
-                    }
-                    
-                    if entityCell.playingView.isHidden.inverted && Set(collections[indexPath.row].items).contains(nowPlaying).inverted {
-                        
-                        entityCell.playingView.isHidden = true
-                        entityCell.indicator.state = .stopped
-                        
-                    } else if entityCell.playingView.isHidden && Set(collections[indexPath.row].items).contains(nowPlaying) {
-                        
-                        entityCell.playingView.isHidden = false
-                        UniversalMethods.performOnMainThread({ entityCell.indicator.state = musicPlayer.isPlaying ? .playing : .paused }, afterDelay: 0.1)
-                    }
+
+            }() {
+
+                entityCell.playingView.isHidden = true
+                entityCell.indicator.state = .stopped
+
+            } else if entityCell.playingView.isHidden && {
+
+                switch entities {
+
+                    case .songs: return nowPlaying == (tableContainer?.filteredEntities as? [MPMediaItem])?[indexPath.row]
+
+                    case .collections(_, kind: let kind):
+
+                        guard kind != .playlist, let collections = tableContainer?.filteredEntities as? [MPMediaItemCollection] else { return false }
+
+                        return Set(collections[indexPath.row].items).contains(nowPlaying)
                 }
+
+            }() {
+                
+                entityCell.playingView.isHidden = false
+                UniversalMethods.performOnMainThread({ entityCell.indicator.state = musicPlayer.isPlaying ? .playing : .paused }, afterDelay: 0.1)
+            }
         }
     }
     
@@ -412,9 +565,46 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
 
         super.viewDidAppear(animated)
         
+        if let _ = container {
+        
+            notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+            notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+            
+            prepareTransientObservers()
+        }
+        
+        if searchBar?.delegate == nil, let container = container {
+            
+            self.filterViewContainer = container.filterViewContainer
+            self.searchBar.delegate = self
+            self.searchBar.text = self.sender?.filterText
+            self.filterViewContainer.filterView.propertyButton.setTitle(self.sender?.filterProperty.title, for: .normal)
+            self.filterViewContainer.filterView.filterTestButton.setTitle(self.sender?.testTitle, for: .normal)
+            self.sender?.updateKeyboard(with: self)
+            self.searchBar?.textField?.leftView = self.filterViewContainer.filterView.leftView
+            self.searchBar.updateTextField(with: self.placeholder)
+            self.updateRightView(animated: true)
+        }
+        
+//        filterViewContainer.filterInfo = (filter: sender, container: self)
+        container?.visualEffectNavigationBar.entityTypeLabel.superview?.isHidden = true
+        
         if let row = array.firstIndex(where: { $0 == searchBar.text }) {
             
             requiredInputView?.pickerView.selectRow(row, inComponent: 0, animated: true)
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        
+        super.viewWillAppear(animated)
+        
+        for cell in tableView.visibleCells {
+            
+            if let cell = cell as? EntityTableViewCell, !cell.playingView.isHidden {
+                
+                cell.indicator.state = musicPlayer.isPlaying ? .playing : .paused
+            }
         }
     }
     
@@ -434,28 +624,47 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         
         notifier.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
         notifier.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+        
+        unregisterAll(from: transientObservers)
     }
     
     @objc func adjustKeyboard(with notification: Notification) {
         
-        guard let keyboardHeightAtEnd = ((notification as NSNotification).userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.size.height, searchBar.isFirstResponder, let duration = (notification as NSNotification).userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval else { return }
+        guard let keyboardHeightAtEnd    = ((notification as NSNotification).userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.size.height, /*searchBar.isFirstResponder, */let duration = (notification as NSNotification).userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval else { return }
+        
+        if let _ = container, let controller = navigationController?.delegate as? NavigationAnimationController, controller.animationInProgress { return }
         
         let keyboardWillShow = notification.name == UIResponder.keyboardWillShowNotification
         
-        bottomViewBottomConstraint.constant = keyboardWillShow ? keyboardHeightAtEnd - 6 : 0
-        updateActivityViewConstraint(keyboardShowing: keyboardWillShow)
+        let constraint = container == nil ? bottomViewBottomConstraint : filterViewContainer.filterView.filterInputViewBottomConstraint
+        let view = container == nil ? self.view : container?.view
+        let negativeConstant: CGFloat = container == nil ? 6 : {
+            
+            if let container = container {
+
+                return 51 + container.collectedViewHeight + container.sliderHeight + container.titlesHeight
+            }
+            
+            return 0
+        }()
         
-        UIView.animate(withDuration: duration, animations: { self.view.layoutIfNeeded() })
+        constraint?.constant = keyboardWillShow ? keyboardHeightAtEnd - negativeConstant : 0
+        
+        if let _ = container, let controller = navigationController?.delegate as? NavigationAnimationController, controller.disregardViewLayoutDuringKeyboardPresentation {
+            
+            return
+        }
+        
+        UIView.animate(withDuration: duration, animations: {
+            
+            self.adjustInsets(context: keyboardWillShow ? .filter(inset: keyboardHeightAtEnd) : .container)
+            view?.layoutIfNeeded()
+        })
     }
     
     @objc func showArranger() {
         
         performSegue(withIdentifier: "toArranger", sender: nil)
-    }
-    
-    func updateActivityViewConstraint(keyboardShowing: Bool) {
-        
-        activityViewVerticalCenterConstraint.constant = keyboardShowing ? -(view.frame.height - 22) / 4 : 0
     }
     
     func updateHeader(count: Int) {
@@ -467,7 +676,7 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
     
     func filter(with searchText: String) {
         
-        updateLoadingViews(hidden: false)
+        updateCurrentView(to: .indicator)
         
         filterOperationQueue.cancelAllOperations()
         sender?.filterOperation = BlockOperation()
@@ -475,16 +684,7 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
             
             let text = searchText
             
-            guard let weakSelf = self, let sender = sender, let operation = sender.filterOperation else {
-                
-                UniversalMethods.performInMain { self?.updateLoadingViews(hidden: true) }
-                
-                return
-            }
-            
-            guard operation.isCancelled.inverted else { return }
-            
-            UniversalMethods.performInMain { weakSelf.updateLoadingViews(hidden: false) }
+            guard let weakSelf = self, let sender = sender, let operation = sender.filterOperation, operation.isCancelled.inverted else { return }
             
             let array: [MPMediaEntity] = {
                 
@@ -496,78 +696,54 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
                 }
             }()
             
-            guard let tableContainer = tableContainer else {
-                
-                weakSelf.updateLoadingViews(hidden: true)
-                
-                return
-            }
-            
-            if sender.filterOperation == nil {
-                
-                UniversalMethods.performInMain { weakSelf.updateLoadingViews(hidden: true) }
-                
-                return
-            }
-            
-            if let operation = weakSelf.filterOperations[text], operation.isCancelled {
-                
-                UniversalMethods.performInMain { weakSelf.updateLoadingViews(hidden: true) }
-                    
-                return
-            }
+            guard let tableContainer = tableContainer, sender.filterOperation != nil, let currentOperation = weakSelf.filterOperations[text], currentOperation.isCancelled.inverted else { return }
             
             OperationQueue.main.addOperation({
                 
-                if sender.filterOperation == nil { weakSelf.updateLoadingViews(hidden: true); return }
                 if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
                 
                 tableContainer.filteredEntities = array
                 
-                if sender.filterOperation == nil { weakSelf.updateLoadingViews(hidden: true); return }
                 if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
                 
                 weakSelf.updateHeaderView()
                 
-                if sender.filterOperation == nil { weakSelf.updateLoadingViews(hidden: true); return }
                 if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
                 
                 weakSelf.tableView.reloadData()
                 
-                if sender.filterOperation == nil { weakSelf.updateLoadingViews(hidden: true); return }
                 if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
                 
-                weakSelf.tableView.setContentOffset(.zero, animated: false)
+                weakSelf.tableView.setContentOffset(weakSelf.container == nil ? .zero : .init(x: 0, y: -weakSelf.inset), animated: false)
                 
-                if sender.filterOperation == nil { weakSelf.updateLoadingViews(hidden: true); return }
                 if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
                 
                 weakSelf.animateCells(direction: .vertical)
                 
-                if sender.filterOperation == nil { weakSelf.updateLoadingViews(hidden: true); return }
                 if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
                 
-                weakSelf.updateHeader(count: array.count)
+                weakSelf.updateCurrentView(to: .none)
                 
-                if sender.filterOperation == nil { weakSelf.updateLoadingViews(hidden: true); return }
                 if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
                 
-                weakSelf.updateLoadingViews(hidden: true)
-                
-                if sender.filterOperation == nil { weakSelf.updateLoadingViews(hidden: true); return }
-                if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
-                
+                UIView.setAnimationsEnabled(false)
                 weakSelf.updateTitleLabel()
+                UIView.setAnimationsEnabled(true)
                 
-                let parent = weakSelf.parent as? PresentedContainerViewController
+                if let parent = weakSelf.parent as? PresentedContainerViewController {
                 
-                parent?.rightButton.setImage(VisualEffectNavigationBar.RightButtonType.actions.image, for: .normal)
-                
-                UIView.animate(withDuration: 0.3, animations: {
+                    parent.rightButton.setImage(VisualEffectNavigationBar.RightButtonType.actions.image, for: .normal)
                     
-                    parent?.rightBorderView.alpha = array.isEmpty ? 0 : 1
-                    parent?.rightButton.alpha = array.isEmpty ? 0 : 1
-                })
+                    UIView.animate(withDuration: 0.3, animations: {
+                        
+                        parent.rightBorderView.alpha = array.isEmpty ? 0 : 1
+                        parent.rightButton.alpha = array.isEmpty ? 0 : 1
+                    })
+                
+                } else if let _ = weakSelf.container {
+                    
+                    weakSelf.updateDeleteButton()
+                }
             })
         })
         
@@ -577,9 +753,9 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
     
     func updateTitleLabel() {
         
-        guard let parent = parent as? PresentedContainerViewController, let tableContainer = tableContainer else { return }
+        guard let tableContainer = tableContainer else { return }
         
-        parent.titleLabel.text = filtering.inverted ? "Previous Searches" : tableContainer.filteredEntities.count.formatted + " of " + tableContainer.entities.count.fullCountText(for: {
+        let text = filtering.inverted ? "Previous Filters" : tableContainer.filteredEntities.count.formatted + " of " + tableContainer.entities.count.fullCountText(for: {
             
             switch self.entities {
                 
@@ -588,6 +764,19 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
                 case .collections(_, kind: let kind): return kind.entityType
             }
         }())
+        
+        if let parent = parent as? PresentedContainerViewController {
+            
+            parent.titleLabel.text = text
+        
+        } else if let container = container {
+            
+            title = text
+            
+            guard container.activeViewController?.topViewController == self else { return }
+            
+            container.visualEffectNavigationBar.titleLabel.text = title
+        }
     }
     
     @IBAction func shuffle() {
@@ -657,9 +846,12 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         if isInDebugMode, deinitBannersEnabled {
             
             let banner = UniversalMethods.banner(withTitle: "FVC going away...")
-            banner.titleLabel.font = .myriadPro(ofWeight: .light, size: 22)
+            banner.titleLabel.font = .font(ofWeight: .light, size: 22)
             banner.show(for: 0.3)
         }
+        
+        unregisterAll(from: lifetimeObservers)
+        notifier.removeObserver(self)
     }
 }
 
@@ -700,7 +892,7 @@ extension FilterViewController: UITableViewDelegate, UITableViewDataSource {
             cell.backgroundColor = .clear
             cell.searchCategoryImageView.image = #imageLiteral(resourceName: "SearchTab")
             
-            let property = Property(rawValue: Int(search.property)) ?? .title
+            let property = Property.fromOldRawValue(Int(search.property)) ?? .title
             let test = PropertyTest(rawValue: search.propertyTest ?? "") ?? filter.initialPropertyTest(for: property)
             
             cell.criteriaLabel.text = property.title + " " + filter.title(for: test, property: property)
@@ -803,7 +995,7 @@ extension FilterViewController: UIGestureRecognizerDelegate {
     
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         
-        if let _ = gestureRecognizer as? UILongPressGestureRecognizer {
+        if let _ = parent as? PresentedContainerViewController, let _ = gestureRecognizer as? UILongPressGestureRecognizer {
             
             return gestureRecognizer.location(in: parent?.view).x > 22
         }
@@ -850,12 +1042,32 @@ extension FilterViewController: UISearchBarDelegate {
     
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         
+        ignoreKeyboardForInset = false
+        
         if filtering.inverted {
             
             unfilteredPoint = .init(x: 0, y: tableView.contentOffset.y)
         }
         
         updateDeleteButton()
+    }
+    
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+            
+        ignoreKeyboardForInset = true
+        
+        if !filtering {
+            
+            updateTitleLabel()
+        }
+        
+        searchBar.resignFirstResponder()
+            
+//        updateCurrentView(to: recentSearches.isEmpty ? .labels(components: components) : .none)
+        
+        updateDeleteButton()
+        
+        adjustInsets(context: .container)
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -878,7 +1090,9 @@ extension FilterViewController: UISearchBarDelegate {
         } else {
             
             sender?.filterOperation?.cancel()
+            sender?.filterOperation = nil
             updateTitleLabel()
+            updateCurrentView(to: recentSearches.isEmpty ? .labels(components: components) : .none)
             tableView.reloadData()
             updateHeaderView()
             tableView.contentOffset = unfilteredPoint
@@ -898,13 +1112,15 @@ extension FilterViewController: UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         
-        saveRecentSearch(withTitle: searchBar.text, resignFirstResponder: true)
-    }
-    
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        if filtering {
         
-        searchBar.resignFirstResponder()
-        self.searchBar(searchBar, textDidChange: "")
+            saveRecentSearch(withTitle: searchBar.text, resignFirstResponder: true)
+            
+        } else if filtering.inverted, let text = searchBar.text, text.isEmpty.inverted {
+            
+            self.searchBar(searchBar, textDidChange: text)
+            searchBar.resignFirstResponder()
+        }
     }
 }
 

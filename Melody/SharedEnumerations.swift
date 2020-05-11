@@ -10,7 +10,7 @@ import Foundation
 
 enum Font: Int, CaseIterable {
     
-    case system, myriadPro, avenirNext
+    case system, myriadPro, avenirNext, museoSansRounded
     
     var name: String {
         
@@ -21,13 +21,15 @@ enum Font: Int, CaseIterable {
             case .myriadPro: return "Myriad Pro"
             
             case .avenirNext: return "Avenir Next"
+            
+            case .museoSansRounded: return "Museo Sans Rounded"
         }
     }
 }
 
 enum FontWeight: Int, CaseIterable {
     
-    case light, regular, semibold, bold
+    case light, regular, semibold, bold, black
 
     var systemWeight: UIFont.Weight {
 
@@ -40,6 +42,8 @@ enum FontWeight: Int, CaseIterable {
             case .semibold: return .semibold
             
             case .bold: return .bold
+            
+            case .black: return .black
         }
     }
 }

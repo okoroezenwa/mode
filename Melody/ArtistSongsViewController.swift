@@ -14,7 +14,7 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
     
     @objc lazy var headerView: HeaderView = {
         
-        let view = HeaderView.fresh
+        let view = HeaderView.instance
         self.actionsStackView = view.actionsStackView
         self.stackView = view.scrollStackView
         arrangeButton = view.sortButton
@@ -210,7 +210,7 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
             }
         }
     }
-    lazy var applicableFilterProperties: Set<Property> = { self.applicationItemFilterProperties.subtracting([.artist]) }()
+    lazy var applicableFilterProperties: Set = self.applicationItemFilterProperties.subtracting([.artist])
     @objc var songs = [MPMediaItem]()
     @objc var filteredSongs: [MPMediaItem] { return filteredEntities as! [MPMediaItem] }
     lazy var sections = [SortSectionDetails]()
@@ -455,18 +455,18 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
         
         switch context {
             
-        case .filter(let inset):
-            
-            tableView.scrollIndicatorInsets.bottom = inset
-            tableView.contentInset.bottom = inset
-            
-        case .container:
-            
-            if let container = appDelegate.window?.rootViewController as? ContainerViewController, ignoreKeyboardForInset {
+            case .filter(let inset):
                 
-                tableView.scrollIndicatorInsets.bottom = container.inset
-                tableView.contentInset.bottom = container.inset
-            }
+                tableView.scrollIndicatorInsets.bottom = inset
+                tableView.contentInset.bottom = inset
+                
+            case .container:
+                
+                if let container = appDelegate.window?.rootViewController as? ContainerViewController, ignoreKeyboardForInset {
+                    
+                    tableView.scrollIndicatorInsets.bottom = container.inset
+                    tableView.contentInset.bottom = container.inset
+                }
         }
     }
     
@@ -504,27 +504,30 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
         
         lifetimeObservers.insert((notifier.addObserver(forName: .resetInsets, object: nil, queue: nil, using: { [weak self] _ in self?.adjustInsets(context: .container) })) as! NSObject)
         
-        lifetimeObservers.insert(notifier.addObserver(forName: .MPMusicPlayerControllerNowPlayingItemDidChange, object: musicPlayer, queue: nil, using: { [weak self] _ in
-            
-            guard let weakSelf = self else { return }
-            
-            for cell in weakSelf.tableView.visibleCells {
+        [Notification.Name.playerChanged, .MPMusicPlayerControllerNowPlayingItemDidChange].forEach({
+        
+            lifetimeObservers.insert(notifier.addObserver(forName: $0, object: /*musicPlayer*/nil, queue: nil, using: { [weak self] _ in
                 
-                guard let cell = cell as? EntityTableViewCell, let indexPath = weakSelf.tableView.indexPath(for: cell) else { continue }
+                guard let weakSelf = self else { return }
                 
-                if cell.playingView.isHidden.inverted && musicPlayer.nowPlayingItem != weakSelf.getSong(from: indexPath) {
+                for cell in weakSelf.tableView.visibleCells {
                     
-                    cell.playingView.isHidden = true
-                    cell.indicator.state = .stopped
+                    guard let cell = cell as? EntityTableViewCell, let indexPath = weakSelf.tableView.indexPath(for: cell) else { continue }
                     
-                } else if cell.playingView.isHidden && musicPlayer.nowPlayingItem == weakSelf.getSong(from: indexPath) {
-                    
-                    cell.playingView.isHidden = false
-                    UniversalMethods.performOnMainThread({ cell.indicator.state = musicPlayer.isPlaying ? .playing : .paused }, afterDelay: 0.1)
+                    if cell.playingView.isHidden.inverted && musicPlayer.nowPlayingItem != weakSelf.getSong(from: indexPath) {
+                        
+                        cell.playingView.isHidden = true
+                        cell.indicator.state = .stopped
+                        
+                    } else if cell.playingView.isHidden && musicPlayer.nowPlayingItem == weakSelf.getSong(from: indexPath) {
+                        
+                        cell.playingView.isHidden = false
+                        UniversalMethods.performOnMainThread({ cell.indicator.state = musicPlayer.isPlaying ? .playing : .paused }, afterDelay: 0.1)
+                    }
                 }
-            }
-            
-        }) as! NSObject)
+                
+            }) as! NSObject)
+        })
         
         lifetimeObservers.insert(notifier.addObserver(forName: .showExplicitnessChanged, object: nil, queue: nil, using: { [weak self] _ in
             
@@ -620,7 +623,7 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
                 currentItem = nil
                 
                 let newBanner = Banner.init(title: showiCloudItems ? "This album is not in your library" : "This album is not available offline", subtitle: nil, image: nil, backgroundColor: .black, didTapBlock: nil)
-                newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+                newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
                 newBanner.show(duration: 0.7)
             }
         }

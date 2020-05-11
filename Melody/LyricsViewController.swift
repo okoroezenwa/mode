@@ -201,7 +201,7 @@ class LyricsViewController: UIViewController {
 //        if isInDebugMode, deinitBannersEnabled {
 //            
 //            let banner = UniversalMethods.banner(withTitle: "LVC going away...")
-//            banner.titleLabel.font = .myriadPro(ofWeight: .light, size: 22)
+//            banner.titleLabel.font = .font(ofWeight: .light, size: 22)
 //            banner.show(for: 0.3)
 //        }
         

@@ -90,7 +90,7 @@ class Themer {
         }
     }
     
-    static func relatedThemeColour() -> UIColor {
+    static func greyThemeColour() -> UIColor {
     
         return darkTheme ? .lightGray : .darkGray
     }

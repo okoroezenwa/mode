@@ -117,7 +117,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
     @objc var actionableSongs: [MPMediaItem] { return [activeItem].compactMap({ $0 }) }
     var applicableActions: [SongAction] {
         
-        var actions = [SongAction.collect, .newPlaylist, .addTo, .show(title: activeItem?.validTitle, context: .song(location: .list, at: 0, within: actionableSongs), canDisplayInLibrary: true), .search(unwinder: { [weak self] in self })]
+        var actions = [SongAction.collect, .newPlaylist, .addTo, .show(title: activeItem?.validTitle, context: .song(location: .list, at: 0, within: actionableSongs), canDisplayInLibrary: true)/*, .search(unwinder: { [weak self] in self })*/]
         
         if activeItem?.existsInLibrary == false {
             
@@ -241,7 +241,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
             guard artistQuery != nil else {
                 
                 let newBanner = Banner.init(title: showiCloudItems ? "This artist is not in your library" : "This artist is not available offline", subtitle: nil, image: nil, backgroundColor: .black, didTapBlock: nil)
-                newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+                newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
                 newBanner.show(duration: 0.7)
                 
                 return
@@ -257,8 +257,6 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
             
         performSegue(withIdentifier: "toAlbumOptions", sender: nil)
     }
-    
-    
     
     @objc func prepareGestures() {
         
@@ -362,7 +360,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
                         case .album:
                         
                             let newBanner = Banner.init(title: showiCloudItems ? "This album is not in your library" : "This album is not available offline", subtitle: nil, image: nil, backgroundColor: .black, didTapBlock: nil)
-                            newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+                            newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
                             newBanner.show(duration: 1)
                             
                             return
@@ -370,7 +368,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
                         case .artist:
                         
                             let newBanner = Banner.init(title: showiCloudItems ? "This artist is not in your library" : "This artist is not available offline", subtitle: nil, image: nil, backgroundColor: .black, didTapBlock: nil)
-                            newBanner.titleLabel.font = UIFont.myriadPro(ofWeight: .regular, size: 15)
+                            newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
                             newBanner.show(duration: 1)
                             
                             return
@@ -397,9 +395,9 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
                         
                         case .song: return applicableActions
                         
-                        case .album: return [SongAction.collect, .show(title: albumButton.title(for: .normal), context: .album(at: 0, within: albumQuery?.collections ?? []), canDisplayInLibrary: true), .newPlaylist, .addTo, .search(unwinder: { [weak self] in self })]
+                        case .album: return [SongAction.collect, .show(title: albumButton.title(for: .normal), context: .album(at: 0, within: albumQuery?.collections ?? []), canDisplayInLibrary: true), .newPlaylist, .addTo/*, .search(unwinder: { [weak self] in self })*/]
                         
-                        case .artist: return [SongAction.collect, .show(title: artistButton.title(for: .normal), context: .collection(kind: .artist, at: 0, within: artistQuery?.collections ?? []), canDisplayInLibrary: true), .newPlaylist, .addTo, .search(unwinder: { [weak self] in self })]
+                        case .artist: return [SongAction.collect, .show(title: artistButton.title(for: .normal), context: .collection(kind: .artist, at: 0, within: artistQuery?.collections ?? []), canDisplayInLibrary: true), .newPlaylist, .addTo/*, .search(unwinder: { [weak self] in self })*/]
                     }
                 }()
                 
@@ -427,7 +425,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
     
     @objc func goToQueue(_ sender: UIGestureRecognizer) {
         
-        guard sender.state == .began, let _ = musicPlayer.nowPlayingItem else { return }
+        guard sender.state == .began/*, let _ = musicPlayer.nowPlayingItem*/ else { return }
         
         performSegue(withIdentifier: "toQueue", sender: nil)
     }
@@ -441,6 +439,20 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
     }
     
     @objc func prepareLifetimeObservers() {
+        
+        lifetimeObservers.insert(notifier.addObserver(forName: .playerChanged, object: nil, queue: nil, using: { [weak self] _ in
+            
+            guard let weakSelf = self else { return }
+            
+            weakSelf.unregisterAll(from: weakSelf.lifetimeObservers)
+            weakSelf.prepareLifetimeObservers()
+            
+            weakSelf.prepareViews(animated: true, shouldDismiss: false)
+            
+            weakSelf.updateSliderDuration()
+            weakSelf.updateTimes(setValue: true, seeking: false)
+        
+        }) as! NSObject)
         
         lifetimeObservers.insert(notifier.addObserver(forName: UIApplication.willEnterForegroundNotification, object: UIApplication.shared, queue: nil, using: { [weak self] _ in
             
@@ -915,81 +927,81 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         }
     }
     
-    @objc func prepareViews(animated: Bool) {
+    @objc func prepareViews(animated: Bool, shouldDismiss: Bool = true) {
         
-        if let currentItem = activeItem {
-            
-            songNameScrollView.contentOffset = .zero
-            songDetailsScrollView.contentOffset = .zero
-            
-            let albumTitle = currentItem.validAlbum
-            let artistName = currentItem.validArtist
-            let songTitle = currentItem.validTitle
-            let albumImage = currentItem.actualArtwork?.image(at: self.albumArtContainer.bounds.size)
-            let image = currentItem.actualArtwork?.image(at: .init(width: 20, height: 20))
-            
-            if animated {
-                
-                UniversalMethods.performTransitions(withRelevantParameters:
-                    
-                    (albumArt, 0.3, { [weak self] in self?.albumArt.image = albumImage ?? #imageLiteral(resourceName: "NoSong900") }, nil),
-                    (imageView, 0.3, { [weak self] in self?.imageView.image = image ?? #imageLiteral(resourceName: "NoArt") }, nil)
-                )
-                
-                if peeker != nil {
-                    
-                    UIView.transition(with: temporaryImageView, duration: 0.3, options: .transitionCrossDissolve, animations: { [weak self] in self?.temporaryImageView.image = image ?? #imageLiteral(resourceName: "NoArt") }, completion: nil)
-                }
-                
-            } else {
-                
-                albumArt.image = albumImage ?? #imageLiteral(resourceName: "NoSong900")
-                imageView.image = image ?? #imageLiteral(resourceName: "NoArt")
-                temporaryImageView.image = image ?? #imageLiteral(resourceName: "NoArt")
-            }
-            
-            songName.setTitle(songTitle, for: .normal)
-            artistButton.setTitle(artistName, for: .normal)
-            albumButton.setTitle(albumTitle, for: .normal)
-            
-            detailsView.layoutIfNeeded()
-            
-            if songName.intrinsicContentSize.width < songNameScrollView.bounds.width {
-                
-                songNameWidthConstraint.constant = songNameScrollView.bounds.width
-                songNameWidthConstraint.priority = UILayoutPriority(rawValue: 999)
-                
-            } else {
-                
-                songNameWidthConstraint.priority = UILayoutPriority(rawValue: 249)
-            }
-            
-            if albumButton.intrinsicContentSize.width + artistButton.intrinsicContentSize.width < songDetailsScrollView.bounds.width {
-                
-                albumWidthConstraint.constant = songDetailsScrollView.bounds.width - artistButton.intrinsicContentSize.width
-                albumWidthConstraint.priority = UILayoutPriority(rawValue: 999)
-                
-            } else {
-                
-                albumWidthConstraint.priority = UILayoutPriority(rawValue: 249)
-            }
-            
-            modifyQueueLabel()
-            modifyPlayPauseButton()
-            rateShareView.entity = currentItem
-            setNeedsStatusBarAppearanceUpdate()
-            verifyLibraryStatus(of: currentItem, itemProperty: .song)
-            verifyLibraryStatus(of: currentItem, itemProperty: .artist)
-            verifyLibraryStatus(of: currentItem, itemProperty: .album)
-            
-            if let lyricsVC = children.first as? LyricsViewController, lyricsViewVisibility == .visible {
-                
-                lyricsVC.manager.item = currentItem
-            }
-        
-        } else {
+        if shouldDismiss, activeItem == nil {
             
             performSegue(withIdentifier: "unwind", sender: nil)
+            
+            return
+        }
+        
+        songNameScrollView.contentOffset = .zero
+        songDetailsScrollView.contentOffset = .zero
+        
+        let albumTitle = activeItem?.validAlbum ?? "Album"
+        let artistName = activeItem?.validArtist ?? "Artist"
+        let songTitle = activeItem?.validTitle ?? "Song Name"
+        let albumImage = activeItem?.actualArtwork?.image(at: self.albumArtContainer.bounds.size)
+        let image = activeItem?.actualArtwork?.image(at: .init(width: 20, height: 20))
+        
+        if animated {
+            
+            UniversalMethods.performTransitions(withRelevantParameters:
+                
+                (albumArt, 0.3, { [weak self] in self?.albumArt.image = albumImage ?? #imageLiteral(resourceName: "NoSong900") }, nil),
+                (imageView, 0.3, { [weak self] in self?.imageView.image = image ?? #imageLiteral(resourceName: "NoArt") }, nil)
+            )
+            
+            if peeker != nil {
+                
+                UIView.transition(with: temporaryImageView, duration: 0.3, options: .transitionCrossDissolve, animations: { [weak self] in self?.temporaryImageView.image = image ?? #imageLiteral(resourceName: "NoArt") }, completion: nil)
+            }
+            
+        } else {
+            
+            albumArt.image = albumImage ?? #imageLiteral(resourceName: "NoSong900")
+            imageView.image = image ?? #imageLiteral(resourceName: "NoArt")
+            temporaryImageView.image = image ?? #imageLiteral(resourceName: "NoArt")
+        }
+        
+        songName.setTitle(songTitle, for: .normal)
+        artistButton.setTitle(artistName, for: .normal)
+        albumButton.setTitle(albumTitle, for: .normal)
+        
+        detailsView.layoutIfNeeded()
+        
+        if songName.intrinsicContentSize.width < songNameScrollView.bounds.width {
+            
+            songNameWidthConstraint.constant = songNameScrollView.bounds.width
+            songNameWidthConstraint.priority = UILayoutPriority(rawValue: 999)
+            
+        } else {
+            
+            songNameWidthConstraint.priority = UILayoutPriority(rawValue: 249)
+        }
+        
+        if albumButton.intrinsicContentSize.width + artistButton.intrinsicContentSize.width < songDetailsScrollView.bounds.width {
+            
+            albumWidthConstraint.constant = songDetailsScrollView.bounds.width - artistButton.intrinsicContentSize.width
+            albumWidthConstraint.priority = UILayoutPriority(rawValue: 999)
+            
+        } else {
+            
+            albumWidthConstraint.priority = UILayoutPriority(rawValue: 249)
+        }
+        
+        modifyQueueLabel()
+        modifyPlayPauseButton()
+        rateShareView.entity = activeItem
+        setNeedsStatusBarAppearanceUpdate()
+        verifyLibraryStatus(of: activeItem, itemProperty: .song)
+        verifyLibraryStatus(of: activeItem, itemProperty: .artist)
+        verifyLibraryStatus(of: activeItem, itemProperty: .album)
+        
+        if let lyricsVC = children.first as? LyricsViewController, lyricsViewVisibility == .visible {
+            
+            lyricsVC.manager.item = activeItem
         }
     }
     
@@ -1251,15 +1263,15 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         }
     }
     
-    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
-        
-        switch identifier {
-            
-            case "toQueue": return musicPlayer.nowPlayingItem != nil
-            
-            default: return true
-        }
-    }
+//    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
+//
+//        switch identifier {
+//
+//            case "toQueue": return musicPlayer.nowPlayingItem != nil
+//
+//            default: return true
+//        }
+//    }
     
     @IBAction func unwind(_ segue: UIStoryboardSegue) { }
     

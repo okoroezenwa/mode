@@ -128,7 +128,7 @@ class EntityTableViewCell: UITableViewCell, ArtworkContainingCell {
         
         notifier.addObserver(self, selector: #selector(modifyPlayOnly), name: .playOnlyChanged, object: nil)
         notifier.addObserver(self, selector: #selector(modifyBackground), name: .themeChanged, object: nil)
-        notifier.addObserver(self, selector: #selector(modifyIndicator), name: .MPMusicPlayerControllerPlaybackStateDidChange, object: musicPlayer)
+        notifier.addObserver(self, selector: #selector(modifyIndicator), name: .MPMusicPlayerControllerPlaybackStateDidChange, object: /*musicPlayer*/nil)
         notifier.addObserver(self, selector: #selector(updateCornersAndShadows), name: .cornerRadiusChanged, object: nil)
         notifier.addObserver(self, selector: #selector(modifyInfoButton), name: .infoButtonVisibilityChanged, object: nil)
         notifier.addObserver(self, selector: #selector(updateSpacing), name: .lineHeightsCalculated, object: nil)

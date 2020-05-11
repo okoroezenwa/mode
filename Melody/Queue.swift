@@ -16,6 +16,7 @@ class Queue {
     var plays = [MPMediaEntityPersistentID: Int]()
     var queueCount: Int { return useSystemPlayer ? musicPlayer.queueCount() : currentQueue.count }
     var indexOfNowPlayingItem: Int?
+    var hasSetupApplicationPlayer = false
     var queueWasModifiedWhileInBackground = false // likely will be used if Siri Shortcuts are added.
     var indexToUse: Int? {
         
@@ -33,9 +34,9 @@ class Queue {
     
     private init() {
     
-        notifier.addObserver(self, selector: #selector(updateIndex), name: .nowPlayingItemChanged, object: musicPlayer)
-        
-        notifier.addObserver(self, selector: #selector(saveQueue), name: .saveQueue, object: musicPlayer)
+        notifier.addObserver(self, selector: #selector(updateIndex), name: .nowPlayingItemChanged, object: nil)
+        notifier.addObserver(self, selector: #selector(saveQueue), name: .saveQueue, object: nil)
+        notifier.addObserver(self, selector: #selector(verifyQueue), name: .playerChanged, object: nil)
     }
     
     func remove(_ items: [MPMediaItem], completion: RemovalCompletion) {
@@ -131,16 +132,15 @@ class Queue {
         performQueueModificationCompletion(with: item, shouldUpdateIndex: shouldUpdateIndex)
     }
     
-    func verifyQueue() {
+    @objc func verifyQueue() {
         
-        guard !useSystemPlayer, #available(iOS 10.3, *), let musicPlayer = musicPlayer as? MPMusicPlayerApplicationController, musicPlayer.nowPlayingItem == nil else {
+        guard hasSetupApplicationPlayer.inverted, !useSystemPlayer, #available(iOS 10.3, *), let musicPlayer = musicPlayer as? MPMusicPlayerApplicationController else { return }
+        
+        guard musicPlayer.nowPlayingItem == nil else {
             
             updateIndex(self)
             
-            if #available(iOS 10.3, *), !useSystemPlayer {
-                
-                MPMusicPlayerController.applicationQueuePlayer.perform(queueTransaction: { _ in }, completionHandler: { controller, _ in self.updateCurrentQueue(with: controller.items, startingItem: controller.items.value(at: prefs.integer(forKey: .indexOfNowPlayingItem))) })
-            }
+            MPMusicPlayerController.applicationQueuePlayer.perform(queueTransaction: { _ in }, completionHandler: { controller, _ in self.updateCurrentQueue(with: controller.items, startingItem: controller.items.value(at: prefs.integer(forKey: .indexOfNowPlayingItem))) })
             
             return
         }
@@ -198,6 +198,8 @@ class Queue {
     
         prefs.set(time, forKey: .currentPlaybackTime)
         NowPlaying.shared.registered.forEach({ $0?.updateTimes(for: item, to: time, setValue: true, seeking: false )})
+        
+        hasSetupApplicationPlayer = true
     }
 }
 
