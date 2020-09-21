@@ -36,6 +36,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
     @IBOutlet var nextLabel: UILabel!
     @IBOutlet var previousButton: UIButton!
     @IBOutlet var nextButton: UIButton!
+    @IBOutlet var ratingBorderView: UIView!
     
     enum QueueLocation { case upNext, previous }
     
@@ -65,8 +66,6 @@ class TodayViewController: UIViewController, NCWidgetProviding {
             updateLocationButtons()
             
             collectionView?.reloadData()
-            
-//            perform(#selector(animateCells), with: nil, afterDelay: 0.01)
             
             updatePreferredSize()
         }
@@ -192,7 +191,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         
         [label, elapsedTimeLabel].forEach({ $0?.textColor = colour })
         ([likedStateButton, shuffleButton, repeatButton] + buttons as [UIButton?]).forEach({ $0?.tintColor = colour })
-        [shuffleBorderView, likedBorderView, repeatBorderView, infoBorderView].forEach({ $0?.backgroundColor = alphaColour })
+        [shuffleBorderView, likedBorderView, repeatBorderView, infoBorderView, ratingBorderView].forEach({ $0?.backgroundColor = alphaColour })
         [altLabel, timeLabel, nextLabel].forEach({ $0?.textColor = colour.withAlphaComponent(0.6) })
     }
     
@@ -205,11 +204,16 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         
         if #available(iOS 13, *), previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle {
             
-            prepareViewColours()
-            updateLocationButtons()
-            updateQueueLabel()
-            updateNowPlayingLabel()
+            updateColours()
         }
+    }
+    
+    func updateColours() {
+        
+        prepareViewColours()
+        updateLocationButtons()
+        updateQueueLabel()
+        updateNowPlayingLabel()
     }
     
     func updateMaxSizes() {
@@ -229,7 +233,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
             return
         }
         
-        let sectionIsPopulated = /*musicPlayer.queueCount() < queueLimit && */(queueLocation == .upNext ? musicPlayer.queueCount() != musicPlayer.nowPlayingItemIndex + 1 : musicPlayer.nowPlayingItemIndex != 0) && musicPlayer.nowPlayingItemIndex != -1
+        let sectionIsPopulated = (queueLocation == .upNext ? musicPlayer.queueCount() != musicPlayer.nowPlayingItemIndex + 1 : musicPlayer.nowPlayingItemIndex != 0) && musicPlayer.nowPlayingItemIndex != -1
         
         let collectionViewHeight: CGFloat = {
             
@@ -265,8 +269,6 @@ class TodayViewController: UIViewController, NCWidgetProviding {
     
     @objc func updateCornersAndShadows(updateShadow: Bool = true) {
         
-//        guard let artwork = artwork else { return }
-        
         let cornerRadius = CornerRadius(rawValue: sharedCornerRadius) ?? .large
         
         (CornerRadius(rawValue: sharedWidgetCornerRadius) ?? cornerRadius).updateCornerRadius(on: artwork.layer, using: artwork.bounds.width, globalRadiusType: cornerRadius)
@@ -301,9 +303,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         
         super.viewDidAppear(animated)
         
-        updateMaxSizes()
-        updatePreferredSize()
-        updateViewVisibility()
+        performRequiredUpdates()
         
         if sharedDefaults.bool(forKey: .quitWidget) {
             
@@ -336,7 +336,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         }
         
         let count = queueLocation == .upNext ? musicPlayer.queueCount() - (musicPlayer.nowPlayingItemIndex + 1) : musicPlayer.nowPlayingItemIndex
-        let text = (queueLocation == .upNext ? "up next (" : "previous (") + count.formatted + ")"
+        let text = (queueLocation == .upNext ? "Up Next (" : "Previous (") + count.formatted + ")"
         let attributed = NSMutableAttributedString.init(string: text)
         attributed.addAttribute(.foregroundColor, value: colour, range: text.nsRange(of: count.formatted))
         
@@ -405,7 +405,6 @@ class TodayViewController: UIViewController, NCWidgetProviding {
                 if notification.name == .MPMusicPlayerControllerNowPlayingItemDidChange {
                     
                     collectionView?.reloadData()
-//                    perform(#selector(animateCells), with: nil, afterDelay: 0.01)
                 }
                 
                 updatePreferredSize()
@@ -419,15 +418,21 @@ class TodayViewController: UIViewController, NCWidgetProviding {
                 if sender is TodayViewController {
                     
                     collectionView?.reloadData()
-//                    perform(#selector(animateCells), with: nil, afterDelay: 0.01)
                 }
             }
             
         } else {
             
-            updateViewVisibility()
-            updatePreferredSize()
+            performRequiredUpdates()
         }
+    }
+    
+    func performRequiredUpdates() {
+        
+        updateMaxSizes()
+        updateViewVisibility()
+        updatePreferredSize()
+        updateColours()
     }
     
     @objc func updateElapsedTime() {
@@ -438,6 +443,11 @@ class TodayViewController: UIViewController, NCWidgetProviding {
     func widgetPerformUpdate(completionHandler: (@escaping (NCUpdateResult) -> Void)) {
         
         update(self)
+        
+        if musicPlayer.nowPlayingItem != nil {
+            
+            performRequiredUpdates()
+        }
         
         completionHandler(NCUpdateResult.newData)
     }
@@ -458,7 +468,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
     @objc func prepareRepeatView() {
         
         repeatBorderView.isHidden = [MPMusicRepeatMode.none, .default].contains(musicPlayer.repeatMode)
-        repeatButton.setImage(musicPlayer.repeatMode == .one ? #imageLiteral(resourceName: "RepeatOne") : #imageLiteral(resourceName: "Repeat"), for: .normal)
+        repeatButton.setImage(musicPlayer.repeatMode == .one ? #imageLiteral(resourceName: "RepeatOne15") : #imageLiteral(resourceName: "Repeat15"), for: .normal)
     }
     
     @objc func prepareLikedView() {
@@ -484,17 +494,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         
         guard let song = musicPlayer.nowPlayingItem, let subviews = ratingStackView?.arrangedSubviews as? [UIButton] else { return }
         
-        for button in subviews {
-            
-            if button.tag == 0 {
-                
-                button.isHidden = song.rating < 1
-                
-            } else {
-                
-                button.setImage(song.rating >= button.tag ? #imageLiteral(resourceName: "StarFilled15") : #imageLiteral(resourceName: "Dot"), for: .normal)
-            }
-        }
+        subviews.forEach { $0.setImage(song.rating >= $0.tag ? #imageLiteral(resourceName: "StarFilled15") : #imageLiteral(resourceName: "Dot"), for: .normal) }
     }
     
     @IBAction func rate(_ sender: UIButton) {
@@ -547,8 +547,6 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         updateQueueLabel()
         updatePreferredSize()
         collectionView?.reloadData()
-//        perform(#selector(animateCells), with: nil, afterDelay: 0.01)
-//        UIView.transition(with: collectionView, duration: 0.3, options: .transitionCrossDissolve, animations: { self.collectionView.reloadData() }, completion: nil)
     }
     
     @IBAction func setRepeat(_ sender: Any) {
@@ -593,16 +591,9 @@ class TodayViewController: UIViewController, NCWidgetProviding {
 
 extension TodayViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        
-//        guard musicPlayer.queueCount() < queueLimit else { return 0 }
-        
-        return 1
-    }
+    func numberOfSections(in collectionView: UICollectionView) -> Int { 1 }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        
-//        guard musicPlayer.queueCount() < queueLimit else { return 0 }
         
         guard musicPlayer.nowPlayingItemIndex != -1 else { return 0 }
         
@@ -615,7 +606,7 @@ extension TodayViewController: UICollectionViewDelegate, UICollectionViewDataSou
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! WidgetCollectionViewCell
         
-        let index = queueLocation == .upNext ? musicPlayer.nowPlayingItemIndex + indexPath.row + 1 : musicPlayer.nowPlayingItemIndex - indexPath.row - 1
+        let index = queueLocation == .upNext ? musicPlayer.nowPlayingItemIndex + indexPath.row + 1 : musicPlayer.nowPlayingItemIndex + indexPath.row - min(10, musicPlayer.nowPlayingItemIndex)// - (indexPath.row + 1)
         
         cell.prepare(with: musicPlayer.item(at: index), index: indexPath.item % 5)
         
@@ -626,24 +617,12 @@ extension TodayViewController: UICollectionViewDelegate, UICollectionViewDataSou
         
         guard musicPlayer.indexOfNowPlayingItem != -1 else { return }
         
-        let index = queueLocation == .upNext ? musicPlayer.nowPlayingItemIndex + indexPath.row + 1 : musicPlayer.nowPlayingItemIndex - indexPath.row - 1
+        let index = queueLocation == .upNext ? musicPlayer.nowPlayingItemIndex + indexPath.row + 1 : musicPlayer.nowPlayingItemIndex + indexPath.row - min(10, musicPlayer.nowPlayingItemIndex)//- (indexPath.row + 1)
         
         musicPlayer.nowPlayingItem = musicPlayer.item(at: index)
         updateQueueLabel()
         updatePreferredSize()
     }
-    
-//    @objc func animateCells() {
-//
-//        guard let cells = collectionView?.visibleCells else { return }
-//        
-//        for cell in cells { cell.alpha = 0 }
-//
-//        for cell in cells.enumerated() {
-//
-//            UIView.animate(withDuration: 0.3, delay: 0, options: [.curveLinear, .allowUserInteraction], animations: { cell.element.alpha = 1 }, completion: nil)
-//        }
-//    }
 }
 
 extension TodayViewController: UICollectionViewDelegateFlowLayout {

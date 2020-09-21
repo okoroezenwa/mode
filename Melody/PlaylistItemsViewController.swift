@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 import StoreKit
 
-class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, AlbumTransitionable, AlbumArtistTransitionable, GenreTransitionable, ComposerTransitionable, ArtistTransitionable, InfoLoading, QueryUpdateable, CellAnimatable, SingleItemActionable, PillButtonContaining, Refreshable, EntityVerifiable, TopScrollable, EntityContainer {
+class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, AlbumTransitionable, AlbumArtistTransitionable, GenreTransitionable, ComposerTransitionable, ArtistTransitionable, SupplementaryHeaderInfoLoading, QueryUpdateable, CellAnimatable, SingleItemActionable, PillButtonContaining, Refreshable, EntityVerifiable, TopScrollable, EntityContainer {
 
     @IBOutlet var tableView: MELTableView!
     @objc lazy var headerView: HeaderView = {
@@ -18,6 +18,7 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
         let view = HeaderView.instance
         self.actionsStackView = view.actionsStackView
         self.stackView = view.scrollStackView
+        view.buttonDetails = [(.grouping, #imageLiteral(resourceName: "Grouping13"), "Grouping", { }), (.sort, #imageLiteral(resourceName: "Order13"), arrangementLabelText, { [weak self] in self?.showArranger() }), (.info, #imageLiteral(resourceName: "InfoNoBorder13"), nil, { [weak self] in self?.entityVC?.showOptions() }), (.insert, #imageLiteral(resourceName: "AddToPlaylist10"), nil, { [weak self] in self?.addSongs() }), (.affinity, SecondaryCategory.loved.propertyImage(from: playlist, context: .header), nil, { [weak self] in self?.setLiked() })]
         view.tapDelegate = self
         view.showTextView = true
         view.showLoved = true
@@ -30,7 +31,6 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
         view.infoButton.addTarget(entityVC, action: #selector(EntityItemsViewController.showOptions), for: .touchUpInside)
         view.likedStateButton.addTarget(self, action: #selector(setLiked), for: .touchUpInside)
         view.addButton.addTarget(self, action: #selector(addSongs), for: .touchUpInside)
-        
         updateLikedButton(view.likedStateButton)
         
         return view
@@ -68,7 +68,7 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
             let created = ScrollHeaderSubview.with(title: "Created", image: #imageLiteral(resourceName: "DateAdded"), useSmallerImage: true)
             dateCreatedLabel = created.label
             
-            let size = ScrollHeaderSubview.with(title: "Size", image: #imageLiteral(resourceName: "FileSize10"))
+            let size = ScrollHeaderSubview.with(title: "Size", image: #imageLiteral(resourceName: "FileSize12"))
             sizeLabel = size.label
             
             let plays = ScrollHeaderSubview.with(title: "Plays", image: #imageLiteral(resourceName: "Plays"))
@@ -118,6 +118,8 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
     @objc var playlistQuery: MPMediaQuery? { return entityVC?.query }
     @objc var playlist: MPMediaPlaylist? { return playlistQuery?.collections?.first as? MPMediaPlaylist }
     @objc weak var entityVC: EntityItemsViewController? { return parent as? EntityItemsViewController }
+    
+    var applicableSupplementaryProperties = [SecondaryCategory.duration, .fileSize, .dateAdded, .plays]
     
     @objc lazy var tableDelegate: TableDelegate = { TableDelegate.init(container: self, location: .playlist) }()
     @objc var entities: [MPMediaEntity] {
@@ -204,7 +206,8 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
                 staticSortCriteria = newValue
                 sortAllItems()
                 
-                headerView.sortButton.setTitle(arrangementLabelText, for: .normal)
+                prepare(.sort, reload: true, animateHeader: true)
+//                headerView.sortButton.setTitle(arrangementLabelText, for: .normal)
                 UIView.animate(withDuration: 0.3, animations: { self.headerView.layoutIfNeeded() })
                 UniversalMethods.saveSortableItem(withPersistentID: id, order: ascending, sortCriteria: staticSortCriteria, kind: .playlist)
             }
@@ -248,7 +251,6 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
         let queue = OperationQueue()
         queue.name = "Image Operation Queue"
         
-        
         return queue
     }()
     @objc let imageCache: ImageCache = {
@@ -263,7 +265,7 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
         
         let queue = OperationQueue()
         queue.name = "Sort Operation Queue"
-        
+        queue.qualityOfService = .userInitiated
         
         return queue
     }()
@@ -310,7 +312,7 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
         tableView.scrollIndicatorInsets.top = inset
     }
     
-    @objc func prepareSupplementaryInfo(animated: Bool = true) {
+    /*@objc func prepareSupplementaryInfo(animated: Bool = true) {
         
         headerView.groupingButton.setTitle((playlistQuery?.items ?? []).count.fullCountText(for: .song, capitalised: false), for: .normal)
         
@@ -344,7 +346,7 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
         })
         
         sortOperationQueue.addOperation(supplementaryOperation!)
-    }
+    }*/
     
     func updateLikedButton(_ sender: UIButton) {
         
@@ -389,10 +391,11 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
             
             UniversalMethods.performOnMainThread({
             
-                if weakSelf.headerView.likedStateButton.image(for: .normal) != weakSelf.image(for: playlist.likedState) {
-                    
-                    UIView.transition(with: weakSelf.headerView.likedStateButton, duration: 0.3, options: .transitionCrossDissolve, animations: { weakSelf.updateLikedButton(weakSelf.headerView.likedStateButton) }, completion: nil)
-                }
+                weakSelf.prepare(.affinity, reload: true, animateHeader: false)
+//                if weakSelf.headerView.likedStateButton.image(for: .normal) != weakSelf.image(for: playlist.likedState) {
+//
+//                    UIView.transition(with: weakSelf.headerView.likedStateButton, duration: 0.3, options: .transitionCrossDissolve, animations: { weakSelf.updateLikedButton(weakSelf.headerView.likedStateButton) }, completion: nil)
+//                }
             
             }, afterDelay: 0.3)
         })
@@ -659,31 +662,33 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
         
         } else {
             
-            guard let gr = sender as? UISwipeGestureRecognizer, let indexPath = tableView.indexPathForRow(at: gr.location(in: tableView)) else { return }
+            tableDelegate.showGoToMenu(via: sender)
             
-            let song = getSong(from: indexPath)
-            
-            let filterPredicates: Set<MPMediaPropertyPredicate> = showiCloudItems ? [.for(.album, using: song.albumPersistentID)] : [.for(.album, using: song.albumPersistentID), .offline]
-            
-            let query = MPMediaQuery.init(filterPredicates: filterPredicates)
-            query.groupingType = .album
-            
-            if let collections = query.collections, !collections.isEmpty {
-                
-                albumQuery = query
-                currentItem = song
-                
-                performSegue(withIdentifier: .albumUnwind, sender: nil)
-                
-            } else {
-                
-                albumQuery = nil
-                currentItem = nil
-                
-                let newBanner = Banner.init(title: showiCloudItems ? "This album is not in your library" : "This album is not available offline", subtitle: nil, image: nil, backgroundColor: .black, didTapBlock: nil)
-                newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
-                newBanner.show(duration: 0.7)
-            }
+//            guard let gr = sender as? UISwipeGestureRecognizer, let indexPath = tableView.indexPathForRow(at: gr.location(in: tableView)) else { return }
+//
+//            let song = getSong(from: indexPath)
+//
+//            let filterPredicates: Set<MPMediaPropertyPredicate> = showiCloudItems ? [.for(.album, using: song.albumPersistentID)] : [.for(.album, using: song.albumPersistentID), .offline]
+//
+//            let query = MPMediaQuery.init(filterPredicates: filterPredicates)
+//            query.groupingType = .album
+//
+//            if let collections = query.collections, !collections.isEmpty {
+//
+//                albumQuery = query
+//                currentItem = song
+//
+//                performSegue(withIdentifier: .albumUnwind, sender: nil)
+//
+//            } else {
+//
+//                albumQuery = nil
+//                currentItem = nil
+//
+//                let newBanner = Banner.init(title: showiCloudItems ? "This album is not in your library" : "This album is not available offline", subtitle: nil, image: nil, backgroundColor: .black, didTapBlock: nil)
+//                newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
+//                newBanner.show(duration: 0.7)
+//            }
         }
     }
     
@@ -755,7 +760,7 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
         
         lifetimeObservers.insert(notifier.addObserver(forName: .songsAddedToPlaylists, object: nil, queue: nil, using: { [weak self] notification in
             
-            guard let weakSelf = self, let id = weakSelf.playlist?.persistentID, let ids = notification.userInfo?[String.addedPlaylists] as? [MPMediaEntityPersistentID], Set(ids).contains(id) else { return }
+            guard let weakSelf = self, let id = weakSelf.playlist?.persistentID, let ids = notification.userInfo?[.addedPlaylists] as? [MPMediaEntityPersistentID], Set(ids).contains(id) else { return }
             
             if let query = weakSelf.getCurrentQuery() {
                 
@@ -1116,7 +1121,7 @@ extension PlaylistItemsViewController: MPMediaPickerControllerDelegate {
                 banner.detailLabel.textColor = Themer.textColour(for: .subtitle)
                 banner.show(for: .bannerInterval)
                 
-                notifier.post(name: .songsAddedToPlaylists, object: nil, userInfo: [String.addedPlaylists: [playlist.persistentID], String.addedSongs: mediaItemCollection.items])
+                notifier.post(name: .songsAddedToPlaylists, object: nil, userInfo: [.addedPlaylists: [playlist.persistentID], .addedSongs: mediaItemCollection.items])
             }
         })
         

@@ -11,4 +11,6 @@ import UIKit
 extension AnyHashable {
     
     static let queueChange = "queueChange"
+    static let addedPlaylists = "addedPlaylists"
+    static let addedSongs = "addedSongs"
 }

@@ -110,7 +110,7 @@ extension TimerBased {
                     
                     UIView.transition(with: repeatButton, duration: duration, options: [.transitionCrossDissolve, .allowUserInteraction], animations: {
                         
-                        repeatButton.setImage(changingMusicPlayer ? #imageLiteral(resourceName: "Repeat") : #imageLiteral(resourceName: self.prefersBoldOnTap == true ? "RepeatOneBold" : "RepeatOne"), for: .normal)
+                        repeatButton.setImage(changingMusicPlayer ? #imageLiteral(resourceName: "Repeat15") : #imageLiteral(resourceName: self.prefersBoldOnTap == true ? "RepeatOneBold15" : "RepeatOne15"), for: .normal)
                         
                         if self.prefersBoldOnTap == true {
                             
@@ -143,7 +143,7 @@ extension TimerBased {
                     
                     UIView.transition(with: repeatButton, duration: duration, options: [.transitionCrossDissolve, .allowUserInteraction], animations: {
                         
-                        repeatButton.setImage(changingMusicPlayer ? #imageLiteral(resourceName: self.prefersBoldOnTap == true ? "RepeatOneBold" : "RepeatOne") : #imageLiteral(resourceName: self.prefersBoldOnTap == true ? "RepeatBold" : "Repeat"), for: .normal)
+                        repeatButton.setImage(changingMusicPlayer ? #imageLiteral(resourceName: self.prefersBoldOnTap == true ? "RepeatOneBold15" : "RepeatOne15") : #imageLiteral(resourceName: self.prefersBoldOnTap == true ? "RepeatBold15" : "Repeat15"), for: .normal)
                         
                         if self.prefersBoldOnTap == true {
                             
@@ -176,7 +176,7 @@ extension TimerBased {
                     
                     UIView.transition(with: repeatButton, duration: duration, options: [.transitionCrossDissolve, .allowUserInteraction], animations: {
                         
-                        repeatButton.setImage(#imageLiteral(resourceName: self.prefersBoldOnTap == true && changingMusicPlayer ? "RepeatBold" : "Repeat"), for: .normal)
+                        repeatButton.setImage(#imageLiteral(resourceName: self.prefersBoldOnTap == true && changingMusicPlayer ? "RepeatBold15" : "Repeat15"), for: .normal)
                         
                         if self.prefersBoldOnTap == true {
                             
@@ -225,7 +225,7 @@ extension TimerBased {
                     UIView.transition(with: shuffle, duration: duration, options: [.transitionCrossDissolve, .allowUserInteraction], animations: {
                         
                         shuffle.fontWeight = (changingMusicPlayer ? FontWeight.semibold : .regular).rawValue
-                        shuffle.setImage(#imageLiteral(resourceName: changingMusicPlayer ? "ShuffleBold" : "Shuffle"), for: .normal)
+                        shuffle.setImage(#imageLiteral(resourceName: changingMusicPlayer ? "ShuffleBold15" : "Shuffle15"), for: .normal)
                         
                     }, completion: nil)
                 }
@@ -254,7 +254,7 @@ extension TimerBased {
                     UIView.transition(with: shuffle, duration: duration, options: [.transitionCrossDissolve, .allowUserInteraction], animations: {
                         
                         shuffle.fontWeight = (changingMusicPlayer ? FontWeight.regular : .semibold).rawValue
-                        shuffle.setImage(#imageLiteral(resourceName: changingMusicPlayer ? "Shuffle" : "ShuffleBold"), for: .normal)
+                        shuffle.setImage(#imageLiteral(resourceName: changingMusicPlayer ? "Shuffle15" : "ShuffleBold15"), for: .normal)
                         
                     }, completion: nil)
                 }

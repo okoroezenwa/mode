@@ -20,7 +20,7 @@ enum SortableKind: Int { case playlist, artistSongs, album, artistAlbums }
 
 enum AnimationDirection { case forward, reverse }
 
-enum PropertyTest: String, CaseIterable { case isExactly, contains, beginsWith, endsWith, isOver, isUnder }
+enum PropertyTest: String, CaseIterable { case isExactly, contains, beginsWith, endsWith, isOver, isUnder, follows, atLeast, atMost }
 
 enum StartPoint: Int { case library, search }
 
@@ -37,8 +37,6 @@ enum HeaderProperty { case songCount, albumCount, sortOrder, duration, size, dat
 enum SortLocation { case playlist, album, songs, collections, playlistList }
 
 enum PlaylistView: Int { case all, user, appleMusic }
-
-enum SecondaryCategory: Int { case loved, plays, lastPlayed, rating, genre, dateAdded, year, fileSize }
 
 enum Position { case leading, middle(single: Bool), trailing }
 
@@ -61,7 +59,7 @@ enum IconTheme: Int { case dark, light, match }
 enum SeparationMethod: Int { case overlay, smaller, below }
 
 enum SupplementaryItems: Int { case star, liked, share, volume }
-#warning("Now Playing Supplementary view need completing")
+#warning("Now Playing Supplementary view needs completing")
 
 enum SelectionAction { case remove, keep }
 
@@ -185,6 +183,24 @@ enum EntityType: Int {
         }
     }
     
+    var secondaryCategories: [SecondaryCategory] {
+        
+        switch self {
+            
+            case .song: return songSecondaryDetails ?? []
+            
+            case .album: return albumSecondaryDetails
+            
+            case .artist, .albumArtist: return artistSecondaryDetails
+            
+            case .genre: return genreSecondaryDetails
+            
+            case .composer: return composerSecondaryDetails
+            
+            case .playlist: return playlistSecondaryDetails
+        }
+    }
+    
     /// EntityType images in sizes 13, 16, 17, and 22.
     var images: (size13: UIImage, size16: UIImage, size17: UIImage, size22: UIImage) {
         
@@ -192,13 +208,13 @@ enum EntityType: Int {
             
             case .album: return (#imageLiteral(resourceName: "AlbumsSmall"), #imageLiteral(resourceName: "Albums16"), #imageLiteral(resourceName: "Albums"), #imageLiteral(resourceName: "AlbumsLarge"))
             
-            case .artist, .albumArtist: return (#imageLiteral(resourceName: "ArtistsSmall"), #imageLiteral(resourceName: "Artists16"), #imageLiteral(resourceName: "Artists"), #imageLiteral(resourceName: "ArtistsLarge"))
+            case .artist, .albumArtist: return (#imageLiteral(resourceName: "Artists14"), #imageLiteral(resourceName: "Artists16"), #imageLiteral(resourceName: "Artists20"), #imageLiteral(resourceName: "Artists23"))
             
             case .composer: return (#imageLiteral(resourceName: "ComposersSmall"), #imageLiteral(resourceName: "Composers16"), #imageLiteral(resourceName: "Composers"), #imageLiteral(resourceName: "ComposersLarge"))
             
             case .genre: return (#imageLiteral(resourceName: "GenresSmall"), #imageLiteral(resourceName: "Genres16"), #imageLiteral(resourceName: "Genres"), #imageLiteral(resourceName: "GenresLarge"))
             
-            case .playlist: return (#imageLiteral(resourceName: "PlaylistsAltSmall"), #imageLiteral(resourceName: "Playlists16"), #imageLiteral(resourceName: "PlaylistsAlt"), #imageLiteral(resourceName: "PlaylistsAlt"))
+            case .playlist: return (#imageLiteral(resourceName: "Playlists16"), #imageLiteral(resourceName: "Playlists17"), #imageLiteral(resourceName: "Playlists22"), #imageLiteral(resourceName: "Playlists22"))
             
             case .song: return (#imageLiteral(resourceName: "SongsSmall"), #imageLiteral(resourceName: "Songs16"), #imageLiteral(resourceName: "Songs"), #imageLiteral(resourceName: "SongsLarge"))
         }
@@ -515,11 +531,11 @@ enum LibrarySection: Int, PropertyStripPresented {
             
             case .composers: return #imageLiteral(resourceName: "Composers")
             
-            case .artists, .albumArtists: return #imageLiteral(resourceName: "Artists")
+            case .artists, .albumArtists: return #imageLiteral(resourceName: "Artists20")
             
             case .genres: return #imageLiteral(resourceName: "Genres")
             
-            case .playlists: return #imageLiteral(resourceName: "PlaylistsAltSmaller")
+            case .playlists: return #imageLiteral(resourceName: "Playlists17")
             
             case .songs: return #imageLiteral(resourceName: "Songs")
         }
@@ -706,7 +722,7 @@ enum Property: Int, PropertyStripPresented, CaseIterable {
             
             case .lastPlayed: return "Played"
             
-            case .plays: return "Plays"
+            case .plays: return "Play Count"
             
             case .rating: return "Rating"
             
@@ -1130,7 +1146,7 @@ enum SearchCategory: Int {
             
             case .genres: return #imageLiteral(resourceName: "Genres16")
             
-            case .playlists: return #imageLiteral(resourceName: "Playlists16")
+            case .playlists: return #imageLiteral(resourceName: "Playlists17")
             
             case .songs: return #imageLiteral(resourceName: "Songs16")
         }
@@ -1234,7 +1250,7 @@ enum SongAction {
             
             case .play: return #imageLiteral(resourceName: "PlayFilled17")
             
-            case .shuffle: return #imageLiteral(resourceName: "Shuffle")
+            case .shuffle: return #imageLiteral(resourceName: "Shuffle15")
             
             case .search: return #imageLiteral(resourceName: "SearchTab")
         }
@@ -1420,7 +1436,7 @@ enum SortCriteria: Int, CaseIterable {
             
             case .lastPlayed: return "Played"
             
-            case .plays: return "Plays"
+            case .plays: return "Play Count"
             
             case .random: return "Random"
             
@@ -1541,3 +1557,407 @@ enum Theme: Int {
         }
     }
 }
+
+enum SecondaryCategory: Int, CaseIterable {
+    
+    case loved, plays, lastPlayed, rating, genre, dateAdded, year, fileSize, albumCount, songCount, copyright, duration/*, isCloud*/
+    
+    var title: String {
+        
+        switch self {
+            
+            case .dateAdded: return "Date Added"
+                    
+            case .fileSize: return "Size"
+                
+            case .genre: return "Genre"
+                
+            case .lastPlayed: return "Last Played"
+                
+            case .loved: return "Affinity"
+                
+            case .plays: return "Plays"
+                
+            case .rating: return "Rating"
+                
+            case .year: return "Year"
+        
+            case .albumCount: return "Album Count"
+        
+            case .songCount: return "Song Count"
+            
+            case .copyright: return "Copyright"
+            
+            case .duration: return "Duration"
+        }
+    }
+    
+    var image: UIImage {
+        
+        switch self {
+            
+            case .plays: return #imageLiteral(resourceName: "Plays")
+            
+            case .rating: return #imageLiteral(resourceName: "Star11")
+            
+            case .lastPlayed: return #imageLiteral(resourceName: "LastPlayed10")
+            
+            case .genre: return #imageLiteral(resourceName: "GenresSmaller")
+            
+            case .dateAdded: return #imageLiteral(resourceName: "DateAdded")
+            
+            case .loved: return #imageLiteral(resourceName: "NoLove11")
+            
+            case .fileSize: return #imageLiteral(resourceName: "FileSize12")
+            
+            case .year: return #imageLiteral(resourceName: "Year")
+            
+            case .songCount: return #imageLiteral(resourceName: "Songs10")
+            
+            case .albumCount: return #imageLiteral(resourceName: "Albums10")
+            
+            case .copyright: return #imageLiteral(resourceName: "Copyright10")
+            
+            case .duration: return #imageLiteral(resourceName: "Time10")
+        }
+    }
+    
+    var imageProperties: (size: CGFloat, spacing: CGFloat) {
+        
+        switch self {
+            
+            case .plays: return (14, 2)
+            
+            case .rating: return (14, 2)
+            
+            case .lastPlayed: return (14, 2)
+            
+            case .genre: return (14, 4)
+            
+            case .dateAdded: return (13, 3)
+            
+            case .loved: return (14, 2)
+            
+            case .fileSize: return (13, 3)
+            
+            case .year: return (14, 4)
+            
+            case .songCount: return (12, 2)
+            
+            case .albumCount: return (14, 3)
+            
+            case .copyright: return (14, 2)
+            
+            case .duration: return (14, 2)
+        }
+    }
+    
+    var largeImage: UIImage {
+        
+        switch self {
+            
+            case .plays: return #imageLiteral(resourceName: "Plays14")
+            
+            case .rating: return #imageLiteral(resourceName: "Star15")
+            
+            case .lastPlayed: return #imageLiteral(resourceName: "LastPlayed14")
+            
+            case .genre: return #imageLiteral(resourceName: "Genre14")
+            
+            case .dateAdded: return #imageLiteral(resourceName: "DateAdded14")
+            
+            case .loved: return #imageLiteral(resourceName: "NoLove15")
+            
+            case .fileSize: return #imageLiteral(resourceName: "FileSize16")
+            
+            case .year: return #imageLiteral(resourceName: "Year14")
+            
+            case .songCount: return #imageLiteral(resourceName: "Songs16")
+            
+            case .albumCount: return #imageLiteral(resourceName: "Albums16")
+            
+            case .copyright: return #imageLiteral(resourceName: "Copyright14")
+            
+            case .duration: return #imageLiteral(resourceName: "Time14")
+        }
+    }
+    
+    var largeSize: CGFloat {
+        
+        switch self {
+            
+            case .plays: return 18
+            
+            case .rating: return 18
+            
+            case .lastPlayed: return 18
+            
+            case .genre: return 18
+            
+            case .dateAdded: return 16
+            
+            case .loved: return 18
+            
+            case .fileSize: return 16
+            
+            case .year: return 16
+            
+            case .songCount: return 18
+            
+            case .albumCount: return 18
+            
+            case .copyright: return 18
+            
+            case .duration: return 18
+        }
+    }
+    
+    func propertyString(from entity: MPMediaEntity) -> String? {
+        
+        switch self {
+            
+            case .plays:
+                
+                guard let plays: String = {
+                    
+                    if let song = entity as? MPMediaItem {
+                        
+                        return song.playCount.formatted
+                        
+                    } else if let collection = entity as? MPMediaItemCollection {
+                        
+                        return collection.items.totalPlays.formatted
+                    }
+                    
+                    return nil
+                    
+                }() else { return nil }
+                
+                return plays
+            
+            case .fileSize:
+                
+                guard let size: Int64 = {
+                    
+                    if let song = entity as? MPMediaItem {
+                        
+                        return song.fileSize
+                        
+                    } else if let collection = entity as? MPMediaItemCollection {
+                        
+                        return collection.items.totalSize
+                    }
+                    
+                    return nil
+                    
+                }() else { return nil }
+                
+                return FileSize.init(actualSize: size).actualSize.fileSizeRepresentation
+            
+            case .dateAdded:
+                
+                guard let existsInLibrary: Bool = {
+                    
+                    if let song = entity as? MPMediaItem { return song.existsInLibrary }
+                    
+                    return true
+                
+                }(), let date: Date = {
+                    
+                    if let playlist = entity as? MPMediaPlaylist {
+                        
+                        return playlist.dateCreated
+                        
+                    } else if let collection = entity as? MPMediaItemCollection {
+                        
+                        return collection.recentlyAdded
+                    
+                    } else if let song = entity as? MPMediaItem {
+                        
+                        return song.validDateAdded
+                    }
+                    
+                    return nil
+                    
+                }() else { return nil }
+                
+                return existsInLibrary ? date.timeIntervalSinceNow.shortStringRepresentation : "Not in Library"
+            
+            case .genre:
+                
+                guard let genre: String = {
+                    
+                    if let song = entity as? MPMediaItem {
+                        
+                        return song.validGenre
+                        
+                    } else if let collection = entity as? MPMediaItemCollection {
+                        
+                        return collection.genre
+                    }
+                    
+                    return nil
+                    
+                }() else { return nil }
+                
+                return genre
+            
+            case .lastPlayed: return (entity as? MPMediaItem)?.lastPlayedDate?.timeIntervalSinceNow.shortStringRepresentation
+            
+            case .loved: return ""
+            
+            case .rating:
+                
+                guard let rating: Int = {
+                    
+                    if let song = entity as? MPMediaItem {
+                        
+                        return song.rating
+                        
+                    } else if let collection = entity as? MPMediaItemCollection {
+                        
+                        return collection.averageRating
+                    }
+                    
+                    return nil
+                    
+                }() else { return nil }
+            
+                return rating.formatted
+        
+            case .year:
+                
+                guard let year: Int = {
+                    
+                    if let song = entity as? MPMediaItem {
+                        
+                        return song.year
+                        
+                    } else if let collection = entity as? MPMediaItemCollection {
+                        
+                        return collection.year
+                    }
+                    
+                    return nil
+                    
+                }() else { return nil }
+                
+                return year == 0 ? "-" : String(year)
+            
+            case .songCount: return (entity as? MPMediaItemCollection)?.songCount.formatted
+            
+            case .albumCount: return (entity as? MPMediaItemCollection)?.albumCount.formatted
+            
+            case .copyright: return (entity as? MPMediaItem)?.copyright
+            
+            case .duration:
+            
+                guard let time: String = {
+                    
+                    if let song = entity as? MPMediaItem {
+                        
+                        return song.playbackDuration.nowPlayingRepresentation
+                        
+                    } else if let collection = entity as? MPMediaItemCollection {
+                        
+                        return collection.items.totalDuration.stringRepresentation(as: .short)
+                    }
+                    
+                    return nil
+                    
+                }() else { return nil }
+                
+                return time
+        }
+    }
+    
+    func propertyImage(from entity: MPMediaEntity?, context: EntityPropertyCollectionViewCell.EntityPropertyContext) -> UIImage? {
+        
+        switch self {
+            
+            case .loved:
+            
+                guard let affinity: LikedState = {
+
+                    if let song = entity as? MPMediaItem {
+
+                        return song.likedState
+
+                    } else if let collection = entity as? MPMediaItemCollection {
+
+                        return collection.likedState
+                    }
+
+                    return nil
+
+                }() else { return nil }
+                
+                switch context {
+                    
+                    case .cell:
+                    
+                        switch affinity {
+
+                            case .disliked: return #imageLiteral(resourceName: "Unloved11")
+
+                            case .liked: return #imageLiteral(resourceName: "Loved11")
+
+                            case .none: return #imageLiteral(resourceName: "NoLove11")
+                        }
+                    
+                    case .header:
+                    
+                        switch affinity {
+
+                            case .disliked: return #imageLiteral(resourceName: "Unloved13")
+
+                            case .liked: return #imageLiteral(resourceName: "Loved13")
+
+                            case .none: return #imageLiteral(resourceName: "NoLove13")
+                        }
+                }
+            
+            case .rating:
+            
+                guard let rating: Int = {
+                    
+                    if let song = entity as? MPMediaItem {
+                        
+                        return song.rating
+                        
+                    } else if let collection = entity as? MPMediaItemCollection {
+                        
+                        return collection.averageRating
+                    }
+                    
+                    return nil
+                    
+                }() else { return nil }
+            
+                switch rating {
+
+                    case 0:
+                        
+                        switch context {
+                            
+                            case .cell: return #imageLiteral(resourceName: "Star11")
+                            
+                            case .header: return #imageLiteral(resourceName: "Star15")
+                        }
+
+                    default:
+                        
+                        switch context {
+                            
+                            case .cell: return #imageLiteral(resourceName: "StarFilled11")
+                            
+                            case .header: return #imageLiteral(resourceName: "StarFilled15")
+                        }
+                }
+            
+            default: return image
+        }
+    }
+}
+
+enum HeaderButtonType { case grouping, sort, artist, affinity, insert, info }

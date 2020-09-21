@@ -8,7 +8,7 @@
 
 import UIKit
 
-class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer, SingleItemActionable/*, CentreViewDisplaying*/ {
+class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer, SingleItemActionable, CentreViewDisplaying {
 
     @IBOutlet var tableView: MELTableView!
     @IBOutlet var bottomView: UIView!
@@ -23,12 +23,12 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
     let applicableActions = [SongAction.remove(nil)]
     @objc lazy var songManager: SongActionManager = { return SongActionManager.init(actionable: self) }()
     
-//    var centreViewGiantImage: UIImage?
-//    var centreViewTitleLabelText: String?
-//    var centreViewSubtitleLabelText: String?
-//    var centreViewLabelsImage: UIImage?
-//    lazy var centreView: CentreView? = CentreView.instance
-//    var currentCentreView = CentreView.CurrentView.none
+    var centreViewGiantImage: UIImage?
+    var centreViewTitleLabelText: String?
+    var centreViewSubtitleLabelText: String?
+    var centreViewLabelsImage: UIImage?
+    lazy var centreView: CentreView? = CentreView.instance
+    var currentCentreView = CentreView.CurrentView.none
     
     lazy var ignoreManager = false
     
@@ -55,7 +55,6 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
         let queue = OperationQueue()
         queue.name = "Image Operation Queue"
         
-        
         return queue
     }()
     @objc let imageCache: ImageCache = {
@@ -75,16 +74,16 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
         
         view.layoutIfNeeded()
         
+        centreView?.add(to: view, below: self, above: bottomView)
+        centreViewLabelsImage = #imageLiteral(resourceName: "AddToPlaylist100")
+        centreViewTitleLabelText = "Playlist Empty"
+        centreViewSubtitleLabelText = "Tap ... to add songs to this playlist"
+        
         updateEditButton(animated: false)
         
         notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillHideNotification, object: nil)
         notifier.addObserver(tableView as Any, selector: #selector(UITableView.reloadData), name: .lineHeightsCalculated, object: nil)
-        
-//        centreView?.add(to: view, below: self, above: bottomView)
-//        centreViewLabelsImage = #imageLiteral(resourceName: "AddToPlaylist100")
-//        centreViewTitleLabelText = "Nothing Here..."
-//        centreViewSubtitleLabelText = "Filters acted upon are added here"
         
         let hold = UILongPressGestureRecognizer.init(target: self, action: #selector(performHold(_:)))
         hold.minimumPressDuration = longPressDuration
@@ -217,15 +216,11 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
     
     func updateEditButton(animated: Bool = true) {
         
-        UIView.animate(withDuration: animated ? 0.3 : 0, animations: {
-            
-            self.editButton.lightOverride = (self.manager?.queue ?? self.playlistItems).isEmpty
-            
-//            if (self.manager?.queue ?? self.playlistItems).isEmpty && self.editView.isHidden == true { } else {
-//
-//                self.editView.isHidden = (self.manager?.queue ?? self.playlistItems).isEmpty
-//            }
-        })
+        updateCurrentView(to: (manager?.queue ?? playlistItems).isEmpty ? .labels(components: [.image, .title, .subtitle]) : .none, animated: animated)
+        
+        UIView.animate(withDuration: animated ? 0.3 : 0, animations: { self.editButton.lightOverride = (self.manager?.queue ?? self.playlistItems).isEmpty })
+        
+        editButton.isUserInteractionEnabled = (self.manager?.queue ?? self.playlistItems).isEmpty.inverted
     }
     
     @objc func handleRightSwipe(_ sender: Any) {
@@ -282,14 +277,11 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
             
             guard let weakSelf = self, let parent = parent else { return }
             
-            if isInDebugMode {
-                
-                UniversalMethods.performInMain { UniversalMethods.banner(withTitle: "Is Editable: " ?+ (playlist?.value(forProperty: .isEditable) as? Bool)?.description).show(for: 1) }
-            }
-            
             UniversalMethods.performInMain {
                 
                 if error == nil {
+                    
+                   if playlistsView != PlaylistView.appleMusic.rawValue, ((weakSelf.manager?.queue ?? weakSelf.playlistItems).isEmpty && shouldHideEmptyPlaylists.inverted) || (weakSelf.manager?.queue ?? weakSelf.playlistItems).isEmpty.inverted { notifier.post(name: .newPlaylistAdded, object: nil) }
                     
                     if (weakSelf.manager?.queue ?? weakSelf.playlistItems).isEmpty {
                         
@@ -319,11 +311,6 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
                         
                             playlist?.add(array, completionHandler: { error in
                                 
-                                if isInDebugMode {
-                                    
-                                    UniversalMethods.performInMain { UniversalMethods.banner(withTitle: "Is Editable: " ?+ (playlist?.value(forProperty: .isEditable) as? Bool)?.description).show(for: 1) }
-                                }
-                                
                                 UniversalMethods.performInMain {
                                     
                                     if error == nil {
@@ -332,7 +319,7 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
                                         newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
                                         newBanner.show(duration: 0.5)
                                         
-                                        notifier.post(name: .songsAddedToPlaylists, object: nil, userInfo: [String.addedPlaylists: [playlist?.persistentID ?? 0], String.addedSongs: array])
+                                        notifier.post(name: .songsAddedToPlaylists, object: nil, userInfo: [.addedPlaylists: [playlist?.persistentID ?? 0], .addedSongs: array])
                                         
                                         if weakSelf.fromQueue, let _ = weakSelf.manager {
                                             
@@ -430,8 +417,15 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
         
         tableView.deleteRows(at: details.indexPathsToRemove, with: .none)
         UniversalMethods.performOnMainThread({ self.tableView.reloadRows(at: self.tableView.indexPathsForVisibleRows ?? [], with: .none) }, afterDelay: 0.3)
+        #warning("Why perform a reload?")
         parent.prepare(animated: true)
         updateEditButton()
+        
+        if (manager?.queue ?? playlistItems).isEmpty, tableView.isEditing, let button = editButton {
+            
+            tableView.isEditing = false
+            editButton.setImage(.inactiveEditBorderlessImage, for: .normal)
+        }
     }
     
     @objc func clear() {
@@ -531,7 +525,7 @@ extension NewPlaylistViewController: MPMediaPickerControllerDelegate {
                 presenter.queueVC.tableView.reloadData()
             }
             
-            updateEditButton(animated: false)
+            updateEditButton(/*animated: false*/)
             tableView.reloadData()
         
         } else {
@@ -541,7 +535,7 @@ extension NewPlaylistViewController: MPMediaPickerControllerDelegate {
             (parent as? PresentedContainerViewController)?.itemsToAdd = array
             
             tableView.reloadData()
-            updateEditButton(animated: false)
+            updateEditButton(/*animated: false*/)
             
             (parent as? PresentedContainerViewController)?.prepare(animated: false)
         }
@@ -575,11 +569,11 @@ extension NewPlaylistViewController: UITableViewDelegate, UITableViewDataSource 
         cell.infoButton.setImage(#imageLiteral(resourceName: "Discard"), for: .normal)
         
         updateImageView(using: song, in: cell, indexPath: indexPath, reusableView: tableView)
-        
-        for category in [SecondaryCategory.loved, .plays, .rating, .lastPlayed, .dateAdded, .genre, .year, .fileSize] {
-            
-            update(category: category, using: song, in: cell, at: indexPath, reusableView: tableView)
-        }
+        updateInfo(for: song, ofType: .song, in: cell, at: indexPath, within: tableView)
+//        for category in [SecondaryCategory.loved, .plays, .rating, .lastPlayed, .dateAdded, .genre, .year, .fileSize] {
+//
+//            update(category: category, using: song, in: cell, at: indexPath, reusableView: tableView)
+//        }
         
         return cell
     }
@@ -662,6 +656,18 @@ extension NewPlaylistViewController: UITextFieldDelegate {
 }
 
 extension NewPlaylistViewController: EntityCellDelegate {
+    
+    func handleScrollSwipe(from gr: UIGestureRecognizer, direction: UISwipeGestureRecognizer.Direction) {
+        
+        switch direction {
+            
+            case .left: handleLeftSwipe(gr)
+            
+            case .right: handleRightSwipe(gr)
+            
+            default: break
+        }
+    }
     
     func editButtonHeld(in cell: EntityTableViewCell) {
         

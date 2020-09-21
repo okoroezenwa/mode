@@ -25,6 +25,7 @@ class RecentsTableViewController: UITableViewController {
         .init(0, 4): .init(title: "Playlists", accessoryType: .onOff(isOn: { showRecentPlaylists }, action: { [weak self] in self?.togglePlaylists() })),
         .init(0, 5): .init(title: "Composers", accessoryType: .onOff(isOn: { showRecentComposers }, action: { [weak self] in self?.toggleComposers() })),
         .init(0, 6): .init(title: "Compilations", accessoryType: .onOff(isOn: { showRecentCompilations }, action: { [weak self] in self?.toggleCompilations() })),
+        .init(0, 7): .init(title: "Album Artists", accessoryType: .onOff(isOn: { showRecentAlbumArtists }, action: { [weak self] in self?.toggleAlbumArtists() })),
         .init(1, 0): .init(title: "All Playlists", accessoryType: .onOff(isOn: { recentlyUpdatedPlaylistSorts.contains(.all) }, action: { [weak self] in self?.toggleRecentlyUpdated(with: .all) })),
         .init(1, 1): .init(title: "My Playlists", accessoryType: .onOff(isOn: { recentlyUpdatedPlaylistSorts.contains(.user) }, action: { [weak self] in self?.toggleRecentlyUpdated(with: .user) })),
         .init(1, 2): .init(title: "Apple Music Playlists", accessoryType: .onOff(isOn: { recentlyUpdatedPlaylistSorts.contains(.appleMusic) }, action: { [weak self] in self?.toggleRecentlyUpdated(with: .appleMusic) }))
@@ -75,6 +76,12 @@ class RecentsTableViewController: UITableViewController {
         notifier.post(name: .showRecentCompilationsChanged, object: nil)
     }
     
+    func toggleAlbumArtists() {
+        
+        prefs.set(!showRecentAlbumArtists, forKey: .showRecentAlbumArtists)
+        notifier.post(name: .showRecentAlbumArtistsChanged, object: nil)
+    }
+    
     func toggleComposers() {
         
         prefs.set(!showRecentComposers, forKey: .showRecentComposers)
@@ -111,7 +118,7 @@ class RecentsTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return settings.filter({ $0.key.section == section }).count// section == 0 ? 7 : 3
+        return settings.filter({ $0.key.section == section }).count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -147,7 +154,7 @@ class RecentsTableViewController: UITableViewController {
         if let text = sections[section]?.footer {
             
             let paragraphStyle = NSMutableParagraphStyle()
-            paragraphStyle.lineHeightMultiple = 1.5
+            paragraphStyle.lineHeightMultiple = .footerLineHeight
             
             footer?.label.text = text
             footer?.label.attributes = [.init(name: .paragraphStyle, value: .other(paragraphStyle), range: text.nsRange())]

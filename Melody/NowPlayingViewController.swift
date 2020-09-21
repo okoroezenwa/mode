@@ -497,7 +497,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         
         lifetimeObservers.insert(notifier.addObserver(forName: .songsAddedToPlaylists, object: nil, queue: nil, using: { [weak self] notification in
             
-            guard let weakSelf = self, let song = musicPlayer.nowPlayingItem, let songs = notification.userInfo?[String.addedSongs] as? [MPMediaItem], Set(songs).contains(song) else { return }
+            guard let weakSelf = self, let song = musicPlayer.nowPlayingItem, let songs = notification.userInfo?[.addedSongs] as? [MPMediaItem], Set(songs).contains(song) else { return }
             
             weakSelf.updateAddButton(hidden: true, animated: true)
             
@@ -1405,7 +1405,7 @@ extension NowPlayingViewController: Detailing {
             
             case .album: return ([.genre, .album, .albumArtist], false)
             
-            default: return ([EntityType.genre, .composer, .albumArtist, .album, .artist], true)
+            default: return ([EntityType.artist, .genre, .album, .composer, .albumArtist], true)
         }
     }
 }

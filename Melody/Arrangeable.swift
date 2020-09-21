@@ -154,7 +154,7 @@ extension Arrangeable {
             
             case .title: return sortLocation == .playlistList ? "Name" : "Title"
                 
-            case .plays: return "Plays"
+            case .plays: return "Play Count"
                 
             case .lastPlayed: return "Last Played"
                 

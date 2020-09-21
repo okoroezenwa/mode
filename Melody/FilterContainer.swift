@@ -329,7 +329,7 @@ extension FilterContainer where Self: UIViewController {
         
         guard let sender = sender else { return }
         
-        let actions = [PropertyTest.contains, .isExactly, .beginsWith, .endsWith, .isOver, .isUnder].filter({ sender.filterTests.contains($0) }).map({ test in
+        let actions = PropertyTest.allCases.filter({ sender.filterTests.contains($0) }).map({ test in
             
             AlertAction.init(title: sender.title(for: test, property: sender.filterProperty), style: .default, accessoryType: .check({ test == sender.propertyTest }), handler: { [weak self] in
                 
@@ -338,6 +338,7 @@ extension FilterContainer where Self: UIViewController {
                 sender.propertyTest = test
                 weakSelf.updateTestView()
                 weakSelf.requiredInputView?.pickerView.reloadAllComponents()
+                UIView.performWithoutAnimation { weakSelf.searchBar.updateTextField(with: weakSelf.placeholder) }
             })
         })
         
@@ -390,15 +391,15 @@ extension FilterContainer where Self: UIViewController {
         
         var properties = propertyHandler(filterProperties.removing(contentsOf: hiddenFilterProperties))
         
-        properties.append(.init(title: "Secondary Categories...", image: #imageLiteral(resourceName: "More22"), requiresDismissalFirst: true, handler: { [weak self] in
+        properties.append(.init(title: "Secondary Categories...", accessoryType: .check({ Set(otherFilterProperties).contains(sender.filterProperty) }), image: #imageLiteral(resourceName: "More22"), requiresDismissalFirst: true, handler: { [weak self] in
             
-            self?.showAlert(title: "Secondary Categories", subtitle: nil, with: propertyHandler(otherFilterProperties), shouldSortActions: false, rightAction: { _, vc in vc.dismiss(animated: true, completion: handler) }, images: (nil, #imageLiteral(resourceName: "Settings")))
+            self?.showAlert(title: "Secondary Categories", subtitle: nil, with: propertyHandler(otherFilterProperties), shouldSortActions: false, rightAction: { _, vc in vc.dismiss(animated: true, completion: handler) }, images: (nil, #imageLiteral(resourceName: "Settings13")))
             
         }), if: otherFilterProperties.isEmpty.inverted)
         
         properties.append(.init(title: title, handler: handler), if: useSystemAlerts)
         
-        showAlert(title: initial, subtitle: nil, with: properties, shouldSortActions: false, rightAction: { _, vc in vc.dismiss(animated: true, completion: handler) }, images: (nil, #imageLiteral(resourceName: "Settings")))
+        showAlert(title: initial, subtitle: nil, with: properties, shouldSortActions: false, rightAction: { _, vc in vc.dismiss(animated: true, completion: handler) }, images: (nil, #imageLiteral(resourceName: "Settings13")))
     }
     
     func deleteRecentSearch(in cell: RecentSearchTableViewCell) {

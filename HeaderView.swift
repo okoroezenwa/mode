@@ -8,6 +8,9 @@
 
 import UIKit
 
+typealias HeaderButtonDetails = (type: HeaderButtonType, image: UIImage?, text: String?, action: () -> Void)
+typealias HeaderPropertyDetails = (text: String, property: SecondaryCategory)
+
 class HeaderView: UIView, InfoLoading {
 
     @IBOutlet var gradientView: GradientView!
@@ -15,6 +18,7 @@ class HeaderView: UIView, InfoLoading {
     @IBOutlet var descriptionTextView: MELTextView!
     @IBOutlet var descriptionTextViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet var scrollStackView: UIStackView!
+    @IBOutlet var supplementaryCollectionView: MELCollectionView!
     @IBOutlet var collectionViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet var collectionViewHeaderHeightConstraint: NSLayoutConstraint!
     @IBOutlet var artistView: UIView!
@@ -80,6 +84,9 @@ class HeaderView: UIView, InfoLoading {
     lazy var size: CGSize = { return CGSize.init(width: width, height: width + FontManager.shared.collectionViewCellConstant - 0.001) }()
     
     @objc lazy var header = TableHeaderView.with(leftButtonVisible: true)
+    
+    var buttonDetails = [HeaderButtonDetails]()
+    var propertyDetails = [HeaderPropertyDetails]()
     
     @objc var showTextView = false {
         
@@ -282,6 +289,11 @@ class HeaderView: UIView, InfoLoading {
         updateScrollStackView()
         updateSpacing(self)
         
+        supplementaryCollectionView.register(.init(nibName: "HeaderButtonsCell", bundle: nil), forCellWithReuseIdentifier: "button")
+        supplementaryCollectionView.register(UINib.init(nibName: "EntityPropertyCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "cell")
+        supplementaryCollectionView.delegate = self
+        supplementaryCollectionView.dataSource = self
+        
         descriptionTextView.textContainer.maximumNumberOfLines = textViewMinimised ? 2 : 0
         descriptionTextView.textContainer.lineBreakMode = .byTruncatingTail
         
@@ -357,7 +369,31 @@ class HeaderView: UIView, InfoLoading {
 
 extension HeaderView: UICollectionViewDelegate, UICollectionViewDataSource {
     
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        
+        if collectionView == supplementaryCollectionView {
+            
+            return 2
+            
+        } else {
+            
+            return 1
+        }
+    }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        
+        if collectionView == supplementaryCollectionView {
+            
+            if section == 0 {
+                
+                return buttonDetails.count
+                
+            } else {
+                
+                return propertyDetails.count
+            }
+        }
         
         switch context {
             
@@ -373,7 +409,7 @@ extension HeaderView: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         
-        guard let cell = cell as? PlaylistCollectionViewCell else { return }
+        guard collectionView == self.collectionView, let cell = cell as? PlaylistCollectionViewCell else { return }
         
         switch context {
             
@@ -416,6 +452,38 @@ extension HeaderView: UICollectionViewDelegate, UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        if collectionView == supplementaryCollectionView {
+            
+            if indexPath.section == 0 {
+                
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "button", for: indexPath) as! HeaderButtonsCollectionViewCell
+                
+                let details = buttonDetails[indexPath.item]
+                cell.prepare(with: details.image, text: details.text, index: indexPath.item)
+                
+                return cell
+                
+            } else {
+                
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! EntityPropertyCollectionViewCell
+                
+                let details = propertyDetails[indexPath.item]
+                cell.context = .header
+                cell.prepare(with: {
+                    
+                    switch details.property {
+                        
+                        case .copyright: return nil
+                        
+                        default: return details.property.largeImage
+                    }
+                    
+                }(), text: details.text, property: details.property)
+                
+                return cell
+            }
+        }
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "playlistCell", for: indexPath) as! PlaylistCollectionViewCell
         
@@ -484,12 +552,36 @@ extension HeaderView: UICollectionViewDelegate, UICollectionViewDataSource {
         return cell
     }
     
+    func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
+        
+        if collectionView == supplementaryCollectionView {
+            
+            return indexPath.section == 0
+        }
+        
+        return true
+    }
+    
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        
+        if collectionView == supplementaryCollectionView {
+            
+            return
+        }
         
         operations[indexPath]?.cancel()
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        if collectionView == supplementaryCollectionView, indexPath.section == 0 {
+            
+            buttonDetails[indexPath.item].action()
+            
+            collectionView.deselectItem(at: indexPath, animated: true)
+            
+            return
+        }
         
         switch context {
             
@@ -578,7 +670,7 @@ extension HeaderView: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         
-        if let collectionsVC = viewController as? CollectionsViewController, collectionsVC.presented, let playlist = playlists.value(at: indexPath.row), let index = collectionsVC.selectedPlaylists.firstIndex(of: playlist)/*, let _ = collectionsVC.libraryVC?.parent as? PresentedContainerViewController*/ {
+        if collectionView == self.collectionView, let collectionsVC = viewController as? CollectionsViewController, collectionsVC.presented, let playlist = playlists.value(at: indexPath.row), let index = collectionsVC.selectedPlaylists.firstIndex(of: playlist)/*, let _ = collectionsVC.libraryVC?.parent as? PresentedContainerViewController*/ {
             
             collectionsVC.selectedPlaylists.remove(at: index)
             collectionsVC.addButton.setTitle("Add (\(collectionsVC.selectedPlaylists.count.formatted))", for: .normal)
@@ -602,7 +694,57 @@ extension HeaderView: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        return size
+        if collectionView == self.collectionView {
+        
+            return size
+        
+        } else {
+            
+            if indexPath.section == 0 {
+                
+                let details = buttonDetails[indexPath.item]
+            
+                return .init(width: (indexPath.item == 0 ? 12 : 4) + 24 + (details.text == nil ? 0 : 4) + FontManager.shared.width(for: details.text, style: .body, weight: .semibold) + 16, height: collectionView.frame.height)
+                
+            } else {
+                
+                let details = propertyDetails[indexPath.item]
+                
+                return .init(width: (details.property == .copyright ? 0 : details.property.largeSize) + FontManager.shared.width(for: details.text, style: .body), height: collectionView.frame.height)
+            }
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        
+        switch section {
+            
+            case 1: return 16
+            
+            default: return 0
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        
+        switch section {
+            
+            case 1: return 16
+            
+            default: return 0
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        
+        switch section {
+            
+            case 0 where collectionView == self.collectionView: return .init(top: 0, left: 4, bottom: 0, right: 8)
+            
+            case 1: return .init(top: 0, left: 4, bottom: 0, right: 16)
+            
+            default: return .zero
+        }
     }
 }
 

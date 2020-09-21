@@ -81,12 +81,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         prepareWindowColours()
         
-        if prefs.bool(forKey: "sectionsAndFiltersReset").inverted {
-            
-            [String.filterProperties, .librarySections, .otherFilterProperties, .otherLibrarySections].forEach({ prefs.removeObject(forKey: $0) })
-            prefs.set(true, forKey: "sectionsAndFiltersReset")
-        }
-        
         performLaunchChecks()
         Settings.registerDefaults()
 //        Queue.shared.verifyQueue()
@@ -135,19 +129,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             shortcutItem = item
         }
-        
-//        let query = MPMediaQuery.init(filterPredicates: [MPMediaPropertyPredicate.init(value: "Problematic Matches", forProperty: MPMediaPlaylistPropertyName, comparisonType: .equalTo)]).grouped(by: .playlist)
-//        let otherQuery = MPMediaQuery.init(filterPredicates: [MPMediaPropertyPredicate.init(value: "Liked 37", forProperty: MPMediaPlaylistPropertyName, comparisonType: .equalTo)]).grouped(by: .playlist)
-//        
-//        if let playlist = query.collections?.first as? MPMediaPlaylist, playlist.items.isEmpty.inverted, playlist.responds(to: NSSelectorFromString("removeFirstItem")), let items = otherQuery.collections?.first?.items {
-//            
-//            playlist.items.forEach({ _ in playlist.perform(NSSelectorFromString("removeFirstItem")) })
-//            
-//            playlist.add(items, completionHandler: { error in
-//                
-//                DispatchQueue.main.async { UniversalMethods.banner(withTitle: error == nil ? "Songs Added" : "Songs Not Added").show(for: 2) }
-//            })
-//        }
         
         return true
     }

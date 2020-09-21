@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="12120" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
-    <device id="retina4_7" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -24,7 +22,7 @@
                                 <constraint firstAttribute="width" priority="900" constant="69" id="Itn-V5-zj9"/>
                             </constraints>
                             <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="15" maxY="0.0"/>
-                            <state key="normal" image="Share"/>
+                            <state key="normal" image="Share19"/>
                             <connections>
                                 <action selector="share" destination="rQL-RO-lqw" eventType="touchUpInside" id="WXK-98-wHf"/>
                             </connections>
@@ -97,7 +95,7 @@
     </objects>
     <resources>
         <image name="Dot" width="4" height="4"/>
-        <image name="NoLove17" width="18" height="17"/>
-        <image name="Share" width="14" height="19"/>
+        <image name="NoLove17" width="19" height="17"/>
+        <image name="Share19" width="16" height="19"/>
     </resources>
 </document>

@@ -27,6 +27,7 @@ class LyricsManager: NSObject {
         
         let queue = OperationQueue()
         queue.name = "Lyrics Operation Queue"
+        queue.qualityOfService = .userInitiated
         
         return queue
     }()
@@ -311,7 +312,7 @@ class LyricsManager: NSObject {
             
             guard operation?.isCancelled == false else { return }
             
-            if let text = try elements.first()?.text().components(separatedBy: "\\n\\n").value(at: 1)?.replacingOccurrences(of: "\\n ", with: "\n").replacingOccurrences(of: "More on Genius", with: "\\") {
+            if let lyrics = try elements.first()?.text().replacing("(.*?Credits.*?\\d )((?:[A-Z]|\\[|\\().*?)(About.*?)", with: "***$2***").components(separatedBy: "***").value(at: 1)?.replacing("\\\\n (\\S)+?", with: "\\\\n \\\\n$1").replacingOccurrences(of: "\\n\\n", with: "\\n").replacingOccurrences(of: "\\n", with: "\n") {
                 
                 guard container.currentObject.id == item?.persistentID else {
                     
@@ -326,7 +327,6 @@ class LyricsManager: NSObject {
                 }
                 
                 guard operation?.isCancelled == false else { return }
-                let lyrics = String(text.prefix(upTo: text.firstIndex(of: "\\") ?? text.endIndex))
                 
                 container.currentObject.url = url.absoluteString
                 container.currentObject.lyrics = lyrics

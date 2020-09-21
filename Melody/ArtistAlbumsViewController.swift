@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, InfoLoading, ArtistTransitionable, AlbumArtistTransitionable, GenreTransitionable, QueryUpdateable, CellAnimatable, EntityContainer, PillButtonContaining, Refreshable, IndexContaining, EntityVerifiable, TopScrollable, AlbumTransitionable {
+class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, SupplementaryHeaderInfoLoading, ArtistTransitionable, AlbumArtistTransitionable, GenreTransitionable, QueryUpdateable, CellAnimatable, EntityContainer, PillButtonContaining, Refreshable, IndexContaining, EntityVerifiable, TopScrollable, AlbumTransitionable {
     
     @IBOutlet var tableView: MELTableView!
     
@@ -17,6 +17,7 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, I
         let view = HeaderView.instance
         self.actionsStackView = view.actionsStackView
         self.stackView = view.scrollStackView
+        view.buttonDetails = [(.grouping, #imageLiteral(resourceName: "Grouping13"), currentArtistQuery?.collections?.count.fullCountText(for: .album, capitalised: false), { [weak self] in self?.entityVC?.showGroupings() }), (.sort, #imageLiteral(resourceName: "Order13"), arrangementLabelText, { [weak self] in self?.showArranger() }), (.info, #imageLiteral(resourceName: "InfoNoBorder13"), nil, { [weak self] in self?.entityVC?.showOptions() })]
         view.showInfo = true
         view.showGrouping = true
         view.sortButton.setTitle(arrangementLabelText, for: .normal)
@@ -61,7 +62,7 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, I
             let created = ScrollHeaderSubview.with(title: "Added", image: #imageLiteral(resourceName: "DateAdded"), useSmallerImage: true)
             dateCreatedLabel = created.label
             
-            let size = ScrollHeaderSubview.with(title: "Size", image: #imageLiteral(resourceName: "FileSize10"))
+            let size = ScrollHeaderSubview.with(title: "Size", image: #imageLiteral(resourceName: "FileSize12"))
             sizeLabel = size.label
             
             let plays = ScrollHeaderSubview.with(title: "Plays", image: #imageLiteral(resourceName: "Plays"))
@@ -163,7 +164,8 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, I
                 staticSortCriteria = newValue
                 sortAllItems()
                 
-                headerView.sortButton.setTitle(arrangementLabelText, for: .normal)
+                prepare(.sort, reload: true, animateHeader: true)
+//                headerView.sortButton.setTitle(arrangementLabelText, for: .normal)
                 UIView.animate(withDuration: 0.3, animations: { self.headerView.layoutIfNeeded() })
                 UniversalMethods.saveSortableItem(withPersistentID: id, order: ascending, sortCriteria: staticSortCriteria, kind: .artistAlbums)
             }
@@ -229,6 +231,8 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, I
     @objc var currentArtistQuery: MPMediaQuery?
     var entityKind: AlbumBasedCollectionKind?
     
+    var applicableSupplementaryProperties = [SecondaryCategory.duration, .fileSize, .plays, .dateAdded]
+    
     @objc var currentItem: MPMediaItem?
     @objc var currentAlbum: MPMediaItemCollection?
     @objc var artistQuery: MPMediaQuery?
@@ -283,14 +287,13 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, I
         let queue = OperationQueue()
         queue.name = "Image Operation Queue"
         
-        
         return queue
     }()
     @objc let sortOperationQueue: OperationQueue = {
         
         let queue = OperationQueue()
         queue.name = "Sort Operation Queue"
-        
+        queue.qualityOfService = .userInitiated
         
         return queue
     }()
@@ -298,6 +301,7 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, I
         
         let queue = OperationQueue()
         queue.name = "Actionable Operation Queue"
+        queue.qualityOfService = .userInitiated
         
         return queue
     }()
@@ -386,7 +390,7 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, I
         scrollToHighlightedRow()
     }
     
-    @objc func prepareSupplementaryInfo(animated: Bool = true) {
+    /*@objc func prepareSupplementaryInfo(animated: Bool = true) {
         
         guard let entityVC = entityVC, let collection: MPMediaItemCollection = {
         
@@ -422,7 +426,7 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, I
         })
         
         sortOperationQueue.addOperation(supplementaryOperation!)
-    }
+    }*/
     
     @objc func showOptions(_ sender: Any) {
         
@@ -616,16 +620,18 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, I
         
         } else {
             
-            guard let gr = sender as? UISwipeGestureRecognizer, let indexPath = tableView.indexPathForRow(at: gr.location(in: tableView)) else { return }
+            tableDelegate.showGoToMenu(via: sender)
             
-            let album = getCollection(inSection: indexPath.section, row: indexPath.row)
-            
-            guard album.representativeItem?.isCompilation == false else {
-                
-                performSegue(withIdentifier: "toAlbum", sender: album)
-                
-                return
-            }
+//            guard let gr = sender as? UISwipeGestureRecognizer, let indexPath = tableView.indexPathForRow(at: gr.location(in: tableView)) else { return }
+//
+//            let album = getCollection(inSection: indexPath.section, row: indexPath.row)
+//
+//            guard album.representativeItem?.isCompilation == false else {
+//
+//                performSegue(withIdentifier: "toAlbum", sender: album)
+//
+//                return
+//            }
             
 //            guard let song = album.representativeItem, entityVC?.kind != .artist else { return }
 //

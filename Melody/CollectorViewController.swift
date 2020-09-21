@@ -98,7 +98,6 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
         let queue = OperationQueue()
         queue.name = "Image Operation Queue"
         
-        
         return queue
     }()
     @objc let imageCache: ImageCache = {
@@ -237,7 +236,14 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
     
     @objc func handleLeftSwipe(_ sender: Any) {
         
-        toggleEditing(false)
+        if tableView.isEditing {
+        
+            toggleEditing(false)
+            
+        } else if let gr = sender as? UIGestureRecognizer, let indexPath = tableView.indexPathForRow(at: gr.location(in: tableView)), let cell = tableView.cellForRow(at: indexPath) as? EntityTableViewCell, let item = manager?.queue[indexPath.row] {
+            
+            singleItemActionDetails(for: .show(title: cell.nameLabel.text, context: .song(location: .list, at: indexPath.row, within: manager.queue), canDisplayInLibrary: true), entityType: .song, using: item, from: self, useAlternateTitle: true).handler()
+        }
     }
     
     @objc func toggleEditing(_ editing: Bool) {
@@ -574,11 +580,11 @@ extension CollectorViewController: UITableViewDelegate, UITableViewDataSource {
             cell.playButton.isUserInteractionEnabled = false
             cell.prepare(with: song, songNumber: songCountVisible.inverted ? nil : indexPath.row + 1)
             updateImageView(using: song, in: cell, indexPath: indexPath, reusableView: tableView)
-            
-            for category in [SecondaryCategory.loved, .plays, .rating, .lastPlayed, .dateAdded, .genre, .year, .fileSize] {
-                
-                update(category: category, using: song, in: cell, at: indexPath, reusableView: tableView)
-            }
+            updateInfo(for: song, ofType: .song, in: cell, at: indexPath, within: tableView)
+//            for category in [SecondaryCategory.loved, .plays, .rating, .lastPlayed, .dateAdded, .genre, .year, .fileSize] {
+//
+//                update(category: category, using: song, in: cell, at: indexPath, reusableView: tableView)
+//            }
         }
         
         return cell
@@ -681,6 +687,18 @@ extension CollectorViewController: UIGestureRecognizerDelegate {
 //}
 
 extension CollectorViewController: EntityCellDelegate {
+    
+    func handleScrollSwipe(from gr: UIGestureRecognizer, direction: UISwipeGestureRecognizer.Direction) {
+        
+        switch direction {
+            
+            case .left: handleLeftSwipe(gr)
+            
+            case .right: handleRightSwipe(gr)
+            
+            default: break
+        }
+    }
     
     func editButtonHeld(in cell: EntityTableViewCell) {
         

@@ -8,19 +8,14 @@
 
 import UIKit
 
+typealias PropertyDictionary = [SecondaryCategory: (image: UIImage, text: String)]
+
 class EntityTableViewCell: UITableViewCell, ArtworkContainingCell {
     
     @IBOutlet var artworkImageView: UIImageView!
     @IBOutlet var nameLabel: MELLabel!
     @IBOutlet var artistAlbumLabel: MELLabel!
-    @IBOutlet var supplemetaryScrollView: UIScrollView!
-    @IBOutlet var supplementaryStackView: UIStackView! {
-        
-        didSet {
-            
-            prepareSupplementaryView()
-        }
-    }
+    @IBOutlet var supplementaryCollectionView: UICollectionView!
     @IBOutlet var playButton: MELButton!
     @IBOutlet var cloudButton: UIImageView!
     @IBOutlet var durationLabel: MELLabel!
@@ -40,29 +35,17 @@ class EntityTableViewCell: UITableViewCell, ArtworkContainingCell {
     @IBOutlet var textContainingStackView: UIStackView!
     @IBOutlet var editButton: MELButton!
     
-    @objc lazy var playsView = ScrollHeaderSubview.forCell(title: "-", image: #imageLiteral(resourceName: "Plays"))
-    
-    @objc lazy var ratingView = ScrollHeaderSubview.forCell(title: "-", image: #imageLiteral(resourceName: "Star"), imageSize: 13)
-    
-    @objc lazy var lastPlayedView: ScrollHeaderSubview = .forCell(title: "-", image: #imageLiteral(resourceName: "LastPlayed10"))
-    
-    @objc lazy var genreView: ScrollHeaderSubview = .forCell(title: "-", image: #imageLiteral(resourceName: "GenresSmaller"), useSmallerDistance: false)
-    
-    @objc lazy var dateAddedView: ScrollHeaderSubview = .forCell(title: "-", image: #imageLiteral(resourceName: "DateAdded"), imageSize: 13, useSmallerDistance: false)
-    
-    @objc lazy var likedStatusView: ScrollHeaderSubview = .forCell(title: nil, image: #imageLiteral(resourceName: "NoLove"), imageSize: 14)
-    
-    @objc lazy var sizeView: ScrollHeaderSubview = .forCell(title: "-", image: #imageLiteral(resourceName: "FileSize10"), imageSize: 13)
-    
-    @objc lazy var yearView: ScrollHeaderSubview = .forCell(title: "-", image: #imageLiteral(resourceName: "Year"), imageSize: 13, useSmallerDistance: false)
-    
-    @objc lazy var skipsView: ScrollHeaderSubview = .forCell(title: "-", image: #imageLiteral(resourceName: "Skips14"))
-    
-    @objc lazy var composerView = ScrollHeaderSubview.forCell(title: "-", image: #imageLiteral(resourceName: "ComposersSmall"))
-    
-    @objc lazy var albumArtistView = ScrollHeaderSubview.forCell(title: "-", image: #imageLiteral(resourceName: "GenresSmall"))
+    lazy var properties = SecondaryCategory.allCases.reduce(PropertyDictionary(), {
+        
+        var dictionary = $0
+        dictionary[$1] = ($1.image, "-")
+        
+        return dictionary
+    })
     
     weak var delegate: EntityCellDelegate?
+    var shouldPerformLeftSwipeAction = true
+    var shouldPerformRightSwipeAction = true
     
     var preferredEditingStyle = Mode.EditingStyle.select {
         
@@ -75,6 +58,7 @@ class EntityTableViewCell: UITableViewCell, ArtworkContainingCell {
     }
     
     var width: CGFloat { return artworkContainer.frame.width }
+    lazy var collectionViewWidth = 0 as CGFloat
     
     @objc lazy var indicator: ESTMusicIndicatorView = {
         
@@ -108,23 +92,17 @@ class EntityTableViewCell: UITableViewCell, ArtworkContainingCell {
         updateCornersAndShadows()
         updateSpacing()
         
+        supplementaryCollectionView.register(UINib.init(nibName: .init(describing: EntityPropertyCollectionViewCell.self), bundle: nil), forCellWithReuseIdentifier: "cell")
+        supplementaryCollectionView.delegate = self
+        supplementaryCollectionView.dataSource = self
+        supplementaryCollectionView.allowsSelection = false
+        
         let tap = UITapGestureRecognizer.init(target: self, action: #selector(tapCell(_:)))
-        supplemetaryScrollView.addGestureRecognizer(tap)
+        supplementaryCollectionView.addGestureRecognizer(tap)
         
-//        let editHold = UILongPressGestureRecognizer.init(target: self, action: #selector(performHold(_:)))
-//        editHold.minimumPressDuration = longPressDuration
-//        editButton.addGestureRecognizer(editHold)
-//        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: editHold))
-        
-//        let accessoryHold = UILongPressGestureRecognizer.init(target: self, action: #selector(performHold(_:)))
-//        accessoryHold.minimumPressDuration = longPressDuration
-//        infoButton.addGestureRecognizer(accessoryHold)
-//        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: accessoryHold))
-//
-//        let artworkHold = UILongPressGestureRecognizer.init(target: self, action: #selector(performHold(_:)))
-//        artworkHold.minimumPressDuration = longPressDuration
-//        playButton.addGestureRecognizer(artworkHold)
-//        LongPressManager.shared.gestureRecognisers.append(Weak.init(value: artworkHold))
+        let pan = UIPanGestureRecognizer.init(target: self, action: #selector(handlePan(_:)))
+        pan.delegate = self
+        supplementaryCollectionView.addGestureRecognizer(pan)
         
         notifier.addObserver(self, selector: #selector(modifyPlayOnly), name: .playOnlyChanged, object: nil)
         notifier.addObserver(self, selector: #selector(modifyBackground), name: .themeChanged, object: nil)
@@ -132,16 +110,6 @@ class EntityTableViewCell: UITableViewCell, ArtworkContainingCell {
         notifier.addObserver(self, selector: #selector(updateCornersAndShadows), name: .cornerRadiusChanged, object: nil)
         notifier.addObserver(self, selector: #selector(modifyInfoButton), name: .infoButtonVisibilityChanged, object: nil)
         notifier.addObserver(self, selector: #selector(updateSpacing), name: .lineHeightsCalculated, object: nil)
-        
-//        let leftSwipe = UISwipeGestureRecognizer.init(target: self, action: #selector(handleLeftSwipe(_:)))
-//        leftSwipe.direction = .left
-//        leftSwipe.delegate = self
-//        supplemetaryScrollView.addGestureRecognizer(leftSwipe)
-//        
-//        let rightSwipe = UISwipeGestureRecognizer.init(target: self, action: #selector(handleRightSwipe(_:)))
-//        rightSwipe.direction = .right
-//        rightSwipe.delegate = self
-//        supplemetaryScrollView.addGestureRecognizer(rightSwipe)
         
         preservesSuperviewLayoutMargins = false
         contentView.preservesSuperviewLayoutMargins = false
@@ -193,11 +161,6 @@ class EntityTableViewCell: UITableViewCell, ArtworkContainingCell {
         textContainingStackView.layoutMargins.top = FontManager.shared.cellInset
     }
     
-    @objc func prepareSupplementaryView() {
-        
-        [SecondaryCategory.loved, .plays, .rating, .lastPlayed, .dateAdded, .genre, .year, .fileSize].forEach({ supplementaryStackView.addArrangedSubview(view(for: $0)) })
-    }
-    
     @objc func updateCornersAndShadows() {
         
         [artworkImageView, playingView].forEach({
@@ -227,28 +190,6 @@ class EntityTableViewCell: UITableViewCell, ArtworkContainingCell {
         editBorderView.clear = preferredEditingStyle == .select && isSelected.inverted
     }
     
-    func view(for category: SecondaryCategory) -> ScrollHeaderSubview {
-
-        switch category {
-
-            case .loved: return likedStatusView
-
-            case .plays: return playsView
-
-            case .rating: return ratingView
-
-            case .lastPlayed: return lastPlayedView
-
-            case .dateAdded: return dateAddedView
-
-            case .genre: return genreView
-
-            case .year: return yearView
-
-            case .fileSize: return sizeView
-        }
-    }
-    
     @objc func modifyPlayOnly() {
         
         playButton.isUserInteractionEnabled = allowPlayOnly && delegate != nil
@@ -274,22 +215,6 @@ class EntityTableViewCell: UITableViewCell, ArtworkContainingCell {
         optionsView.isHidden = !showInfoButtons
         infoButton.isHidden = !showInfoButtons
     }
-    
-//    @objc func handleLeftSwipe(_ gr: UISwipeGestureRecognizer) {
-//
-//        if (supplemetaryScrollView.contentSize.width < supplemetaryScrollView.frame.width) || (supplemetaryScrollView.contentSize.width > supplemetaryScrollView.frame.width && (supplemetaryScrollView.frame.width + supplemetaryScrollView.contentOffset.x == supplemetaryScrollView.contentSize.width)) {
-//
-//            scrollDelegate?.handleScrollSwipe(in: self, from: gr, direction: .left)
-//        }
-//    }
-//
-//    @objc func handleRightSwipe(_ gr: UISwipeGestureRecognizer) {
-//
-//        if supplemetaryScrollView.contentOffset.x == 0.0 {
-//
-//            scrollDelegate?.handleScrollSwipe(in: self, from: gr, direction: .right)
-//        }
-//    }
     
     @objc func tapCell(_ gr: UITapGestureRecognizer) {
         
@@ -345,7 +270,6 @@ class EntityTableViewCell: UITableViewCell, ArtworkContainingCell {
         optionsView.isHidden = hideOptionsView
         infoButton.isHidden = hideOptionsView
         
-        supplementaryStackView.isHidden = false
         durationLabel.greyOverride = false
     }
     
@@ -381,9 +305,9 @@ class EntityTableViewCell: UITableViewCell, ArtworkContainingCell {
     }
     
     override func setEditing(_ editing: Bool, animated: Bool) {
-
-        super.setEditing(editing, animated: animated)
         
+        super.setEditing(editing, animated: animated)
+
         if #available(iOS 13, *), preferredEditingStyle == .select { return }
         
         mainViewInnerViewLeadingConstraint.constant = editing ? 0 : 10
@@ -419,17 +343,17 @@ class EntityTableViewCell: UITableViewCell, ArtworkContainingCell {
             if #available(iOS 13, *) {
                 
                 view.isUserInteractionEnabled = true
-            
+
                 let editHold = UILongPressGestureRecognizer.init(target: self, action: #selector(performHold(_:)))
                 editHold.minimumPressDuration = longPressDuration
                 view.addGestureRecognizer(editHold)
                 LongPressManager.shared.gestureRecognisers.append(Weak.init(value: editHold))
-                
+
                 let tap = UITapGestureRecognizer.init(target: self, action: #selector(editTap))
                 view.addGestureRecognizer(tap)
-                
+
             } else {
-                
+
                 view.isHidden = true
             }
         }
@@ -446,78 +370,6 @@ class EntityTableViewCell: UITableViewCell, ArtworkContainingCell {
         } else {
             
             delegate?.tableView.selectRow(at: delegate?.tableView.indexPath(for: self), animated: false, scrollPosition: .none)
-        }
-    }
-    
-    @objc func modifySecondaryScrollView(withSong song: MPMediaItem) {
-        
-        guard let array = songSecondaryDetails, !array.isEmpty else { return }
-            
-        for category in array {
-            
-            switch category {
-                
-                case .loved:
-                    
-                    let image: UIImage = {
-                        
-                        switch song.likedState {
-                            
-                            case .disliked: return #imageLiteral(resourceName: "Unloved")
-                                
-                            case .liked: return #imageLiteral(resourceName: "Loved")
-                                
-                            case .none: return #imageLiteral(resourceName: "NoLove")
-                        }
-                    }()
-                    
-                    likedStatusView.imageView.image = image
-                    
-                case .plays: playsView.label.text = song.playCount.formatted
-                    
-                case .rating:
-                    
-                    ratingView.label.text = String(song.rating)
-                    ratingView.imageView.image = song.rating > 0 ? #imageLiteral(resourceName: "StarFilled") : #imageLiteral(resourceName: "Star")
-                    
-                case .lastPlayed:
-                    
-                    guard let text = song.lastPlayedDate?.timeIntervalSinceNow.shortStringRepresentation, !text.isEmpty else {
-                        
-                        lastPlayedView.isHidden = true
-                        continue
-                    }
-                    
-                    lastPlayedView.label.text = text
-                    
-                case .dateAdded: dateAddedView.label.text = song.existsInLibrary ? song.validDateAdded.timeIntervalSinceNow.shortStringRepresentation : "Not in Library"
-                    
-                case .genre:
-                
-                    guard let text = song.genre, !text.isEmpty else {
-                        
-                        genreView.isHidden = true
-                        continue
-                    }
-                    
-                    genreView.label.text = text
-                    
-                case .year:
-                    
-                    guard song.year != 0 else {
-                        
-                        yearView.isHidden = true
-                        continue
-                    }
-                    
-                    yearView.label.text = String(song.year)
-                    
-                case .fileSize:
-                    
-                    let sizer = FileSize.init(actualSize: song.fileSize)
-                    
-                    sizeView.label.text = String(sizer.size) + sizer.suffix
-            }
         }
     }
     
@@ -668,7 +520,6 @@ class EntityTableViewCell: UITableViewCell, ArtworkContainingCell {
         
         explicitView.isHidden = true
         cloudButton.isHidden = true
-        supplementaryStackView.isHidden = true
         durationLabel.greyOverride = true
         
         [playingView, indicator].forEach({ $0.isHidden = {
@@ -693,13 +544,107 @@ class EntityTableViewCell: UITableViewCell, ArtworkContainingCell {
             trackNumberLabel.superview?.isHidden = true
         }
     }
+    
+    override func layoutSubviews() {
+        
+        super.layoutSubviews()
+        
+        collectionViewWidth = supplementaryCollectionView.frame.width
+    }
 }
 
 extension EntityTableViewCell {
     
+    @objc func handlePan(_ gr: UIPanGestureRecognizer) {
+        
+        let translation = gr.translation(in: gr.view)
+        let direction = translation.x > 0 ? UISwipeGestureRecognizer.Direction.right : .left
+        
+        switch gr.state {
+            
+            case .began, .changed:
+                
+                if direction == .right, supplementaryCollectionView.contentOffset.x <= 0 {
+                    
+                    supplementaryCollectionView.bounces = false
+                    
+                    if shouldPerformLeftSwipeAction {
+                        
+                        delegate?.handleScrollSwipe(from: gr, direction: .right)
+                        shouldPerformLeftSwipeAction = false
+                        shouldPerformRightSwipeAction = true
+                    }
+                
+                } else if direction == .left, supplementaryCollectionView.contentOffset.x >= (supplementaryCollectionView.contentSize.width - supplementaryCollectionView.frame.size.width) {
+                    
+                    supplementaryCollectionView.bounces = false
+                    
+                    if shouldPerformRightSwipeAction {
+                        
+                        delegate?.handleScrollSwipe(from: gr, direction: .left)
+                        shouldPerformRightSwipeAction = false
+                        shouldPerformLeftSwipeAction = true
+                    }
+                }
+            
+            case .ended: supplementaryCollectionView.bounces = true
+            
+            default: break
+        }
+    }
+    
+    override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        
+        if let gr = gestureRecognizer as? UIPanGestureRecognizer {
+            
+            if abs(gr.velocity(in: gr.view).x) < abs(gr.velocity(in: gr.view).y) { return false }
+            
+            let direction = gr.translation(in: gr.view).x > 0 ? UISwipeGestureRecognizer.Direction.right : .left
+            
+            if (direction == .right && supplementaryCollectionView.contentOffset.x <= 0) || (direction == .left && supplementaryCollectionView.contentOffset.x >= (supplementaryCollectionView.contentSize.width - supplementaryCollectionView.frame.size.width)) {
+                
+                supplementaryCollectionView.bounces = false
+            }
+
+            shouldPerformLeftSwipeAction = true
+            shouldPerformRightSwipeAction = true
+        }
+        
+        return true
+    }
+    
     override func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         
-        return gestureRecognizer is UISwipeGestureRecognizer && otherGestureRecognizer == supplemetaryScrollView.panGestureRecognizer
+        return gestureRecognizer is UIPanGestureRecognizer && otherGestureRecognizer == supplementaryCollectionView.panGestureRecognizer
+    }
+}
+
+extension EntityTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource {
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int { entityType.secondaryCategories.count }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! EntityPropertyCollectionViewCell
+        
+        let property = entityType.secondaryCategories[indexPath.row]
+        let details = properties[property]
+        
+        cell.prepare(with: details?.image, text: details?.text, property: property)
+        
+        return cell
+    }
+}
+
+extension EntityTableViewCell: UICollectionViewDelegateFlowLayout {
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
+        let property = entityType.secondaryCategories[indexPath.row]
+        let imageProperties = property.imageProperties
+        let text = properties[property]?.text
+        
+        return .init(width: imageProperties.size + (text?.isEmpty == true ? 0 : imageProperties.spacing) + FontManager.shared.width(for: text, style: .secondary), height: collectionView.frame.height)
     }
 }
 
@@ -713,4 +658,5 @@ protocol EntityCellDelegate: EditControlContaining {
     func accessoryButtonHeld(in cell: EntityTableViewCell)
     func editButtonTapped(in cell: EntityTableViewCell)
     func editButtonHeld(in cell: EntityTableViewCell)
+    func handleScrollSwipe(from gr: UIGestureRecognizer, direction: UISwipeGestureRecognizer.Direction)
 }

@@ -17,9 +17,154 @@ protocol InfoLoading: class {
     var imageOperationQueue: OperationQueue { get }
 }
 
-protocol RecentsInfoLoading: InfoLoading {
+/// Was to be used for supplementary info in recents cells
+//protocol RecentsInfoLoading: InfoLoading {
+//
+//    var recentsOperations: ImageOperations { get set }
+//}
+
+protocol SupplementaryHeaderInfoLoading: InfoLoading {
     
-    var recentsOperations: ImageOperations { get set }
+    var applicableSupplementaryProperties: [SecondaryCategory] { get set }
+    var supplementaryOperation: BlockOperation? { get set }
+    var sortOperationQueue: OperationQueue { get }
+    var headerView: HeaderView { get set }
+}
+
+extension SupplementaryHeaderInfoLoading {
+    
+    var collection: MPMediaItemCollection? {
+        
+        guard let vc = self as? UIViewController else { return nil }
+        
+        switch vc.location {
+            
+            case .collections(kind: let kind) where kind != .playlist:
+            
+                guard let vc = vc as? CollectionsViewController, let items = vc.collectionsQuery.items else { return nil }
+            
+                return .init(items: items)
+            
+            case .songs:
+            
+                guard let vc = vc as? SongsViewController, let items = vc.songsQuery.items else { return nil }
+                
+                return .init(items: items)
+            
+            case .collection(kind: _, point: let startPoint):
+            
+                switch startPoint {
+                    
+                    case .songs:
+                    
+                        guard let vc = vc as? ArtistSongsViewController, let grouping = vc.entityVC?.kind.grouping else { return nil }
+                        
+                        return (vc.currentArtistQuery?.copy() as? MPMediaQuery)?.grouped(by: grouping).collections?.first
+                    
+                    case .albums:
+                    
+                        guard let vc = vc as? ArtistAlbumsViewController, let grouping = vc.entityVC?.kind.grouping else { return nil }
+                        
+                        return (vc.currentArtistQuery?.copy() as? MPMediaQuery)?.grouped(by: grouping).collections?.first
+                }
+            
+            case .album: return (vc as? AlbumItemsViewController)?.album
+            
+            case .playlist: return (vc as? PlaylistItemsViewController)?.playlist
+            
+            default: return nil
+        }
+    }
+    
+    @discardableResult func prepare(_ headerButtonType: HeaderButtonType, reload shouldReload: Bool, animateHeader isAnimated: Bool) -> Int? {
+        
+        guard let collection = collection, let vc = self as? UIViewController, let _ = vc.viewIfLoaded, let index = headerView.buttonDetails.firstIndex(where: { $0.type == headerButtonType }) else { return nil }
+        
+        let details = headerView.buttonDetails[index]
+        
+        switch headerButtonType {
+            
+            case .affinity: headerView.buttonDetails[index] = (details.type, SecondaryCategory.loved.propertyImage(from: collection, context: .header), nil, details.action)
+            
+            case .grouping: headerView.buttonDetails[index] = (details.type, details.image, {
+                
+                switch vc.location {
+                    
+                    case .album, .playlist, .collection(kind: _, point: .songs): return collection.count.fullCountText(for: .song, capitalised: false)
+                    
+                    case .collection(kind: _, point: .albums): return (vc as? ArtistAlbumsViewController)?.currentArtistQuery?.collections?.count.fullCountText(for: .album, capitalised: false)
+                    
+                    case .collections(kind: .playlist): return (vc as? CollectionsViewController)?.playlistsViewText
+                    
+                    default: return nil
+                }
+                
+            }(), details.action)
+            
+            case .sort: headerView.buttonDetails[index] = (details.type, details.image, (vc as? Arrangeable)?.arrangementLabelText, details.action)
+            
+            default: return nil
+        }
+        
+        if shouldReload {
+        
+            headerView.supplementaryCollectionView.performBatchUpdates({ [weak self] in self?.headerView.supplementaryCollectionView.reloadItems(at: [.init(row: index, section: 0)]) }, completion: nil)
+        }
+        
+        if isAnimated {
+            
+            UIView.animate(withDuration: 0.3, animations: { self.headerView.layoutIfNeeded() })
+        }
+        
+        return index
+    }
+    
+    func prepareSupplementaryInfo(animated: Bool = true) {
+        
+        guard let collection = collection, let vc = self as? UIViewController, let _ = vc.viewIfLoaded else { return }
+        
+        let array = [HeaderButtonType.grouping, .affinity].reduce([IndexPath](), {
+            
+            guard let index = prepare($1, reload: false, animateHeader: false) else { return $0 }
+            
+            return $0.appending(.init(row: index, section: 0))
+        })
+        
+        if animated {
+            
+            UIView.animate(withDuration: 0.3, animations: { self.headerView.layoutIfNeeded() })
+            
+            headerView.supplementaryCollectionView.performBatchUpdates({ [weak self] in self?.headerView.supplementaryCollectionView.reloadItems(at: array) }, completion: nil)
+        
+        } else {
+            
+            headerView.supplementaryCollectionView.reloadItems(at: array)
+        }
+        
+        supplementaryOperation?.cancel()
+        supplementaryOperation = BlockOperation()
+        supplementaryOperation?.addExecutionBlock({ [weak self] in
+            
+            guard let weakSelf = self else { return }
+            
+            let array = weakSelf.applicableSupplementaryProperties.reduce([HeaderPropertyDetails](), {
+                
+                guard let string = $1.propertyString(from: collection) else { return $0 }
+                
+                return $0.appending((string, $1))
+            })
+            
+            guard weakSelf.supplementaryOperation?.isCancelled == false else { return }
+            
+            OperationQueue.main.addOperation({
+                
+                weakSelf.headerView.propertyDetails = array
+                weakSelf.headerView.supplementaryCollectionView.reloadSections(.init(integer: 1))
+            })
+        })
+        
+        sortOperationQueue.addOperation(supplementaryOperation!)
+    }
 }
 
 extension InfoLoading {
@@ -263,129 +408,35 @@ extension InfoLoading {
         }
     }
     
-    func update(category: SecondaryCategory, using song: MPMediaItem, in cell: EntityTableViewCell, at indexPath: IndexPath, reusableView: Any) {
+    func updateInfo(for entity: MPMediaEntity, ofType type: EntityType, in cell: EntityTableViewCell, at indexPath: IndexPath, within tableView: UITableView) {
         
-        let view = cell.view(for: category)
-        
-        guard let array = songSecondaryDetails, Set(array).contains(category) else {
+        let operation = BlockOperation()
+        operation.addExecutionBlock({ [weak entity, weak operation] in
             
-            view.isHidden = true
-            return
-        }
-        
-        view.isHidden = false
-        
-        if let string = infoCache.object(forKey: .init(id: song.persistentID, index: category.rawValue)) as String? {
-            
-            view.label.text = {
+            let array = type.secondaryCategories
+            let dictionary = array.reduce(PropertyDictionary(), { dict, property -> PropertyDictionary in
                 
-                switch category {
-                    
-                    case .loved: return nil
-                    
-                    case .rating: return string.components(separatedBy: ".").value(at: 1)
-                    
-                    default: return string
-                }
-            }()
-            
-            if category == .loved {
+                var dictionary = dict
                 
-                view.imageView.image = UIImage.init(imageLiteralResourceName: string)
-            
-            } else if category == .rating {
+                guard let entity = entity, let string: String = property.propertyString(from: entity), let image: UIImage = property.propertyImage(from: entity, context: .cell) else { return dict }
                 
-                view.imageView.image = UIImage.init(imageLiteralResourceName: string.components(separatedBy: ".").first ?? "")
-            }
-            
-        } else {
-            
-            let operation = BlockOperation()
-            operation.addExecutionBlock({ [weak song, weak operation/*, weak infoCache*/] in
+                dictionary[property] = (image: image, text: string)
                 
-                if let song = song, let string: String = {
-                    
-                    switch category {
-                        
-                        case .plays: return song.playCount.formatted
-                        
-                        case .fileSize:
-                        
-                            let sizer = FileSize.init(actualSize: song.fileSize)
-                            
-                            return sizer.actualSize.fileSizeRepresentation//String(sizer.size) + sizer.suffix
-                        
-                        case .dateAdded: return song.existsInLibrary ? song.validDateAdded.timeIntervalSinceNow.shortStringRepresentation : "Not in Library"
-                        
-                        case .genre: return song.validGenre
-                        
-                        case .lastPlayed: return song.lastPlayedDate?.timeIntervalSinceNow.shortStringRepresentation ?? "-"
-                        
-                        case .loved:
-                            
-                            switch song.likedState {
-                                
-                                case .disliked: return "Unloved"
-                                
-                                case .liked: return "Loved"
-                                
-                                case .none: return "NoLove"
-                            }
-                        
-                        case .rating:
-                            
-                            switch song.rating {
-                                
-                                case 0: return "Star" + "." + song.rating.formatted
-                                
-                                default: return "StarFilled" + "." + song.rating.formatted
-                            }
-                    
-                        case .year: return song.year == 0 ? "-" : String(song.year)
-                    }
-                    
-                }(), !string.isEmpty {
-                    
-                    guard operation?.isCancelled == false else { return }
-                    
-//                    infoCache?.setObject(string as NSString, forKey: .init(id: song.persistentID, index: category.rawValue))
-                    
-                    OperationQueue.main.addOperation {
-                        
-                        if let cell = (reusableView as? UITableView)?.cellForRow(at: indexPath) as? EntityTableViewCell, operation?.isCancelled == false {
-                            
-                            if category == .rating {
-                                
-                                cell.view(for: category).label.text = string.components(separatedBy: ".").value(at: 1)
-                                cell.view(for: category).imageView.image = UIImage.init(imageLiteralResourceName: string.components(separatedBy: ".").first ?? "")
-                            
-                            } else if category != .loved {
-                                
-                                cell.view(for: category).label.text = string
-                            
-                            } else {
-                                
-                                cell.view(for: category).label.text = nil
-                                cell.view(for: category).imageView.image = UIImage.init(imageLiteralResourceName: string)
-                            }
-                        }
-                    }
-                    
-                } else {
-                    
-                    OperationQueue.main.addOperation {
-                        
-                        if let cell = (reusableView as? UITableView)?.cellForRow(at: indexPath) as? EntityTableViewCell, operation?.isCancelled == false {
-                            
-                            cell.view(for: category).isHidden = true
-                        }
-                    }
-                }
+                return dictionary
             })
             
-            infoOperations[.init(id: song.persistentID, index: category.rawValue)] = operation
-            imageOperationQueue.addOperation(operation)
-        }
+            OperationQueue.main.addOperation {
+                
+                if let cell = tableView.cellForRow(at: indexPath) as? EntityTableViewCell, operation?.isCancelled == false {
+                    
+                    cell.properties = dictionary
+                    cell.supplementaryCollectionView.reloadData()
+                }
+            }
+        })
+        
+        infoOperations[.init(id: entity.persistentID, index: indexPath.item)] = operation
+        imageOperationQueue.addOperation(operation)
     }
 }
 

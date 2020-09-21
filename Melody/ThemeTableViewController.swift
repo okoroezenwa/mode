@@ -105,7 +105,7 @@ class ThemeTableViewController: UITableViewController {
         if let text = footerText {
             
             let paragraphStyle = NSMutableParagraphStyle()
-            paragraphStyle.lineHeightMultiple = 1.5
+            paragraphStyle.lineHeightMultiple = .footerLineHeight
             
             footer?.label.text = text
             footer?.label.attributes = [.init(name: .paragraphStyle, value: .other(paragraphStyle), range: text.nsRange())]
@@ -384,7 +384,7 @@ class ThemeTableViewController: UITableViewController {
         if let text = footerText {
             
             let paragraphStyle = NSMutableParagraphStyle()
-            paragraphStyle.lineHeightMultiple = 1.5
+            paragraphStyle.lineHeightMultiple = .footerLineHeight
             
             footer?.label.text = text
             footer?.label.attributes = [.init(name: .paragraphStyle, value: .other(paragraphStyle), range: text.nsRange())]

@@ -1,0 +1,16 @@
+//
+//  Release.xcconfig
+//  Melody
+//
+//  Created by Ezenwa Okoro on 24/06/2020.
+//  Copyright © 2020 Ezenwa Okoro. All rights reserved.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+#include "Base.xcconfig"
+
+APP_NAME = $(inherited)
+MODE_BUNDLE_ID = $(BUNDLE_ID_BASE).ModePlayer
+MODE_WIDGET_BUNDLE_ID = $(MODE_BUNDLE_ID).Widget

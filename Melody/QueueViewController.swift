@@ -97,7 +97,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
     var oldArtwork: UIImage?
     
     var centreViewGiantImage: UIImage?
-    var centreViewTitleLabelText: String? = "Empty Queue"
+    var centreViewTitleLabelText: String? = "Queue Empty"
     var centreViewSubtitleLabelText: String? = "Play a song or two to show the queue"
     var centreViewLabelsImage: UIImage? = #imageLiteral(resourceName: "Queue100")
     lazy var centreView: CentreView? = .instance
@@ -127,7 +127,6 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         
         let queue = OperationQueue()
         queue.name = "Image Operation Queue"
-        
         
         return queue
     }()
@@ -618,31 +617,33 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         
         } else {
             
-            guard !presented, let gr = sender as? UISwipeGestureRecognizer, let indexPath = tableView.indexPathForRow(at: gr.location(in: tableView)), let song = getSong(from: indexPath) else { return }
+            guard !presented, let gr = sender as? UIGestureRecognizer, let indexPath = tableView.indexPathForRow(at: gr.location(in: tableView)), let cell = tableView.cellForRow(at: indexPath) as? EntityTableViewCell, let item = getSong(from: indexPath) else { return }
             
-            let filterPredicates: Set<MPMediaPropertyPredicate> = showiCloudItems ? [.for(.album, using: song.albumPersistentID)] : [.for(.album, using: song.albumPersistentID), .offline]
+            singleItemActionDetails(for: .show(title: cell.nameLabel.text, context: context(from: indexPath), canDisplayInLibrary: true), entityType: .song, using: item, from: self, useAlternateTitle: true).handler()
             
-            let query = MPMediaQuery.init(filterPredicates: filterPredicates)
-            query.groupingType = .album
-            
-            if let collections = query.collections, !collections.isEmpty {
-                
-                albumQuery = query
-                currentItem = song
-                
-                useAlternateAnimation = true
-                
-                performSegue(withIdentifier: .albumUnwind, sender: nil)
-                
-            } else {
-                
-                albumQuery = nil
-                currentItem = nil
-                
-                let newBanner = Banner.init(title: showiCloudItems ? "This album is not in your library" : "This album is not available offline", subtitle: nil, image: nil, backgroundColor: .black, didTapBlock: nil)
-                newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
-                newBanner.show(duration: 0.7)
-            }
+//            let filterPredicates: Set<MPMediaPropertyPredicate> = showiCloudItems ? [.for(.album, using: song.albumPersistentID)] : [.for(.album, using: song.albumPersistentID), .offline]
+//
+//            let query = MPMediaQuery.init(filterPredicates: filterPredicates)
+//            query.groupingType = .album
+//
+//            if let collections = query.collections, !collections.isEmpty {
+//
+//                albumQuery = query
+//                currentItem = song
+//
+//                useAlternateAnimation = true
+//
+//                performSegue(withIdentifier: .albumUnwind, sender: nil)
+//
+//            } else {
+//
+//                albumQuery = nil
+//                currentItem = nil
+//
+//                let newBanner = Banner.init(title: showiCloudItems ? "This album is not in your library" : "This album is not available offline", subtitle: nil, image: nil, backgroundColor: .black, didTapBlock: nil)
+//                newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
+//                newBanner.show(duration: 0.7)
+//            }
         }
     }
     
@@ -1141,7 +1142,17 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                 return queue[indexPath.row]
             }
             
-            return isQueueAvailable ? queue.value(at: indexPath.row) : musicPlayer.item(at: indexPath.row)
+            return isQueueAvailable ? queue.value(at: indexPath.row) : musicPlayer.item(at: {
+                
+                if #available(iOS 13.5, *) { return indexPath.row }
+                
+                if #available(iOS 11.3, *), useSystemPlayer || forceOldStyleQueue, let index = Queue.shared.indexToUse, index > limit {
+                    
+                    return index - (limit - indexPath.row)
+                }
+                
+                return indexPath.row
+            }())
             
         } else if indexPath.section == 1 {
             
@@ -1161,6 +1172,13 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         
         if indexPath.section == 0 {
             
+            if #available(iOS 13.5, *) { return indexPath.row }
+            
+            if #available(iOS 11.3, *), useSystemPlayer || forceOldStyleQueue, index > limit {
+                
+                return index - (limit - indexPath.row)
+            }
+            
             return indexPath.row
         
         } else if indexPath.section == 1 {
@@ -1178,13 +1196,6 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         return ([EntityType.artist, .genre, .album, .composer, .albumArtist], true)
     }
     
-//    @objc func updateLoadingViews(hidden: Bool) {
-//
-//        activityVisualEffectView.isHidden = queueIsBeingEdited ? hidden : firstScroll
-//        activityView.isHidden = hidden
-//        hidden ? activityIndicator.stopAnimating() : activityIndicator.startAnimating()
-//    }
-    
     deinit {
         
         if isInDebugMode, deinitBannersEnabled {
@@ -1196,7 +1207,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             
             ArtworkManager.shared.currentlyPeeking = nil
             
-            UIView.transition(with: container.imageView, duration: 0.5, options: .transitionCrossDissolve, animations: { container.imageView.image = ArtworkManager.shared.activeContainer?.modifier?.artworkType.image/*self.oldArtwork*/ }, completion: nil)
+            UIView.transition(with: container.imageView, duration: 0.5, options: .transitionCrossDissolve, animations: { container.imageView.image = ArtworkManager.shared.activeContainer?.modifier?.artworkType.image }, completion: nil)
         }
     }
 
@@ -1230,46 +1241,60 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             return queue.count
         }
         
+        let block: (Bool) -> Int = { limited in
+            
+            if limited {
+                
+                if section == 0 {
+                    
+                    guard let index = Queue.shared.indexToUse else { return 1 }
+                    
+                    return index == 0 ? 1 : min(index, self.limit)
+                    
+                } else if section == 1 {
+                    
+                    return self.presented ? 1 : 2
+                    
+                } else if section == 2 {
+                    
+                    guard let index = Queue.shared.indexToUse else { return 1 }
+                    
+                    return (self.queueCount - (index + 1)) == 0 ? 1 : min(self.limit, self.queueCount - (index + 1))
+                }
+                
+            } else {
+            
+                if section == 0 {
+                    
+                    guard let index = Queue.shared.indexToUse else { return 1 }
+                    
+                    return index == 0 ? 1 : index
+                    
+                } else if section == 1 {
+                    
+                    return self.presented ? 1 : 2
+                    
+                } else if section == 2 {
+                    
+                    guard let index = Queue.shared.indexToUse else { return 1 }
+                    
+                    return (self.queueCount - (index + 1)) == 0 ? 1 : self.queueCount - (index + 1)
+                }
+            }
+            
+            return 0
+        }
+        
+        if #available(iOS 13.5, *) { return block(false) }
+        
         if #available(iOS 11.3, *), useSystemPlayer || forceOldStyleQueue {
             
-            if section == 0 {
-                
-                guard let index = Queue.shared.indexToUse else { return 1 }
-                
-                return index == 0 ? 1 : min(index, limit)
-                
-            } else if section == 1 {
-                
-                return presented ? 1 : 2
-                
-            } else if section == 2 {
-                
-                guard let index = Queue.shared.indexToUse else { return 1 }
-                
-                return (queueCount - (index + 1)) == 0 ? 1 : min(limit, queueCount - (index + 1))
-            }
+            return block(true)
             
         } else {
         
-            if section == 0 {
-                
-                guard let index = Queue.shared.indexToUse else { return 1 }
-                
-                return index == 0 ? 1 : index
-                
-            } else if section == 1 {
-                
-                return presented ? 1 : 2
-                
-            } else if section == 2 {
-                
-                guard let index = Queue.shared.indexToUse else { return 1 }
-                
-                return (queueCount - (index + 1)) == 0 ? 1 : queueCount - (index + 1)
-            }
+            return block(false)
         }
-        
-        return 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -1289,10 +1314,10 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                 
             } else {
                 
-                if #available(iOS 11.3, *), useSystemPlayer || forceOldStyleQueue, index > limit {
-                    
-                    return songCell(at: indexPath, with: getSong(from: .init(row: index - (limit - indexPath.row), section: 0)))
-                }
+//                if #available(iOS 11.3, *), useSystemPlayer || forceOldStyleQueue, index > limit {
+//                    
+//                    return songCell(at: indexPath, with: getSong(from: .init(row: index - (limit - indexPath.row), section: 0)))
+//                }
                 
                 return songCell(at: indexPath, with: getSong(from: indexPath))
             }
@@ -1482,7 +1507,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                     
                     let wasPlaying = musicPlayer.isPlaying
                     
-                    if /*self.*/isQueueAvailable {
+                    if isQueueAvailable {
                         
                         musicPlayer.setQueue(with: .init(items: self.queue))
                         musicPlayer.nowPlayingItem = item
@@ -1533,7 +1558,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                     
                     guard let index = Queue.shared.indexToUse else { return }
                     
-                    let item = getSong(from: indexPath)//musicPlayer.item(at: index + 1 + indexPath.row)
+                    let item = getSong(from: indexPath)
                     
                     if warnForQueueInterruption && changeGuard {
                         
@@ -1603,6 +1628,8 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                 
                 let numberToUse: Int = {
                     
+                    if #available(iOS 13.5, *) { return indexPath.row + 1 }
+                    
                     if #available(iOS 11.3, *), useSystemPlayer || forceOldStyleQueue, index > limit {
                         
                         return index - (limit - indexPath.row) + 1
@@ -1615,18 +1642,16 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             }()
             
             cell.prepare(with: song, songNumber: songNumber, hideOptionsView: presented ? true : !showInfoButtons)
-
             cell.delegate = self
-//            cell.swipeDelegate = self
             cell.preferredEditingStyle = preferredEditingStyle
             cell.playButton.isUserInteractionEnabled = false
 
             updateImageView(using: song, in: cell, indexPath: indexPath, reusableView: tableView)
-            
-            for category in [SecondaryCategory.loved, .plays, .rating, .lastPlayed, .dateAdded, .genre, .year, .fileSize] {
-                
-                update(category: category, using: song, in: cell, at: indexPath, reusableView: tableView as Any)
-            }
+            updateInfo(for: song, ofType: .song, in: cell, at: indexPath, within: tableView)
+//            for category in [SecondaryCategory.loved, .plays, .rating, .lastPlayed, .dateAdded, .genre, .year, .fileSize] {
+//                
+//                update(category: category, using: song, in: cell, at: indexPath, reusableView: tableView as Any)
+//            }
         }
         
         return cell
@@ -1695,30 +1720,26 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         }
     }
     
-    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
-        
-        return .none
-    }
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle { .none }
     
-    func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
-        
-        if #available(iOS 13, *) {
-            
-            return true
-        }
-        
-        return false
-    }
+    func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool { false }
     
     func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
         
         guard let _ = Queue.shared.indexToUse else { return false }
         
+        let block: () -> Bool = {
+            
+            if self.queueIsBeingEdited { return true }
+            
+            return Set([0, 2]).contains(indexPath.section)
+        }
+        
+        if #available(iOS 13.5, *) { return block() }
+        
         if #available(iOS 11.3, *), useSystemPlayer || forceOldStyleQueue { return false }
         
-        if queueIsBeingEdited { return true }
-        
-        return Set([0, 2]).contains(indexPath.section)
+        return block()
     }
     
     func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
@@ -2002,6 +2023,8 @@ extension QueueViewController: Attributor {
                 
                 let numberToUse: Int = {
                     
+                    if #available(iOS 13.5, *) { return section == 0 ? index : queueCount - (index + 1) }
+                    
                     if #available(iOS 11.3, *), useSystemPlayer || forceOldStyleQueue {
                         
                         return section == 0 ? min(limit, index) : min(limit, queueCount - (index + 1))
@@ -2107,6 +2130,18 @@ extension QueueViewController {
 }
 
 extension QueueViewController: EntityCellDelegate {
+    
+    func handleScrollSwipe(from gr: UIGestureRecognizer, direction: UISwipeGestureRecognizer.Direction) {
+        
+        switch direction {
+            
+            case .left: handleLeftSwipe(gr)
+            
+            case .right: handleRightSwipe(gr)
+            
+            default: break
+        }
+    }
     
     func editButtonHeld(in cell: EntityTableViewCell) {
         

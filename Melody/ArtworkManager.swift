@@ -16,7 +16,7 @@ class ArtworkManager: NSObject { // Handles adaptive artwork
         
         super.init()
         
-        [Notification.Name.themeChanged, .backgroundArtworkAdaptivityChanged, .nowPlayingItemChanged].forEach({ notifier.addObserver(self, selector: #selector(updateArtwork), name: $0, object: nil) })
+        [Notification.Name.themeChanged, .backgroundArtworkAdaptivityChanged, .nowPlayingItemChanged, Notification.Name.init("updateSection")].forEach({ notifier.addObserver(self, selector: #selector(updateArtwork), name: $0, object: nil) })
     }
     
     weak var container: ArtworkModifierContaining?

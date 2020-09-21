@@ -1,0 +1,16 @@
+//
+//  Base.xcconfig
+//  Melody
+//
+//  Created by Ezenwa Okoro on 24/06/2020.
+//  Copyright © 2020 Ezenwa Okoro. All rights reserved.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+BUNDLE_ID_BASE = com.okoroezenwa
+DEBUG_BUNDLE_ID_BASE = $(BUNDLE_ID_BASE).modeplayer
+APP_NAME = Mode
+APP_VERSION = 1.2
+APP_BUILD_NUMBER = 22314

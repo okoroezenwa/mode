@@ -198,7 +198,7 @@ extension LyricsInfoViewController: UITableViewDelegate, UITableViewDataSource {
             
                 let cell = tableView.dequeueReusableCell(withIdentifier: "field", for: indexPath) as! TextFieldsTableViewCell
                 
-                cell.itemImageView.image = #imageLiteral(resourceName: indexPath.row == 0 ? "Songs" : "Artists")
+                cell.itemImageView.image = #imageLiteral(resourceName: indexPath.row == 0 ? "Songs" : "Artists20")
                 cell.textField.placeholder = indexPath.row == 0 ? "song title" : "artist name"
                 cell.textField.text = indexPath.row == 0 ? currentObject.titleTerm : currentObject.artistTerm
                 

@@ -125,7 +125,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         
         didSet {
             
-            playShuffleButton.setImage(shuffled ? #imageLiteral(resourceName: "Shuffle") : #imageLiteral(resourceName: "PlayFilled12"), for: .normal)
+            playShuffleButton.setImage(shuffled ? #imageLiteral(resourceName: "Shuffle15") : #imageLiteral(resourceName: "PlayFilled12"), for: .normal)
             playShuffleButton.imageEdgeInsets.left = shuffled ? 0 : 2
             playShuffleButton.contentEdgeInsets.bottom = shuffled ? 0 : 1
         }
@@ -206,6 +206,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
     var isSearchNavigationControllerInitialised = false
     var isLibraryNavigationControllerInitialised = false
     var allowSwipeAssistedPan = false
+    var childViewSwipeAssistedPan: UIPanGestureRecognizer?
     
     override func viewDidLoad() {
         
@@ -260,7 +261,15 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         updateCornersAndShadows()
         
         getCollected()
-        Queue.shared.verifyQueue()
+        
+        if #available(iOS 10.3, *), let _ = musicPlayer as? MPMusicPlayerApplicationController {
+        
+            Queue.shared.verifyQueue()
+            
+        } else {
+            
+            updateTimes(setValue: true, seeking: false)
+        }
     }
     
     func prepareManuallyAddedViews() {
@@ -495,6 +504,11 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             pan.delegate = self
             $0?.addGestureRecognizer(pan)
         })
+        
+        let pan = UIPanGestureRecognizer.init(target: self, action: #selector(panTest(_:)))
+        pan.delegate = self
+        childViewSwipeAssistedPan = pan
+        containerView.addGestureRecognizer(pan)
             
         let altQueueSwipeLeft = UIScreenEdgePanGestureRecognizer.init(target: self, action: #selector(performAuxillaryNowPlayingAction))
         altQueueSwipeLeft.edges = .right//direction = .left
@@ -526,7 +540,10 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
     
     @objc func panTest(_ sender: UIPanGestureRecognizer) {
         
-        guard allowSwipeAssistedPan else { return }
+        if sender != childViewSwipeAssistedPan {
+        
+            guard allowSwipeAssistedPan else { return }
+        }
         
         switch sender.state {
             
@@ -536,7 +553,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
                 
                 top.gestureActivated(sender)
             
-                if sender.state == .ended { allowSwipeAssistedPan = false }
+                if sender.state == .ended, sender != childViewSwipeAssistedPan { allowSwipeAssistedPan = false }
             
             default: break
         }
@@ -633,15 +650,15 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         
         var sections = sectionHandler(librarySections.removing(contentsOf: hiddenLibrarySections))
         
-        sections.append(.init(title: "Secondary Sections...", image: #imageLiteral(resourceName: "More22"), requiresDismissalFirst: true, handler: { [weak self] in
+        sections.append(.init(title: "Secondary Sections...", accessoryType: .check({ Set(otherLibrarySections.map({ $0.rawValue })).contains(lastUsedLibrarySection) }), image: #imageLiteral(resourceName: "More22"), requiresDismissalFirst: true, handler: { [weak self] in
             
-            self?.showAlert(title: "Secondary Sections", subtitle: nil, with: sectionHandler(otherLibrarySections), shouldSortActions: false, rightAction: { _, vc in vc.dismiss(animated: true, completion: handler) }, images: (nil, #imageLiteral(resourceName: "Settings")))
+            self?.showAlert(title: "Secondary Sections", subtitle: nil, with: sectionHandler(otherLibrarySections), shouldSortActions: false, rightAction: { _, vc in vc.dismiss(animated: true, completion: handler) }, images: (nil, #imageLiteral(resourceName: "Settings13")))
             
         }), if: otherLibrarySections.isEmpty.inverted)
         
         sections.append(.init(title: title, handler: handler), if: useSystemAlerts)
         
-        showAlert(title: "Library Sections", subtitle: nil, with: sections, shouldSortActions: false, rightAction: { _, vc in vc.dismiss(animated: true, completion: handler) }, images: (nil, #imageLiteral(resourceName: "Settings")))
+        showAlert(title: "Library Sections", subtitle: nil, with: sections, shouldSortActions: false, rightAction: { _, vc in vc.dismiss(animated: true, completion: handler) }, images: (nil, #imageLiteral(resourceName: "Settings13")))
     }
     
     @objc func doubleTap(_ sender: UITapGestureRecognizer) {
@@ -886,7 +903,6 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
                     notifier.post(name: Notification.Name.init("updateSection"), object: nil)
                     
                     self.prepareNowPlayingViews(animated: true)
-                    self.updateBackgroundWithNowPlaying()
                     self.updateSliderDuration()
                 }
                 
@@ -949,7 +965,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         
         lifetimeObservers.insert(notifier.addObserver(forName: .songsAddedToPlaylists, object: nil, queue: nil, using: { [weak self] notification in
             
-            guard let weakSelf = self, let song = musicPlayer.nowPlayingItem, let songs = notification.userInfo?[String.addedSongs] as? [MPMediaItem], Set(songs).contains(song) else { return }
+            guard let weakSelf = self, let song = musicPlayer.nowPlayingItem, let songs = notification.userInfo?[.addedSongs] as? [MPMediaItem], Set(songs).contains(song) else { return }
             
             weakSelf.updateAddButton(hidden: true, animated: true)
         
@@ -1390,33 +1406,33 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         }
     }
     
-    @objc func updateBackgroundWithNowPlaying(animated: Bool = true) {
-        
-        guard backgroundArtworkAdaptivity == .nowPlayingAdaptive || shouldUseNowPlayingArt else { return }
-        
-        UIView.transition(with: imageView, duration: animated ? 0.45 : 0, options: [.transitionCrossDissolve], animations: { self.imageView.image = musicPlayer.nowPlayingItem?.actualArtwork?.image(at: .init(width: 20, height: 20)) ?? #imageLiteral(resourceName: "NoArt") }, completion: { [weak self] finished in
-            
-            guard finished, let weakSelf = self else { return }
-            
-            if let _ = weakSelf.currentModifier, !weakSelf.deferToNowPlayingViewController {
-                
-                weakSelf.shouldUseNowPlayingArt = false
-                
-                UniversalMethods.performOnMainThread({
-                    
-                    weakSelf.updateBackgroundViaModifier()
-                    
-                }, afterDelay: 3)
-            }
-        })
-    }
-    
-    @objc func updateBackgroundViaModifier(with imageOverride: UIImage? = nil) {
-        
-        guard backgroundArtworkAdaptivity == .sectionAdaptive && !shouldUseNowPlayingArt else { return }
-        
-        UIView.transition(with: imageView, duration: 0.45, options: .transitionCrossDissolve, animations: { self.imageView.image = imageOverride ?? self.currentModifier?.artworkType.image }, completion: nil)
-    }
+//    @objc func updateBackgroundWithNowPlaying(animated: Bool = true) {
+//
+//        guard backgroundArtworkAdaptivity == .nowPlayingAdaptive || shouldUseNowPlayingArt else { return }
+//
+//        UIView.transition(with: imageView, duration: animated ? 0.45 : 0, options: [.transitionCrossDissolve], animations: { self.imageView.image = musicPlayer.nowPlayingItem?.actualArtwork?.image(at: .init(width: 20, height: 20)) ?? #imageLiteral(resourceName: "NoArt") }, completion: { [weak self] finished in
+//
+//            guard finished, let weakSelf = self else { return }
+//
+//            if let _ = weakSelf.currentModifier, !weakSelf.deferToNowPlayingViewController {
+//
+//                weakSelf.shouldUseNowPlayingArt = false
+//
+//                UniversalMethods.performOnMainThread({
+//
+//                    weakSelf.updateBackgroundViaModifier()
+//
+//                }, afterDelay: 3)
+//            }
+//        })
+//    }
+//
+//    @objc func updateBackgroundViaModifier(with imageOverride: UIImage? = nil) {
+//
+//        guard backgroundArtworkAdaptivity == .sectionAdaptive && !shouldUseNowPlayingArt else { return }
+//
+//        UIView.transition(with: imageView, duration: 0.45, options: .transitionCrossDissolve, animations: { self.imageView.image = imageOverride ?? self.currentModifier?.artworkType.image }, completion: nil)
+//    }
 
     func update(_ button: UIButton?, to state: UIButton.SelectionState, animated: Bool = true) {
         
@@ -1796,6 +1812,11 @@ extension ContainerViewController: UIGestureRecognizerDelegate {
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        
+        if gestureRecognizer == childViewSwipeAssistedPan {
+            
+            return gestureRecognizer is UIPanGestureRecognizer && otherGestureRecognizer is UISwipeGestureRecognizer
+        }
         
         return gestureRecognizer is UIPanGestureRecognizer && otherGestureRecognizer is UISwipeGestureRecognizer && otherGestureRecognizer.view == gestureRecognizer.view
     }

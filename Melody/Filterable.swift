@@ -86,6 +86,8 @@ extension Filterable {
             
             case .duration: return "HH.MM.SS"
             
+            case _ where propertyTest == .follows: return "Regex Pattern"
+            
             default: return nil
         }
     }
@@ -293,13 +295,13 @@ extension Filterable {
         
         switch filterProperty {
             
-            case .album, .artist, .title, .composer, .genre, .albumArtist: return [.isExactly, .contains, .beginsWith, .endsWith]
+            case .album, .artist, .title, .composer, .genre, .albumArtist: return [.isExactly, .contains, .beginsWith, .endsWith, .follows]
                 
-            case .songCount, .albumCount, .plays, .rating, .year, .size: return [.isExactly, .isOver, .isUnder]
+            case .songCount, .albumCount, .plays, .rating, .year, .size: return [.isExactly, .isOver, .isUnder, .atLeast, .atMost]
                 
             case .isCloud, .isCompilation, .artwork, .isExplicit, .affinity: return [.isExactly]
                 
-            case .lastPlayed, .dateAdded, .duration: return [.isExactly, .isOver, .isUnder]
+            case .lastPlayed, .dateAdded, .duration: return [.isExactly, .isOver, .isUnder, .atLeast, .atMost]
             
             case .default, .albumName, .albumYear, .random: return []
         }
@@ -385,7 +387,15 @@ extension Filterable {
                     
                     case .endsWith: return items.filter({ (filterTerm(from: $0) as? String)?.hasSuffix((term as? String ?? "").lowercased().folded) == true }, until: { filterOperation?.isCancelled == true })
                     
-                    default: return []
+                    case .follows: return items.filter({
+                        
+                        guard let regex = try? NSRegularExpression.init(pattern: text, options: .caseInsensitive), let term = filterTerm(from: $0) as? String else { return false }
+                        
+                        return regex.firstMatch(in: term, options: [], range: NSRange.init(term.startIndex..., in: term)) != nil
+                        
+                    }, until: { filterOperation?.isCancelled == true })
+                    
+                    case .atLeast, .atMost, .isOver, .isUnder: return []
                 }
             
             case .plays, .rating, .year:
@@ -400,7 +410,11 @@ extension Filterable {
                     
                     case .isUnder: return items.filter({ (filterTerm(from: $0) as? Int ?? 0) < number }, until: { filterOperation?.isCancelled == true })
                     
-                    default: return []
+                    case .atLeast: return items.filter({ (filterTerm(from: $0) as? Int ?? 0) >= number }, until: { filterOperation?.isCancelled == true })
+                    
+                    case .atMost: return items.filter({ (filterTerm(from: $0) as? Int ?? 0) <= number }, until: { filterOperation?.isCancelled == true })
+                    
+                    case .beginsWith, .contains, .endsWith, .follows: return []
                 }
             
             case .isCloud:
@@ -453,8 +467,12 @@ extension Filterable {
                     case .isOver: return items.filter({ $0.fileSize > number.applyMultiplier(of: primarySuffix) }, until: { filterOperation?.isCancelled == true })
                         
                     case .isUnder: return items.filter({ $0.fileSize < number.applyMultiplier(of: primarySuffix) }, until: { filterOperation?.isCancelled == true })
+                    
+                    case .atLeast: return items.filter({ $0.fileSize >= number.applyMultiplier(of: primarySuffix) }, until: { filterOperation?.isCancelled == true })
+                    
+                    case .atMost: return items.filter({ $0.fileSize <= number.applyMultiplier(of: primarySuffix) }, until: { filterOperation?.isCancelled == true })
                         
-                    default: return []
+                    case .beginsWith, .contains, .endsWith, .follows: return []
                 }
             
             case .duration:
@@ -466,8 +484,12 @@ extension Filterable {
                     case .isOver: return items.filter({ $0.playbackDuration > (term as? TimeInterval ?? 0) }, until: { filterOperation?.isCancelled == true })
                         
                     case .isUnder: return items.filter({ $0.playbackDuration < (term as? TimeInterval ?? 0) }, until: { filterOperation?.isCancelled == true })
+                    
+                    case .atLeast: return items.filter({ $0.playbackDuration >= (term as? TimeInterval ?? 0) }, until: { filterOperation?.isCancelled == true })
                         
-                    default: return []
+                    case .atMost: return items.filter({ $0.playbackDuration <= (term as? TimeInterval ?? 0) }, until: { filterOperation?.isCancelled == true })
+                        
+                    case .beginsWith, .contains, .endsWith, .follows: return []
                 }
             
             case .lastPlayed:
@@ -485,8 +507,12 @@ extension Filterable {
                     case .isOver: return items.filter({ $0.validLastPlayed > date }, until: { filterOperation?.isCancelled == true })
                         
                     case .isUnder: return items.filter({ $0.validLastPlayed < date }, until: { filterOperation?.isCancelled == true })
+                    
+                    case .atLeast: return items.filter({ $0.validLastPlayed >= date }, until: { filterOperation?.isCancelled == true })
                         
-                    default: return []
+                    case .atMost: return items.filter({ $0.validLastPlayed <= date }, until: { filterOperation?.isCancelled == true })
+                        
+                    case .beginsWith, .contains, .endsWith, .follows: return []
                 }
             
             case .dateAdded:
@@ -504,8 +530,12 @@ extension Filterable {
                     case .isOver: return items.filter({ $0.validDateAdded > date }, until: { filterOperation?.isCancelled == true })
                         
                     case .isUnder: return items.filter({ $0.validDateAdded < date }, until: { filterOperation?.isCancelled == true })
+                    
+                    case .atLeast: return items.filter({ $0.validDateAdded >= date }, until: { filterOperation?.isCancelled == true })
                         
-                    default: return []
+                    case .atMost: return items.filter({ $0.validDateAdded <= date }, until: { filterOperation?.isCancelled == true })
+                        
+                    case .beginsWith, .contains, .endsWith, .follows: return []
                 }
             
             case .affinity:
@@ -545,7 +575,15 @@ extension Filterable {
                     
                     case .endsWith: return collections.filter({ (filterTerm(from: $0, kind: kind) as? String)?.hasSuffix((term as? String ?? "").lowercased().folded) == true }, until: { filterOperation?.isCancelled == true })
                     
-                    default: return []
+                    case .follows: return collections.filter({
+                        
+                        guard let regex = try? NSRegularExpression.init(pattern: text, options: .caseInsensitive), let term = filterTerm(from: $0, kind: kind) as? String else { return false }
+                        
+                        return regex.firstMatch(in: term, options: [], range: NSRange.init(term.startIndex..., in: term)) != nil
+                        
+                    }, until: { filterOperation?.isCancelled == true })
+                    
+                    case .atLeast, .atMost, .isOver, .isUnder: return []
                 }
             
             case .plays, .year, .songCount, .albumCount:
@@ -560,7 +598,11 @@ extension Filterable {
                     
                     case .isUnder: return collections.filter({ (filterTerm(from: $0, kind: kind) as? Int ?? 0) < number }, until: { filterOperation?.isCancelled == true })
                     
-                    default: return []
+                    case .atLeast: return collections.filter({ (filterTerm(from: $0, kind: kind) as? Int ?? 0) >= number }, until: { filterOperation?.isCancelled == true })
+                    
+                    case .atMost: return collections.filter({ (filterTerm(from: $0, kind: kind) as? Int ?? 0) <= number }, until: { filterOperation?.isCancelled == true })
+                    
+                    case .beginsWith, .contains, .endsWith, .follows: return []
                 }
             
             case .isCloud:
@@ -614,7 +656,11 @@ extension Filterable {
                     
                     case .isUnder: return collections.filter({ $0.totalSize < number.applyMultiplier(of: primarySuffix) }, until: { filterOperation?.isCancelled == true })
                     
-                    default: return []
+                    case .atLeast: return collections.filter({ $0.totalSize >= number.applyMultiplier(of: primarySuffix) }, until: { filterOperation?.isCancelled == true })
+                    
+                    case .atMost: return collections.filter({ $0.totalSize <= number.applyMultiplier(of: primarySuffix) }, until: { filterOperation?.isCancelled == true })
+                    
+                    case .beginsWith, .contains, .endsWith, .follows: return []
                 }
             
             case .duration:
@@ -627,7 +673,11 @@ extension Filterable {
                     
                     case .isUnder: return collections.filter({ $0.totalDuration < (term as? TimeInterval ?? 0) }, until: { filterOperation?.isCancelled == true })
                     
-                    default: return []
+                    case .atLeast: return collections.filter({ $0.totalDuration >= (term as? TimeInterval ?? 0) }, until: { filterOperation?.isCancelled == true })
+                    
+                    case .atMost: return collections.filter({ $0.totalDuration <= (term as? TimeInterval ?? 0) }, until: { filterOperation?.isCancelled == true })
+                    
+                    case .beginsWith, .contains, .endsWith, .follows: return []
                 }
 
             case .dateAdded:
@@ -646,7 +696,11 @@ extension Filterable {
                     
                     case .isUnder: return collections.filter({ guard let dateAdded = filterTerm(from: $0, kind: kind) as? Date else { return false }; return dateAdded < date }, until: { filterOperation?.isCancelled == true })
                     
-                    default: return []
+                    case .atLeast: return collections.filter({ guard let dateAdded = filterTerm(from: $0, kind: kind) as? Date else { return false }; return dateAdded >= date }, until: { filterOperation?.isCancelled == true })
+                    
+                    case .atMost: return collections.filter({ guard let dateAdded = filterTerm(from: $0, kind: kind) as? Date else { return false }; return dateAdded <= date }, until: { filterOperation?.isCancelled == true })
+                    
+                    case .beginsWith, .contains, .endsWith, .follows: return []
                 }
             
             case .affinity:
@@ -678,10 +732,6 @@ extension Filterable {
                     
                     case .album, .artist, .title, .composer, .genre: return "matches"
                     
-//                    case .songCount, .albumCount, .plays: return "equal"
-//
-//                    case .rating, .size, .duration: return "equals"
-                    
                     case .lastPlayed, .dateAdded: return "on"
                     
                     default: return "is"
@@ -693,13 +743,31 @@ extension Filterable {
             
             case .endsWith: return "ends with"
             
+            case .atLeast:
+            
+                switch property {
+                    
+                    case .dateAdded, .lastPlayed, .year: return "on or after"
+                    
+                    default: return "is at least"
+                }
+            
+            case .atMost:
+                
+                switch property {
+                    
+                    case .dateAdded, .lastPlayed, .year: return "on or after"
+                    
+                    default: return "is at most"
+                }
+            
             case .isOver:
             
                 switch property {
                     
                 case .album, .artist, .title, .composer, .genre, .isCloud, .isCompilation, .artwork, .isExplicit, .affinity, .albumArtist, .default, .albumName, .albumYear, .random: return ""
                     
-                    case .songCount, .albumCount, .plays, .rating, .size, .duration: return "over"
+                    case .songCount, .albumCount, .plays, .rating, .size, .duration: return "is over"
                     
                     case .lastPlayed, .dateAdded, .year: return "after"
                 }
@@ -710,10 +778,12 @@ extension Filterable {
                     
                     case .album, .artist, .title, .composer, .genre, .isCloud, .isCompilation, .artwork, .isExplicit, .affinity, .albumArtist, .default, .albumName, .albumYear, .random: return ""
                     
-                    case .songCount, .albumCount, .plays, .rating, .size, .duration: return "under"
+                    case .songCount, .albumCount, .plays, .rating, .size, .duration: return "is under"
                     
                     case .lastPlayed, .dateAdded, .year: return "before"
                 }
+            
+            case .follows: return "follows"
         }
     }
     

@@ -892,6 +892,10 @@ extension CGFloat {
     }
     
     static var emptyHeaderHeight: CGFloat { return 11 }
+    
+    static var settingsSubtitleLineHeight: CGFloat { return 1.3 }
+    
+    static var footerLineHeight: CGFloat { return 1.5 }
 }
 
 // MARK: - UILabel
@@ -1107,7 +1111,7 @@ extension CALayer {
 extension IndexPath {
     
     var settingsSection: SettingSection { return .from(self) }
-    var indexSet: IndexSet { return .init(integer: self.section) }
+    var indexSet: IndexSet { return .init(integer: section) }
 }
 
 extension Range where Element == Int {

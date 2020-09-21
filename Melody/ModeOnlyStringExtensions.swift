@@ -90,4 +90,11 @@ extension String {
             return remove(.punctuation, from: type).remove(.censoredWords, from: type).remove(.ampersands, from: type).containingBracketsRemoved
         }
     }
+    
+    func replacing(_ pattern: String, with template: String, options: NSRegularExpression.Options = []) -> String {
+
+        guard let regex = try? NSRegularExpression.init(pattern: pattern, options: options) else { return self }
+
+        return regex.stringByReplacingMatches(in: self, options: [], range: NSRange.init(startIndex..., in: self), withTemplate: template)
+    }
 }

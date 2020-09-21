@@ -22,6 +22,7 @@ extension NSNotification.Name {
     static let addedToLibrary = Notification.Name.init("appleMusicSongAddedToLibrary")
     static let updateForFirstLaunch = Notification.Name.init("updateForFirstLaunch")
     static let songsAddedToPlaylists = Notification.Name.init("songsAddedToPlaylists")
+    static let newPlaylistAdded = Notification.Name.init("newPlaylistAdded")
     static let changeLibrarySection = Notification.Name.init(rawValue: "changeLibrarySection")
     static let appleMusicStatusChecked = Notification.Name.init(rawValue: "appleMusicStatusChecked")
     static let libraryStatusChanged = Notification.Name.init(rawValue: "userLibraryStatusChanged")

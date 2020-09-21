@@ -8,7 +8,7 @@
 
 import UIKit
 
-class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, InfoLoading, QueryUpdateable, CellAnimatable, SingleItemActionable, PillButtonContaining, Refreshable, IndexContaining, AlbumArtistTransitionable, ArtistTransitionable, GenreTransitionable, ComposerTransitionable, EntityVerifiable, TopScrollable, EntityContainer {
+class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, SupplementaryHeaderInfoLoading, QueryUpdateable, CellAnimatable, SingleItemActionable, PillButtonContaining, Refreshable, IndexContaining, AlbumArtistTransitionable, ArtistTransitionable, GenreTransitionable, ComposerTransitionable, EntityVerifiable, TopScrollable, EntityContainer {
     
     @IBOutlet var tableView: MELTableView!
 
@@ -19,6 +19,7 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Inf
         self.stackView = view.scrollStackView
         arrangeButton = view.sortButton
         activityIndicator = view.sortActivityIndicatorView
+        view.buttonDetails = [(.grouping, #imageLiteral(resourceName: "Grouping13"), "Grouping", { }), (.sort, #imageLiteral(resourceName: "Order13"), arrangementLabelText, { [weak self] in self?.showArranger() }), (.artist, #imageLiteral(resourceName: "Artists15"), album?.representativeItem?.validAlbumArtist, { [weak self] in self?.goToArtist() }), (.info, #imageLiteral(resourceName: "InfoNoBorder13"), nil, { [weak self] in self?.entityVC?.showOptions() }), (.affinity, SecondaryCategory.loved.propertyImage(from: album, context: .header), nil, { [weak self] in self?.setLiked() })]
         view.showArtistView = true
         view.showLoved = true
         view.showInfo = true
@@ -76,7 +77,7 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Inf
             let genre = ScrollHeaderSubview.with(title: "Genre", image: #imageLiteral(resourceName: "GenresSmaller"))
             genreLabel = genre.label
             
-            let size = ScrollHeaderSubview.with(title: "Size", image: #imageLiteral(resourceName: "FileSize10"))
+            let size = ScrollHeaderSubview.with(title: "Size", image: #imageLiteral(resourceName: "FileSize12"))
             sizeLabel = size.label
             
             let plays = ScrollHeaderSubview.with(title: "Plays", image: #imageLiteral(resourceName: "Plays"))
@@ -139,6 +140,8 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Inf
     @objc var lifetimeObservers = Set<NSObject>()
     @objc var transientObservers = Set<NSObject>()
     
+    var applicableSupplementaryProperties = [SecondaryCategory.duration, .fileSize, .plays, .year, .genre, .copyright]
+    
     @objc var currentItem: MPMediaItem?
     @objc var currentAlbum: MPMediaItemCollection?
     @objc var composerQuery: MPMediaQuery?
@@ -197,7 +200,8 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Inf
                 staticSortCriteria = newValue
                 sortAllItems()
                 
-                headerView.sortButton.setTitle(arrangementLabelText, for: .normal)
+                prepare(.sort, reload: true, animateHeader: true)
+//                headerView.sortButton.setTitle(arrangementLabelText, for: .normal)
                 UIView.animate(withDuration: 0.3, animations: { self.headerView.layoutIfNeeded() })
                 UniversalMethods.saveSortableItem(withPersistentID: id, order: ascending, sortCriteria: staticSortCriteria, kind: .album)
             }
@@ -259,7 +263,6 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Inf
         let queue = OperationQueue()
         queue.name = "Image Operation Queue"
         
-        
         return queue
     }()
     @objc let imageCache: ImageCache = {
@@ -274,12 +277,13 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Inf
         
         let queue = OperationQueue()
         queue.name = "Sort Operation Queue"
-        
+        queue.qualityOfService = .userInitiated
         
         return queue
     }()
     @objc var operation: BlockOperation?
     @objc var filterOperation: BlockOperation?
+    var supplementaryOperation: BlockOperation?
     
     // MARK: - Methods
     
@@ -317,7 +321,7 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Inf
         tableView.scrollIndicatorInsets.top = inset
     }
     
-    @objc func prepareSupplementaryInfo(animated: Bool = true) {
+    /*@objc func prepareSupplementaryInfo(animated: Bool = true) {
         
         let items = albumQuery?.items ?? []
         
@@ -360,7 +364,7 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Inf
         sizeLabel.text = FileSize.init(actualSize: items.totalSize).actualSize.fileSizeRepresentation
         
         playsLabel.text = items.totalPlays.formatted
-    }
+    }*/
     
     func updateLikedButton(_ sender: UIButton) {
         
@@ -405,10 +409,11 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Inf
             
             UniversalMethods.performOnMainThread({
             
-                if weakSelf.headerView.likedStateButton.image(for: .normal) != weakSelf.image(for: album.likedState) {
-                    
-                    UIView.transition(with: weakSelf.headerView.likedStateButton, duration: 0.3, options: .transitionCrossDissolve, animations: { weakSelf.updateLikedButton(weakSelf.headerView.likedStateButton) }, completion: nil)
-                }
+                weakSelf.prepare(.sort, reload: true, animateHeader: true)
+//                if weakSelf.headerView.likedStateButton.image(for: .normal) != weakSelf.image(for: album.likedState) {
+//
+//                    UIView.transition(with: weakSelf.headerView.likedStateButton, duration: 0.3, options: .transitionCrossDissolve, animations: { weakSelf.updateLikedButton(weakSelf.headerView.likedStateButton) }, completion: nil)
+//                }
             
             }, afterDelay: 0.3)
         })
@@ -706,6 +711,13 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Inf
             tableView.setEditing(false, animated: true)
         
         } else {
+            
+            if let gr = sender as? UISwipeGestureRecognizer, tableView.indexPathForRow(at: gr.location(in: tableView)) != nil {
+                
+                tableDelegate.showGoToMenu(via: sender)
+                
+                return
+            }
             
             let song: MPMediaItem? = {
                 

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, InfoLoading, AlbumTransitionable, GenreTransitionable, ArtistTransitionable, AlbumArtistTransitionable, ComposerTransitionable, QueryUpdateable, CellAnimatable, SingleItemActionable, PillButtonContaining, Refreshable, IndexContaining, EntityVerifiable, TopScrollable, EntityContainer {
+class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, SupplementaryHeaderInfoLoading, AlbumTransitionable, GenreTransitionable, ArtistTransitionable, AlbumArtistTransitionable, ComposerTransitionable, QueryUpdateable, CellAnimatable, SingleItemActionable, PillButtonContaining, Refreshable, IndexContaining, EntityVerifiable, TopScrollable, EntityContainer {
     
     @IBOutlet var tableView: MELTableView!
     
@@ -19,6 +19,7 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
         self.stackView = view.scrollStackView
         arrangeButton = view.sortButton
         activityIndicator = view.sortActivityIndicatorView
+        view.buttonDetails = [(.grouping, #imageLiteral(resourceName: "Grouping13"), "Grouping", { [weak self] in self?.entityVC?.showGroupings() }), (.sort, #imageLiteral(resourceName: "Order13"), arrangementLabelText, { [weak self] in self?.showArranger() }), (.info, #imageLiteral(resourceName: "InfoNoBorder13"), nil, { [weak self] in self?.entityVC?.showOptions() })]
         view.showInfo = true
         view.showGrouping = true
         view.sortButton.setTitle(arrangementLabelText, for: .normal)
@@ -61,7 +62,7 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
             let created = ScrollHeaderSubview.with(title: "Added", image: #imageLiteral(resourceName: "DateAdded"), useSmallerImage: true)
             dateCreatedLabel = created.label
             
-            let size = ScrollHeaderSubview.with(title: "Size", image: #imageLiteral(resourceName: "FileSize10"))
+            let size = ScrollHeaderSubview.with(title: "Size", image: #imageLiteral(resourceName: "FileSize12"))
             sizeLabel = size.label
             
             let plays = ScrollHeaderSubview.with(title: "Plays", image: #imageLiteral(resourceName: "Plays"))
@@ -186,7 +187,8 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
                 staticSortCriteria = newValue
                 sortAllItems()
                 
-                headerView.sortButton.setTitle(arrangementLabelText, for: .normal)
+                prepare(.sort, reload: true, animateHeader: true)
+                //headerView.sortButton.setTitle(arrangementLabelText, for: .normal)
                 UIView.animate(withDuration: 0.3, animations: { self.headerView.layoutIfNeeded() })
                 UniversalMethods.saveSortableItem(withPersistentID: id, order: ascending, sortCriteria: staticSortCriteria, kind: .artistSongs)
             }
@@ -219,6 +221,8 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
     var entityCount: Int { return songs.count }
     @objc var ignoreKeyboardForInset = true
     @objc lazy var wasFiltering = false
+    
+    var applicableSupplementaryProperties = [SecondaryCategory.duration, .fileSize, .plays, .dateAdded]
     
     @objc var lifetimeObservers = Set<NSObject>()
     @objc var transientObservers = Set<NSObject>()
@@ -271,6 +275,7 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
         
         let queue = OperationQueue()
         queue.name = "Sort Operation Queue"
+        queue.qualityOfService = .userInitiated
         
         return queue
     }()
@@ -351,7 +356,7 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
         scrollToHighlightedRow()
     }
     
-    @objc func prepareSupplementaryInfo(animated: Bool = true) {
+    /*@objc func prepareSupplementaryInfo(animated: Bool = true) {
         
         guard let _ = viewIfLoaded, let grouping = entityVC?.kind.grouping else { return }
         
@@ -387,7 +392,7 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
         })
         
         sortOperationQueue.addOperation(supplementaryOperation!)
-    }
+    }*/
     
     @objc func showOptions(_ sender: Any) {
         
@@ -601,31 +606,33 @@ class ArtistSongsViewController: UIViewController, FilterContextDiscoverable, In
         
         } else {
             
-            guard let gr = sender as? UISwipeGestureRecognizer, let indexPath = tableView.indexPathForRow(at: gr.location(in: tableView)) else { return }
+            tableDelegate.showGoToMenu(via: sender)
             
-            let song = getSong(from: indexPath)
-            
-            let filterPredicates: Set<MPMediaPropertyPredicate> = showiCloudItems ? [.for(.album, using: song.albumPersistentID)] : [.for(.album, using: song.albumPersistentID), .offline]
-            
-            let query = MPMediaQuery.init(filterPredicates: filterPredicates)
-            query.groupingType = .album
-            
-            if let collections = query.collections, !collections.isEmpty {
-                
-                albumQuery = query
-                currentItem = song
-                
-                performSegue(withIdentifier: .albumUnwind, sender: nil)
-                
-            } else {
-                
-                albumQuery = nil
-                currentItem = nil
-                
-                let newBanner = Banner.init(title: showiCloudItems ? "This album is not in your library" : "This album is not available offline", subtitle: nil, image: nil, backgroundColor: .black, didTapBlock: nil)
-                newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
-                newBanner.show(duration: 0.7)
-            }
+//            guard let gr = sender as? UISwipeGestureRecognizer, let indexPath = tableView.indexPathForRow(at: gr.location(in: tableView)) else { return }
+//
+//            let song = getSong(from: indexPath)
+//
+//            let filterPredicates: Set<MPMediaPropertyPredicate> = showiCloudItems ? [.for(.album, using: song.albumPersistentID)] : [.for(.album, using: song.albumPersistentID), .offline]
+//
+//            let query = MPMediaQuery.init(filterPredicates: filterPredicates)
+//            query.groupingType = .album
+//
+//            if let collections = query.collections, !collections.isEmpty {
+//
+//                albumQuery = query
+//                currentItem = song
+//
+//                performSegue(withIdentifier: .albumUnwind, sender: nil)
+//
+//            } else {
+//
+//                albumQuery = nil
+//                currentItem = nil
+//
+//                let newBanner = Banner.init(title: showiCloudItems ? "This album is not in your library" : "This album is not available offline", subtitle: nil, image: nil, backgroundColor: .black, didTapBlock: nil)
+//                newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
+//                newBanner.show(duration: 0.7)
+//            }
         }
     }
     

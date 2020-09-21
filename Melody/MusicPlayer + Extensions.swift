@@ -27,6 +27,8 @@ public extension MPMusicPlayerController {
     /// whether the musicPlayer is playing, using the playback rate due to a bug
     var isPlaying: Bool {
         
+        if #available(iOS 13.5, *) { return playbackState == .playing }
+        
         if #available(iOS 11.3, *) {
             
             return playbackState == .playing || currentPlaybackRate > 0.0
@@ -402,6 +404,8 @@ public extension MPMusicPlayerController {
                         completion?()
                     }
                     
+                    notifier.post(name: .queueModified, object: nil, userInfo: [.queueChange: true])
+                    
                     return
                     
                 } else if case .last = position {
@@ -414,6 +418,8 @@ public extension MPMusicPlayerController {
                         
                         completion?()
                     }
+                    
+                    notifier.post(name: .queueModified, object: nil, userInfo: [.queueChange: true])
                     
                     Queue.shared.updateCurrentQueue(with: itemDescriptor.query.items ?? itemDescriptor.itemCollection.items, startingItem: nil, shouldUpdateIndex: false)
                     
@@ -485,12 +491,35 @@ public extension MPMusicPlayerController {
             
             switch position {
                 
-                case .next, .after(_): return startOfQueue + songs + endOfQueue
+                case .next, .after(_, _): return startOfQueue + songs + endOfQueue
                     
                 case .last: return startOfQueue + endOfQueue + songs
             }
         }()
         
         return items
+    }
+}
+
+extension MPMusicPlaybackState {
+    
+    var title: String {
+        
+        switch self {
+            
+            case .playing: return "Playing"
+            
+            case .paused: return "Paused"
+            
+            case .interrupted: return "Interrupted"
+            
+            case .seekingForward: return "Seeking Forward"
+            
+            case .seekingBackward: return "Seeking Backward"
+            
+            case .stopped: return "Stopped"
+        
+            @unknown default: return "Unknown"
+        }
     }
 }

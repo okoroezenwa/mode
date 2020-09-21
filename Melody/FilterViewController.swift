@@ -196,6 +196,8 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
     var arrangeBorderView: PillButtonView!
     var editView: PillButtonView!
     
+    var firstLoad = true
+    
     var query: MPMediaQuery?
     var sortCriteria: SortCriteria {
         
@@ -267,7 +269,6 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         let queue = OperationQueue()
         queue.name = "Image Operation Queue"
         
-        
         return queue
     }()
     @objc let filterOperationQueue: OperationQueue = {
@@ -282,6 +283,7 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         
         let queue = OperationQueue()
         queue.name = "Sort Operation Queue"
+        queue.qualityOfService = .userInitiated
         
         return queue
     }()
@@ -573,20 +575,41 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
             prepareTransientObservers()
         }
         
-        if searchBar?.delegate == nil, let container = container {
+        let searchBarIsInvalid: Bool = {
             
-            self.filterViewContainer = container.filterViewContainer
-            self.searchBar.delegate = self
-            self.searchBar.text = self.sender?.filterText
-            self.filterViewContainer.filterView.propertyButton.setTitle(self.sender?.filterProperty.title, for: .normal)
-            self.filterViewContainer.filterView.filterTestButton.setTitle(self.sender?.testTitle, for: .normal)
-            self.sender?.updateKeyboard(with: self)
-            self.searchBar?.textField?.leftView = self.filterViewContainer.filterView.leftView
-            self.searchBar.updateTextField(with: self.placeholder)
-            self.updateRightView(animated: true)
+            if let delegate = searchBar?.delegate as? UIViewController, delegate != self {
+                
+                return true
+            
+            } else if searchBar?.delegate == nil {
+                
+                return true
+            }
+            
+            return false
+        }()
+        
+        if let container = container {
+            
+            if tableContainer?.filterContainer == nil {
+            
+                filterViewContainer = container.filterViewContainer
+                tableContainer?.filterContainer = self
+            }
+            
+            if searchBarIsInvalid {
+            
+                self.searchBar.delegate = self
+                self.searchBar.text = self.sender?.filterText
+                self.filterViewContainer.filterView.propertyButton.setTitle(self.sender?.filterProperty.title, for: .normal)
+                self.filterViewContainer.filterView.filterTestButton.setTitle(self.sender?.testTitle, for: .normal)
+                self.sender?.updateKeyboard(with: self)
+                self.searchBar?.textField?.leftView = self.filterViewContainer.filterView.leftView
+                self.searchBar.updateTextField(with: self.placeholder)
+                self.updateRightView(animated: true)
+            }
         }
         
-//        filterViewContainer.filterInfo = (filter: sender, container: self)
         container?.visualEffectNavigationBar.entityTypeLabel.superview?.isHidden = true
         
         if let row = array.firstIndex(where: { $0 == searchBar.text }) {
@@ -1097,7 +1120,10 @@ extension FilterViewController: UISearchBarDelegate {
             updateHeaderView()
             tableView.contentOffset = unfilteredPoint
             
-            animateCells(direction: .vertical)
+            if firstLoad { firstLoad = false } else {
+            
+                animateCells(direction: .vertical)
+            }
             
             updateDeleteButton()
             
@@ -1128,7 +1154,14 @@ extension FilterViewController: EntityContainer {
     
     func handleLeftSwipe(_ sender: Any) {
         
-        tableView.setEditing(false, animated: true)
+        if tableView.isEditing {
+        
+            tableView.setEditing(false, animated: true)
+            
+        } else {
+            
+            tableContainer?.tableDelegate.showGoToMenu(via: sender)
+        }
     }
     
     func handleRightSwipe(_ sender: Any) {

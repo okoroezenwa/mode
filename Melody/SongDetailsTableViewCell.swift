@@ -26,30 +26,8 @@ class SongDetailsTableViewCell: UITableViewCell {
 
     func prepare(for detail: SecondaryCategory, visible: Bool) {
         
-        let details: (text: String, image: UIImage) = {
-            
-            switch detail {
-                
-                case .dateAdded: return ("Date Added", #imageLiteral(resourceName: "DateAdded14"))
-                    
-                case .fileSize: return ("Size", #imageLiteral(resourceName: "FileSize14"))
-                    
-                case .genre: return ("Genre", #imageLiteral(resourceName: "Genre14"))
-                    
-                case .lastPlayed: return ("Last Played", #imageLiteral(resourceName: "LastPlayed14"))
-                    
-                case .loved: return ("Affinity", #imageLiteral(resourceName: "NoLove14"))
-                    
-                case .plays: return ("Plays", #imageLiteral(resourceName: "Plays14"))
-                    
-                case .rating: return ("Rating", #imageLiteral(resourceName: "Star14"))
-                    
-                case .year: return ("Year", #imageLiteral(resourceName: "Year14"))
-            }
-        }()
-        
-        label.text = details.text
-        typeImageView.image = details.image
+        label.text = detail.title
+        typeImageView.image = detail.largeImage
         
         checkImageView.isHidden = !visible
     }

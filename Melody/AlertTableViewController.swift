@@ -64,6 +64,7 @@ class AlertTableViewController: UITableViewController, PreviewTransitionable {
 //        tableView.scrollIndicatorInsets.top = 15
         tableView.scrollIndicatorInsets.bottom = 15
         tableView.separatorInset.left = actions.first?.info.subtitle == nil && actions.first?.info.image == nil ? 0 : 54
+        tableView.tableFooterView = UIView.init(frame: .zero)
         
         notifier.addObserver(self, selector: #selector(updateScrollView), name: UIApplication.didChangeStatusBarFrameNotification, object: UIApplication.shared)
         

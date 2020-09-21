@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097.3" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15510"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -559,7 +559,7 @@
                                                                     <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="body"/>
                                                                 </userDefinedRuntimeAttributes>
                                                             </label>
-                                                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Duplicates" translatesAutoresizingMaskIntoConstraints="NO" id="sdA-HC-r3K" customClass="MELImageView" customModule="Mode" customModuleProvider="target">
+                                                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Duplicates13" translatesAutoresizingMaskIntoConstraints="NO" id="sdA-HC-r3K" customClass="MELImageView" customModule="Mode" customModuleProvider="target">
                                                                 <rect key="frame" x="16" y="19" width="14" height="14"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="width" secondItem="sdA-HC-r3K" secondAttribute="height" multiplier="1:1" id="3i3-nf-vsn"/>
@@ -760,7 +760,7 @@
                                                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                                                 <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                                 <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="0.0" maxY="15"/>
-                                                                                <state key="normal" image="PlaylistsAltSmaller"/>
+                                                                                <state key="normal" image="Playlists17"/>
                                                                                 <connections>
                                                                                     <action selector="chooseSection:" destination="WS2-Co-knh" eventType="touchUpInside" id="yjz-yh-m2u"/>
                                                                                 </connections>
@@ -880,7 +880,7 @@
                                                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                                                 <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                                 <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="0.0" maxY="15"/>
-                                                                                <state key="normal" image="Artists"/>
+                                                                                <state key="normal" image="Artists20"/>
                                                                                 <connections>
                                                                                     <action selector="chooseSection:" destination="WS2-Co-knh" eventType="touchUpInside" id="w2N-Oe-Uit"/>
                                                                                 </connections>
@@ -940,7 +940,7 @@
                                                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                                                 <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                                 <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="0.0" maxY="15"/>
-                                                                                <state key="normal" image="Artists"/>
+                                                                                <state key="normal" image="Artists20"/>
                                                                                 <connections>
                                                                                     <action selector="chooseSection:" destination="WS2-Co-knh" eventType="touchUpInside" id="0Jc-92-Tgi"/>
                                                                                 </connections>
@@ -1424,7 +1424,7 @@
                                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BRy-Vg-67k" customClass="MELButton" customModule="Mode" customModuleProvider="target">
                                                                         <rect key="frame" x="0.0" y="0.0" width="54" height="54"/>
                                                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                                        <state key="normal" image="Settings"/>
+                                                                        <state key="normal" image="Settings13"/>
                                                                         <connections>
                                                                             <action selector="goToSettings" destination="WS2-Co-knh" eventType="touchUpInside" id="SkZ-GV-lWl"/>
                                                                         </connections>
@@ -1854,7 +1854,7 @@
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
                                                         <tableView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="4oX-Wy-SLg" customClass="MELTableView" customModule="Mode" customModuleProvider="target">
-                                                            <rect key="frame" x="0.0" y="0.0" width="363" height="119.5"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="363" height="120"/>
                                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                             <userDefinedRuntimeAttributes>
                                                                 <userDefinedRuntimeAttribute type="boolean" keyPath="regular" value="YES"/>
@@ -1865,7 +1865,7 @@
                                                             </connections>
                                                         </tableView>
                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="NDr-fh-HMf" customClass="SubviewIgnoringStackView" customModule="Mode" customModuleProvider="target">
-                                                            <rect key="frame" x="0.0" y="0.0" width="363" height="119.5"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="363" height="120"/>
                                                             <subviews>
                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lCq-Em-K9b">
                                                                     <rect key="frame" x="0.0" y="0.0" width="363" height="53"/>
@@ -2025,10 +2025,10 @@
                                                                     </constraints>
                                                                 </view>
                                                                 <stackView opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="te1-d1-nwb">
-                                                                    <rect key="frame" x="0.0" y="53" width="363" height="66"/>
+                                                                    <rect key="frame" x="0.0" y="53" width="363" height="66.5"/>
                                                                     <subviews>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="999" text="Title" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Smp-rv-80U" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="0.0" width="343" height="23"/>
+                                                                            <rect key="frame" x="10" y="0.0" width="343" height="23.5"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
@@ -2041,7 +2041,7 @@
                                                                             </userDefinedRuntimeAttributes>
                                                                         </label>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="998" text="Subtitle" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qmd-cS-Hye" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="10" y="31" width="343" height="17"/>
+                                                                            <rect key="frame" x="10" y="31.5" width="343" height="17"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
@@ -2057,7 +2057,7 @@
                                                                     <edgeInsets key="layoutMargins" top="0.0" left="10" bottom="18" right="10"/>
                                                                 </stackView>
                                                                 <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d7g-8E-Uhg" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="119" width="363" height="0.5"/>
+                                                                    <rect key="frame" x="0.0" y="119.5" width="363" height="0.5"/>
                                                                     <color key="backgroundColor" white="0.0" alpha="0.050000000000000003" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="height" priority="900" constant="0.5" id="S9c-tA-2zF"/>
@@ -2074,7 +2074,7 @@
                                                             </subviews>
                                                         </stackView>
                                                         <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lfP-04-gL9">
-                                                            <rect key="frame" x="0.0" y="119.5" width="363" height="171"/>
+                                                            <rect key="frame" x="0.0" y="120" width="363" height="171"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" priority="899" constant="171" identifier="containerHeightConstraint" id="s0I-h5-x1a"/>
                                                             </constraints>
@@ -2274,19 +2274,23 @@
             <point key="canvasLocation" x="-1179.375" y="-114.08450704225352"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="Kge-QJ-aED"/>
+    </inferredMetricsTieBreakers>
+    <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
     <resources>
         <image name="AddNoBorder" width="13" height="13"/>
         <image name="AddNoBorder11" width="12" height="12"/>
         <image name="AddSong" width="15" height="13"/>
         <image name="Albums" width="20" height="20"/>
-        <image name="Artists" width="15" height="20"/>
+        <image name="Artists20" width="18" height="20"/>
         <image name="Bold" width="9" height="14"/>
         <image name="Clean" width="16" height="16"/>
         <image name="Compilations" width="17" height="19"/>
         <image name="Composers" width="17" height="17"/>
         <image name="CurrentlyPlaying13" width="15" height="15"/>
         <image name="DarkMode" width="15" height="16"/>
-        <image name="Duplicates" width="15" height="12"/>
+        <image name="Duplicates13" width="17" height="14"/>
         <image name="DynamicBar" width="17" height="17"/>
         <image name="EmptyPlaylist" width="9" height="16"/>
         <image name="Filter" width="13" height="15"/>
@@ -2296,12 +2300,8 @@
         <image name="Locked13" width="11" height="15"/>
         <image name="More13" width="13" height="3"/>
         <image name="Offline14" width="11" height="16"/>
-        <image name="PlaylistsAltSmaller" width="15" height="17"/>
-        <image name="Settings" width="15" height="15"/>
+        <image name="Playlists17" width="15" height="17"/>
+        <image name="Settings13" width="14" height="14"/>
         <image name="Songs" width="12" height="17"/>
     </resources>
-    <inferredMetricsTieBreakers>
-        <segue reference="Kge-QJ-aED"/>
-    </inferredMetricsTieBreakers>
-    <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
 </document>

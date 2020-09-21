@@ -17,8 +17,6 @@ public extension String {
     // MARK: - Miscellaneous
     static let collectedItems = "collectedItems"
     static let queueItems = "queueItems"
-    static let addedPlaylists = "addedPlaylists"
-    static let addedSongs = "addedSongs"
     static let indexOfNowPlayingItem = "indexOfNowPlayingItem"
     static let currentPlaybackTime = "currentPlaybackTime"
     static let musicPlayerController = "controller"
@@ -151,6 +149,28 @@ public extension String {
     var folded: String { return self.folding(options: .diacriticInsensitive, locale: nil) }
     
     var nilIfEmpty: String? { return self.isEmpty ? nil : self }
+}
+
+extension String {
+    
+    func deletingPrefix(_ prefix: String) -> String {
+        
+        guard hasPrefix(prefix) else { return self }
+        
+        return String(dropFirst(prefix.count))
+    }
+    
+    func deletingSuffix(_ suffix: String) -> String {
+        
+        guard hasSuffix(suffix) else { return self }
+        
+        return String(dropLast(suffix.count))
+    }
+    
+    func addingPrefix(_ prefix: String) -> String {
+        
+        return prefix + self
+    }
 }
 
 // MARK: - Enums

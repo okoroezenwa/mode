@@ -8,7 +8,7 @@
 
 import UIKit
 
-class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, GenreTransitionable, PlaylistTransitionable, ComposerTransitionable, FilterContextDiscoverable, CellAnimatable, EntityContainer, PillButtonContaining, Refreshable, QueryUpdateable, IndexContaining, LibrarySectionContainer, EntityVerifiable, TopScrollable {
+class CollectionsViewController: UIViewController, SupplementaryHeaderInfoLoading, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, GenreTransitionable, PlaylistTransitionable, ComposerTransitionable, FilterContextDiscoverable, CellAnimatable, EntityContainer, PillButtonContaining, Refreshable, QueryUpdateable, IndexContaining, LibrarySectionContainer, EntityVerifiable, TopScrollable {
     
     @IBOutlet var tableView: MELTableView!
     @IBOutlet var lastUsedCollectionView: UICollectionView!
@@ -29,6 +29,8 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
         arrangeButton = view.sortButton
         activityIndicator = view.sortActivityIndicatorView
         
+        view.buttonDetails = [(.sort, #imageLiteral(resourceName: "Order13"), arrangementLabelText, { [weak self] in self?.showArranger() })]
+        
         view.showRecents = self.showRecents
         view.sortButton.setTitle(arrangementLabelText, for: .normal)
         view.sortButton.addTarget(self, action: #selector(showArranger), for: .touchUpInside)
@@ -40,6 +42,7 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
             
             if presented.inverted {
                 
+                view.buttonDetails.insert((.grouping, #imageLiteral(resourceName: "Grouping13"), playlistsViewText, { [weak self] in self?.changePlaylistView() }), at: 0)
                 view.groupingButton.addTarget(self, action: #selector(changePlaylistView), for: .touchUpInside)
             
             } else {
@@ -111,7 +114,7 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
             let duration = ScrollHeaderSubview.with(title: "Duration", image: #imageLiteral(resourceName: "Time10"))
             totalDurationLabel = duration.label
             
-            let size = ScrollHeaderSubview.with(title: "Size", image: #imageLiteral(resourceName: "FileSize10"))
+            let size = ScrollHeaderSubview.with(title: "Size", image: #imageLiteral(resourceName: "FileSize12"))
             sizeLabel = size.label
             
             let plays = ScrollHeaderSubview.with(title: "Plays", image: #imageLiteral(resourceName: "Plays"))
@@ -283,6 +286,7 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
                 
                 prefs.set(criteria.rawValue, forKey: settingsKeys.criteria)
                 sortAllItems()
+                prepare(.sort, reload: true, animateHeader: true)
                 headerView.sortButton.setTitle(arrangementLabelText, for: .normal)
                 UIView.animate(withDuration: 0.3, animations: { self.headerView.layoutIfNeeded() })
             }
@@ -329,6 +333,8 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
     
     @objc lazy var collectionsQuery: MPMediaQuery = { self.getCurrentQuery() }()
     @objc lazy var recentsQuery: MPMediaQuery? = { self.getRecentsQuery() }()
+    
+    var applicableSupplementaryProperties = [SecondaryCategory.duration, .fileSize, .plays]
     
     @objc var presented = false
     @objc var itemsToAdd = [MPMediaItem]()
@@ -380,14 +386,14 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
     }
     @objc var lifetimeObservers = Set<NSObject>()
     @objc var transientObservers = Set<NSObject>()
-    @objc lazy var artworkOperationQueue: OperationQueue = {
-        
-        let queue = OperationQueue.init()
-        queue.name = "Artwork Operation Queue"
-        
-        
-        return queue
-    }()
+//    @objc lazy var artworkOperationQueue: OperationQueue = {
+//
+//        let queue = OperationQueue.init()
+//        queue.name = "Artwork Operation Queue"
+//        queue.qualityOfService = .userInitiated
+//
+//        return queue
+//    }()
     @objc var operations = ImageOperations()
     @objc var infoOperations = InfoOperations()
     @objc let infoCache: InfoCache = {
@@ -403,13 +409,13 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
         let queue = OperationQueue()
         queue.name = "Image Operation Queue"
         
-        
         return queue
     }()
     let actionableQueue: OperationQueue = {
         
         let queue = OperationQueue()
         queue.name = "Actionable Operation Queue"
+        queue.qualityOfService = .userInitiated
         
         return queue
     }()
@@ -425,7 +431,7 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
         
         let queue = OperationQueue()
         queue.name = "Sort Operation Queue"
-        
+        queue.qualityOfService = .userInitiated
         
         return queue
     }()
@@ -507,7 +513,7 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
         tableView.scrollIndicatorInsets.top = libraryVC?.inset ?? VisualEffectNavigationBar.Location.main.total
     }
     
-    @objc func prepareSupplementaryInfo(animated: Bool = true) {
+    /*@objc func prepareSupplementaryInfo(animated: Bool = true) {
         
         guard collectionKind != .playlist else { return }
         
@@ -522,22 +528,19 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
             
             guard let weakSelf = self, let items = weakSelf.collectionsQuery.items else { return }
             
-            let totalDuration = items.totalDuration.stringRepresentation(as: .short)
-            let totalSize = FileSize.init(actualSize: items.totalSize).actualSize.fileSizeRepresentation
-            let plays = items.totalPlays
+            let array = weakSelf.headerView.propertyDetails.map({ ($0.property.propertyString(from: MPMediaItemCollection.init(items: items)) ?? "-", $0.property) })
             
             guard weakSelf.supplementaryOperation?.isCancelled == false else { return }
             
             OperationQueue.main.addOperation({
                 
-                weakSelf.totalDurationLabel.text = totalDuration
-                weakSelf.sizeLabel.text = totalSize
-                weakSelf.playsLabel.text = plays.formatted
+                weakSelf.headerView.propertyDetails = array
+                weakSelf.headerView.supplementaryCollectionView.reloadData()
             })
         })
         
         sortOperationQueue.addOperation(supplementaryOperation!)
-    }
+    }*/
     
     @objc func prepareGestures() {
         
@@ -974,9 +977,17 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
                     
                 }) as! NSObject)
                 
+                lifetimeObservers.insert(notifier.addObserver(forName: .newPlaylistAdded, object: nil, queue: nil, using: { [weak self] _ in
+                    
+                    guard let weakSelf = self else { return }
+                    
+                    weakSelf.sortAllItems()
+                    
+                }) as! NSObject)
+                
                 lifetimeObservers.insert(notifier.addObserver(forName: .songsAddedToPlaylists, object: nil, queue: nil, using: { [weak self] notification in
                     
-                    guard let weakSelf = self, let ids = notification.userInfo?[String.addedPlaylists] as? [MPMediaEntityPersistentID] else { return }
+                    guard let weakSelf = self, let ids = notification.userInfo?[.addedPlaylists] as? [MPMediaEntityPersistentID] else { return }
                     
                     if let indexPaths = weakSelf.tableView.indexPathsForVisibleRows?.filter({ Set(ids).contains (weakSelf.getCollection(from: $0).persistentID) }), indexPaths.isEmpty.inverted {
                         
@@ -1245,6 +1256,7 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
     
     func updateGrouping(animated: Bool) {
         
+        prepare(.grouping, reload: true, animateHeader: true)
         headerView.groupingButton.setTitle(playlistsViewText, for: .normal)
         
         guard animated else { return }
@@ -1281,30 +1293,32 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
         
         } else {
             
-            guard let gr = sender as? UISwipeGestureRecognizer, collectionKind == .album, let indexPath = tableView.indexPathForRow(at: gr.location(in: tableView)) else { return }
+            tableDelegate.showGoToMenu(via: sender)
             
-            let album = getCollection(inSection: indexPath.section, row: indexPath.row)
-            
-            guard let song = album.representativeItem else { return }
-            
-            let query = MPMediaQuery.init(filterPredicates: [.for(.albumArtist, using: song.albumArtistPersistentID)]).cloud.grouped(by: .albumArtist)
-            
-            if let collections = query.collections, !collections.isEmpty {
-                
-                albumArtistQuery = query
-                currentAlbum = album
-                
-                performSegue(withIdentifier: .albumArtistUnwind, sender: nil)
-                
-            } else {
-                
-                albumArtistQuery = nil
-                currentAlbum = nil
-                
-                let newBanner = Banner.init(title: showiCloudItems ? "This album artist is not in your library" : "This album artist is not available offline", subtitle: nil, image: nil, backgroundColor: .black, didTapBlock: nil)
-                newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
-                newBanner.show(duration: 0.7)
-            }
+//            guard let gr = sender as? UISwipeGestureRecognizer, collectionKind == .album, let indexPath = tableView.indexPathForRow(at: gr.location(in: tableView)) else { return }
+//
+//            let album = getCollection(inSection: indexPath.section, row: indexPath.row)
+//
+//            guard let song = album.representativeItem else { return }
+//
+//            let query = MPMediaQuery.init(filterPredicates: [.for(.albumArtist, using: song.albumArtistPersistentID)]).cloud.grouped(by: .albumArtist)
+//
+//            if let collections = query.collections, !collections.isEmpty {
+//
+//                albumArtistQuery = query
+//                currentAlbum = album
+//
+//                performSegue(withIdentifier: .albumArtistUnwind, sender: nil)
+//
+//            } else {
+//
+//                albumArtistQuery = nil
+//                currentAlbum = nil
+//
+//                let newBanner = Banner.init(title: showiCloudItems ? "This album artist is not in your library" : "This album artist is not available offline", subtitle: nil, image: nil, backgroundColor: .black, didTapBlock: nil)
+//                newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
+//                newBanner.show(duration: 0.7)
+//            }
         }
     }
     
@@ -1468,6 +1482,7 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
         }
     }
     
+    /// Adds songs to selected playlists.
     @IBAction func addItemsToSelectedPlaylists() {
         
         guard selectedPlaylists.isEmpty.inverted else {
@@ -1477,8 +1492,11 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
             return
         }
         
+        // checks for duplicates within the playlists
         let duplicates = selectedPlaylists.reduce([], { $0 + Array(Set($1.items).intersection(Set(manager?.queue ?? itemsToAdd))) })
         let duplicateText = duplicates.count == 1 ? "duplicate" : "duplicates"
+        
+        // checks whether a playlist is selected from the filtering window.
         let filtering = filterContainer != nil
         
         guard let parent = (filterContainer?.parent ?? parent?.parent) as? PresentedContainerViewController else { return }
@@ -1497,8 +1515,13 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
                 return (weakSelf.manager?.queue ?? weakSelf.itemsToAdd).filter({ !duplicates.contains($0) })
             }()
             
+            // count of playlists.
             let staticCount = weakSelf.selectedPlaylists.count
+            
+            // count of playlist that songs couldn't be added to.
             var errors = [(error: Error?, playlist: MPMediaPlaylist)]()
+            
+            // a modifiable count that reduces once a playlist's operation is completed.
             var count = staticCount {
                 
                 didSet {
@@ -1531,7 +1554,8 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
                             weakSelf.performSegue(withIdentifier: "unwind", sender: nil)
                         }
                         
-                        notifier.post(name: .songsAddedToPlaylists, object: nil, userInfo: [String.addedPlaylists: Set(weakSelf.selectedPlaylists).subtracting(Set(errors.map({ $0.playlist }))).map({ $0.persistentID }), String.addedSongs: array])
+                        notifier.post(name: .songsAddedToPlaylists, object: nil, userInfo: [
+                            .addedPlaylists: Set(weakSelf.selectedPlaylists).subtracting(Set(errors.map({ $0.playlist }))).map({ $0.persistentID }), .addedSongs: array])
                     }
                 }
             }
@@ -1548,7 +1572,10 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
                 
                 UniversalMethods.performInMain {
                     
-                    if let error = error { errors.append((error, playlist)) }
+                    if let error = error {
+                        
+                        errors.append((error, playlist))
+                    }
                     
                     count -= 1
                 }
@@ -1573,87 +1600,87 @@ class CollectionsViewController: UIViewController, InfoLoading, AlbumTransitiona
         (filterContainer ?? self).showAlert(title: selectedPlaylists.count.fullCountText(for: .playlist, capitalised: true), subtitle: !duplicates.isEmpty ? duplicates.count.formatted + " " + duplicateText : nil, with: add + noDuplicates)
     }
     
-    @objc func addItems(to playlist: MPMediaPlaylist) {
-        
-        let duplicates = Set(playlist.items).intersection(Set(manager?.queue ?? itemsToAdd))
-        let duplicateText = duplicates.count == 1 ? "duplicate" : "duplicates"
-        let filtering = filterContainer != nil
-        
-        guard let parent = (filterContainer?.parent ?? parent?.parent) as? PresentedContainerViewController else { return }
-        
-        let addSongs: (Bool) -> () = { [weak self] allowDuplicates in
-            
-            guard let weakSelf = self else { return }
-            
-            let array: [MPMediaItem] = {
-                
-                if allowDuplicates {
-                    
-                    return weakSelf.manager?.queue ?? weakSelf.itemsToAdd
-                }
-                
-                return (weakSelf.manager?.queue ?? weakSelf.itemsToAdd).filter({ !duplicates.contains($0) })
-            }()
-            
-            parent.activityIndicator.startAnimating()
-            
-            if !filtering {
-                
-                parent.rightButton.isHidden = true
-                parent.rightBorderView.isHidden = true
-            }
-            
-            playlist.add(array, completionHandler: { error in
-                
-                guard error == nil else {
-                    
-                    UniversalMethods.performInMain {
-                        
-                        let newBanner = Banner.init(title: "Unable to add \(array.count.fullCountText(for: .song)) to \(playlist.name ??? "Untitled Playlist")", subtitle: error?.localizedDescription, image: nil, backgroundColor: .red, didTapBlock: nil)
-                        newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
-                        newBanner.detailLabel.font = UIFont.font(ofWeight: .regular, size: 15)
-                        newBanner.show(duration: 1)
-                        
-                        parent.activityIndicator.stopAnimating()
-                        
-                        if !filtering {
-                            
-                            parent.rightButton.isHidden = false
-                            parent.rightBorderView.isHidden = false
-                        }
-                    }
-                    
-                    return
-                }
-                
-                UniversalMethods.performInMain {
-                    
-                    let newBanner = Banner.init(title: "\(array.count.fullCountText(for: .song)) added to \(playlist.name ??? "Untitled Playlist")", subtitle: nil, image: nil, backgroundColor: .deepGreen, didTapBlock: nil)
-                    newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
-                    newBanner.show(duration: 0.5)
-                    
-                    if let _ = weakSelf.manager {
-                        
-                        notifier.post(name: .endQueueModification, object: nil)
-                        
-                    } else {
-                        
-                        weakSelf.performSegue(withIdentifier: "unwind", sender: nil)
-                    }
-                    
-                    notifier.post(name: .songsAddedToPlaylists, object: nil, userInfo: [String.addedPlaylists: [playlist.persistentID], String.addedSongs: array])
-                    
-                    parent.activityIndicator.stopAnimating()
-                }
-            })
-        }
-        
-        let add = [AlertAction.init(title: duplicates.count > 0 ? "Add With \(duplicateText.capitalized)" : "Add \((manager?.queue ?? itemsToAdd).count == 1 ? "Song" : "Songs")", style: .default, handler: { addSongs(true) })]
-        
-        let noDuplicates = duplicates.isEmpty || duplicates.count == (manager?.queue ?? itemsToAdd).count ? [] : [AlertAction.init(title: "Add Without \(duplicateText.capitalized)", style: .default, handler: { addSongs(false) })]
-        
-        (filterContainer ?? self).showAlert(title: playlist.name ??? "Untitled Playlist", subtitle: !duplicates.isEmpty ? duplicates.count.formatted + " " + duplicateText : nil, with: add + noDuplicates)
-    }
+//    @objc func addItems(to playlist: MPMediaPlaylist) {
+//
+//        let duplicates = Set(playlist.items).intersection(Set(manager?.queue ?? itemsToAdd))
+//        let duplicateText = duplicates.count == 1 ? "duplicate" : "duplicates"
+//        let filtering = filterContainer != nil
+//
+//        guard let parent = (filterContainer?.parent ?? parent?.parent) as? PresentedContainerViewController else { return }
+//
+//        let addSongs: (Bool) -> () = { [weak self] allowDuplicates in
+//
+//            guard let weakSelf = self else { return }
+//
+//            let array: [MPMediaItem] = {
+//
+//                if allowDuplicates {
+//
+//                    return weakSelf.manager?.queue ?? weakSelf.itemsToAdd
+//                }
+//
+//                return (weakSelf.manager?.queue ?? weakSelf.itemsToAdd).filter({ !duplicates.contains($0) })
+//            }()
+//
+//            parent.activityIndicator.startAnimating()
+//
+//            if !filtering {
+//
+//                parent.rightButton.isHidden = true
+//                parent.rightBorderView.isHidden = true
+//            }
+//
+//            playlist.add(array, completionHandler: { error in
+//
+//                guard error == nil else {
+//
+//                    UniversalMethods.performInMain {
+//
+//                        let newBanner = Banner.init(title: "Unable to add \(array.count.fullCountText(for: .song)) to \(playlist.name ??? "Untitled Playlist")", subtitle: error?.localizedDescription, image: nil, backgroundColor: .red, didTapBlock: nil)
+//                        newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
+//                        newBanner.detailLabel.font = UIFont.font(ofWeight: .regular, size: 15)
+//                        newBanner.show(duration: 1)
+//
+//                        parent.activityIndicator.stopAnimating()
+//
+//                        if !filtering {
+//
+//                            parent.rightButton.isHidden = false
+//                            parent.rightBorderView.isHidden = false
+//                        }
+//                    }
+//
+//                    return
+//                }
+//
+//                UniversalMethods.performInMain {
+//
+//                    let newBanner = Banner.init(title: "\(array.count.fullCountText(for: .song)) added to \(playlist.name ??? "Untitled Playlist")", subtitle: nil, image: nil, backgroundColor: .deepGreen, didTapBlock: nil)
+//                    newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
+//                    newBanner.show(duration: 0.5)
+//
+//                    if let _ = weakSelf.manager {
+//
+//                        notifier.post(name: .endQueueModification, object: nil)
+//
+//                    } else {
+//
+//                        weakSelf.performSegue(withIdentifier: "unwind", sender: nil)
+//                    }
+//
+//                    notifier.post(name: .songsAddedToPlaylists, object: nil, userInfo: [String.addedPlaylists: [playlist.persistentID], String.addedSongs: array])
+//
+//                    parent.activityIndicator.stopAnimating()
+//                }
+//            })
+//        }
+//
+//        let add = [AlertAction.init(title: duplicates.count > 0 ? "Add With \(duplicateText.capitalized)" : "Add \((manager?.queue ?? itemsToAdd).count == 1 ? "Song" : "Songs")", style: .default, handler: { addSongs(true) })]
+//
+//        let noDuplicates = duplicates.isEmpty || duplicates.count == (manager?.queue ?? itemsToAdd).count ? [] : [AlertAction.init(title: "Add Without \(duplicateText.capitalized)", style: .default, handler: { addSongs(false) })]
+//
+//        (filterContainer ?? self).showAlert(title: playlist.name ??? "Untitled Playlist", subtitle: !duplicates.isEmpty ? duplicates.count.formatted + " " + duplicateText : nil, with: add + noDuplicates)
+//    }
 }
 
 extension CollectionsViewController: TableViewContainer {

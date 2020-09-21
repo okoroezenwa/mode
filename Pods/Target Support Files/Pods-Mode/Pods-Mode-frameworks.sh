@@ -165,6 +165,11 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/LastFm/LastFm.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SwiftSoup/SwiftSoup.framework"
 fi
+if [[ "$CONFIGURATION" == "Stable" ]]; then
+  install_framework "${BUILT_PRODUCTS_DIR}/KissXML/KissXML.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/LastFm/LastFm.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/SwiftSoup/SwiftSoup.framework"
+fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/KissXML/KissXML.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/LastFm/LastFm.framework"

@@ -244,7 +244,6 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         let queue = OperationQueue()
         queue.name = "Image Operation Queue"
         
-        
         return queue
     }()
     @objc let imageCache: ImageCache = {
@@ -521,9 +520,11 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
             
             editView.animateChange(title: .inactiveEditButtonTitle, image: .inactiveEditImage)
         
-        } else if let gr = sender as? UISwipeGestureRecognizer, let indexPath = tableView.indexPathForRow(at: gr.location(in: tableView)), filtering {
+        } else if let gr = sender as? UIGestureRecognizer, let indexPath = tableView.indexPathForRow(at: gr.location(in: tableView)), filtering, let cell = tableView.cellForRow(at: indexPath) as? EntityTableViewCell, let entity = getEntity(at: indexPath) {
             
-            switch sectionDetails[indexPath.section].category {
+            singleItemActionDetails(for: .show(title: cell.nameLabel.text, context: context(from: indexPath), canDisplayInLibrary: true), entityType: sectionDetails[indexPath.section].category.entityType, using: entity, from: self, useAlternateTitle: true).handler()
+            
+            /*switch sectionDetails[indexPath.section].category {
                 
                 case .songs:
                 
@@ -593,7 +594,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
                     saveRecentSearch(withTitle: searchBar?.text, resignFirstResponder: false)
                 
                 default: break
-            }
+            }*/
         }
     }
     
@@ -811,7 +812,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         updateTitleLabel()
         updateHeaderView()
         tableView.reloadData()
-        updateCurrentView(to: .none)
+        updateCurrentView(to: recentSearches.isEmpty ? .labels(components: components) : .none)
         
         if !filtering {
             
@@ -1236,11 +1237,12 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
                 cell.prepare(with: song, songNumber: songCountVisible.inverted ? nil : indexPath.row + 1)
                 
                 updateImageView(using: song, in: cell, indexPath: indexPath, reusableView: tableView)
+                updateInfo(for: song, ofType: .song, in: cell, at: indexPath, within: tableView)
                 
-                for category in [SecondaryCategory.loved, .plays, .rating, .lastPlayed, .dateAdded, .genre, .year, .fileSize] {
-                    
-                    update(category: category, using: song, in: cell, at: indexPath, reusableView: tableView)
-                }
+//                for category in [SecondaryCategory.loved, .plays, .rating, .lastPlayed, .dateAdded, .genre, .year, .fileSize] {
+//                    
+//                    update(category: category, using: song, in: cell, at: indexPath, reusableView: tableView)
+//                }
             
             case .playlists:
             
@@ -1598,6 +1600,18 @@ extension SearchViewController: OnlineOverridable {
 }
 
 extension SearchViewController: EntityCellDelegate {
+    
+    func handleScrollSwipe(from gr: UIGestureRecognizer, direction: UISwipeGestureRecognizer.Direction) {
+        
+        switch direction {
+            
+            case .left: handleLeftSwipe(gr)
+            
+            case .right: handleRightSwipe(gr)
+            
+            default: break
+        }
+    }
     
     func editButtonHeld(in cell: EntityTableViewCell) {
         

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, ComposerTransitionable, GenreTransitionable, InfoLoading, CellAnimatable, SingleItemActionable, PillButtonContaining, Refreshable, IndexContaining, LibrarySectionContainer, EntityVerifiable, TopScrollable, EntityContainer {
+class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, ComposerTransitionable, GenreTransitionable, SupplementaryHeaderInfoLoading, CellAnimatable, SingleItemActionable, PillButtonContaining, Refreshable, IndexContaining, LibrarySectionContainer, EntityVerifiable, TopScrollable, EntityContainer {
 
     @IBOutlet var tableView: MELTableView!
     lazy var headerView: HeaderView = {
@@ -16,6 +16,7 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
         let view = HeaderView.instance
         self.actionsStackView = view.actionsStackView
         self.stackView = view.scrollStackView
+        view.buttonDetails = [(.sort, #imageLiteral(resourceName: "Order13"), arrangementLabelText, { [weak self] in self?.showArranger() })]
         view.showRecents = showRecentSongs
         view.collectionView.isHidden = true
         view.sortButton.setTitle(arrangementLabelText, for: .normal)
@@ -58,7 +59,7 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
             let duration = ScrollHeaderSubview.with(title: "Duration", image: #imageLiteral(resourceName: "Time10"))
             totalDurationLabel = duration.label
             
-            let size = ScrollHeaderSubview.with(title: "Size", image: #imageLiteral(resourceName: "FileSize10"))
+            let size = ScrollHeaderSubview.with(title: "Size", image: #imageLiteral(resourceName: "FileSize12"))
             sizeLabel = size.label
             
             let plays = ScrollHeaderSubview.with(title: "Plays", image: #imageLiteral(resourceName: "Plays"))
@@ -160,6 +161,8 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
     var transientObservers = Set<NSObject>()
     var firstLaunch = true
     
+    var applicableSupplementaryProperties = [SecondaryCategory.duration, .fileSize, .plays]
+    
     @objc var currentItem: MPMediaItem?
     @objc var currentAlbum: MPMediaItemCollection?
     @objc var albumQuery: MPMediaQuery?
@@ -178,7 +181,9 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
             if let _ = tableView {
                 
                 sortAllItems()
-                headerView.sortButton.setTitle(arrangementLabelText, for: .normal)
+                
+                prepare(.sort, reload: true, animateHeader: true)
+//                headerView.sortButton.setTitle(arrangementLabelText, for: .normal)
                 UIView.animate(withDuration: 0.3, animations: { self.headerView.layoutIfNeeded() })
                 
                 prefs.set(sortCriteria.rawValue, forKey: .songsSort)
@@ -220,7 +225,7 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
         
         let queue = OperationQueue()
         queue.name = "Image Operation Queue"
-        
+        queue.qualityOfService = .userInitiated
         
         return queue
     }()
@@ -284,7 +289,7 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
         tableView.scrollIndicatorInsets.top = libraryVC?.inset ?? VisualEffectNavigationBar.Location.main.total
     }
     
-    @objc func prepareSupplementaryInfo(animated: Bool = true) {
+    /*@objc func prepareSupplementaryInfo(animated: Bool = true) {
         
         if animated {
             
@@ -297,22 +302,19 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
             
             guard let weakSelf = self, let items = weakSelf.songsQuery.items else { return }
             
-            let totalDuration = items.totalDuration.stringRepresentation(as: .short)
-            let totalSize = FileSize.init(actualSize: items.totalSize).actualSize.fileSizeRepresentation
-            let plays = items.totalPlays
+            let array = weakSelf.headerView.propertyDetails.map({ ($0.property.propertyString(from: MPMediaItemCollection.init(items: items)) ?? "-", $0.property) })
             
             guard weakSelf.supplementaryOperation?.isCancelled == false else { return }
             
             OperationQueue.main.addOperation({
                 
-                weakSelf.totalDurationLabel.text = totalDuration
-                weakSelf.sizeLabel.text = totalSize
-                weakSelf.playsLabel.text = plays.formatted
+                weakSelf.headerView.propertyDetails = array
+                weakSelf.headerView.supplementaryCollectionView.reloadData()
             })
         })
         
         sortOperationQueue.addOperation(supplementaryOperation!)
-    }
+    }*/
     
     func prepareGestures() {
         
@@ -456,6 +458,10 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
         
         } else {
             
+            tableDelegate.showGoToMenu(via: sender)
+            
+            /*
+            
             guard let gr = sender as? UISwipeGestureRecognizer, let indexPath = tableView.indexPathForRow(at: gr.location(in: tableView)) else { return }
             
             let song = getSong(from: indexPath)
@@ -481,6 +487,8 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
                 newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
                 newBanner.show(duration: 0.7)
             }
+ 
+             */
         }
     }
     

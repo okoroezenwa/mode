@@ -31,7 +31,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Nothing Playing" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eQr-BK-8sg">
-                                <rect key="frame" x="16" y="115" width="288" height="20"/>
+                                <rect key="frame" x="16" y="113.5" width="288" height="23.5"/>
                                 <fontDescription key="fontDescription" name="MyriadPro-Bold" family="Myriad Pro" pointSize="20"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -101,22 +101,22 @@
                                                                 <rect key="frame" x="0.0" y="24.5" width="191" height="20.5"/>
                                                                 <subviews>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="252" verticalCompressionResistancePriority="749" text="0 of 0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aRX-RD-2MB">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="34.5" height="20.5"/>
+                                                                        <rect key="frame" x="0.0" y="0.0" width="38.5" height="20.5"/>
                                                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="15"/>
                                                                         <nil key="textColor"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
                                                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="avj-K6-r4H">
-                                                                        <rect key="frame" x="44.5" y="0.0" width="146.5" height="20.5"/>
+                                                                        <rect key="frame" x="48.5" y="0.0" width="142.5" height="20.5"/>
                                                                         <subviews>
                                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" verticalCompressionResistancePriority="749" text="00:00  " textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oi4-xy-WOr">
-                                                                                <rect key="frame" x="0.0" y="0.0" width="100" height="20.5"/>
+                                                                                <rect key="frame" x="0.0" y="0.0" width="91.5" height="20.5"/>
                                                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="15"/>
                                                                                 <nil key="textColor"/>
                                                                                 <nil key="highlightedColor"/>
                                                                             </label>
                                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="252" verticalCompressionResistancePriority="749" text="/ 00:00" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TJ9-aa-R4Q">
-                                                                                <rect key="frame" x="104" y="0.0" width="42.5" height="20.5"/>
+                                                                                <rect key="frame" x="95.5" y="0.0" width="47" height="20.5"/>
                                                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="15"/>
                                                                                 <nil key="textColor"/>
                                                                                 <nil key="highlightedColor"/>
@@ -196,7 +196,7 @@
                                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NlE-R8-Bpz">
                                                                         <rect key="frame" x="0.0" y="0.0" width="54.5" height="55"/>
                                                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                                        <inset key="contentEdgeInsets" minX="0.5" minY="0.0" maxX="0.0" maxY="4"/>
+                                                                        <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="0.0" maxY="4"/>
                                                                         <state key="normal" image="NoLove14"/>
                                                                         <connections>
                                                                             <action selector="setLiked:" destination="M4Y-Lb-cyx" eventType="touchUpInside" id="ZxL-L2-kXY"/>
@@ -228,25 +228,14 @@
                                                             <constraint firstItem="z3D-D7-JgG" firstAttribute="top" secondItem="816-bL-cS0" secondAttribute="top" id="oiW-vH-exA"/>
                                                         </constraints>
                                                     </view>
-                                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nmc-lf-WcY">
+                                                    <view contentMode="scaleToFill" horizontalHuggingPriority="251" horizontalCompressionResistancePriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="nmc-lf-WcY">
                                                         <rect key="frame" x="54.5" y="0.0" width="156.5" height="55"/>
                                                         <subviews>
                                                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="LtK-Uu-HyO">
-                                                                <rect key="frame" x="0.0" y="0.0" width="156.5" height="55"/>
+                                                                <rect key="frame" x="16" y="0.0" width="124.5" height="55"/>
                                                                 <subviews>
-                                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ETn-lW-U8C">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="26" height="55"/>
-                                                                        <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="18"/>
-                                                                        <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                                        <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="0.0" maxY="4"/>
-                                                                        <inset key="titleEdgeInsets" minX="0.0" minY="2" maxX="0.0" maxY="0.0"/>
-                                                                        <state key="normal" image="NoRating15"/>
-                                                                        <connections>
-                                                                            <action selector="rate:" destination="M4Y-Lb-cyx" eventType="touchUpInside" id="Uo0-B5-CAj"/>
-                                                                        </connections>
-                                                                    </button>
                                                                     <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YiZ-Ui-7oI">
-                                                                        <rect key="frame" x="26" y="0.0" width="26" height="55"/>
+                                                                        <rect key="frame" x="0.0" y="0.0" width="25" height="55"/>
                                                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="18"/>
                                                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                         <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="0.0" maxY="4"/>
@@ -257,7 +246,7 @@
                                                                         </connections>
                                                                     </button>
                                                                     <button opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="N75-EA-OXF">
-                                                                        <rect key="frame" x="52" y="0.0" width="26.5" height="55"/>
+                                                                        <rect key="frame" x="25" y="0.0" width="25" height="55"/>
                                                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="18"/>
                                                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                         <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="0.0" maxY="4"/>
@@ -268,7 +257,7 @@
                                                                         </connections>
                                                                     </button>
                                                                     <button opaque="NO" tag="3" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6qA-hc-hbk">
-                                                                        <rect key="frame" x="78.5" y="0.0" width="26" height="55"/>
+                                                                        <rect key="frame" x="50" y="0.0" width="25" height="55"/>
                                                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="18"/>
                                                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                         <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="0.0" maxY="4"/>
@@ -279,7 +268,7 @@
                                                                         </connections>
                                                                     </button>
                                                                     <button opaque="NO" tag="4" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="39L-gz-Pf4">
-                                                                        <rect key="frame" x="104.5" y="0.0" width="26" height="55"/>
+                                                                        <rect key="frame" x="75" y="0.0" width="24.5" height="55"/>
                                                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="18"/>
                                                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                         <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="0.0" maxY="4"/>
@@ -290,7 +279,7 @@
                                                                         </connections>
                                                                     </button>
                                                                     <button opaque="NO" tag="5" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zGi-d4-4kj">
-                                                                        <rect key="frame" x="130.5" y="0.0" width="26" height="55"/>
+                                                                        <rect key="frame" x="99.5" y="0.0" width="25" height="55"/>
                                                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="18"/>
                                                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                         <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="0.0" maxY="4"/>
@@ -302,13 +291,46 @@
                                                                     </button>
                                                                 </subviews>
                                                             </stackView>
+                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dHy-vq-buf">
+                                                                <rect key="frame" x="0.0" y="0.0" width="16" height="55"/>
+                                                                <connections>
+                                                                    <action selector="rate:" destination="M4Y-Lb-cyx" eventType="touchUpInside" id="h94-lf-dWF"/>
+                                                                </connections>
+                                                            </button>
+                                                            <button opaque="NO" tag="5" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9yb-Vt-hLJ">
+                                                                <rect key="frame" x="140.5" y="0.0" width="16" height="55"/>
+                                                                <connections>
+                                                                    <action selector="rate:" destination="M4Y-Lb-cyx" eventType="touchUpInside" id="kqW-Mk-EMe"/>
+                                                                </connections>
+                                                            </button>
+                                                            <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2Lt-9q-6bb">
+                                                                <rect key="frame" x="0.0" y="10" width="156.5" height="31"/>
+                                                                <color key="backgroundColor" white="0.0" alpha="0.050000000000000003" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                                <userDefinedRuntimeAttributes>
+                                                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                                        <integer key="value" value="15"/>
+                                                                    </userDefinedRuntimeAttribute>
+                                                                </userDefinedRuntimeAttributes>
+                                                            </view>
                                                         </subviews>
                                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                         <constraints>
-                                                            <constraint firstItem="LtK-Uu-HyO" firstAttribute="leading" secondItem="nmc-lf-WcY" secondAttribute="leading" id="1VC-Ig-DI9"/>
-                                                            <constraint firstAttribute="bottom" secondItem="LtK-Uu-HyO" secondAttribute="bottom" id="4KH-KX-yMY"/>
-                                                            <constraint firstAttribute="trailing" secondItem="LtK-Uu-HyO" secondAttribute="trailing" id="BwN-La-q3N"/>
-                                                            <constraint firstItem="LtK-Uu-HyO" firstAttribute="top" secondItem="nmc-lf-WcY" secondAttribute="top" id="iw2-dj-QAS"/>
+                                                            <constraint firstItem="9yb-Vt-hLJ" firstAttribute="leading" secondItem="LtK-Uu-HyO" secondAttribute="trailing" id="5yQ-fw-bNe"/>
+                                                            <constraint firstAttribute="trailing" secondItem="9yb-Vt-hLJ" secondAttribute="trailing" id="AaL-8j-oI7"/>
+                                                            <constraint firstAttribute="bottom" secondItem="2Lt-9q-6bb" secondAttribute="bottom" constant="14" id="DlY-W0-Wxx"/>
+                                                            <constraint firstItem="LtK-Uu-HyO" firstAttribute="leading" secondItem="dHy-vq-buf" secondAttribute="trailing" id="PFd-dX-8tg"/>
+                                                            <constraint firstItem="2Lt-9q-6bb" firstAttribute="top" secondItem="nmc-lf-WcY" secondAttribute="top" constant="10" id="RDp-4u-KgY"/>
+                                                            <constraint firstItem="2Lt-9q-6bb" firstAttribute="leading" secondItem="nmc-lf-WcY" secondAttribute="leading" id="UFE-Yg-7lU"/>
+                                                            <constraint firstAttribute="bottom" secondItem="LtK-Uu-HyO" secondAttribute="bottom" id="Xde-VD-RoV"/>
+                                                            <constraint firstItem="LtK-Uu-HyO" firstAttribute="top" secondItem="nmc-lf-WcY" secondAttribute="top" id="ats-GX-w5j"/>
+                                                            <constraint firstItem="9yb-Vt-hLJ" firstAttribute="bottom" secondItem="dHy-vq-buf" secondAttribute="bottom" id="d2p-Ss-T7X"/>
+                                                            <constraint firstItem="9yb-Vt-hLJ" firstAttribute="top" secondItem="dHy-vq-buf" secondAttribute="top" id="fRK-qs-Rob"/>
+                                                            <constraint firstItem="dHy-vq-buf" firstAttribute="top" secondItem="nmc-lf-WcY" secondAttribute="top" id="fbK-u5-Ej0"/>
+                                                            <constraint firstAttribute="trailing" secondItem="2Lt-9q-6bb" secondAttribute="trailing" id="kfW-nG-Ere"/>
+                                                            <constraint firstItem="dHy-vq-buf" firstAttribute="leading" secondItem="nmc-lf-WcY" secondAttribute="leading" id="mSC-ap-uiQ"/>
+                                                            <constraint firstAttribute="trailing" secondItem="LtK-Uu-HyO" secondAttribute="trailing" constant="16" id="tOa-Lh-cAS"/>
+                                                            <constraint firstAttribute="bottom" secondItem="dHy-vq-buf" secondAttribute="bottom" id="wAQ-tp-NHH"/>
+                                                            <constraint firstItem="LtK-Uu-HyO" firstAttribute="leading" secondItem="nmc-lf-WcY" secondAttribute="leading" constant="16" id="ztX-lI-q7O"/>
                                                         </constraints>
                                                     </view>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3Hm-DT-k7y">
@@ -321,7 +343,7 @@
                                                                         <rect key="frame" x="0.0" y="0.0" width="54.5" height="55"/>
                                                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                         <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="0.0" maxY="4"/>
-                                                                        <state key="normal" image="Shuffle"/>
+                                                                        <state key="normal" image="Shuffle15"/>
                                                                         <connections>
                                                                             <action selector="shuffle:" destination="M4Y-Lb-cyx" eventType="touchUpInside" id="ECf-Xo-hNk"/>
                                                                         </connections>
@@ -362,7 +384,7 @@
                                                                         <rect key="frame" x="0.0" y="0.0" width="54.5" height="55"/>
                                                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                         <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="0.0" maxY="4"/>
-                                                                        <state key="normal" image="Repeat"/>
+                                                                        <state key="normal" image="Repeat15"/>
                                                                         <connections>
                                                                             <action selector="setRepeat:" destination="M4Y-Lb-cyx" eventType="touchUpInside" id="Ahq-1a-10W"/>
                                                                         </connections>
@@ -418,16 +440,16 @@
                                 <rect key="frame" x="0.0" y="110" width="320" height="140"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="CGY-nS-C7n">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="38"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="41.5"/>
                                         <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="999" verticalCompressionResistancePriority="999" text="up next" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gmn-MC-D7U">
-                                                <rect key="frame" x="10" y="5" width="201" height="20"/>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="999" verticalCompressionResistancePriority="999" text="Up Next" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gmn-MC-D7U">
+                                                <rect key="frame" x="10" y="5" width="201" height="23.5"/>
                                                 <fontDescription key="fontDescription" name="MyriadPro-Bold" family="Myriad Pro" pointSize="20"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="57y-in-Nfh">
-                                                <rect key="frame" x="265.5" y="0.0" width="54.5" height="38"/>
+                                                <rect key="frame" x="265.5" y="0.0" width="54.5" height="41.5"/>
                                                 <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="0.0" maxY="10"/>
                                                 <state key="normal" image="ForwardArrow12"/>
                                                 <connections>
@@ -435,7 +457,7 @@
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ygp-ac-gxa">
-                                                <rect key="frame" x="211" y="0.0" width="54.5" height="38"/>
+                                                <rect key="frame" x="211" y="0.0" width="54.5" height="41.5"/>
                                                 <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="0.0" maxY="10"/>
                                                 <state key="normal" image="BackArrow12"/>
                                                 <connections>
@@ -460,7 +482,7 @@
                                         </constraints>
                                     </view>
                                     <collectionView multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="bTP-CL-kbS">
-                                        <rect key="frame" x="0.0" y="38" width="320" height="102"/>
+                                        <rect key="frame" x="0.0" y="41.5" width="320" height="98.5"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="0.0" minimumInteritemSpacing="0.0" id="bh1-6D-Z9o">
                                             <size key="itemSize" width="74" height="68"/>
@@ -554,6 +576,7 @@
                         <outlet property="nothingPlayingLabel" destination="eQr-BK-8sg" id="NKC-zp-t45"/>
                         <outlet property="playButton" destination="vmN-hc-WtI" id="gH5-le-xil"/>
                         <outlet property="previousButton" destination="ygp-ac-gxa" id="d9s-d2-oy3"/>
+                        <outlet property="ratingBorderView" destination="2Lt-9q-6bb" id="FDN-3M-JIi"/>
                         <outlet property="ratingStackView" destination="LtK-Uu-HyO" id="Jmc-c9-xQM"/>
                         <outlet property="repeatBorderView" destination="PRe-nQ-z2I" id="5A6-Jh-hNl"/>
                         <outlet property="repeatButton" destination="AHf-HV-hKx" id="lDC-aP-yaG"/>
@@ -564,12 +587,11 @@
                         <outlet property="timeLabel" destination="TJ9-aa-R4Q" id="HkB-gB-F2E"/>
                         <outlet property="titlesStackView" destination="Pvu-fE-O8B" id="bb7-vY-wX7"/>
                         <outletCollection property="buttons" destination="MgZ-AQ-x2v" collectionClass="NSMutableArray" id="rlD-O0-jqR"/>
-                        <outletCollection property="buttons" destination="ETn-lW-U8C" collectionClass="NSMutableArray" id="kVf-Yu-if8"/>
-                        <outletCollection property="buttons" destination="YiZ-Ui-7oI" collectionClass="NSMutableArray" id="U5s-J2-w5Y"/>
                         <outletCollection property="buttons" destination="N75-EA-OXF" collectionClass="NSMutableArray" id="Av2-5r-gWL"/>
+                        <outletCollection property="buttons" destination="zGi-d4-4kj" collectionClass="NSMutableArray" id="bPE-ci-NwJ"/>
+                        <outletCollection property="buttons" destination="YiZ-Ui-7oI" collectionClass="NSMutableArray" id="U5s-J2-w5Y"/>
                         <outletCollection property="buttons" destination="6qA-hc-hbk" collectionClass="NSMutableArray" id="28u-PG-8uc"/>
                         <outletCollection property="buttons" destination="39L-gz-Pf4" collectionClass="NSMutableArray" id="vRj-nv-rVv"/>
-                        <outletCollection property="buttons" destination="zGi-d4-4kj" collectionClass="NSMutableArray" id="bPE-ci-NwJ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vXp-U4-Rya" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -583,9 +605,8 @@
         <image name="Dot" width="4" height="4"/>
         <image name="ForwardArrow12" width="7" height="12"/>
         <image name="InfoNoBorder10" width="5" height="10"/>
-        <image name="NoLove14" width="14" height="14"/>
-        <image name="NoRating15" width="17" height="17"/>
-        <image name="Repeat" width="15" height="15"/>
-        <image name="Shuffle" width="18" height="14"/>
+        <image name="NoLove14" width="15" height="14"/>
+        <image name="Repeat15" width="17" height="15"/>
+        <image name="Shuffle15" width="18" height="15"/>
     </resources>
 </document>

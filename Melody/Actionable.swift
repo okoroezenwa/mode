@@ -182,7 +182,7 @@ extension SongActionable {
                     }
                     
                     vc.updateItems(at: (0..<vc.tableView.numberOfRows(inSection: 0)).map({ IndexPath.init(row: $0, section: 0) }), for: .remove)
-                    vc.updateEditButton(animated: false)
+                    vc.updateEditButton(/*animated: false*/)
                 })
             
             case .library:
@@ -880,7 +880,7 @@ extension SingleItemActionable {
                     }
                 })
             
-            case .show(title: let title, context: let context, canDisplayInLibrary: let canDisplay):
+            case .show(title: _, context: let context, canDisplayInLibrary: let canDisplay):
             
                 return (action: action, title: useSystemAlerts ? "Show..." : "Go To...", style: .default, {
                     
@@ -908,7 +908,7 @@ extension SingleItemActionable {
                     var topAction: UnwindAction?
                     var topPreviewAction: PreviewAction?
                     
-                    details.entities.filter({ verifiable.verifyLibraryStatus(of: song, itemProperty: $0, animated: false, updateButton: false) == .present }).enumerated().forEach({ index, verifiedEntityType in
+                    details.entities.sorted(by: { $0.title().size < $1.title().size }).filter({ verifiable.verifyLibraryStatus(of: song, itemProperty: $0, animated: false, updateButton: false) == .present }).enumerated().forEach({ index, verifiedEntityType in
                         
                         let collection = verifiedEntityType.collection(from: entity)
                         parameters.append((collection, verifiedEntityType))
@@ -1101,6 +1101,7 @@ extension SingleItemActionable {
                             return .bar
                         }(),
                         with: actions,
+                        shouldSortActions: false,
                         segmentDetails: (canDisplay ? [.init(title: "Show in Library")/*\(2.countText(for: entityType, compilationOverride: song.isCompilation, capitalised: true))")*/] : [], canDisplay ? [{ alertVC in verifiable.showInLibrary(entity: entity, type: entityType, unwinder: alertVC) }] : [])/*,
                         leftAction: { [weak self] _, unwinder in self?.singleItemActionDetails(for: .search(unwinder: { unwinder.children.first }), entityType: entityType, using: entity, from: vc, useAlternateTitle: useAlternateTitle).handler() }*/,
                         rightAction: { [weak self] _, presenter in presenter.dismiss(animated: true, completion: { self?.singleItemActionDetails(for: .info(context: context), entityType: entityType, using: entity, from: vc, useAlternateTitle: useAlternateTitle).handler() }) },
@@ -1279,7 +1280,7 @@ extension SingleItemActionable {
                             
                             UniversalMethods.banner(withTitle: "\(playlist.name ??? "Untitled Playlist")", subtitle: "Added \(items.count.fullCountText(for: .song))", image: nil, backgroundColor: .deepGreen, titleFont: .font(ofWeight: .light, size: 25), subtitleFont: .font(ofWeight: .light, size: 20), didTapBlock: nil).show(duration: .bannerInterval)
                             
-                            notifier.post(name: .songsAddedToPlaylists, object: nil, userInfo: [String.addedPlaylists: [playlist.persistentID], String.addedSongs: items])
+                            notifier.post(name: .songsAddedToPlaylists, object: nil, userInfo: [.addedPlaylists: [playlist.persistentID], .addedSongs: items])
                             completions?.success()
                         }
                     })

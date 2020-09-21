@@ -8,7 +8,13 @@
 
 import UIKit
 
-let sharedDefaults = UserDefaults.init(suiteName: "group.okoroezenwa.modeplayer")!
+let sharedDefaults: UserDefaults = {
+    
+    guard let identifier = Bundle.main.bundleIdentifier?.deletingSuffix(".Widget").replacingOccurrences(of: "com.", with: "group.").lowercased() else { return UserDefaults.init(suiteName: "group.okoroezenwa.modeplayer")! }
+    
+    return UserDefaults.init(suiteName: identifier)!
+}()
+
 var sharedUseSystemPlayer: Bool { return sharedDefaults.bool(forKey: .systemPlayer) }
 var sharedUseLighterBorders: Bool { return sharedDefaults.bool(forKey: .lighterBorders) }
 var sharedCornerRadius: Int { return sharedDefaults.integer(forKey: .cornerRadius) }

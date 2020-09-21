@@ -167,7 +167,7 @@ extension UIImage {
         return nil
     }
     
-    class var inactiveEditImage: UIImage { #imageLiteral(resourceName: "Edit") }
+    class var inactiveEditImage: UIImage { #imageLiteral(resourceName: "EditNoBorder15") }//Edit") }
     class var inactiveEditBorderlessImage: UIImage { #imageLiteral(resourceName: "EditNoBorder13") }
     class var moreEditImage: UIImage { #imageLiteral(resourceName: "MoreBordered13") }
     class var doneImage: UIImage { #imageLiteral(resourceName: "CheckBordered13") }

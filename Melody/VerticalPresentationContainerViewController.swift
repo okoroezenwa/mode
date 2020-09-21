@@ -90,7 +90,7 @@ class VerticalPresentationContainerViewController: UIViewController, PreviewTran
         
         switch context {
             
-            case .actions: return (#imageLiteral(resourceName: "Locked13"), #imageLiteral(resourceName: "Settings"))
+            case .actions: return (#imageLiteral(resourceName: "Locked13"), #imageLiteral(resourceName: "Settings13"))
             
             case .alert: return (nil, #imageLiteral(resourceName: "InfoNoBorder13"))
             

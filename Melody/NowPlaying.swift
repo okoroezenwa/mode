@@ -62,6 +62,11 @@ class NowPlaying: NSObject {
         observers.insert(notifier.addObserver(forName: UIApplication.willEnterForegroundNotification, object: UIApplication.shared, queue: nil, using: { [weak self] _ in
             
             guard let weakSelf = self else { return }
+            
+            if #available(iOS 13.5, *), musicPlayer.playbackState == .stopped, musicPlayer.currentPlaybackTime > 0 {
+                
+                musicPlayer.currentPlaybackTime = 0
+            }
         
             notifier.post(weakSelf.notification)
             weakSelf.modifyTimerForNotification()
@@ -73,6 +78,11 @@ class NowPlaying: NSObject {
             self?.registered.forEach({ $0?.modifyPlayPauseButton() })
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {
+                
+                if #available(iOS 13.5, *), musicPlayer.playbackState == .stopped, musicPlayer.currentPlaybackTime > 0 {
+                    
+                    musicPlayer.currentPlaybackTime = 0
+                }
                 
                 self?.modifyTimerForNotification()
                 

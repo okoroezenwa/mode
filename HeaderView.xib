@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16097.3" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
@@ -42,6 +42,19 @@
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hPt-1A-Uje" customClass="GradientView" customModule="Mode" customModuleProvider="target">
                     <rect key="frame" x="0.0" y="34" width="474" height="44"/>
                     <subviews>
+                        <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="ATw-BP-QSP" customClass="MELCollectionView" customModule="Mode" customModuleProvider="target">
+                            <rect key="frame" x="0.0" y="0.0" width="474" height="44"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="0.0" minimumInteritemSpacing="0.0" id="EH6-at-pnH">
+                                <size key="itemSize" width="98" height="50"/>
+                                <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                            </collectionViewFlowLayout>
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="boolean" keyPath="horizontal" value="YES"/>
+                            </userDefinedRuntimeAttributes>
+                        </collectionView>
                         <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oCg-6I-fI1" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
                             <rect key="frame" x="0.0" y="0.0" width="474" height="44"/>
                             <subviews>
@@ -314,6 +327,9 @@
                                 <constraint firstAttribute="bottom" secondItem="oIz-FE-Vxb" secondAttribute="bottom" id="oAZ-kB-4YL"/>
                                 <constraint firstItem="Xik-7R-75C" firstAttribute="top" secondItem="oCg-6I-fI1" secondAttribute="top" id="z2g-SM-bT6"/>
                             </constraints>
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="boolean" keyPath="hidden" value="YES"/>
+                            </userDefinedRuntimeAttributes>
                         </scrollView>
                     </subviews>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -321,8 +337,12 @@
                         <constraint firstAttribute="height" constant="44" id="Ftj-XX-cLc"/>
                         <constraint firstItem="oCg-6I-fI1" firstAttribute="top" secondItem="hPt-1A-Uje" secondAttribute="top" id="Gef-VL-dea"/>
                         <constraint firstAttribute="trailing" secondItem="oCg-6I-fI1" secondAttribute="trailing" id="JBX-GE-Bxg"/>
+                        <constraint firstItem="ATw-BP-QSP" firstAttribute="top" secondItem="hPt-1A-Uje" secondAttribute="top" id="UMt-2e-NgX"/>
                         <constraint firstItem="oCg-6I-fI1" firstAttribute="leading" secondItem="hPt-1A-Uje" secondAttribute="leading" id="Ua9-GH-hNq"/>
+                        <constraint firstItem="ATw-BP-QSP" firstAttribute="leading" secondItem="hPt-1A-Uje" secondAttribute="leading" id="kJx-xX-dUZ"/>
                         <constraint firstAttribute="bottom" secondItem="oCg-6I-fI1" secondAttribute="bottom" id="ooI-JF-jTq"/>
+                        <constraint firstAttribute="trailing" secondItem="ATw-BP-QSP" secondAttribute="trailing" id="q6U-ZM-OxX"/>
+                        <constraint firstAttribute="bottom" secondItem="ATw-BP-QSP" secondAttribute="bottom" id="sGA-Bb-bR4"/>
                     </constraints>
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gZ7-cD-rJW">
@@ -363,16 +383,16 @@
                             </userDefinedRuntimeAttributes>
                         </collectionView>
                         <visualEffectView hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6zL-CQ-7yb" customClass="MELVisualEffectView" customModule="Mode" customModuleProvider="target">
-                            <rect key="frame" x="148.5" y="59" width="177.5" height="40"/>
+                            <rect key="frame" x="140.5" y="59" width="193.5" height="40"/>
                             <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="mzm-YD-VFV">
-                                <rect key="frame" x="0.0" y="0.0" width="177.5" height="40"/>
+                                <rect key="frame" x="0.0" y="0.0" width="193.5" height="40"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
                                     <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="751" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="hPq-aX-UXH" customClass="MELActivityIndicatorView" customModule="Mode" customModuleProvider="target">
                                         <rect key="frame" x="10" y="10" width="20" height="20"/>
                                     </activityIndicatorView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Loading Recents..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6eE-IR-d5E" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                        <rect key="frame" x="40" y="10" width="127.5" height="20"/>
+                                        <rect key="frame" x="40" y="10" width="143" height="20"/>
                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -465,6 +485,7 @@
                 <outlet property="sortBorderView" destination="reL-hE-933" id="tJq-bq-Oa2"/>
                 <outlet property="sortButton" destination="Tip-95-vbe" id="UKV-3H-cZh"/>
                 <outlet property="sortView" destination="Xqr-Vo-LnQ" id="w30-T4-83v"/>
+                <outlet property="supplementaryCollectionView" destination="ATw-BP-QSP" id="f8d-Re-rPP"/>
                 <outlet property="tableHeaderContainer" destination="6yI-jD-ZZE" id="ltw-Nz-fey"/>
             </connections>
             <point key="canvasLocation" x="0.0" y="-63.868065967016499"/>
@@ -472,10 +493,10 @@
     </objects>
     <resources>
         <image name="AddToPlaylist10" width="10" height="12"/>
-        <image name="Artists15" width="11" height="15"/>
+        <image name="Artists15" width="15" height="15"/>
         <image name="Grouping13" width="15" height="15"/>
         <image name="InfoNoBorder13" width="6" height="13"/>
-        <image name="NoLove13" width="13" height="13"/>
+        <image name="NoLove13" width="14" height="13"/>
         <image name="Order13" width="12" height="13"/>
     </resources>
 </document>

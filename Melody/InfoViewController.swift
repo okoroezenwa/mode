@@ -216,7 +216,6 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
         let queue = OperationQueue()
         queue.name = "Image Operation Queue"
         
-        
         return queue
     }()
 //    lazy var queueOperationQueue: OperationQueue = {
@@ -1934,7 +1933,7 @@ extension InfoViewController: MPMediaPickerControllerDelegate {
                 banner.detailLabel.textColor = Themer.textColour(for: .subtitle)
                 banner.show(for: .bannerInterval)
                 
-                notifier.post(name: .songsAddedToPlaylists, object: nil, userInfo: [String.addedPlaylists: [playlist.persistentID], String.addedSongs: mediaItemCollection.items])
+                notifier.post(name: .songsAddedToPlaylists, object: nil, userInfo: [.addedPlaylists: [playlist.persistentID], .addedSongs: mediaItemCollection.items])
                 weakSelf.parent?.performSegue(withIdentifier: "unwind", sender: nil)
             }
         })

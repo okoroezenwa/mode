@@ -286,4 +286,11 @@ extension FontManager {
         
         return ceil(("y" as NSString).boundingRect(with: .init(width: 100, height: CGFloat.greatestFiniteMagnitude), options: .usesLineFragmentOrigin, attributes: [.font: UIFont.font(ofWeight: .regular, size: style.textSize())], context: nil).height)
     }
+    
+    func width(for text: String?, style: TextStyle, weight: FontWeight = .regular) -> CGFloat {
+        
+        guard let text = text else { return 0 }
+        
+        return ceil((text as NSString).boundingRect(with: .init(width: CGFloat.greatestFiniteMagnitude, height: 100), options: .usesLineFragmentOrigin, attributes: [.font: UIFont.font(ofWeight: weight, size: style.textSize())], context: nil).width)
+    }
 }
