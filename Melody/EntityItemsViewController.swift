@@ -84,7 +84,7 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
     }
     var artworkDetails: NavigationBarArtworkDetails? {
         
-        get { return (navBarArtworkMode == .large ? topArtwork : smallArtwork, (listsCornerRadius ?? cornerRadius).radiusDetails(for: entityTypeForContainerType(), width: navBarArtworkMode == .large ? inset - 18 : smallArtworkHeight, globalRadiusType: cornerRadius)) }
+        get { return (topArtwork != nil ? EntityArtworkType.image(navBarArtworkMode == .large ? topArtwork : smallArtwork) : .empty(entityType: collection?.granularEntityType(basedOn: entityTypeForContainerType()) ?? .song, size: navBarArtworkMode == .large ? .regular : .small), (listsCornerRadius ?? cornerRadius).radiusDetails(for: entityTypeForContainerType(), width: navBarArtworkMode == .large ? inset - 18 : smallArtworkHeight, globalRadiusType: cornerRadius)) }
         
         set { }
     }
@@ -250,38 +250,6 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         let collectionImage = collection?.customArtwork(for: entityTypeForContainerType())?.scaled(to: size, by: 2)
         let image = item?.actualArtwork?.image(at: size)
         
-        var noImage: UIImage {
-            
-            switch entityContainerType {
-                
-                case .album: return collection?.representativeItem?.isCompilation == true ? #imageLiteral(resourceName: "NoCompilation75") : #imageLiteral(resourceName: "NoAlbum75")
-                
-                case .playlist:
-                
-                    guard let playlist = collection as? MPMediaPlaylist else { return #imageLiteral(resourceName: "NoPlaylist75") }
-                
-                    switch playlist.playlistAttributes {
-                        
-                        case .smart: return #imageLiteral(resourceName: "NoSmart75")
-                        
-                        case .genius: return #imageLiteral(resourceName: "NoGenius75")
-                        
-                        default: return #imageLiteral(resourceName: "NoPlaylist75")
-                    }
-                
-                case .collection:
-                
-                    switch kind {
-                        
-                        case .albumArtist, .artist: return #imageLiteral(resourceName: "NoArtist75")
-                        
-                        case .composer: return #imageLiteral(resourceName: "NoComposer75")
-                        
-                        case .genre: return #imageLiteral(resourceName: "NoGenre75")
-                    }
-            }
-        }
-        
         let shouldUseCollectionArtwork: Bool = {
             
             switch entityContainerType {
@@ -294,8 +262,8 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
             }
         }()
         
-        artwork = (shouldUseCollectionArtwork ? collectionImage ?? image : image)?.at(.init(width: 20, height: 20)) //?? #imageLiteral(resourceName: "NoArt")
-        topArtwork = collectionImage ?? image ?? noImage
+        artwork = (shouldUseCollectionArtwork ? collectionImage ?? image : image)?.at(.init(width: 20, height: 20))
+        topArtwork = collectionImage ?? image //?? noImage
         
         if let _ = peeker, let container = appDelegate.window?.rootViewController as? ContainerViewController {
             
@@ -672,9 +640,9 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         let albumCount = query?.collections?.count ?? 0
         let songCount = query?.items?.count ?? 0
         
-        let songs = AlertAction.init(title: "Songs", subtitle: songCount.fullCountText(for: .song), style: .default, accessoryType: .check({ [weak self] in self?.activeChildViewController == self?.artistSongsViewController }), image: EntityType.song.images.size22, handler: { [weak self] in self?.activeChildViewController = self?.artistSongsViewController })
+        let songs = AlertAction.init(title: "Songs", subtitle: songCount.fullCountText(for: .song), style: .default, accessoryType: .check({ [weak self] in self?.activeChildViewController == self?.artistSongsViewController }), image: EntityType.song.images.size23, handler: { [weak self] in self?.activeChildViewController = self?.artistSongsViewController })
         
-        let albums = AlertAction.init(title: "Albums", subtitle: albumCount.fullCountText(for: .album), style: .default, accessoryType: .check({ [weak self] in self?.activeChildViewController == self?.artistAlbumsViewController }), image: EntityType.album.images.size22, handler: { [weak self] in self?.activeChildViewController = self?.artistAlbumsViewController })
+        let albums = AlertAction.init(title: "Albums", subtitle: albumCount.fullCountText(for: .album), style: .default, accessoryType: .check({ [weak self] in self?.activeChildViewController == self?.artistAlbumsViewController }), image: EntityType.album.images.size23, handler: { [weak self] in self?.activeChildViewController = self?.artistAlbumsViewController })
         
         showAlert(title: title, subtitle: "Group by...", topHeaderMode: .themedImage(name: "Grouping22", height: 22), with: songs, albums)
     }

@@ -73,6 +73,8 @@ enum EditingStyle { case insert, select/*, both*/ }
 
 enum CellState { case untouched, highlighted, selected }
 
+enum HeaderButtonType { case grouping, sort, artist, affinity, insert, info }
+
 // MARK: - Well-Defined
 
 enum GestureDuration: Int {
@@ -201,18 +203,18 @@ enum EntityType: Int {
         }
     }
     
-    /// EntityType images in sizes 13, 16, 17, and 22.
-    var images: (size13: UIImage, size16: UIImage, size17: UIImage, size22: UIImage) {
+    /// EntityType images in sizes 13, 16, 20, and 22.
+    var images: (size13: UIImage, size16: UIImage, size20: UIImage, size23: UIImage) {
         
         switch self {
             
-            case .album: return (#imageLiteral(resourceName: "AlbumsSmall"), #imageLiteral(resourceName: "Albums16"), #imageLiteral(resourceName: "Albums"), #imageLiteral(resourceName: "AlbumsLarge"))
+            case .album: return (#imageLiteral(resourceName: "Albums13"), #imageLiteral(resourceName: "Albums16"), #imageLiteral(resourceName: "Albums20"), #imageLiteral(resourceName: "Albums23"))
             
-            case .artist, .albumArtist: return (#imageLiteral(resourceName: "Artists14"), #imageLiteral(resourceName: "Artists16"), #imageLiteral(resourceName: "Artists20"), #imageLiteral(resourceName: "Artists23"))
+            case .artist, .albumArtist: return (#imageLiteral(resourceName: "Artists13"), #imageLiteral(resourceName: "Artists16"), #imageLiteral(resourceName: "Artists20"), #imageLiteral(resourceName: "Artists23"))
             
             case .composer: return (#imageLiteral(resourceName: "ComposersSmall"), #imageLiteral(resourceName: "Composers16"), #imageLiteral(resourceName: "Composers"), #imageLiteral(resourceName: "ComposersLarge"))
             
-            case .genre: return (#imageLiteral(resourceName: "GenresSmall"), #imageLiteral(resourceName: "Genres16"), #imageLiteral(resourceName: "Genres"), #imageLiteral(resourceName: "GenresLarge"))
+            case .genre: return (#imageLiteral(resourceName: "Genres16"), #imageLiteral(resourceName: "Genres16"), #imageLiteral(resourceName: "Genres20"), #imageLiteral(resourceName: "Genres23"))
             
             case .playlist: return (#imageLiteral(resourceName: "Playlists16"), #imageLiteral(resourceName: "Playlists17"), #imageLiteral(resourceName: "Playlists22"), #imageLiteral(resourceName: "Playlists22"))
             
@@ -533,7 +535,7 @@ enum LibrarySection: Int, PropertyStripPresented {
             
             case .artists, .albumArtists: return #imageLiteral(resourceName: "Artists20")
             
-            case .genres: return #imageLiteral(resourceName: "Genres")
+            case .genres: return #imageLiteral(resourceName: "Genres20")
             
             case .playlists: return #imageLiteral(resourceName: "Playlists17")
             
@@ -545,7 +547,7 @@ enum LibrarySection: Int, PropertyStripPresented {
         
         switch self {
             
-            case .albums: return #imageLiteral(resourceName: "Albums17")
+            case .albums: return #imageLiteral(resourceName: "Albums16")
             
             case .compilations: return #imageLiteral(resourceName: "CompilationsSmall")
             
@@ -553,7 +555,7 @@ enum LibrarySection: Int, PropertyStripPresented {
             
             case .artists, .albumArtists: return #imageLiteral(resourceName: "Artists16")
             
-            case .genres: return #imageLiteral(resourceName: "GenresSmall")
+            case .genres: return #imageLiteral(resourceName: "Genres16")
             
             case .playlists: return #imageLiteral(resourceName: "Playlists13")
             
@@ -1314,44 +1316,6 @@ enum FilterViewContext: Equatable {
     case library, filter
     
     enum Operation { case group(index: Int?), ungroup(index: Int?), hide, unhide }
-
-//    static func ==(lhs: FilterViewContext, rhs: FilterViewContext) -> Bool {
-//
-//        switch lhs {
-//
-//            case .filter(let filter, _):
-//
-//                switch rhs {
-//
-//                    case .filter(filter: let otherFilter, container: _): return filter == nil && otherFilter == nil
-//
-//                    default: return false
-//                }
-//
-//            case .library:
-//
-//                switch rhs {
-//
-//                    case .library: return true
-//
-//                    default: return false
-//                }
-//        }
-//    }
-//
-//    static func ~=(lhs: FilterViewContext, rhs: FilterViewContext) -> Bool {
-//
-//        switch lhs {
-//
-//            case .filter:
-//
-//                if case .filter = rhs { return true }
-//
-//                return false
-//
-//            case .library: return rhs == .library
-//        }
-//    }
 }
 
 enum BarBlurBehavour: Int, CaseIterable {
@@ -1602,7 +1566,7 @@ enum SecondaryCategory: Int, CaseIterable {
             
             case .lastPlayed: return #imageLiteral(resourceName: "LastPlayed10")
             
-            case .genre: return #imageLiteral(resourceName: "GenresSmaller")
+            case .genre: return #imageLiteral(resourceName: "Genres10")
             
             case .dateAdded: return #imageLiteral(resourceName: "DateAdded")
             
@@ -1662,7 +1626,7 @@ enum SecondaryCategory: Int, CaseIterable {
             
             case .lastPlayed: return #imageLiteral(resourceName: "LastPlayed14")
             
-            case .genre: return #imageLiteral(resourceName: "Genre14")
+            case .genre: return #imageLiteral(resourceName: "Genres14")
             
             case .dateAdded: return #imageLiteral(resourceName: "DateAdded14")
             
@@ -1672,9 +1636,9 @@ enum SecondaryCategory: Int, CaseIterable {
             
             case .year: return #imageLiteral(resourceName: "Year14")
             
-            case .songCount: return #imageLiteral(resourceName: "Songs16")
+            case .songCount: return #imageLiteral(resourceName: "Songs14")
             
-            case .albumCount: return #imageLiteral(resourceName: "Albums16")
+            case .albumCount: return #imageLiteral(resourceName: "Albums14")
             
             case .copyright: return #imageLiteral(resourceName: "Copyright14")
             
@@ -1959,5 +1923,3 @@ enum SecondaryCategory: Int, CaseIterable {
         }
     }
 }
-
-enum HeaderButtonType { case grouping, sort, artist, affinity, insert, info }

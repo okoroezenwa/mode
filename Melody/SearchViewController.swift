@@ -124,7 +124,6 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         set { }
     }
     var artworkDetails: NavigationBarArtworkDetails?
-//    var firstButtonUpdateUsed = false
     var buttonDetails: NavigationBarButtonDetails = (.clear, true) {
         
         didSet {

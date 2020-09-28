@@ -8,7 +8,7 @@
 
 import UIKit
 
-class WidgetCollectionViewCell: UICollectionViewCell {
+class WidgetCollectionViewCell: UICollectionViewCell, ThemeStatusProvider {
     
     @IBOutlet var artworkContainer: UIView!
     @IBOutlet var selectedView: UIView!
@@ -49,6 +49,7 @@ class WidgetCollectionViewCell: UICollectionViewCell {
         
         super.awakeFromNib()
         
+        artworkImageView.provider = self
         artworkImageView.clipsToBounds = true
         artworkContainer.addSubview(artworkImageView)
         
@@ -96,7 +97,7 @@ class WidgetCollectionViewCell: UICollectionViewCell {
         artworkContainerLeadingConstraint.constant = leading// - 8
         artworkContainerTrailingConstraint.constant = trailing// - 8
         
-        artworkImageView.image = item?.artwork?.image(at: artworkContainer.frame.size) ?? #imageLiteral(resourceName: "NoSong75")
+        artworkImageView.artworkType = item?.artwork?.image(at: artworkContainer.frame.size).map({ .image($0) }) ?? .empty(entityType: .song, size: .regular)
         
         isUpdated = true
     }

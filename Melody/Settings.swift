@@ -513,7 +513,6 @@ extension NSNotification.Name {
     static let settingsDismissed = Notification.Name.init("settingsVCDismissed")
     static let emptyPlaylistsVisibilityChanged = Notification.Name.init("emptyPlaylistsChanged")
     static let backgroundArtworkAdaptivityChanged = Notification.Name.init("backgroundArtworkAdaptivityChanged")
-    static let themeChanged = Notification.Name.init("themeChanged")
     static let songCellCategoriesChanged = Notification.Name.init("songCellCategoriesChanged")
     static let artistCellCategoriesChanged = nameByAppending(to: "artistCellCategories")
     static let albumCellCategoriesChanged = nameByAppending(to: "albumCellCategories")

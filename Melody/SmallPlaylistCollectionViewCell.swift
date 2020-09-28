@@ -8,9 +8,15 @@
 
 import UIKit
 
-class SmallPlaylistCollectionViewCell: UICollectionViewCell, ArtworkContainingCell {
+class SmallPlaylistCollectionViewCell: UICollectionViewCell, ArtworkContainingCell, ThemeStatusProvider {
     
-    @IBOutlet var artworkImageView: UIImageView!
+    @IBOutlet var imageView: InvertIgnoringImageView! {
+        
+        didSet {
+            
+            imageView.provider = self
+        }
+    }
     @IBOutlet var nameLabel: MELLabel!
     @IBOutlet var songCountLabel: MELLabel!
     @IBOutlet var artworkContainer: InvertIgnoringView!
@@ -20,6 +26,13 @@ class SmallPlaylistCollectionViewCell: UICollectionViewCell, ArtworkContainingCe
     @IBOutlet var containerViewBottomConstraint: NSLayoutConstraint!
     @IBOutlet var chevronLeadingConstraint: NSLayoutConstraint!
     @IBOutlet var chevronWidthConstraint: NSLayoutConstraint!
+    
+    var artworkImageView: (UIImageView & EntityArtworkDisplaying)! {
+        
+        get { imageView }
+        
+        set { }
+    }
     
     var topConstraint: CGFloat = 0 {
         
@@ -92,17 +105,22 @@ class SmallPlaylistCollectionViewCell: UICollectionViewCell, ArtworkContainingCe
         
         songCountLabel.text = playlist.items.count.fullCountText(for: .song)
         
-        if playlist.playlistAttributes == .genius {
+        let granularType: EntityArtworkType.GranularEntityType = {
             
-            artworkImageView.image = #imageLiteral(resourceName: "NoGenius75")
-            
-        } else if playlist.playlistAttributes == .smart {
-            
-            artworkImageView.image = #imageLiteral(resourceName: "NoSmart75")
-            
-        } else {
-            
-            artworkImageView.image = #imageLiteral(resourceName: "NoPlaylist75")
-        }
+            if playlist.playlistAttributes == .genius {
+                
+                return .geniusPlaylist
+                
+            } else if playlist.playlistAttributes == .smart {
+                
+                return .smartPlaylist
+                
+            } else {
+                
+                return .playlist
+            }
+        }()
+        
+        artworkImageView.artworkType = .empty(entityType: granularType, size: .small)
     }
 }

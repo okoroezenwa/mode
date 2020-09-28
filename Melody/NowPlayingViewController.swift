@@ -9,12 +9,18 @@
 import UIKit
 import StoreKit
 
-class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTransitionable, AlbumArtistTransitionable, GenreTransitionable, ComposerTransitionable, PreviewTransitionable, InteractivePresenter, TimerBased, SingleItemActionable, Boldable, EntityVerifiable, Peekable, BackgroundHideable, ArtworkModifying, ArtworkModifierContaining {
+class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTransitionable, AlbumArtistTransitionable, GenreTransitionable, ComposerTransitionable, PreviewTransitionable, InteractivePresenter, TimerBased, SingleItemActionable, Boldable, EntityVerifiable, Peekable, BackgroundHideable, ArtworkModifying, ArtworkModifierContaining, ThemeStatusProvider {
 
     @IBOutlet var songName: MELButton!
     @IBOutlet var artistButton: MELButton!
     @IBOutlet var albumButton: MELButton!
-    @IBOutlet var albumArt: UIImageView!
+    @IBOutlet var albumArt: InvertIgnoringImageView! {
+        
+        didSet {
+            
+            albumArt.provider = self
+        }
+    }
     @IBOutlet var albumArtContainer: UIView!
     @IBOutlet var closeButtonBorder: UIView! {
         
@@ -886,10 +892,8 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
     @objc func updateArtwork() {
         
         if let nowPlaying = activeItem {
-            
-            let image = nowPlaying.actualArtwork?.image(at: .init(width: albumArtContainer.bounds.width, height: albumArtContainer.bounds.height)) ?? #imageLiteral(resourceName: "NoSong900")
 
-            albumArt.image = image
+            albumArt.artworkType = nowPlaying.actualArtwork?.image(at: .init(width: albumArtContainer.bounds.width, height: albumArtContainer.bounds.height)).map({ .image($0) }) ?? .empty(entityType: .song, size: .extraLarge)
         }
     }
     
@@ -942,27 +946,27 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         let albumTitle = activeItem?.validAlbum ?? "Album"
         let artistName = activeItem?.validArtist ?? "Artist"
         let songTitle = activeItem?.validTitle ?? "Song Name"
-        let albumImage = activeItem?.actualArtwork?.image(at: self.albumArtContainer.bounds.size)
+        let type = activeItem?.actualArtwork?.image(at: self.albumArtContainer.bounds.size).map({ EntityArtworkType.image($0) }) ?? .empty(entityType: .song, size: .extraLarge)
         let image = activeItem?.actualArtwork?.image(at: .init(width: 20, height: 20))
         
         if animated {
             
             UniversalMethods.performTransitions(withRelevantParameters:
                 
-                (albumArt, 0.3, { [weak self] in self?.albumArt.image = albumImage ?? #imageLiteral(resourceName: "NoSong900") }, nil),
-                (imageView, 0.3, { [weak self] in self?.imageView.image = image ?? #imageLiteral(resourceName: "NoArt") }, nil)
+                (albumArt, 0.3, { [weak self] in self?.albumArt.artworkType = type }, nil),
+                (imageView, 0.3, { [weak self] in self?.imageView.image = image ?? self?.artworkType.image }, nil)
             )
             
             if peeker != nil {
                 
-                UIView.transition(with: temporaryImageView, duration: 0.3, options: .transitionCrossDissolve, animations: { [weak self] in self?.temporaryImageView.image = image ?? #imageLiteral(resourceName: "NoArt") }, completion: nil)
+                UIView.transition(with: temporaryImageView, duration: 0.3, options: .transitionCrossDissolve, animations: { [weak self] in self?.temporaryImageView.image = image ?? self?.artworkType.image }, completion: nil)
             }
             
         } else {
             
-            albumArt.image = albumImage ?? #imageLiteral(resourceName: "NoSong900")
-            imageView.image = image ?? #imageLiteral(resourceName: "NoArt")
-            temporaryImageView.image = image ?? #imageLiteral(resourceName: "NoArt")
+            albumArt.artworkType = type
+            imageView.image = image ?? artworkType.image
+            temporaryImageView.image = image ?? artworkType.image
         }
         
         songName.setTitle(songTitle, for: .normal)

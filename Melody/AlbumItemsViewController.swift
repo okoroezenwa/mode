@@ -74,7 +74,7 @@ class AlbumItemsViewController: UIViewController, FilterContextDiscoverable, Sup
             let year = ScrollHeaderSubview.with(title: "Year", image: #imageLiteral(resourceName: "Year"), useSmallerImage: true)
             yearLabel = year.label
             
-            let genre = ScrollHeaderSubview.with(title: "Genre", image: #imageLiteral(resourceName: "GenresSmaller"))
+            let genre = ScrollHeaderSubview.with(title: "Genre", image: #imageLiteral(resourceName: "Genres10"))
             genreLabel = genre.label
             
             let size = ScrollHeaderSubview.with(title: "Size", image: #imageLiteral(resourceName: "FileSize12"))

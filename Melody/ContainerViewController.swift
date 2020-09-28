@@ -9,7 +9,7 @@
 import UIKit
 import StoreKit
 
-class ContainerViewController: UIViewController, QueueManager, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, ComposerTransitionable, GenreTransitionable, InteractivePresenter, TimerBased, SingleItemActionable, EntityVerifiable, Detailing, ArtworkModifierContaining, ChildContaining {
+class ContainerViewController: UIViewController, QueueManager, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, ComposerTransitionable, GenreTransitionable, InteractivePresenter, TimerBased, SingleItemActionable, EntityVerifiable, Detailing, ArtworkModifierContaining, ChildContaining, ThemeStatusProvider {
 
     @IBOutlet var effectView: MELVisualEffectView!
     @IBOutlet var effectViewTopSuperviewConstraint: NSLayoutConstraint!
@@ -66,7 +66,13 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
     @IBOutlet var collectedUpNextViewEqualWidthConstraint: NSLayoutConstraint!
     @IBOutlet var collectedUpNextViewWidthConstraint: NSLayoutConstraint!
     @IBOutlet var altNowPlayingView: UIView!
-    @IBOutlet var altAlbumArt: UIImageView!
+    @IBOutlet var altAlbumArt: InvertIgnoringImageView! {
+        
+        didSet {
+            
+            altAlbumArt.provider = self
+        }
+    }
     @IBOutlet var altNowPlayingButton: MELButton!
     @IBOutlet var altNowPlayingViewSuperview: UIView!
     @IBOutlet var actionsButton: ActionsButton! {
@@ -595,7 +601,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             
             sections.map({ section in
                 
-                AlertAction.init(title: section.title, subtitle: nil, style: .default, accessoryType: .check({ LibrarySection(rawValue: lastUsedLibrarySection) == section }), image: section == .compilations ? #imageLiteral(resourceName: "CompilationsLarge") : section.entityType.images.size22, handler: { [weak self] in
+                AlertAction.init(title: section.title, subtitle: nil, style: .default, accessoryType: .check({ LibrarySection(rawValue: lastUsedLibrarySection) == section }), image: section == .compilations ? #imageLiteral(resourceName: "CompilationsLarge") : section.entityType.images.size23, handler: { [weak self] in
                     
                     guard let weakSelf = self, let librarySection = LibrarySection(rawValue: lastUsedLibrarySection) else { return }
                     
@@ -1617,12 +1623,12 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             let albumTitle = nowPlaying.validAlbum
             let artistName = nowPlaying.validArtist
             let songTitle = nowPlaying.validTitle
-            let albumImage = nowPlaying.actualArtwork?.image(at: .init(width: 20, height: 20)) ?? #imageLiteral(resourceName: "NoSong75")
+            let type = nowPlaying.actualArtwork?.image(at: .init(width: 20, height: 20)).map({ EntityArtworkType.image($0) }) ?? .empty(entityType: .song, size: .small)
             
             if animated {
                 
                 UniversalMethods.performTransitions(withRelevantParameters:
-                    (altAlbumArt, 0.3, { self.altAlbumArt.image = albumImage }, nil),
+                    (altAlbumArt, 0.3, { self.altAlbumArt.artworkType = type }, nil),
                     (songName, 0.3, { self.songName.text = songTitle }, nil),
                     (artistAndAlbum, 0.3, { self.artistAndAlbum.text = artistName + " — " + albumTitle }, nil)
                 )
@@ -1639,7 +1645,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
                 
             } else {
                 
-                altAlbumArt.image = albumImage
+                altAlbumArt.artworkType = type
                 songName.text = songTitle
                 artistAndAlbum.text = artistName + " — " + albumTitle
                 
@@ -1652,18 +1658,23 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             
             if animated {
                 
-                UIView.transition(with: altAlbumArt, duration: 0.3, options: .transitionCrossDissolve, animations: { self.altAlbumArt.image = UIImage.new(withColour: .clear, size: nil) }, completion: nil)
-                
-                UIView.animate(withDuration: 0.3, animations: {
-                    
-                    
-                    
-                }, completion: { _ in
+                UIView.transition(with: altAlbumArt, duration: 0.3, options: .transitionCrossDissolve, animations: { self.altAlbumArt.artworkType = .image(nil) /*UIImage.new(withColour: .clear, size: nil)*/ }, completion: { _ in
                         
                     self.songName.text = nil
                     self.artistAndAlbum.text = nil
                     notifier.post(name: .resetInsets, object: nil)
                 })
+                
+//                UIView.animate(withDuration: 0.3, animations: {
+//                    
+//                    
+//                    
+//                }, completion: { _ in
+//                        
+//                    self.songName.text = nil
+//                    self.artistAndAlbum.text = nil
+//                    notifier.post(name: .resetInsets, object: nil)
+//                })
                 
             } else {
                 

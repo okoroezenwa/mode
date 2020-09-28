@@ -44,6 +44,16 @@ func getItemSize(from view: UIView) -> CGSize {
     return CGSize.init(width: width, height: width + 10 - 12) // to keep the 1:1 ratio the difference between the left/right and top/bottom constraints are then added.
 }
 
+extension UITraitEnvironment {
+    
+    var isDarkTheme: Bool {
+        
+        guard #available(iOS 13, *) else { return false }
+        
+        return traitCollection.userInterfaceStyle == .dark
+    }
+}
+
 enum LikedState: Int { case none, liked = 2, disliked = 3 }
 
 enum CornerRadius: Int {

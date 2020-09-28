@@ -493,7 +493,7 @@
     </objects>
     <resources>
         <image name="AddToPlaylist10" width="10" height="12"/>
-        <image name="Artists15" width="15" height="15"/>
+        <image name="Artists15" width="9" height="15"/>
         <image name="Grouping13" width="15" height="15"/>
         <image name="InfoNoBorder13" width="6" height="13"/>
         <image name="NoLove13" width="14" height="13"/>

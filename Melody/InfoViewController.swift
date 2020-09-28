@@ -72,7 +72,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
         }
     }
     
-    var artworkImageView: UIImageView! { return headerView.artworkImageView }
+    var artworkImageView: InvertIgnoringImageView! { return headerView.artworkImageView }
     var artworkContainer: UIView! { return headerView.artworkContainer }
     var titleButton: MELButton! { return headerView.titleButton }
     var alternateButton1: MELButton! { return headerView.alternateButton1 }
@@ -1039,7 +1039,7 @@ extension InfoViewController {
     
     func prepareTopView() {
         
-        guard let details: (currentItem: MPMediaItem?, entity: EntityType, title: String?, alternateTitle1: String?, alternateTitle2: String?, alternateTitle3: String?, entityInstance: Any?) = {
+        guard let details: (currentItem: MPMediaItem?, entityType: EntityType, title: String?, alternateTitle1: String?, alternateTitle2: String?, alternateTitle3: String?, entity: MPMediaEntity?) = {
             
             switch entityState {
                 
@@ -1174,7 +1174,7 @@ extension InfoViewController {
         alternateButton2.setTitle(details.alternateTitle2, for: .normal)
         alternateButton3.setTitle(details.alternateTitle3, for: .normal)
         
-        updateInfoArtwork(with: details.entityInstance)
+        updateInfoArtwork(with: details.entity)
     }
     
     func prepareAdded() {

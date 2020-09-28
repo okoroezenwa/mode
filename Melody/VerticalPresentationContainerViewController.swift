@@ -14,7 +14,7 @@ typealias UnwindAction = (VerticalPresentationContainerViewController) -> Void
 typealias PreviewAction = (UIViewController) -> UIViewController?
 typealias HeaderButtonImages = (left: UIImage?, right: UIImage?)
 
-class VerticalPresentationContainerViewController: UIViewController, PreviewTransitionable {
+class VerticalPresentationContainerViewController: UIViewController, PreviewTransitionable, ThemeStatusProvider {
 
     @IBOutlet var effectView: MELVisualEffectView! {
         
@@ -35,7 +35,13 @@ class VerticalPresentationContainerViewController: UIViewController, PreviewTran
     @IBOutlet var labelsStackView: UIStackView!
     @IBOutlet var topView: UIView!
     @IBOutlet var topBorderView: MELBorderView!
-    @IBOutlet var topEntityImageView: InvertIgnoringImageView!
+    @IBOutlet var topEntityImageView: InvertIgnoringImageView! {
+        
+        didSet {
+            
+            topEntityImageView.provider = self
+        }
+    }
     @IBOutlet var topThemedImageView: MELImageView!
     @IBOutlet var topThemedImageViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet var topBarView: MELBorderView!
@@ -57,7 +63,7 @@ class VerticalPresentationContainerViewController: UIViewController, PreviewTran
     
     enum Context { case sort, actions, alert } // actions referring to actionsVC
     enum RelevantView { case collectionView, tableView, topTableView }
-    enum TopHeaderMode { case bar, entityImage(UIImage, type: EntityType), themedImage(name: String, height: CGFloat) }
+    enum TopHeaderMode { case bar, entityImage(EntityArtworkType, type: EntityType), themedImage(name: String, height: CGFloat) }
     
     var viewController: UIViewController?
     var isCurrentlyTopViewController: Bool = false
@@ -297,11 +303,11 @@ class VerticalPresentationContainerViewController: UIViewController, PreviewTran
                 topEntityImageView.superview?.isHidden = true
                 topThemedImageView.isHidden = true
             
-            case .entityImage(let image, type: let type):
+            case .entityImage(let artworkType, type: let type):
             
                 topBarView.isHidden = true
                 topThemedImageView.isHidden = true
-                topEntityImageView.image = image
+                topEntityImageView.image = artworkType.artwork
                 
                 (listsCornerRadius ?? cornerRadius).updateCornerRadius(on: topEntityImageView.layer, width: 30, entityType: type, globalRadiusType: cornerRadius)
                 

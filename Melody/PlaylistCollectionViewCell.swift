@@ -8,11 +8,17 @@
 
 import UIKit
 
-class PlaylistCollectionViewCell: UICollectionViewCell, ArtworkContainingCell {
+class PlaylistCollectionViewCell: UICollectionViewCell, ArtworkContainingCell, ThemeStatusProvider {
     
     weak var delegate: PlaylistCollectionCellDelegate?
     
-    @IBOutlet var artworkImageView: UIImageView!
+    @IBOutlet var imageView: InvertIgnoringImageView! {
+        
+        didSet {
+            
+            imageView.provider = self
+        }
+    }
     @IBOutlet var nameLabel: MELLabel!
     @IBOutlet var songCountLabel: MELLabel!
     @IBOutlet var artworkContainer: UIView!
@@ -29,11 +35,18 @@ class PlaylistCollectionViewCell: UICollectionViewCell, ArtworkContainingCell {
     @IBOutlet var stackView: UIStackView!
     @IBOutlet var stackViewTopConstraint: NSLayoutConstraint!
     
+    var artworkImageView: (UIImageView & EntityArtworkDisplaying)! {
+        
+        get { imageView }
+        
+        set { }
+    }
+    
     var details: (entityType: EntityType, width: CGFloat?) = (.playlist, nil) {
 
         didSet {
 
-            guard !(details.entityType == oldValue.entityType && details.width == oldValue.width), let _ = artworkContainer, let _ = artworkImageView, let _ = selectedView else { return }
+            guard !(details.entityType == oldValue.entityType && details.width == oldValue.width), let _ = artworkContainer, let _ = imageView, let _ = selectedView else { return }
             
             updateCornersAndShadows()
         }
@@ -82,9 +95,9 @@ class PlaylistCollectionViewCell: UICollectionViewCell, ArtworkContainingCell {
     
     @objc func updateCornersAndShadows() {
         
-        [artworkImageView, selectedView].forEach({
+        [imageView, selectedView].forEach({
             
-            (listsCornerRadius ?? cornerRadius).updateCornerRadius(on: $0?.layer, width: (details.width ?? artworkImageView.bounds.width) - 16, entityType: details.entityType, globalRadiusType: cornerRadius)
+            (listsCornerRadius ?? cornerRadius).updateCornerRadius(on: $0?.layer, width: (details.width ?? imageView.bounds.width) - 16, entityType: details.entityType, globalRadiusType: cornerRadius)
         })
         
         UniversalMethods.addShadow(to: artworkContainer, radius: 4, opacity: 0.35, shouldRasterise: true)
@@ -126,23 +139,24 @@ class PlaylistCollectionViewCell: UICollectionViewCell, ArtworkContainingCell {
         
         nameLabel.text = playlist.validName
         songCountLabel.text = count.fullCountText(for: .song)
-        let image: UIImage = {
+        
+        let granularType: EntityArtworkType.GranularEntityType = {
             
             if playlist.playlistAttributes == .genius {
                 
-                return #imageLiteral(resourceName: "NoGenius300")
+                return .geniusPlaylist
                 
             } else if playlist.playlistAttributes == .smart {
                 
-                return #imageLiteral(resourceName: "NoSmart300")
+                return .smartPlaylist
                 
             } else {
                 
-                return #imageLiteral(resourceName: "NoPlaylist300")
+                return .playlist
             }
         }()
         
-        artworkImageView.image = image
+        artworkImageView.artworkType = .empty(entityType: granularType, size: .large)
         
         playView.isHidden = delegate == nil
         modifyInfoButton()
@@ -171,7 +185,7 @@ class PlaylistCollectionViewCell: UICollectionViewCell, ArtworkContainingCell {
         nameLabel.text = song.validTitle
         songCountLabel.text = song.validArtist + " — " + song.validAlbum
         
-        artworkImageView.image = #imageLiteral(resourceName: "NoSong300")
+        artworkImageView.artworkType = .empty(entityType: .song, size: .large)
         
         playView.isHidden = delegate == nil
         modifyInfoButton()
@@ -200,7 +214,7 @@ class PlaylistCollectionViewCell: UICollectionViewCell, ArtworkContainingCell {
         nameLabel.text = album.representativeItem?.validAlbum
         songCountLabel.text = album.representativeItem?.validArtist
         
-        artworkImageView.image = album.representativeItem?.isCompilation == true ? #imageLiteral(resourceName: "NoCompilation300") : #imageLiteral(resourceName: "NoAlbum300")
+        artworkImageView.artworkType = .empty(entityType: album.representativeItem?.isCompilation == true ? .compilation : .album, size: .large)
         
         playView.isHidden = delegate == nil
         modifyInfoButton()
@@ -225,9 +239,6 @@ class PlaylistCollectionViewCell: UICollectionViewCell, ArtworkContainingCell {
     }
     
     func prepare(with collection: MPMediaItemCollection, kind: AlbumBasedCollectionKind, editing: Bool = false) {
-        
-//        nameLabel.textAlignment = .center
-//        songCountLabel.textAlignment = .center
         
         nameLabel.text = {
             
@@ -259,17 +270,21 @@ class PlaylistCollectionViewCell: UICollectionViewCell, ArtworkContainingCell {
 
         songCountLabel.text = set.count.fullCountText(for: .album) + ", " + collection.items.count.fullCountText(for: .song)
         
-        artworkImageView.image = {
+        let granularType: EntityArtworkType.GranularEntityType = {
             
             switch kind {
                 
-                case .artist, .albumArtist: return #imageLiteral(resourceName: "NoArtist300")
+                case .artist: return .artist
                 
-                case .genre: return #imageLiteral(resourceName: "NoGenre300")
+                case .albumArtist: return .albumArtist
                 
-                case .composer: return #imageLiteral(resourceName: "NoComposer300")
+                case .composer: return .composer
+                
+                case .genre: return .genre
             }
         }()
+        
+        artworkImageView.artworkType = .empty(entityType: granularType, size: .large)
         
         playView.isHidden = delegate == nil
         modifyInfoButton()

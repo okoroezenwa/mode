@@ -42,4 +42,5 @@ extension NSNotification.Name {
     static let playbackStopped = Notification.Name(rawValue: "playbackStopped")
     static let indexUpdated = Notification.Name.init("indexUpdated")
     static let playlistSelected = Notification.Name.init("playlistSelected")
+    static let themeChanged = Notification.Name.init("themeChanged")
 }

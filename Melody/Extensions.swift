@@ -860,21 +860,43 @@ extension MPMediaEntity {
         }
     }
     
-    func emptyArtwork(for entityType: EntityType) -> UIImage {
+    func emptyArtwork(for entityType: EntityType, size: EntityArtworkType.Size = .regular) -> UIImage? {
+        
+        EntityArtworkType.empty(entityType: granularEntityType(basedOn: entityType), size: size).artwork
+    }
+    
+    func granularEntityType(basedOn entityType: EntityType) -> EntityArtworkType.GranularEntityType {
         
         switch entityType {
             
-            case .song: return #imageLiteral(resourceName: "NoSong75")
+            case .song: return .song
             
-            case .album: return (self as? MPMediaItemCollection)?.representativeItem?.isCompilation == true ? #imageLiteral(resourceName: "NoCompilation75") : #imageLiteral(resourceName: "NoAlbum75")
+            case .album: return (self as? MPMediaItemCollection)?.representativeItem?.isCompilation == true ? .compilation : .album
             
-            case .artist, .albumArtist: return #imageLiteral(resourceName: "NoArtist75")
+            case .artist: return .artist
+                
+            case .albumArtist: return .albumArtist
             
-            case .composer: return #imageLiteral(resourceName: "NoComposer75")
+            case .composer: return .composer
             
-            case .genre: return #imageLiteral(resourceName: "NoGenre75")
+            case .genre: return .genre
             
-            case .playlist: return #imageLiteral(resourceName: "NoPlaylist75")
+            case .playlist:
+            
+                guard let playlist = self as? MPMediaPlaylist else { return .playlist }
+            
+                if playlist.playlistAttributes == .genius {
+                    
+                    return .geniusPlaylist
+                    
+                } else if playlist.playlistAttributes == .smart {
+                    
+                    return .smartPlaylist
+                    
+                } else {
+                    
+                    return .playlist
+                }
         }
     }
 }

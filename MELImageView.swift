@@ -8,7 +8,7 @@
 
 import UIKit
 
-class MELImageView: UIImageView {
+class MELImageView: UIImageView, EntityArtworkDisplaying {
     
     @objc var greyOverride = false {
         
@@ -27,6 +27,14 @@ class MELImageView: UIImageView {
     }
     
     @objc var reversed = false
+    
+    var artworkType = EntityArtworkType.image(nil) {
+        
+        didSet {
+            
+            image = artworkType.artwork
+        }
+    }
 
     override func awakeFromNib() {
         
@@ -60,5 +68,9 @@ class MELImageView: UIImageView {
     @objc func changeThemeColor() {
         
         tintColor = reversed ? (lightOverride ? Themer.reversedTempInactiveColours : Themer.reversedTextColour(for: greyOverride ? .subtitle : .title)) : (lightOverride ? Themer.tempInactiveColours : Themer.textColour(for: greyOverride ? .subtitle : .title))
+        
+        guard case .empty = artworkType else { return }
+        
+        image = artworkType.artwork
     }
 }

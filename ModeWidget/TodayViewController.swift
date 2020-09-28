@@ -9,7 +9,7 @@
 import UIKit
 import NotificationCenter
 
-class TodayViewController: UIViewController, NCWidgetProviding {
+class TodayViewController: UIViewController, NCWidgetProviding, ThemeStatusProvider {
         
     @IBOutlet var label: MarqueeLabel?
     @IBOutlet var altLabel: UILabel?
@@ -134,6 +134,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
         }
         
         artwork.clipsToBounds = true
+        artwork.provider = self
         artworkContainer?.addSubview(artwork)
         NSLayoutConstraint.activate(artworkConstraints)
         
@@ -369,11 +370,11 @@ class TodayViewController: UIViewController, NCWidgetProviding {
             
             updateCountLabel()
             
-            artwork.image = {
+            artwork.artworkType = {
                 
-                guard let artwork = musicPlayer.nowPlayingItem?.artwork, artwork.bounds.size.width != 0 else { return #imageLiteral(resourceName: "NoSong75") }
+                guard let artwork = musicPlayer.nowPlayingItem?.artwork, artwork.bounds.size.width != 0 else { return .empty(entityType: .song, size: .regular) }
                 
-                return artwork.image(at: self.artwork.bounds.size)
+                return .image(artwork.image(at: self.artwork.bounds.size))
             }()
             
             prepareLikedView()

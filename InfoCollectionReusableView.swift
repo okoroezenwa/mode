@@ -8,11 +8,17 @@
 
 import UIKit
 
-class InfoCollectionReusableView: UICollectionReusableView {
+class InfoCollectionReusableView: UICollectionReusableView, ThemeStatusProvider {
     
     @IBOutlet var containerView: UIView!
     @IBOutlet var stackView: UIStackView!
-    @IBOutlet var artworkImageView: UIImageView!
+    @IBOutlet var artworkImageView: InvertIgnoringImageView! {
+        
+        didSet {
+            
+            artworkImageView.provider = self
+        }
+    }
     @IBOutlet var artworkContainer: UIView!
     @IBOutlet var titleButton: MELButton!
     @IBOutlet var alternateButton1: MELButton!

@@ -1000,7 +1000,7 @@ extension SingleItemActionable {
                             actions.append(
                                 .init(info: .init(title: "\(entityType == verifiedEntityType ? "This " : "")" + verifiedEntityType.title().capitalized,
                                     subtitle: entity.title(for: verifiedEntityType, basedOn: entityType),
-                                    image: verifiedEntityType.images.size22,
+                                    image: verifiedEntityType.images.size23,
                                     accessoryType: .button(type: .image({ #imageLiteral(resourceName: "InfoNoBorder13") }), bordered: true, widthType: .standard, touchEnabled: true)),
                                 
                                 handler: { [weak vc, weak entity] in
@@ -1087,18 +1087,22 @@ extension SingleItemActionable {
                         context: .show,
                         topHeaderMode: {
                             
-                            if useArtworkInShowMenu.inverted { return .bar }
+                            guard useArtworkInShowMenu else { return .bar }
                             
-                            if let item = entity as? MPMediaItem {
+                            return .entityImage({
                                 
-                                return .entityImage(item.actualArtwork?.image(at: .square(of: 30)) ?? item.emptyArtwork(for: entityType), type: entityType)
+                                if let item = entity as? MPMediaItem, let image = item.actualArtwork?.image(at: .square(of: 30)) {
+                                    
+                                    return .image(image)
+                                    
+                                } else if let collection = entity as? MPMediaItemCollection, let image = collection.customArtwork(for: entityType)?.scaled(to: .square(of: 30), by: 2) ?? collection.representativeArtwork(for: entityType, size: .square(of: 30)) {
+                                    
+                                    return .image(image)
+                                }
                                 
-                            } else if let collection = entity as? MPMediaItemCollection {
+                                return .empty(entityType: entity.granularEntityType(basedOn: entityType), size: .small)
                                 
-                                return .entityImage(collection.customArtwork(for: entityType)?.scaled(to: .square(of: 30), by: 2) ?? collection.representativeArtwork(for: entityType, size: .square(of: 30)) ?? collection.emptyArtwork(for: entityType), type: entityType)
-                            }
-                            
-                            return .bar
+                            }(), type: entityType)
                         }(),
                         with: actions,
                         shouldSortActions: false,

@@ -89,7 +89,7 @@
                                                                     <view opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" userInteractionEnabled="NO" contentMode="center" translatesAutoresizingMaskIntoConstraints="NO" id="wS0-d0-ytu" customClass="InvertIgnoringView" customModule="Mode" customModuleProvider="target">
                                                                         <rect key="frame" x="0.0" y="1" width="54" height="54"/>
                                                                         <subviews>
-                                                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="NoSong75" translatesAutoresizingMaskIntoConstraints="NO" id="Z1x-dB-p1f" customClass="InvertIgnoringImageView" customModule="Mode" customModuleProvider="target">
+                                                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="NoSongLight75" translatesAutoresizingMaskIntoConstraints="NO" id="Z1x-dB-p1f" customClass="InvertIgnoringImageView" customModule="Mode" customModuleProvider="target">
                                                                                 <rect key="frame" x="0.0" y="0.0" width="54" height="54"/>
                                                                             </imageView>
                                                                             <view clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Esa-GO-Ww7">
@@ -125,13 +125,13 @@
                                                                 <rect key="frame" x="62" y="0.0" width="579" height="56"/>
                                                                 <subviews>
                                                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="2" translatesAutoresizingMaskIntoConstraints="NO" id="gqV-qz-hsX">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="579" height="18"/>
+                                                                        <rect key="frame" x="0.0" y="0.0" width="579" height="20"/>
                                                                         <subviews>
                                                                             <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bLz-mO-fRH">
-                                                                                <rect key="frame" x="0.0" y="0.0" width="9.5" height="18"/>
+                                                                                <rect key="frame" x="0.0" y="0.0" width="10.5" height="20"/>
                                                                                 <subviews>
                                                                                     <label opaque="NO" userInteractionEnabled="NO" alpha="0.69999999999999996" contentMode="left" horizontalHuggingPriority="900" verticalHuggingPriority="251" horizontalCompressionResistancePriority="752" text="#" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5cK-Mh-hCM" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                                        <rect key="frame" x="0.0" y="0.0" width="7.5" height="18"/>
+                                                                                        <rect key="frame" x="0.0" y="0.0" width="8.5" height="20"/>
                                                                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="15"/>
                                                                                         <nil key="highlightedColor"/>
                                                                                         <userDefinedRuntimeAttributes>
@@ -148,16 +148,16 @@
                                                                                 </constraints>
                                                                             </view>
                                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Entity Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9iq-9R-pdn" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                                <rect key="frame" x="11.5" y="0.0" width="87" height="18"/>
+                                                                                <rect key="frame" x="12.5" y="0.0" width="93" height="20"/>
                                                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                                                 <nil key="textColor"/>
                                                                                 <nil key="highlightedColor"/>
                                                                             </label>
                                                                             <view userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" translatesAutoresizingMaskIntoConstraints="NO" id="DM1-9f-C2G" userLabel="Explicit View">
-                                                                                <rect key="frame" x="100.5" y="0.0" width="478.5" height="18"/>
+                                                                                <rect key="frame" x="107.5" y="0.0" width="471.5" height="20"/>
                                                                                 <subviews>
                                                                                     <view tag="1" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="arX-WO-oNJ" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                                                                        <rect key="frame" x="3" y="0.0" width="14" height="14"/>
+                                                                                        <rect key="frame" x="3" y="1" width="14" height="14"/>
                                                                                         <subviews>
                                                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="E" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pjh-Fc-2Pg" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
                                                                                                 <rect key="frame" x="0.0" y="2" width="14" height="12"/>
@@ -204,7 +204,7 @@
                                                                         </subviews>
                                                                     </stackView>
                                                                     <label opaque="NO" userInteractionEnabled="NO" alpha="0.69999999999999996" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Secondary Field" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lAo-he-29c" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                        <rect key="frame" x="0.0" y="23" width="579" height="14"/>
+                                                                        <rect key="frame" x="0.0" y="25" width="579" height="9.5"/>
                                                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="14"/>
                                                                         <nil key="highlightedColor"/>
                                                                         <userDefinedRuntimeAttributes>
@@ -213,10 +213,10 @@
                                                                         </userDefinedRuntimeAttributes>
                                                                     </label>
                                                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="WY1-8Z-coD">
-                                                                        <rect key="frame" x="0.0" y="42" width="579" height="14"/>
+                                                                        <rect key="frame" x="0.0" y="39.5" width="579" height="16.5"/>
                                                                         <subviews>
                                                                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Cloud10" translatesAutoresizingMaskIntoConstraints="NO" id="4QH-fW-QeR" customClass="MELImageView" customModule="Mode" customModuleProvider="target">
-                                                                                <rect key="frame" x="0.0" y="0.0" width="14" height="14"/>
+                                                                                <rect key="frame" x="0.0" y="0.0" width="14" height="16.5"/>
                                                                                 <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                                 <constraints>
                                                                                     <constraint firstAttribute="width" priority="900" constant="14" id="fLR-iW-AJe"/>
@@ -226,7 +226,7 @@
                                                                                 </userDefinedRuntimeAttributes>
                                                                             </imageView>
                                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" horizontalCompressionResistancePriority="753" verticalCompressionResistancePriority="753" text="Time" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XB3-A4-gW0" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                                <rect key="frame" x="26" y="0.0" width="29" height="14"/>
+                                                                                <rect key="frame" x="26" y="0.0" width="31" height="16.5"/>
                                                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="14"/>
                                                                                 <nil key="highlightedColor"/>
                                                                                 <userDefinedRuntimeAttributes>
@@ -237,7 +237,7 @@
                                                                                 </userDefinedRuntimeAttributes>
                                                                             </label>
                                                                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="cqi-kJ-Ywd">
-                                                                                <rect key="frame" x="67" y="0.0" width="512" height="14"/>
+                                                                                <rect key="frame" x="69" y="0.0" width="510" height="16.5"/>
                                                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                                 <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="10" minimumInteritemSpacing="10" id="Ahr-Tr-Pet">
                                                                                     <size key="itemSize" width="128" height="128"/>
@@ -344,12 +344,12 @@
             <connections>
                 <outlet property="artistAlbumLabel" destination="lAo-he-29c" id="bqM-I1-E67"/>
                 <outlet property="artworkContainer" destination="wS0-d0-ytu" id="oUa-k6-T07"/>
-                <outlet property="artworkImageView" destination="Z1x-dB-p1f" id="15t-Z1-qVD"/>
                 <outlet property="cloudButton" destination="4QH-fW-QeR" id="t0M-jI-XIa"/>
                 <outlet property="durationLabel" destination="XB3-A4-gW0" id="nSA-sc-0zG"/>
                 <outlet property="editBorderView" destination="Ngm-NP-w6x" id="zbI-x6-72m"/>
                 <outlet property="editButton" destination="0Ig-8m-Y2D" id="3Rz-xA-3yM"/>
                 <outlet property="editingView" destination="HWk-e8-ntz" id="LQE-bI-StW"/>
+                <outlet property="entityImageView" destination="Z1x-dB-p1f" id="sDC-NE-SrB"/>
                 <outlet property="explicitView" destination="DM1-9f-C2G" id="bS1-SO-yXA"/>
                 <outlet property="infoBorderView" destination="nmp-we-wUi" id="GH7-8U-h6M"/>
                 <outlet property="infoButton" destination="fW2-Wa-dJ5" id="0pz-7a-DLV"/>
@@ -372,6 +372,6 @@
         <image name="AddNoBorderSmall" width="10" height="10"/>
         <image name="Cloud10" width="17" height="12"/>
         <image name="More13" width="13" height="3"/>
-        <image name="NoSong75" width="75" height="75"/>
+        <image name="NoSongLight75" width="75" height="75"/>
     </resources>
 </document>

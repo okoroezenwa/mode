@@ -10,9 +10,15 @@ import UIKit
 
 typealias PropertyDictionary = [SecondaryCategory: (image: UIImage, text: String)]
 
-class EntityTableViewCell: UITableViewCell, ArtworkContainingCell {
+class EntityTableViewCell: UITableViewCell, ArtworkContainingCell, ThemeStatusProvider {
     
-    @IBOutlet var artworkImageView: UIImageView!
+    @IBOutlet var entityImageView: InvertIgnoringImageView! {
+        
+        didSet {
+            
+            entityImageView.provider = self
+        }
+    }
     @IBOutlet var nameLabel: MELLabel!
     @IBOutlet var artistAlbumLabel: MELLabel!
     @IBOutlet var supplementaryCollectionView: UICollectionView!
@@ -34,6 +40,13 @@ class EntityTableViewCell: UITableViewCell, ArtworkContainingCell {
     @IBOutlet var textStackView: UIStackView!
     @IBOutlet var textContainingStackView: UIStackView!
     @IBOutlet var editButton: MELButton!
+    
+    var artworkImageView: (UIImageView & EntityArtworkDisplaying)! {
+        
+        get { entityImageView }
+        
+        set { }
+    }
     
     lazy var properties = SecondaryCategory.allCases.reduce(PropertyDictionary(), {
         
@@ -75,7 +88,7 @@ class EntityTableViewCell: UITableViewCell, ArtworkContainingCell {
         
         didSet {
             
-            guard entityType != oldValue, let _ = artworkContainer, let _ = artworkImageView else { return }
+            guard entityType != oldValue, let _ = artworkContainer, let _ = entityImageView else { return }
             
             updateCornersAndShadows()
         }
@@ -163,7 +176,7 @@ class EntityTableViewCell: UITableViewCell, ArtworkContainingCell {
     
     @objc func updateCornersAndShadows() {
         
-        [artworkImageView, playingView].forEach({
+        [entityImageView, playingView].forEach({
             
             (listsCornerRadius ?? cornerRadius).updateCornerRadius(on: $0?.layer, width: width, entityType: entityType, globalRadiusType: cornerRadius)
         })
@@ -249,7 +262,7 @@ class EntityTableViewCell: UITableViewCell, ArtworkContainingCell {
         }
         
         durationLabel.text = (song.playbackDuration < 3600 ? appDelegate.formatter.timeMinuteFormatter : appDelegate.formatter.timeHourFormatter).string(from: song.playbackDuration)
-        artworkImageView.image = #imageLiteral(resourceName: "NoSong75")
+        artworkImageView.artworkType = .empty(entityType: .song, size: .regular)
         
         cloudButton.isHidden = !song.isCloudItem
         
@@ -399,23 +412,23 @@ class EntityTableViewCell: UITableViewCell, ArtworkContainingCell {
         artistAlbumLabel.text = count.fullCountText(for: .song)
         artistAlbumLabel.attributes = nil
         
-        let image: UIImage = {
+        let granularType: EntityArtworkType.GranularEntityType = {
             
             if playlist.playlistAttributes == .genius {
                 
-                return #imageLiteral(resourceName: "NoGenius75")
+                return .geniusPlaylist
                 
             } else if playlist.playlistAttributes == .smart {
                 
-                return #imageLiteral(resourceName: "NoSmart75")
+                return .smartPlaylist
                 
             } else {
                 
-                return #imageLiteral(resourceName: "NoPlaylist75")
+                return .playlist
             }
         }()
         
-        artworkImageView.image = image
+        artworkImageView.artworkType = .empty(entityType: granularType, size: .regular)
         
         backgroundColor = .clear
         
@@ -460,19 +473,21 @@ class EntityTableViewCell: UITableViewCell, ArtworkContainingCell {
         artistAlbumLabel.text = set.count.fullCountText(for: .album) + ", " + collection.items.count.fullCountText(for: .song)
         artistAlbumLabel.attributes = nil
         
-        let image: UIImage = {
+        let granularType: EntityArtworkType.GranularEntityType = {
             
             switch kind {
                 
-                case .artist, .albumArtist: return #imageLiteral(resourceName: "NoArtist75")
+                case .artist: return .artist
                 
-                case .composer: return #imageLiteral(resourceName: "NoComposer75")
+                case .albumArtist: return .albumArtist
                 
-                case .genre: return #imageLiteral(resourceName: "NoGenre75")
+                case .composer: return .composer
+                
+                case .genre: return .genre
             }
         }()
         
-        artworkImageView.image = image
+        artworkImageView.artworkType = .empty(entityType: granularType, size: .regular)
         
         backgroundColor = .clear
         
@@ -499,13 +514,12 @@ class EntityTableViewCell: UITableViewCell, ArtworkContainingCell {
             backgroundColor = .clear
         }
         
-        //artistLabel.isHidden = withinArtist
         let text = album.count.fullCountText(for: .song) + "   " + item.validAlbumArtist
         
         artistAlbumLabel.text = text
         artistAlbumLabel.attributes = [.init(kind: .title, range: text.nsRange(of: item.validAlbumArtist))]
         
-        artworkImageView.image = album.representativeItem?.isCompilation == true ? #imageLiteral(resourceName: "NoCompilation75") : #imageLiteral(resourceName: "NoAlbum75")
+        artworkImageView.artworkType = .empty(entityType: album.representativeItem?.isCompilation == true ? .compilation : .album, size: .regular)
         
         updateViews(using: album, number: number)
     }

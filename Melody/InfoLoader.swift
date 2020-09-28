@@ -169,7 +169,7 @@ extension SupplementaryHeaderInfoLoading {
 
 extension InfoLoading {
     
-    func updateInfoArtwork(with entity: Any?) {
+    func updateInfoArtwork(with entity: MPMediaEntity?) {
         
         guard let infoVC = self as? InfoViewController else { return }
         
@@ -194,48 +194,14 @@ extension InfoLoading {
                 
                 OperationQueue.main.addOperation({
                     
-                    infoVC.artworkImageView.image = image
+                    infoVC.artworkImageView.artworkType = .image(image)
                 })
             
             } else {
                 
                 OperationQueue.main.addOperation({
                     
-                    infoVC.artworkImageView.image = {
-                        
-                        switch infoVC.context {
-                            
-                            case .album(let index, let albums): return albums[index].representativeItem?.isCompilation == true ? #imageLiteral(resourceName: "NoCompilation300") : #imageLiteral(resourceName: "NoAlbum300")
-                            
-                            case .collection(kind: let kind, _, _):
-                            
-                                switch kind {
-                                    
-                                    case .albumArtist, .artist: return #imageLiteral(resourceName: "NoArtist300")
-                                    
-                                    case .composer: return #imageLiteral(resourceName: "NoComposer300")
-                                    
-                                    case .genre: return #imageLiteral(resourceName: "NoGenre300")
-                                }
-                            
-                            case .song: return #imageLiteral(resourceName: "NoSong300")
-                            
-                            case .playlist(at: let index, within: let playlists):
-                            
-                                if playlists[index].playlistAttributes == .smart {
-                                    
-                                    return #imageLiteral(resourceName: "NoSmart300")
-                                    
-                                } else if playlists[index].playlistAttributes == .genius {
-                                    
-                                    return #imageLiteral(resourceName: "NoGenius300")
-                                
-                                } else {
-                                    
-                                    return #imageLiteral(resourceName: "NoPlaylist300")
-                                }
-                        }
-                    }()
+                    infoVC.artworkImageView.artworkType = .empty(entityType: entity?.granularEntityType(basedOn: infoVC.context.entityType) ?? .song, size: .large)
                 })
             }
         })
@@ -247,7 +213,7 @@ extension InfoLoading {
         
         if let image = imageCache.object(forKey: "\(song.persistentID)" as NSString) {
             
-            cell.artworkImageView.image = image
+            cell.artworkImageView.artworkType = .image(image)
             
         } else {
             
@@ -279,7 +245,7 @@ extension InfoLoading {
                             
                         }(), operation?.isCancelled == false {
                             
-                            cell.artworkImageView.image = image
+                            cell.artworkImageView.artworkType = .image(image)
                         }
                     })
                 }
@@ -336,7 +302,7 @@ extension InfoLoading {
         
         if let image = imageCache.object(forKey: "\(persistentID)" as NSString) {
             
-            cell.artworkImageView.image = image
+            cell.artworkImageView.artworkType = .image(image)
             
         } else {
             
@@ -368,7 +334,7 @@ extension InfoLoading {
                                 
                             }(), operation?.isCancelled == false else { return }
                             
-                            cell.artworkImageView.image = image
+                            cell.artworkImageView.artworkType = .image(image)
                         })
                     }
                     
@@ -397,7 +363,7 @@ extension InfoLoading {
                                 
                             }(), operation?.isCancelled == false else { return }
                             
-                            cell.artworkImageView.image = image
+                            cell.artworkImageView.artworkType = .image(image)
                         })
                     }
                 }

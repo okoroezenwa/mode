@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097.3" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina3_5" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
@@ -473,7 +473,7 @@
                                                                         <view contentMode="scaleToFill" horizontalHuggingPriority="252" verticalHuggingPriority="252" translatesAutoresizingMaskIntoConstraints="NO" id="05n-bL-HUd" customClass="InvertIgnoringView" customModule="Mode" customModuleProvider="target">
                                                                             <rect key="frame" x="10" y="10" width="146" height="146"/>
                                                                             <subviews>
-                                                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" verticalHuggingPriority="252" image="NoSong300" translatesAutoresizingMaskIntoConstraints="NO" id="342-au-cQ5" customClass="InvertIgnoringImageView" customModule="Mode" customModuleProvider="target">
+                                                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" verticalHuggingPriority="252" image="NoSongLight300" translatesAutoresizingMaskIntoConstraints="NO" id="342-au-cQ5" customClass="InvertIgnoringImageView" customModule="Mode" customModuleProvider="target">
                                                                                     <rect key="frame" x="0.0" y="0.0" width="146" height="146"/>
                                                                                 </imageView>
                                                                             </subviews>
@@ -2457,9 +2457,9 @@
         <image name="EditNoBorder13" width="13" height="9"/>
         <image name="ForwardArrow12" width="7" height="12"/>
         <image name="More13" width="13" height="3"/>
-        <image name="NoSong300" width="300" height="300"/>
+        <image name="NoSongLight300" width="300" height="300"/>
         <image name="PlayFilled12" width="11" height="13"/>
         <image name="Playlists10" width="10" height="12"/>
-        <image name="Shuffle14" width="17" height="14"/>
+        <image name="Shuffle14" width="16" height="14"/>
     </resources>
 </document>

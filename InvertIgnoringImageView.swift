@@ -8,7 +8,19 @@
 
 import UIKit
 
-class InvertIgnoringImageView: UIImageView {
+class InvertIgnoringImageView: UIImageView, EntityArtworkDisplaying {
+    
+    weak var provider: ThemeStatusProvider?
+    
+    var artworkType = EntityArtworkType.image(nil) {
+        
+        didSet {
+            
+            guard let provider = provider else { return }
+            
+            image = artworkType.artwork(darkTheme: provider.isDarkTheme)
+        }
+    }
 
     override func awakeFromNib() {
         
@@ -20,6 +32,8 @@ class InvertIgnoringImageView: UIImageView {
             
             accessibilityIgnoresInvertColors = true
         }
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(updateImage), name: .themeChanged, object: nil)
     }
     
     override init(frame: CGRect) {
@@ -39,4 +53,16 @@ class InvertIgnoringImageView: UIImageView {
         
         super.init(coder: coder)
     }
+    
+    @objc func updateImage() {
+        
+        guard case .empty = artworkType, let provider = provider else { return }
+        
+        image = artworkType.artwork(darkTheme: provider.isDarkTheme)
+    }
+}
+
+protocol ThemeStatusProvider: class {
+    
+    var isDarkTheme: Bool { get }
 }

@@ -12,15 +12,27 @@ typealias TopBarOffset = VisualEffectNavigationBar.ArtworkMode
 
 var barConstant: Int { return prefs.integer(forKey: "barConstant") }
 
-class VisualEffectNavigationBar: MELVisualEffectView {
+class VisualEffectNavigationBar: MELVisualEffectView, ThemeStatusProvider {
 
     @IBOutlet var stackView: UIStackView!
     @IBOutlet var titleLabel: MELLabel!
     @IBOutlet var backLabel: MELLabel!
     @IBOutlet var artworkContainer: InvertIgnoringView!
-    @IBOutlet var artworkImageView: InvertIgnoringImageView!
+    @IBOutlet var artworkImageView: InvertIgnoringImageView! {
+        
+        didSet {
+            
+            artworkImageView.provider = self
+        }
+    }
     @IBOutlet var clearButtonView: UIView!
-    @IBOutlet var entityImageView: InvertIgnoringImageView!
+    @IBOutlet var entityImageView: InvertIgnoringImageView! {
+        
+        didSet {
+            
+            entityImageView.provider = self
+        }
+    }
     @IBOutlet var entityImageViewContainer: InvertIgnoringView!
     @IBOutlet var backView: UIView!
     @IBOutlet var backBorderView: UIView!
@@ -453,7 +465,7 @@ class VisualEffectNavigationBar: MELVisualEffectView {
         
         if let artworkDetails = navigatable.artworkDetails {
                           
-            imageView.image = artworkDetails.image
+            imageView.artworkType = artworkDetails.artworkType
             imageView.layer.setRadiusTypeIfNeeded(to: artworkDetails.details.useContinuousCorners)
             imageView.layer.cornerRadius = artworkDetails.details.radius
         }
@@ -569,7 +581,7 @@ protocol NavigatableContained {
     var navigatable: Navigatable? { get }
 }
 
-typealias NavigationBarArtworkDetails = (image: UIImage?, details: RadiusDetails)
+typealias NavigationBarArtworkDetails = (artworkType: EntityArtworkType, details: RadiusDetails)
 typealias NavigationBarButtonDetails = (type: VisualEffectNavigationBar.RightButtonType, hidden: Bool)
 
 class TemporaryNavigatable: Navigatable {

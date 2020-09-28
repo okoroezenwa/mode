@@ -8,7 +8,27 @@
 
 import UIKit
 
-class NoAccessView: UIView {
+class NoAccessView: UIView, ThemeStatusProvider {
+    
+    @IBOutlet var imageView: InvertIgnoringImageView!
+    
+    override func awakeFromNib() {
+        
+        super.awakeFromNib()
+        
+        updateArtwork()
+        
+        notifier.addObserver(self, selector: #selector(updateArtwork), name: .themeChanged, object: nil)
+    }
+    
+    @objc func updateArtwork() {
+        
+        let prefix = "NoArtwork"
+        let suffix = "20"
+        let infix = darkTheme ? "Dark" : "Light"
+        
+        imageView.image = #imageLiteral(resourceName: prefix + infix + suffix)
+    }
 
     @IBAction func openSettings() {
     

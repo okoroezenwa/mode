@@ -84,9 +84,9 @@ extension Contained where Self: UIViewController {
 }
 
 // MARK: - ArtworkContainingCell
-protocol ArtworkContainingCell {
+protocol ArtworkContainingCell: class {
     
-    var artworkImageView: UIImageView! { get set }
+    var artworkImageView: (EntityArtworkDisplaying & UIImageView)! { get set }
 }
 
 protocol ArtistTransitionable: class {
@@ -1000,4 +1000,14 @@ protocol YAxisAnchorable {
     
     var topAnchor: NSLayoutYAxisAnchor { get }
     var bottomAnchor: NSLayoutYAxisAnchor { get }
+}
+
+extension EntityArtworkType {
+    
+    var artwork: UIImage? { self.artwork(darkTheme: darkTheme) }
+}
+
+extension ThemeStatusProvider {
+    
+    var isDarkTheme: Bool { darkTheme }
 }

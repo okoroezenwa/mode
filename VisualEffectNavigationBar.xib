@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16097.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16097.3" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
@@ -57,7 +57,7 @@
                                                     <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="goQ-fQ-za1" userLabel="Artwork Container" customClass="InvertIgnoringView" customModule="Mode" customModuleProvider="target">
                                                         <rect key="frame" x="8" y="6" width="65" height="65"/>
                                                         <subviews>
-                                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="999" verticalHuggingPriority="999" horizontalCompressionResistancePriority="800" image="NoAlbum75" translatesAutoresizingMaskIntoConstraints="NO" id="ict-Ou-czO" customClass="InvertIgnoringImageView" customModule="Mode" customModuleProvider="target">
+                                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="999" verticalHuggingPriority="999" horizontalCompressionResistancePriority="800" image="NoAlbumLight75" translatesAutoresizingMaskIntoConstraints="NO" id="ict-Ou-czO" customClass="InvertIgnoringImageView" customModule="Mode" customModuleProvider="target">
                                                                 <rect key="frame" x="0.0" y="0.0" width="65" height="65"/>
                                                             </imageView>
                                                         </subviews>
@@ -219,7 +219,7 @@
                                                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qkD-Ac-gtA" customClass="InvertIgnoringView" customModule="Mode" customModuleProvider="target">
                                                                                         <rect key="frame" x="0.0" y="-1" width="30" height="30"/>
                                                                                         <subviews>
-                                                                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="999" verticalHuggingPriority="999" horizontalCompressionResistancePriority="800" verticalCompressionResistancePriority="752" image="NoAlbum75" translatesAutoresizingMaskIntoConstraints="NO" id="Ofg-i6-SIT" customClass="InvertIgnoringImageView" customModule="Mode" customModuleProvider="target">
+                                                                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="999" verticalHuggingPriority="999" horizontalCompressionResistancePriority="800" verticalCompressionResistancePriority="752" image="NoAlbumLight30" translatesAutoresizingMaskIntoConstraints="NO" id="Ofg-i6-SIT" customClass="InvertIgnoringImageView" customModule="Mode" customModuleProvider="target">
                                                                                                 <rect key="frame" x="0.0" y="0.0" width="30" height="30"/>
                                                                                                 <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                                                 <constraints>
@@ -397,6 +397,7 @@
     <resources>
         <image name="BackArrow9" width="7" height="9"/>
         <image name="Discard" width="9" height="13"/>
-        <image name="NoAlbum75" width="75" height="75"/>
+        <image name="NoAlbumLight30" width="30" height="30"/>
+        <image name="NoAlbumLight75" width="75" height="75"/>
     </resources>
 </document>

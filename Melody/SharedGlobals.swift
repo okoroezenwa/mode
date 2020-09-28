@@ -28,3 +28,68 @@ enum ModeBuild: String {
     
     case release = "com.okoroezenwa.ModePlayer"
 }
+
+enum EntityArtworkType {
+    
+    enum Size { case small, regular, large, extraLarge }
+    enum GranularEntityType { case song, album, compilation, artist, albumArtist, genre, composer, playlist, smartPlaylist, geniusPlaylist }
+    
+    case empty(entityType: GranularEntityType, size: Size), image(UIImage?)
+    
+    func artwork(darkTheme: Bool) -> UIImage? {
+        
+        switch self {
+            
+            case .image(let image): return image
+            
+            case .empty(entityType: let type, size: let size):
+                
+                let suffix: String = {
+                    
+                    switch size {
+                        
+                        case .small: return "30"
+                        
+                        case .regular: return "75"
+                        
+                        case .large: return "300"
+                        
+                        case .extraLarge: return "900"
+                    }
+                }()
+                
+                let prefix: String = {
+                    
+                    switch type {
+                        
+                        case .albumArtist, .artist: return "NoArtist"
+                        
+                        case .composer: return "NoComposer"
+                        
+                        case .song: return "NoSong"
+                        
+                        case .album: return "NoAlbum"
+                        
+                        case .compilation: return "NoCompilation"
+                        
+                        case .playlist: return "NoPlaylist"
+                        
+                        case .smartPlaylist: return "NoSmart"
+                        
+                        case .geniusPlaylist: return "NoGenius"
+                        
+                        case .genre: return "NoGenre"
+                    }
+                }()
+            
+                let infix = darkTheme ? "Dark" : "Light"
+            
+            return .init(imageLiteralResourceName: prefix + infix + suffix)
+        }
+    }
+}
+
+protocol EntityArtworkDisplaying: class {
+    
+    var artworkType: EntityArtworkType { get set }
+}

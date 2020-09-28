@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16097.3" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15510"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -108,13 +108,13 @@
             <size key="customSize" width="328" height="134"/>
             <connections>
                 <outlet property="artworkContainer" destination="zlg-g7-Y3T" id="PGR-mI-gsX"/>
-                <outlet property="artworkImageView" destination="A7E-Rh-NZp" id="YUa-lu-2WM"/>
                 <outlet property="chevron" destination="4nr-Az-nvc" id="lMw-98-NzT"/>
                 <outlet property="chevronLeadingConstraint" destination="DrZ-2G-g4U" id="89n-UJ-cI2"/>
                 <outlet property="chevronWidthConstraint" destination="Q2A-ba-tmq" id="xQy-r3-1cD"/>
                 <outlet property="containerView" destination="RYh-7E-ius" id="Yhh-nF-haD"/>
                 <outlet property="containerViewBottomConstraint" destination="16M-Qa-Hpr" id="pTp-5f-wTx"/>
                 <outlet property="containerViewTopConstraint" destination="ldn-9Z-qVs" id="31V-9p-5FT"/>
+                <outlet property="imageView" destination="A7E-Rh-NZp" id="t90-qH-Myl"/>
                 <outlet property="nameLabel" destination="Mk5-5Q-MD7" id="oQK-ml-4jC"/>
                 <outlet property="songCountLabel" destination="Lhe-Z1-Stf" id="eSn-cq-oRq"/>
             </connections>

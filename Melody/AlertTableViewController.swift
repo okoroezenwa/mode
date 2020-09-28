@@ -9,7 +9,7 @@
 import UIKit
 
 typealias ShowMenuParameters = (collection: MPMediaItemCollection?, entityType: EntityType)
-typealias ShowMenuImageInfo = (image: UIImage?, entityType: EntityType)
+typealias ShowMenuImageInfo = (/*image: UIImage?*/artworkType: EntityArtworkType, entityType: EntityType)
 
 class AlertTableViewController: UITableViewController, PreviewTransitionable {
     
@@ -36,7 +36,19 @@ class AlertTableViewController: UITableViewController, PreviewTransitionable {
             
             guard showMenuParameters.isEmpty.inverted else { return }
             
-            imageInfo = showMenuParameters.map({ ($0.collection?.customArtwork(for: $0.entityType)?.scaled(to: .init(width: 38, height: 38), by: 2) ?? $0.collection?.representativeArtwork(for: $0.entityType, size: .init(width: 38, height: 38)) ?? $0.collection?.emptyArtwork(for: $0.entityType), $0.entityType) })
+            imageInfo = showMenuParameters.map({ parameters -> ShowMenuImageInfo in
+                
+                ({
+                    if let image = parameters.collection?.customArtwork(for: parameters.entityType)?.scaled(to: .init(width: 38, height: 38), by: 2) ?? parameters.collection?.representativeArtwork(for: parameters.entityType, size: .init(width: 38, height: 38)) {
+                    
+                        return .image(image)
+                    
+                    } else {
+                        
+                        return .empty(entityType: parameters.collection?.granularEntityType(basedOn: parameters.entityType) ?? .album, size: .small)
+                    }
+                    
+                }(), parameters.entityType) })
         }
     }
     lazy var imageInfo = [ShowMenuImageInfo]()
@@ -132,7 +144,7 @@ extension AlertTableViewController {
                 cell.leadingImageViewWidthConstraint.constant = 38
                 cell.leadingImageViewLeadingConstraint.constant = 8
                 cell.labelsStackView.layoutMargins.left = 8
-                cell.leadingImageView.image = info.image
+                cell.leadingImageView.artworkType = info.artworkType
                 (listsCornerRadius ?? cornerRadius).updateCornerRadius(on: cell.leadingImageView.layer, width: 38, entityType: info.entityType, globalRadiusType: cornerRadius)
                 
                 if let superview = cell.leadingImageView.superview, superview.layer.shadowOpacity < 0.1 {
