@@ -803,7 +803,7 @@ extension InfoViewController: UICollectionViewDelegate, UICollectionViewDataSour
             }
         }()
         
-        cell.prepare(with: playlist, count: playlist.count, direction: .vertical, position: position, topConstraint: indexPath.row < 3 ? 4 : 2)
+        cell.prepare(with: playlist, count: MPMediaQuery.for(.playlist, using: playlist).itemsAccessed(at: showiCloudItems ? .all : .standard).cloud.collections?.count ?? 0, direction: .vertical, position: position, topConstraint: indexPath.row < 3 ? 4 : 2)
         cell.details = (.playlist, width)
         
         return cell

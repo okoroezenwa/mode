@@ -32,7 +32,7 @@ class ActionsButton: MELButton {
             
             if useLargerImage {
                 
-                return showTabBarLabels ? #imageLiteral(resourceName: "Actions20") : #imageLiteral(resourceName: "Actions22")
+                return /*showTabBarLabels ? #imageLiteral(resourceName: "Actions20") : */#imageLiteral(resourceName: "Actions22")
                 
             } else if useMiddleImage {
                 

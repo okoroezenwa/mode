@@ -83,7 +83,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         performLaunchChecks()
         Settings.registerDefaults()
-//        Queue.shared.verifyQueue()
         setLibraryTimerIfNeeded()
         
         if showPlaylistFolders {

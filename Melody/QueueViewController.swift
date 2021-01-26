@@ -326,6 +326,8 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                         actions.append(singleItemAlertAction(for: .library, entityType: .song, using: item, from: self))
                     }
                     
+                    if isInDebugMode && showCustomCollections { actions.append(singleItemAlertAction(for: .customCollection, entityType: .song, using: item, from: self)) }
+                    
                     if indexPath.section != 1 {
                         
                         actions.append(singleItemAlertAction(for: .remove(indexPath), entityType: .song, using: item, from: self))
@@ -1541,7 +1543,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                     
                     if warnForQueueInterruption && changeGuard {
                         
-                        let play = AlertAction.init(title: "Change Song", style: .default, handler: {  play(item, indexPath.row) })
+                        let play = AlertAction.init(title: "Change Song", style: .default, requiresDismissalFirst: false, handler: {  play(item, indexPath.row) })
                         
                         showAlert(title: item?.validTitle, with: play)
                         
@@ -1562,7 +1564,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                     
                     if warnForQueueInterruption && changeGuard {
                         
-                        let play = AlertAction.init(title: "Change Song", style: .default, handler: {  play(item, index + 1 + indexPath.row) })
+                        let play = AlertAction.init(title: "Change Song", style: .default, requiresDismissalFirst: false, handler: {  play(item, index + 1 + indexPath.row) })
                         
                         showAlert(title: item?.validTitle, with: play)
                         
@@ -2118,7 +2120,7 @@ extension QueueViewController {
                 }
             }
             
-            let action = AlertAction.init(title: "Clear Queue", style: .destructive, handler: { clear(vc) })
+            let action = AlertAction.init(title: "Clear Queue", style: .destructive, requiresDismissalFirst: false, handler: { clear(vc) })
             
             weakSelf.peeker?.showAlert(title: nil, with: action)
             
@@ -2186,6 +2188,8 @@ extension QueueViewController: EntityCellDelegate {
             
             actions.append(singleItemAlertAction(for: .library, entityType: .song, using: item, from: self))
         }
+        
+        if isInDebugMode && showCustomCollections { actions.append(singleItemAlertAction(for: .customCollection, entityType: .song, using: item, from: self)) }
         
         if indexPath.section != 1 {
             

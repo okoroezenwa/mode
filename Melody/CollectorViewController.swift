@@ -760,7 +760,7 @@ extension CollectorViewController: EntityCellDelegate {
             actions.insert(singleItemAlertAction(for: .library, entityType: .song, using: item, from: self), at: 1)
         }
         
-        actions.append(.init(title: "Get Info", style: .default, handler: { [weak self] in
+        actions.append(.init(title: "Get Info", style: .default, requiresDismissalFirst: false, handler: { [weak self] in
 
             guard let weakSelf = self else { return }
 

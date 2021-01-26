@@ -437,7 +437,7 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
         
         if let indexPaths = tableView.indexPathsForSelectedRows, !indexPaths.isEmpty {
             
-            let clear = AlertAction.init(title: "Selected", style: .destructive, handler: { [weak self] in
+            let clear = AlertAction.init(title: "Selected", style: .destructive, requiresDismissalFirst: false, handler: { [weak self] in
                 
                 guard let weakSelf = self else { return }
                 
@@ -448,7 +448,7 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
             
             if indexPaths.count < (manager?.queue ?? playlistItems).count {
                 
-                let keep = AlertAction.init(title: "Unselected", style: .destructive, handler: { [weak self] in
+                let keep = AlertAction.init(title: "Unselected", style: .destructive, requiresDismissalFirst: false, handler: { [weak self] in
                     
                     guard let weakSelf = self else { return }
                     
@@ -711,7 +711,7 @@ extension NewPlaylistViewController: EntityCellDelegate {
     
     func showDeleteConfirmation(from indexPath: IndexPath) {
         
-        showAlert(title: (manager?.queue ?? playlistItems)[indexPath.row].validTitle, with: AlertAction.init(title: "Clear", style: .destructive, handler: { [weak self] in self?.updateItems(at: [indexPath], for: .remove) }))
+        showAlert(title: (manager?.queue ?? playlistItems)[indexPath.row].validTitle, with: AlertAction.init(title: "Clear", style: .destructive, requiresDismissalFirst: false, handler: { [weak self] in self?.updateItems(at: [indexPath], for: .remove) }))
     }
     
     func accessoryButtonHeld(in cell: EntityTableViewCell) {

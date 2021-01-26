@@ -130,6 +130,8 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
             actions.append(.library)
         }
         
+        if isInDebugMode && showCustomCollections { actions.append(.customCollection) }
+        
         return actions
     }
     @objc lazy var songManager: SongActionManager = { return SongActionManager.init(actionable: self) }()

@@ -522,7 +522,7 @@ extension HeaderView: UICollectionViewDelegate, UICollectionViewDataSource {
                         }
                     }
                     
-                    cell.prepare(with: playlist, count: playlist.count, editingMode: collectionsVC.tableView.isEditing)
+                    cell.prepare(with: playlist, count: MPMediaQuery.for(.playlist, using: playlist).itemsAccessed(at: showiCloudItems ? .all : .standard).cloud.collections?.count ?? 0, editingMode: collectionsVC.tableView.isEditing)
                     cell.details = (.playlist, width)
                 }
             

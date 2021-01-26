@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -123,7 +123,7 @@
                                                     <constraint firstItem="f5L-4u-R2C" firstAttribute="leading" secondItem="idn-zO-EVL" secondAttribute="leading" id="mA4-af-8ux"/>
                                                 </constraints>
                                             </view>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="exb-sL-4bo">
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="exb-sL-4bo">
                                                 <rect key="frame" x="0.0" y="0.0" width="60" height="60"/>
                                                 <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="10" maxY="10"/>
                                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2" maxY="0.0"/>
@@ -161,7 +161,7 @@
                                                     <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" verticalCompressionResistancePriority="752" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rgv-0i-dDl" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
                                                         <rect key="frame" x="0.0" y="0.0" width="370" height="37"/>
                                                         <subviews>
-                                                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="251" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="tailTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ga3-Y8-pYe" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="251" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="system" lineBreakMode="tailTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ga3-Y8-pYe" customClass="MELButton" customModule="Mode" customModuleProvider="target">
                                                                 <rect key="frame" x="0.0" y="0.0" width="138" height="37"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="width" priority="250" constant="100" id="Cld-2J-J9c"/>
@@ -217,7 +217,7 @@
                                                     <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" verticalCompressionResistancePriority="751" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iK9-vm-Z4n" customClass="MELScrollView" customModule="Mode" customModuleProvider="target">
                                                         <rect key="frame" x="0.0" y="0.0" width="414" height="33"/>
                                                         <subviews>
-                                                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" horizontalCompressionResistancePriority="751" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="tailTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2Rd-zT-DKs" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" horizontalCompressionResistancePriority="751" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="system" lineBreakMode="tailTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2Rd-zT-DKs" customClass="MELButton" customModule="Mode" customModuleProvider="target">
                                                                 <rect key="frame" x="0.0" y="0.0" width="82" height="33"/>
                                                                 <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="22"/>
                                                                 <inset key="contentEdgeInsets" minX="10" minY="0.0" maxX="25" maxY="0.0"/>
@@ -234,7 +234,7 @@
                                                                     <action selector="goToArtist" destination="DFa-JA-3bC" eventType="touchUpInside" id="dO6-D2-TY6"/>
                                                                 </connections>
                                                             </button>
-                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="tailTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TFF-uE-Arq" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="system" lineBreakMode="tailTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TFF-uE-Arq" customClass="MELButton" customModule="Mode" customModuleProvider="target">
                                                                 <rect key="frame" x="82" y="0.0" width="80" height="33"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="width" priority="250" constant="70" id="DhW-dC-TvC"/>
@@ -302,7 +302,7 @@
                                                     </userDefinedRuntimeAttribute>
                                                 </userDefinedRuntimeAttributes>
                                             </view>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1oq-MD-A6s" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1oq-MD-A6s" customClass="MELButton" customModule="Mode" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="0.0" width="44" height="37"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="44" id="xJ8-Sn-fXd"/>
@@ -374,7 +374,7 @@
                                                             <constraint firstItem="yCe-PU-seI" firstAttribute="centerX" secondItem="2JO-ON-JwR" secondAttribute="centerX" id="v6B-ok-AoK"/>
                                                         </constraints>
                                                     </view>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Hxt-cy-mvz" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Hxt-cy-mvz" customClass="MELButton" customModule="Mode" customModuleProvider="target">
                                                         <rect key="frame" x="83" y="0.0" width="82.5" height="147"/>
                                                         <fontDescription key="fontDescription" name="MyriadPro-Light" family="Myriad Pro" pointSize="23"/>
                                                         <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -390,12 +390,12 @@
                                                             <action selector="previousSong" destination="DFa-JA-3bC" eventType="touchUpInside" id="Q6i-RR-7Nd"/>
                                                         </connections>
                                                     </button>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Mte-Wq-qWQ" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Mte-Wq-qWQ" customClass="MELButton" customModule="Mode" customModuleProvider="target">
                                                         <rect key="frame" x="165.5" y="0.0" width="83" height="147"/>
                                                         <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <state key="normal" image="Play"/>
                                                     </button>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="17s-Fl-bZF" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="17s-Fl-bZF" customClass="MELButton" customModule="Mode" customModuleProvider="target">
                                                         <rect key="frame" x="248.5" y="0.0" width="82.5" height="147"/>
                                                         <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <state key="normal" image="Forward"/>
@@ -455,7 +455,7 @@
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xlb-8R-xfV">
                                                 <rect key="frame" x="0.0" y="0.0" width="165.5" height="46"/>
                                                 <subviews>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1YJ-UY-VNe" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1YJ-UY-VNe" customClass="MELButton" customModule="Mode" customModuleProvider="target">
                                                         <rect key="frame" x="0.0" y="0.0" width="165.5" height="46"/>
                                                         <gestureRecognizers/>
                                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
@@ -477,7 +477,7 @@
                                                     <constraint firstAttribute="trailing" secondItem="1YJ-UY-VNe" secondAttribute="trailing" id="o8h-MW-lAk"/>
                                                 </constraints>
                                             </view>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ugz-Ax-rTt" customClass="ActionsButton" customModule="Mode" customModuleProvider="target">
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ugz-Ax-rTt" customClass="ActionsButton" customModule="Mode" customModuleProvider="target">
                                                 <rect key="frame" x="165.5" y="0.0" width="83" height="46"/>
                                                 <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                 <userDefinedRuntimeAttributes>
@@ -492,7 +492,7 @@
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LcP-Db-AFl">
                                                 <rect key="frame" x="248.5" y="0.0" width="165.5" height="46"/>
                                                 <subviews>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CrQ-9d-W2d" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CrQ-9d-W2d" customClass="MELButton" customModule="Mode" customModuleProvider="target">
                                                         <rect key="frame" x="0.0" y="0.0" width="165.5" height="46"/>
                                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                         <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

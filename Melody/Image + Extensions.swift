@@ -41,6 +41,34 @@ extension UIImage {
         return image!;
     }
     
+    static func gradientImage(in bounds: CGRect, colors: [UIColor]) -> UIImage {
+        
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.frame = bounds
+        gradientLayer.colors = colors.map({ $0.cgColor })
+        
+        UIGraphicsBeginImageContext(gradientLayer.bounds.size)
+        gradientLayer.render(in: UIGraphicsGetCurrentContext()!)
+        
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return image!
+    }
+    
+    static func gradientImage(in bounds: CGRect, colors: UIColor...) -> UIImage {
+        
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.frame = bounds
+        gradientLayer.colors = colors.map({ $0.cgColor })
+        
+        UIGraphicsBeginImageContext(gradientLayer.bounds.size)
+        gradientLayer.render(in: UIGraphicsGetCurrentContext()!)
+        
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return image!
+    }
+    
     class func from(_ view: UIView?) -> UIImage? {
         
         guard let view = view else { return nil }

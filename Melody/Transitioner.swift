@@ -52,7 +52,7 @@ class Transitioner: NSObject {
         }()
         
         let id = collection.persistentID
-        let query = MPMediaQuery.init(filterPredicates: [.for(entityType, using: id)]).cloud.grouped(by: entityType == .playlist ? .playlist : .album)
+        let query = MPMediaQuery.init(filterPredicates: [.for(entityType, using: id)]).cloud.grouped(by: entityType == .playlist ? .playlist : .album).itemsAccessed(at: showiCloudItems && entityType == .playlist ? .all : .standard).cloud
         
         entityVC.query = query
         
@@ -261,7 +261,7 @@ class Transitioner: NSObject {
         
         vc.context = .alert
         vc.alertVC.context = .select
-        vc.alertVC.actions = [.init(title: "Invert", handler: nil), .init(title: "Select", handler: nil), .init(title: "Deselect", handler: nil)]
+        vc.alertVC.actions = [.init(title: "Invert", requiresDismissalFirst: false, handler: nil), .init(title: "Select", requiresDismissalFirst: false, handler: nil), .init(title: "Deselect", requiresDismissalFirst: false, handler: nil)]
         vc.segments = [.init(title: "All"), .init(title: "Above"), .init(title: "Below")]
         vc.alertVC.segmentActions = [{ _ in }, { _ in }, { _ in }]
         vc.leftButtonAction = nil

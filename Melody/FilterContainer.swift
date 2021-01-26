@@ -126,11 +126,11 @@ extension FilterContainer where Self: UIViewController {
             
             switch filter.filterProperty {
                 
-                case .size: return Array(Int64.FileSize.byte.rawValue...Int64.FileSize.terabyte.rawValue).compactMap({ Int64.FileSize(rawValue: $0) }).map({ size in AlertAction.init(title: size.suffix, style: .default, handler: { action(size.rawValue) }) })
+                case .size: return Array(Int64.FileSize.byte.rawValue...Int64.FileSize.terabyte.rawValue).compactMap({ Int64.FileSize(rawValue: $0) }).map({ size in AlertAction.init(title: size.suffix, style: .default, requiresDismissalFirst: false, handler: { action(size.rawValue) }) })
                 
-                case .duration: return [AlertAction.init(title: "s", style: .default, handler: nil)]
+                case .duration: return [AlertAction.init(title: "s", style: .default, requiresDismissalFirst: false, handler: nil)]
                 
-                case .dateAdded, .lastPlayed: return [AlertAction.init(title: "d ago", style: .default, handler: nil)]
+                case .dateAdded, .lastPlayed: return [AlertAction.init(title: "d ago", style: .default, requiresDismissalFirst: false, handler: nil)]
                 
                 default: return []
             }
@@ -308,7 +308,7 @@ extension FilterContainer where Self: UIViewController {
     
     func clearRecentSearches() {
         
-        let delete = AlertAction.init(title: "Clear \(tableView.isEditing && (tableView.indexPathsForSelectedRows ?? []).isEmpty.inverted ? "Selected" : "All")", style: .destructive, handler: { [weak self] in
+        let delete = AlertAction.init(title: "Clear \(tableView.isEditing && (tableView.indexPathsForSelectedRows ?? []).isEmpty.inverted ? "Selected" : "All")", style: .destructive, requiresDismissalFirst: false, handler: { [weak self] in
             
             guard let weakSelf = self else { return }
             
@@ -331,7 +331,7 @@ extension FilterContainer where Self: UIViewController {
         
         let actions = PropertyTest.allCases.filter({ sender.filterTests.contains($0) }).map({ test in
             
-            AlertAction.init(title: sender.title(for: test, property: sender.filterProperty), style: .default, accessoryType: .check({ test == sender.propertyTest }), handler: { [weak self] in
+            AlertAction.init(title: sender.title(for: test, property: sender.filterProperty), style: .default, accessoryType: .check({ test == sender.propertyTest }), requiresDismissalFirst: false, handler: { [weak self] in
                 
                 guard let weakSelf = self else { return }
                 
@@ -353,7 +353,7 @@ extension FilterContainer where Self: UIViewController {
             
             properties.map({ property in
                 
-                AlertAction.init(title: property.title, subtitle: nil, style: .default, accessoryType: .check({ sender.filterProperty == property }), image: #imageLiteral(resourceName: "Search22"), handler: { [weak self] in
+                AlertAction.init(title: property.title, subtitle: nil, style: .default, accessoryType: .check({ sender.filterProperty == property }), image: #imageLiteral(resourceName: "Search22"), requiresDismissalFirst: false, handler: { [weak self] in
                     
                     guard let weakSelf = self else { return }
                     
@@ -397,7 +397,7 @@ extension FilterContainer where Self: UIViewController {
             
         }), if: otherFilterProperties.isEmpty.inverted)
         
-        properties.append(.init(title: title, handler: handler), if: useSystemAlerts)
+        properties.append(.init(title: title, requiresDismissalFirst: false, handler: handler), if: useSystemAlerts)
         
         showAlert(title: initial, subtitle: nil, with: properties, shouldSortActions: false, rightAction: { _, vc in vc.dismiss(animated: true, completion: handler) }, images: (nil, #imageLiteral(resourceName: "Settings13")))
     }
@@ -411,7 +411,7 @@ extension FilterContainer where Self: UIViewController {
         let test = PropertyTest(rawValue: search.propertyTest ?? "") ?? filter.initialPropertyTest(for: property)
         let alertTitle = property.title + " " + filter.title(for: test, property: property)
         
-        let clear = AlertAction.init(title: "Clear", style: .destructive, handler: { self.clear(items: self.recentSearches[indexPath.row]) })
+        let clear = AlertAction.init(title: "Clear", style: .destructive, requiresDismissalFirst: false, handler: { self.clear(items: self.recentSearches[indexPath.row]) })
         
         showAlert(title: alertTitle, subtitle: search.title, with: clear)
     }

@@ -640,9 +640,9 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         let albumCount = query?.collections?.count ?? 0
         let songCount = query?.items?.count ?? 0
         
-        let songs = AlertAction.init(title: "Songs", subtitle: songCount.fullCountText(for: .song), style: .default, accessoryType: .check({ [weak self] in self?.activeChildViewController == self?.artistSongsViewController }), image: EntityType.song.images.size23, handler: { [weak self] in self?.activeChildViewController = self?.artistSongsViewController })
+        let songs = AlertAction.init(title: "Songs", subtitle: songCount.fullCountText(for: .song), style: .default, accessoryType: .check({ [weak self] in self?.activeChildViewController == self?.artistSongsViewController }), image: EntityType.song.images.size23, requiresDismissalFirst: false, handler: { [weak self] in self?.activeChildViewController = self?.artistSongsViewController })
         
-        let albums = AlertAction.init(title: "Albums", subtitle: albumCount.fullCountText(for: .album), style: .default, accessoryType: .check({ [weak self] in self?.activeChildViewController == self?.artistAlbumsViewController }), image: EntityType.album.images.size23, handler: { [weak self] in self?.activeChildViewController = self?.artistAlbumsViewController })
+        let albums = AlertAction.init(title: "Albums", subtitle: albumCount.fullCountText(for: .album), style: .default, accessoryType: .check({ [weak self] in self?.activeChildViewController == self?.artistAlbumsViewController }), image: EntityType.album.images.size23, requiresDismissalFirst: false, handler: { [weak self] in self?.activeChildViewController = self?.artistAlbumsViewController })
         
         showAlert(title: title, subtitle: "Group by...", topHeaderMode: .themedImage(name: "Grouping22", height: 22), with: songs, albums)
     }

@@ -961,9 +961,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
             var playlists = [MPMediaPlaylist]()
             var albumArtists = [MPMediaItemCollection]()
             
-            let songsQuery = MPMediaQuery.songs().cloud
-            songsQuery.showAll()
-            songs = weakSelf.getResults(for: songsQuery.items ?? [], against: searchText)
+            songs = weakSelf.getResults(for: MPMediaQuery.songs().itemsAccessed(at: showiCloudItems ? .all : .unadded).cloud.items ?? [], against: searchText)
             
             if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
             
@@ -1246,7 +1244,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
             case .playlists:
             
                 let playlist = playlists[indexPath.row]
-                cell.prepare(with: playlist, count: playlist.count, number: songCountVisible.inverted ? nil : indexPath.row + 1)
+                cell.prepare(with: playlist, count: MPMediaQuery.for(.playlist, using: playlist).itemsAccessed(at: showiCloudItems ? .all : .standard).cloud.collections?.count ?? 0, number: songCountVisible.inverted ? nil : indexPath.row + 1)
                 updateImageView(using: playlist, entityType: .playlist, in: cell, indexPath: indexPath, reusableView: tableView, overridable: self)
             
             case .albums:

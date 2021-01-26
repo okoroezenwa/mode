@@ -56,6 +56,12 @@ extension UIViewController {
     var location: Location {
         
         switch self {
+        
+            case let x where x is ItemsViewController:
+                
+                guard let vc = x as? ItemsViewController else { return .unknown }
+                
+                return vc.actualLocation
             
             case let x where x is PlaylistItemsViewController: return .playlist
             

@@ -239,6 +239,16 @@ class EntityTableViewCell: UITableViewCell, ArtworkContainingCell, ThemeStatusPr
                  highlightedSong: MPMediaItem? = nil,
                  hideOptionsView: Bool = !showInfoButtons) {
         
+        contentView.alpha = {
+            
+            if let number = song.value(forProperty: "isPlayable") as? NSNumber, number.boolValue.inverted {
+                
+                return 0.5
+            }
+            
+            return 1
+        }()
+        
         entityType = .song
         
         nameLabel.text = song.title ??? .untitledSong
@@ -403,6 +413,8 @@ class EntityTableViewCell: UITableViewCell, ArtworkContainingCell, ThemeStatusPr
     
     func prepare(with playlist: MPMediaPlaylist, count: Int, number: Int? = nil) {
         
+        contentView.alpha = 1
+        
         entityType = .playlist
         
         nameLabel.text = playlist.name ??? "Untitled Playlist"
@@ -436,6 +448,8 @@ class EntityTableViewCell: UITableViewCell, ArtworkContainingCell, ThemeStatusPr
     }
     
     func prepare(for kind: AlbumBasedCollectionKind, with collection: MPMediaItemCollection, number: Int? = nil) {
+        
+        contentView.alpha = 1
         
         entityType = kind.entityType
         
@@ -498,6 +512,8 @@ class EntityTableViewCell: UITableViewCell, ArtworkContainingCell, ThemeStatusPr
                        withinArtist: Bool,
                        highlightedAlbum: MPMediaItemCollection? = nil,
                        number: Int? = nil) {
+        
+        contentView.alpha = 1
         
         guard let item = album.representativeItem else { return }
         

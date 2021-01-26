@@ -1222,7 +1222,7 @@ enum LibraryRefreshInterval: Int {
 
 enum SongAction {
     
-    case collect, addTo, newPlaylist, remove(IndexPath?), library, queue(name: String?, query: MPMediaQuery?), likedState, rate, insert(items: [MPMediaItem], completions: Completions?), show(title: String?, context: InfoViewController.Context, canDisplayInLibrary: Bool), info(context: InfoViewController.Context), reveal(indexPath: IndexPath), play(title: String?, completion: (() -> ())?), shuffle(mode: String.ShuffleSuffix, title: String?, completion: (() -> ())?), search(unwinder: (() -> UIViewController?)?)
+    case collect, addTo, newPlaylist, remove(IndexPath?), library, queue(name: String?, query: MPMediaQuery?), likedState, rate, insert(items: [MPMediaItem], completions: Completions?), show(title: String?, context: InfoViewController.Context, canDisplayInLibrary: Bool), info(context: InfoViewController.Context), reveal(indexPath: IndexPath), play(title: String?, completion: (() -> ())?), shuffle(mode: String.ShuffleSuffix, title: String?, completion: (() -> ())?), search(unwinder: (() -> UIViewController?)?), customCollection
     
     var icon: UIImage {
         
@@ -1230,7 +1230,7 @@ enum SongAction {
             
             case .collect: return #imageLiteral(resourceName: "Collected17")
             
-            case .addTo, .newPlaylist: return #imageLiteral(resourceName: "AddNoBorder")
+            case .addTo, .newPlaylist, .customCollection: return #imageLiteral(resourceName: "AddNoBorder")
             
             case .remove: return #imageLiteral(resourceName: "Discard17")
             
@@ -1262,9 +1262,9 @@ enum SongAction {
         
         switch self {
             
-            case .addTo, .newPlaylist, .play, .shuffle, .info, .queue, .rate, .likedState, .show: return true
+            case .addTo, .newPlaylist, .play, .shuffle, .info, .queue, .rate, .likedState, .show, .customCollection: return true
         
-            default: return false
+            case .collect, .remove, .library, .insert, .reveal, .search: return false
         }
     }
 }
@@ -1306,7 +1306,7 @@ enum ArtworkType {
             
             case .image(let image): return image
             
-            case .colour(let colour): return .new(withColour: colour, size: .artworkSize)
+            case .colour(_): return .gradientImage(in: .init(origin: .zero, size: .artworkSize), colors: Themer.gradientColours)//new(withColour: colour, size: .artworkSize)
         }
     }
 }
@@ -1676,7 +1676,7 @@ enum SecondaryCategory: Int, CaseIterable {
         }
     }
     
-    func propertyString(from entity: MPMediaEntity) -> String? {
+    func propertyString(from entity: MPMediaEntity, context: EntityPropertyCollectionViewCell.EntityPropertyContext) -> String? {
         
         switch self {
             
@@ -1695,7 +1695,7 @@ enum SecondaryCategory: Int, CaseIterable {
                     
                     return nil
                     
-                }() else { return nil }
+                }() else { return context == .cell ? "-" : nil }
                 
                 return plays
             
@@ -1714,7 +1714,7 @@ enum SecondaryCategory: Int, CaseIterable {
                     
                     return nil
                     
-                }() else { return nil }
+                }() else { return context == .cell ? "-" : nil }
                 
                 return FileSize.init(actualSize: size).actualSize.fileSizeRepresentation
             
@@ -1743,7 +1743,7 @@ enum SecondaryCategory: Int, CaseIterable {
                     
                     return nil
                     
-                }() else { return nil }
+                }() else { return context == .cell ? "-" : nil }
                 
                 return existsInLibrary ? date.timeIntervalSinceNow.shortStringRepresentation : "Not in Library"
             
@@ -1762,11 +1762,11 @@ enum SecondaryCategory: Int, CaseIterable {
                     
                     return nil
                     
-                }() else { return nil }
+                }() else { return context == .cell ? "-" : nil }
                 
                 return genre
             
-            case .lastPlayed: return (entity as? MPMediaItem)?.lastPlayedDate?.timeIntervalSinceNow.shortStringRepresentation
+            case .lastPlayed: return (entity as? MPMediaItem)?.lastPlayedDate?.timeIntervalSinceNow.shortStringRepresentation ?? (context == .cell ? "-" : nil)
             
             case .loved: return ""
             
@@ -1785,7 +1785,7 @@ enum SecondaryCategory: Int, CaseIterable {
                     
                     return nil
                     
-                }() else { return nil }
+                }() else { return context == .cell ? "-" : nil }
             
                 return rating.formatted
         
@@ -1804,9 +1804,9 @@ enum SecondaryCategory: Int, CaseIterable {
                     
                     return nil
                     
-                }() else { return nil }
+                }() else { return context == .cell ? "-" : nil }
                 
-                return year == 0 ? "-" : String(year)
+                return year == 0 ? (context == .cell ? "-" : nil) : String(year)
             
             case .songCount: return (entity as? MPMediaItemCollection)?.songCount.formatted
             
@@ -1829,7 +1829,7 @@ enum SecondaryCategory: Int, CaseIterable {
                     
                     return nil
                     
-                }() else { return nil }
+                }() else { return context == .cell ? "-" : nil }
                 
                 return time
         }

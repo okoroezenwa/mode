@@ -206,6 +206,7 @@ class TodayViewController: UIViewController, NCWidgetProviding, ThemeStatusProvi
         if #available(iOS 13, *), previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle {
             
             updateColours()
+            NotificationCenter.default.post(name: .themeChanged, object: nil)
         }
     }
     
@@ -355,7 +356,7 @@ class TodayViewController: UIViewController, NCWidgetProviding, ThemeStatusProvi
         }()
     }
     
-    @objc func update(_ sender: Any) {
+        @objc func update(_ sender: Any) {
         
         if let song = musicPlayer.nowPlayingItem {
             

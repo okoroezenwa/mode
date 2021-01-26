@@ -72,7 +72,13 @@ class SettingsTableViewController: UITableViewController {
         .init(9, 1): .init(title: "Use Descriptor", accessoryType: .onOff(isOn: { useDescriptor }, action: { [weak self] in self?.toggleDescriptor() })),
         .init(9, 2): .init(title: "Use Media Items", accessoryType: .onOff(isOn: { useMediaItems }, action: { [weak self] in self?.toggleMediaItems() })),
         .init(9, 3): .init(title: "Manual Queue Insertion", accessoryType: .onOff(isOn: { useOldStyleQueue }, action: { [weak self] in self?.toggleManual() })),
-        .init(10, 0): .init(title: "Collect New Songs", accessoryType: .none, textAlignment: .center, borderVisibility: .both)
+        .init(9, 4): .init(title: "Show Custom Collections", accessoryType: .onOff(isOn: { showCustomCollections }, action: { [weak self] in self?.toggleCustomCollections() })),
+        .init(10, 0): .init(title: "Collect New Songs", accessoryType: .none, textAlignment: .center, borderVisibility: .both),
+        .init(11, 0): .init(title: "A List", subtitle: aList.count.fullCountText(for: .song), accessoryType: .chevron),
+        .init(11, 1): .init(title: "B List", subtitle: bList.count.fullCountText(for: .song), accessoryType: .chevron),
+        .init(11, 2): .init(title: "C List", subtitle: cList.count.fullCountText(for: .song), accessoryType: .chevron),
+        .init(11, 3): .init(title: "Language List", subtitle: { languageList.count.fullCountText(for: .song) }(), accessoryType: .chevron),
+        .init(11, 4): .init(title: "Chopping Block", subtitle: { choppingBlock.count.fullCountText(for: .song) }(), accessoryType: .chevron)
     ]
 
     override func viewDidLoad() {
@@ -84,6 +90,23 @@ class SettingsTableViewController: UITableViewController {
         notifier.addObserver(self, selector: #selector(updateThemeCellTertiaryText), name: .themeChanged, object: nil)
         
         notifier.addObserver(self, selector: #selector(updateSortSection(_:)), name: .collectionSortChanged, object: nil)
+        
+        let gr = UILongPressGestureRecognizer.init(target: self, action: #selector(addToPlaylist))
+        gr.minimumPressDuration = 0.3
+        gr.delegate = self
+        tableView.addGestureRecognizer(gr)
+    }
+    
+    @objc func addToPlaylist(_ gr: UILongPressGestureRecognizer) {
+        
+        guard gr.state == .began, let indexPath = tableView.indexPathForRow(at: gr.location(in: tableView)), let presentedVC = presentedStoryboard.instantiateViewController(withIdentifier: "presentedVC") as? PresentedContainerViewController else { return }
+        
+        presentedVC.itemsToAdd = CollectionItemsTableViewController.Collection.allCases.first(where: { $0.index == indexPath.row })?.array.compactMap({ MPMediaQuery.for(.song, using: $0).items?.first }) ?? []
+        presentedVC.context = .playlists
+        presentedVC.fromQueue = false
+        presentedVC.playlistsVC.sectionOverride = .playlists
+            
+        present(presentedVC, animated: true, completion: nil)
     }
     
     @objc func updateSortSection(_ notification: Notification) {
@@ -171,6 +194,12 @@ class SettingsTableViewController: UITableViewController {
             
             default: fatalError("Not allowed")
         }
+    }
+    
+    func toggleCustomCollections() {
+        
+        showCustomCollections.toggle()
+        tableView.reloadData()
     }
     
     func toggleCloud() {
@@ -263,7 +292,7 @@ class SettingsTableViewController: UITableViewController {
     
     func reset() {
         
-        let reset = AlertAction.init(title: "Reset All Settings", style: .destructive, handler: {
+        let reset = AlertAction.init(title: "Reset All Settings", style: .destructive, requiresDismissalFirst: false, handler: {
             
             let wasCloud = showiCloudItems
             let wasDynamic = dynamicStatusBar
@@ -341,7 +370,7 @@ class SettingsTableViewController: UITableViewController {
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         
-        return isInDebugMode ? 11 : 9
+        return isInDebugMode ? 12 - (showCustomCollections ? 0 : 1) : 9
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -367,7 +396,9 @@ class SettingsTableViewController: UITableViewController {
             
             case 6: return 10
             
-            case 9: return 4
+            case 9: return 5
+                
+            case 11: return 5
             
             default: return 1
         }
@@ -380,6 +411,24 @@ class SettingsTableViewController: UITableViewController {
         if let setting = settings[indexPath.settingsSection] {
             
             cell.prepare(with: setting)
+        }
+        
+        if indexPath.section == 11 {
+            
+            switch indexPath.row {
+                
+                case 0: cell.subtitleLabel.text = aList.count.fullCountText(for: .song)
+                    
+                case 1: cell.subtitleLabel.text = bList.count.fullCountText(for: .song)
+                    
+                case 2: cell.subtitleLabel.text = cList.count.fullCountText(for: .song)
+                    
+                case 3: cell.subtitleLabel.text = languageList.count.fullCountText(for: .song)
+                    
+                case 4: cell.subtitleLabel.text = choppingBlock.count.fullCountText(for: .song)
+                    
+                default: break
+            }
         }
         
         return cell
@@ -399,19 +448,19 @@ class SettingsTableViewController: UITableViewController {
             if indexPath.row == 1 {
                 
                 var alerts = [AlertAction
-                    .init(title: "Dark", accessoryType: .check({ appTheme == .dark }), handler: {
+                    .init(title: "Dark", accessoryType: .check({ appTheme == .dark }), requiresDismissalFirst: false, handler: {
                     
                         guard appTheme != .dark else { return }
                         
                         Themer.shared.changeTheme(to: .dark, changePreference: true)
                     }),
-                    .init(title: "Light", accessoryType: .check({ appTheme == .light }), handler: {
+                    .init(title: "Light", accessoryType: .check({ appTheme == .light }), requiresDismissalFirst: false, handler: {
                         
                         guard appTheme != .light else { return }
                         
                         Themer.shared.changeTheme(to: .light, changePreference: true)
                     }),
-                    .init(title: "System", accessoryType: .check({ appTheme == .system }), handler: {
+                    .init(title: "System", accessoryType: .check({ appTheme == .system }), requiresDismissalFirst: false, handler: {
                         
                         guard appTheme != .system else { return }
                         
@@ -504,10 +553,35 @@ class SettingsTableViewController: UITableViewController {
         } else if indexPath.section == 10 {
             
             let playlists = (MPMediaQuery.playlists().collections as? [MPMediaPlaylist])?.filter({ $0.isAppleMusic })
-            playlists?.forEach({ ($0.value(forKey: "itemsQuery") as? MPMediaQuery)?.showAll() })
+            playlists?.forEach({ ($0.value(forKey: "itemsQuery") as? MPMediaQuery)?.setItemAccess(at: .all) })
             let items = playlists?.reduce([], { $0 + $1.items.filter({ $0.existsInLibrary.inverted }) }) ?? []
             
             notifier.post(name: .addedToQueue, object: nil, userInfo: [DictionaryKeys.queueItems: items])
+        
+        } else if indexPath.section == 11 {
+            
+            guard let presentedVC = presentedStoryboard.instantiateViewController(withIdentifier: "presentedVC") as? PresentedContainerViewController else { return }
+            
+            presentedVC.context = .customCollection
+            presentedVC.customVC.collection = {
+                
+                switch indexPath.row {
+                    
+                    case 0: return .aList
+                        
+                    case 1: return .bList
+                        
+                    case 2: return .cList
+                        
+                    case 3: return .languageList
+                        
+                    case 4: return .choppingBlock
+                        
+                    default: fatalError()
+                }
+            }()
+            
+            self.present(presentedVC, animated: true, completion: nil)
         }
         
         tableView.deselectRow(at: indexPath, animated: true)
@@ -515,7 +589,7 @@ class SettingsTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         
-        return indexPath.section == 0 || (indexPath.section == 1 && Set([0]).contains(indexPath.row).inverted) || indexPath.section == 2 || (indexPath.section == 4 && Set([3, 4, 10]).contains(indexPath.row)) || indexPath.section == 5 || indexPath.section == 6 || indexPath.section == 7 || indexPath.section == 8 || indexPath.section == 10
+        return indexPath.section == 0 || (indexPath.section == 1 && Set([0]).contains(indexPath.row).inverted) || indexPath.section == 2 || (indexPath.section == 4 && Set([3, 4, 9]).contains(indexPath.row)) || indexPath.section == 5 || indexPath.section == 6 || indexPath.section == 7 || indexPath.section == 8 || indexPath.section == 10 || indexPath.section == 11
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -576,5 +650,15 @@ class SettingsTableViewController: UITableViewController {
             
             UniversalMethods.banner(withTitle: "STVC going away...").show(for: 0.3)
         }
+    }
+}
+
+extension SettingsTableViewController: UIGestureRecognizerDelegate {
+    
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        
+        guard let indexPath = tableView.indexPathForRow(at: gestureRecognizer.location(in: tableView)) else { return true }
+        
+        return indexPath.section == 11
     }
 }

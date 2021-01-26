@@ -132,6 +132,16 @@ class Themer {
     static var reversedTempActiveColours: UIColor { darkTheme ? .black : .white }
     
     static var reversedTempInactiveColours: UIColor { (darkTheme ? UIColor.black : .white).withAlphaComponent(0.3) }
+    
+    static var gradientColours: [UIColor] {
+    
+        switch darkTheme {
+        
+            case true: return [.alternateColour, .init(totalRed: 2, green: 2, blue: 2)]
+                
+            case false: return [.init(totalRed: 253, green: 253, blue: 253), .alternateColour]
+        }
+    }
 }
 
 extension Themer {

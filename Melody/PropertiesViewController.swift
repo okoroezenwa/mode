@@ -28,7 +28,7 @@ class PropertiesViewController: UIViewController {
     enum Button { case leftButton, rightButton }
     enum Key: String {
         
-        case persistentID, mediaLibrary, multiverseIdentifier, itemsQuery, artworkCatalog, dateAccessed, lyrics, effectiveAlbumArtist, effectiveStopTime, playCountSinceSync, storeCloudAlbumID, cloudUniversalLibraryID, existsInLibrary, isCloudMix, storeCloudID, isPlaybackHistoryPlaylist, cloudShareURL, cloudGlobalID, cloudIsSubscribed, albumStoreID, artistArtworkCatalog, artistStoreID, albumArtistArtworkCatalog, albumArtistStoreID, genreStoreID, composerStoreID, bitRate, isHidden
+        case persistentID, mediaLibrary, multiverseIdentifier, itemsQuery, artworkCatalog, dateAccessed, lyrics, effectiveAlbumArtist, effectiveStopTime, playCountSinceSync, storeCloudAlbumID, cloudUniversalLibraryID, existsInLibrary, isCloudMix, storeCloudID, isPlaybackHistoryPlaylist, cloudShareURL, cloudGlobalID, cloudIsSubscribed, albumStoreID, artistArtworkCatalog, artistStoreID, albumArtistArtworkCatalog, albumArtistStoreID, genreStoreID, composerStoreID, bitRate, isHidden, isPlayable
         
         static func keys(for entityType: EntityType) -> [Key] {
         
@@ -39,7 +39,7 @@ class PropertiesViewController: UIViewController {
             
                 switch entityType {
                     
-                    case .song: return [.playCountSinceSync, .isHidden, .artworkCatalog, .dateAccessed, .bitRate, .lyrics, .effectiveAlbumArtist, .effectiveStopTime, .storeCloudAlbumID, .cloudUniversalLibraryID]
+                    case .song: return [.playCountSinceSync, .isHidden, .isPlayable, .artworkCatalog, .dateAccessed, .bitRate, .lyrics, .effectiveAlbumArtist, .effectiveStopTime, .storeCloudAlbumID, .cloudUniversalLibraryID]
                     
                     case .playlist: return collectionArray + [.isHidden, .artworkCatalog, .existsInLibrary, .isCloudMix, .storeCloudID, .isPlaybackHistoryPlaylist, .cloudShareURL, .cloudGlobalID, .cloudIsSubscribed]
                     

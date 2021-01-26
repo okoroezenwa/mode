@@ -117,6 +117,8 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         
         var actions = [SongAction.collect, .newPlaylist, .addTo, .show(title: song.validTitle, context: .song(location: .list, at: 0, within: [song]), canDisplayInLibrary: true)/*, .search(unwinder: nil)*/]
         
+        if isInDebugMode && showCustomCollections { actions.append(.customCollection) }
+        
         if song.existsInLibrary.inverted {
             
             actions.append(.library)
@@ -310,9 +312,9 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
         artworkContainerCentreYConstraint.constant = showTabBarLabels ? -8.5 : 0
         artworkContainerWidthConstraint.constant = showTabBarLabels ? 24 : 28
         
-        [playPauseButton, libraryButton, searchButton, actionsButton].forEach({ $0?.contentEdgeInsets.bottom = showTabBarLabels ? 17 : 0 })
-        
-        [playButtonLabel, libraryButtonLabel, searchButtonLabel, queueButtonLabel, actionsButtonLabel].forEach({ $0?.isHidden = showTabBarLabels.inverted })
+        actionsButton.contentEdgeInsets.bottom = 0
+        [playPauseButton, libraryButton, searchButton/*, actionsButton*/].forEach({ $0?.contentEdgeInsets.bottom = showTabBarLabels ? 17 : 0 })
+        [playButtonLabel, libraryButtonLabel, searchButtonLabel, queueButtonLabel/*, actionsButtonLabel*/].forEach({ $0?.isHidden = showTabBarLabels.inverted })
     }
     
     func updateSecondaryPlayingViews(_ sender: Any) {
@@ -601,7 +603,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             
             sections.map({ section in
                 
-                AlertAction.init(title: section.title, subtitle: nil, style: .default, accessoryType: .check({ LibrarySection(rawValue: lastUsedLibrarySection) == section }), image: section == .compilations ? #imageLiteral(resourceName: "CompilationsLarge") : section.entityType.images.size23, handler: { [weak self] in
+                AlertAction.init(title: section.title, subtitle: nil, style: .default, accessoryType: .check({ LibrarySection(rawValue: lastUsedLibrarySection) == section }), image: section == .compilations ? #imageLiteral(resourceName: "CompilationsLarge") : section.entityType.images.size23, requiresDismissalFirst: false, handler: { [weak self] in
                     
                     guard let weakSelf = self, let librarySection = LibrarySection(rawValue: lastUsedLibrarySection) else { return }
                     
@@ -662,7 +664,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             
         }), if: otherLibrarySections.isEmpty.inverted)
         
-        sections.append(.init(title: title, handler: handler), if: useSystemAlerts)
+        sections.append(.init(title: title, requiresDismissalFirst: false, handler: handler), if: useSystemAlerts)
         
         showAlert(title: "Library Sections", subtitle: nil, with: sections, shouldSortActions: false, rightAction: { _, vc in vc.dismiss(animated: true, completion: handler) }, images: (nil, #imageLiteral(resourceName: "Settings13")))
     }
@@ -1150,7 +1152,7 @@ class ContainerViewController: UIViewController, QueueManager, AlbumTransitionab
             guard sender.state == .began else { return }
         }
         
-        let remove = AlertAction.init(title: "Discard Collected", style: .destructive, handler: { notifier.post(name: .endQueueModification, object: nil) })
+        let remove = AlertAction.init(title: "Discard Collected", style: .destructive, requiresDismissalFirst: false, handler: { notifier.post(name: .endQueueModification, object: nil) })
         
         showAlert(title: nil, with: remove)
     }

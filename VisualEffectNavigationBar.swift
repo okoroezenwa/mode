@@ -222,7 +222,7 @@ class VisualEffectNavigationBar: MELVisualEffectView, ThemeStatusProvider {
         
         let actions = TopBarOffset.allCases.map({ mode in
             
-            AlertAction.init(title: mode.title, style: .default, accessoryType: .check({ mode == navBarArtworkMode }), handler: { [weak self] in
+            AlertAction.init(title: mode.title, style: .default, accessoryType: .check({ mode == navBarArtworkMode }), requiresDismissalFirst: false, handler: { [weak self] in
                 
                 guard let weakSelf = self else { return }
                 
@@ -238,7 +238,7 @@ class VisualEffectNavigationBar: MELVisualEffectView, ThemeStatusProvider {
         
         let actions = Font.allCases.map({ font in
             
-            AlertAction.init(title: font.name, style: .default, accessoryType: .check({ font == activeFont }), handler: {
+            AlertAction.init(title: font.name, style: .default, accessoryType: .check({ font == activeFont }), requiresDismissalFirst: false, handler: {
                 
                 prefs.set(font.rawValue, forKey: .activeFont)
                 notifier.post(name: .activeFontChanged, object: nil)
@@ -254,7 +254,7 @@ class VisualEffectNavigationBar: MELVisualEffectView, ThemeStatusProvider {
             
             let actions = TopBarOffset.allCases.map({ offset in
                 
-                AlertAction.init(title: offset.title, style: .default, accessoryType: .check({ offset == navBarConstant }), handler: { [weak self] in
+                AlertAction.init(title: offset.title, style: .default, accessoryType: .check({ offset == navBarConstant }), requiresDismissalFirst: false, handler: { [weak self] in
                 
                     guard let weakSelf = self else { return }
                     
@@ -293,7 +293,7 @@ class VisualEffectNavigationBar: MELVisualEffectView, ThemeStatusProvider {
         
         let actions = BarBlurBehavour.allCases.map({ behaviour in
             
-            AlertAction.init(title: behaviour.title, style: .default, accessoryType: .check({ barBlurBehaviour == behaviour }), handler: {
+            AlertAction.init(title: behaviour.title, style: .default, accessoryType: .check({ barBlurBehaviour == behaviour }), requiresDismissalFirst: false, handler: {
                 
                 prefs.set(behaviour.rawValue, forKey: .barBlurBehaviour)
                 notifier.post(name: .barBlurBehaviourChanged, object: nil)

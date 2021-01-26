@@ -607,7 +607,7 @@ class CollectionsViewController: UIViewController, SupplementaryHeaderInfoLoadin
             
             return recentlyUpdatedPlaylistSorts.contains(weakSelf.currentPlaylistsView)
             
-        }), handler: { [weak self] in
+        }), requiresDismissalFirst: false, handler: { [weak self] in
             
             guard let weakSelf = self, recentlyUpdatedPlaylistSorts.contains(weakSelf.currentPlaylistsView) else { return }
             
@@ -623,7 +623,7 @@ class CollectionsViewController: UIViewController, SupplementaryHeaderInfoLoadin
             
             return recentlyUpdatedPlaylistSorts.contains(weakSelf.currentPlaylistsView).inverted
             
-        }), handler: { [weak self] in
+        }), requiresDismissalFirst: false, handler: { [weak self] in
             
             guard let weakSelf = self, recentlyUpdatedPlaylistSorts.contains(weakSelf.currentPlaylistsView).inverted else { return }
             
@@ -661,7 +661,7 @@ class CollectionsViewController: UIViewController, SupplementaryHeaderInfoLoadin
         
         switch sender.state {
             
-            case .began: showAlert(title: nil, with: AlertAction.init(title: "Clear History", style: .destructive, handler: {
+            case .began: showAlert(title: nil, with: AlertAction.init(title: "Clear History", style: .destructive, requiresDismissalFirst: false, handler: {
                 
                 playlistHistoryDetails = ([], .reset)
                 self.lastUsedController.playlists = []
@@ -693,7 +693,7 @@ class CollectionsViewController: UIViewController, SupplementaryHeaderInfoLoadin
                 
                 let playlist = lastUsedController.playlists[indexPath.item]
                 
-                showAlert(title: playlist.validName, with: AlertAction.init(title: "Remove", style: .destructive, handler: {
+                showAlert(title: playlist.validName, with: AlertAction.init(title: "Remove", style: .destructive, requiresDismissalFirst: false, handler: {
                 
                     playlistHistoryDetails = ([playlist.persistentID], .remove)
                     self.lastUsedController.playlists.remove(at: indexPath.item)
@@ -1111,7 +1111,7 @@ class CollectionsViewController: UIViewController, SupplementaryHeaderInfoLoadin
                     
                 case .artist: return .artists()
                 
-                case .albumArtist: return .albumArtists//.value(forKey: "albumArtistsQuery") as? MPMediaQuery ?? .artists()
+                case .albumArtist: return .albumArtists
                     
                 case .compilation: return .compilations()
                     
@@ -1151,28 +1151,6 @@ class CollectionsViewController: UIViewController, SupplementaryHeaderInfoLoadin
         
         return nil
     }
-    
-//    func predicate(for view: PlaylistView) -> MPMediaPropertyPredicate? {
-//
-//        guard !presented else {
-//
-//            if appDelegate.appleMusicStatus != .appleMusic(libraryAccess: true) {
-//
-//                return nil
-//            }
-//
-//            return .user
-//        }
-//
-//        switch view {
-//
-//            case .all: return nil
-//
-//            case .appleMusic: return .am
-//            
-//            case .user: return .user
-//        }
-//    }
     
     func condition(for playlist: MPMediaPlaylist) -> Bool {
         
@@ -1225,18 +1203,6 @@ class CollectionsViewController: UIViewController, SupplementaryHeaderInfoLoadin
     }
     
     func changeView(from currentView: PlaylistView, to newView: PlaylistView) {
-        
-//        if let predicate = predicate(for: currentView) {
-//
-//            collectionsQuery.removeFilterPredicate(predicate)
-//            recentsQuery?.removeFilterPredicate(predicate)
-//        }
-//
-//        if let predicate = predicate(for: newView) {
-//
-//            collectionsQuery.addFilterPredicate(predicate)
-//            recentsQuery?.addFilterPredicate(predicate)
-//        }
         
         guard currentView != newView else { return }
         
@@ -1583,13 +1549,13 @@ class CollectionsViewController: UIViewController, SupplementaryHeaderInfoLoadin
             }) })
         }
         
-        let add = [AlertAction.init(title: duplicates.count > 0 ? "Add With \(duplicateText.capitalized)" : "Add \((manager?.queue ?? itemsToAdd).count.fullCountText(for: .song, capitalised: true))", style: .default, handler: {
+        let add = [AlertAction.init(title: duplicates.count > 0 ? "Add With \(duplicateText.capitalized)" : "Add \((manager?.queue ?? itemsToAdd).count.fullCountText(for: .song, capitalised: true))", style: .default, requiresDismissalFirst: false, handler: {
             
             playlistHistoryDetails = (self.selectedPlaylists.map({ $0.persistentID }), .insert)
             addSongs(true)
         })]
         
-        let noDuplicates = duplicates.isEmpty ? [] : [AlertAction.init(title: "Add Without \(duplicateText.capitalized)", style: .default, handler: {
+        let noDuplicates = duplicates.isEmpty ? [] : [AlertAction.init(title: "Add Without \(duplicateText.capitalized)", style: .default, requiresDismissalFirst: false, handler: {
             
             playlistHistoryDetails = (self.selectedPlaylists.map({ $0.persistentID }), .insert)
             addSongs(false)
@@ -1861,10 +1827,10 @@ extension CollectionsViewController: FullySortable {
     
     @objc func offlineQuery(for playlist: MPMediaPlaylist) -> MPMediaQuery {
         
-        let selString = NSString.init(format: "%@%@%@", "item", "sQu", "ery")
+        let selString = "item" + "sQu" + "ery"
         let sel = NSSelectorFromString(selString as String)
         
-        if playlist.responds(to: sel), let query = playlist.value(forKey: "itemsQuery") as? MPMediaQuery {
+        if playlist.responds(to: sel), let query = playlist.value(forKey: selString) as? MPMediaQuery {
             
             query.filterPredicates = [.for(.playlist, using: playlist.persistentID)]
             query.addFilterPredicate(.offline)

@@ -76,6 +76,22 @@ extension SupplementaryHeaderInfoLoading {
         }
     }
     
+    var collectionCount: Int? {
+        
+        guard let vc = self as? UIViewController else { return nil }
+        
+        switch vc.location {
+        
+            case .playlist:
+                
+                guard let vc = vc as? PlaylistItemsViewController else { return nil }
+                
+                return vc.playlistQuery?.items?.count
+                
+            default: return collection?.count
+        }
+    }
+    
     @discardableResult func prepare(_ headerButtonType: HeaderButtonType, reload shouldReload: Bool, animateHeader isAnimated: Bool) -> Int? {
         
         guard let collection = collection, let vc = self as? UIViewController, let _ = vc.viewIfLoaded, let index = headerView.buttonDetails.firstIndex(where: { $0.type == headerButtonType }) else { return nil }
@@ -89,8 +105,10 @@ extension SupplementaryHeaderInfoLoading {
             case .grouping: headerView.buttonDetails[index] = (details.type, details.image, {
                 
                 switch vc.location {
+                
+                    case .playlist: return collectionCount?.fullCountText(for: .song, capitalised: false)
                     
-                    case .album, .playlist, .collection(kind: _, point: .songs): return collection.count.fullCountText(for: .song, capitalised: false)
+                    case .album, .collection(kind: _, point: .songs): return collection.count.fullCountText(for: .song, capitalised: false)
                     
                     case .collection(kind: _, point: .albums): return (vc as? ArtistAlbumsViewController)?.currentArtistQuery?.collections?.count.fullCountText(for: .album, capitalised: false)
                     
@@ -149,7 +167,7 @@ extension SupplementaryHeaderInfoLoading {
             
             let array = weakSelf.applicableSupplementaryProperties.reduce([HeaderPropertyDetails](), {
                 
-                guard let string = $1.propertyString(from: collection) else { return $0 }
+                guard let string = $1.propertyString(from: collection, context: .header) else { return $0 }
                 
                 return $0.appending((string, $1))
             })
@@ -384,7 +402,7 @@ extension InfoLoading {
                 
                 var dictionary = dict
                 
-                guard let entity = entity, let string: String = property.propertyString(from: entity), let image: UIImage = property.propertyImage(from: entity, context: .cell) else { return dict }
+                guard let entity = entity, let string: String = property.propertyString(from: entity, context: .cell), let image: UIImage = property.propertyImage(from: entity, context: .cell) else { return dict }
                 
                 dictionary[property] = (image: image, text: string)
                 

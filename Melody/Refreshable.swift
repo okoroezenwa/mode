@@ -41,20 +41,20 @@ class Refresher: NSObject {
                 
                 guard let vc = refreshable as? UIViewController else { return }
             
-                let offline = AlertAction.init(title: "Go \(showiCloudItems ? "Offline" : "Online")", style: .default, handler: {
+                let offline = AlertAction.init(title: "Go \(showiCloudItems ? "Offline" : "Online")", style: .default, requiresDismissalFirst: false, handler: {
                 
                     prefs.set(!showiCloudItems, forKey: .iCloudItems)
                     notifier.post(name: .iCloudVisibilityChanged, object: nil)
                 })
                 
-                let reload = AlertAction.init(title: "Refresh", style: .default, handler: { [weak self] in
+                let reload = AlertAction.init(title: "Refresh", style: .default, requiresDismissalFirst: false, handler: { [weak self] in
                     
                     guard let weakSelf = self, let sorter = weakSelf.refreshable as? TableViewContainer else { return }
                     
                     sorter.sortAllItems()//sortItems()
                 })
             
-                let theme = AlertAction.init(title: "\(darkTheme ? "Light" : "Dark") Theme", style: .default, handler: {
+                let theme = AlertAction.init(title: "\(darkTheme ? "Light" : "Dark") Theme", style: .default, requiresDismissalFirst: false, handler: {
                     
                     prefs.set(!darkTheme, forKey: .darkTheme)
 //                    notifier.post(name: .themeChanged, object: nil)

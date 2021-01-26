@@ -32,7 +32,7 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
     @IBOutlet var promptLabel: MELLabel!
     @IBOutlet var topStackViewConstraint: NSLayoutConstraint!
     
-    enum ChildContext { case items, playlists, upNext, newPlaylist, settings, tips, queue, playlistDetails, info, songDetails, queueGuard, theme, gestures, playback, tabBar, background, filter, artwork, icon, fullPlayer, libraryRefresh, recents, properties, propertySettings, lyricsInfo, lyricsEdit, savedLyrics, lastFM }
+    enum ChildContext { case items, playlists, upNext, newPlaylist, settings, tips, queue, playlistDetails, info, songDetails, queueGuard, theme, gestures, playback, tabBar, background, filter, artwork, icon, fullPlayer, libraryRefresh, recents, properties, propertySettings, lyricsInfo, lyricsEdit, savedLyrics, lastFM, customCollection }
     
     var context = ChildContext.items
     var manager: QueueManager?
@@ -274,6 +274,12 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
         
         return vc
     }()
+    @objc lazy var customVC: CollectionItemsTableViewController = {
+        
+        let vc = presentedChilrenStoryboard.instantiateViewController(withIdentifier: String.init(describing: CollectionItemsTableViewController.self)) as! CollectionItemsTableViewController
+        
+        return vc
+    }()
     @objc var activeViewController: UIViewController? {
         
         didSet {
@@ -362,6 +368,8 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
                 case .savedLyrics: return savedLyricsVC
                 
                 case .lastFM: return lastFMVC
+                    
+                case .customCollection: return customVC
             }
         }()
         
@@ -576,6 +584,8 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
                 case .savedLyrics: return "Saved Lyrics"
                 
                 case .lastFM: return "Last.fm"
+                    
+                case .customCollection: return customVC.collection.rawValue
             }
         }()
         
@@ -596,7 +606,7 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
         
         switch context {
             
-            case /*.items, */.upNext, .savedLyrics: break
+            case /*.items, */.upNext, .savedLyrics, .customCollection: break
             
             case .filter:
             
@@ -780,6 +790,8 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
                 }
             
             case .savedLyrics: savedLyricsVC.clearLyrics()
+                
+            case .customCollection: customVC.clearCollection()
             
             case .info:
             
@@ -832,7 +844,7 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
             
             case /*.items,*/ .upNext:
                 
-                let remove = AlertAction.init(title: "Discard Collected", style: .destructive, handler: { notifier.post(name: .endQueueModification, object: nil) })
+                let remove = AlertAction.init(title: "Discard Collected", style: .destructive, requiresDismissalFirst: false, handler: { notifier.post(name: .endQueueModification, object: nil) })
                 
                 showAlert(title: "Discard Collected", with: remove)
         }

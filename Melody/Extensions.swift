@@ -138,6 +138,21 @@ extension UIColor {
     class var licorice: UIColor { return UIColor(red:0.1843, green:0.2078, blue:0.2784, alpha:1.0000) }
     
     class var noArtwork: UIColor { return darkTheme ? (useBlackColorBackground ? .black : .licorice) : (useWhiteColorBackground ? .white : .cream) }
+    
+    convenience init(totalRed: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat = 1) {
+        
+        self.init(red: totalRed/255, green: green/255, blue: blue/255, alpha: alpha)
+    }
+    
+    class var alternateColour: UIColor {
+        
+        switch darkTheme {
+        
+            case true: return .init(totalRed: 40, green: 40, blue: 40)
+                
+            case false: return .init(totalRed: 221, green: 226, blue: 231)
+        }
+    }
 }
 
 // MARK: - Date
@@ -693,34 +708,27 @@ extension UITableView {
 // MARK: - MPMediaQuery
 extension MPMediaQuery {
     
-    func showAll() {
+    enum ItemAccessPermissionLevel: Int, Comparable {
         
-        let selector = NSSelectorFromString("setShouldIncludeNonLibraryEntities:")
+        case standard, unadded, all
         
-        if responds(to: selector) {
-            
-            perform(selector, with: true)
-        }
+        static func < (lhs: ItemAccessPermissionLevel, rhs: ItemAccessPermissionLevel) -> Bool { lhs.rawValue < rhs.rawValue }
     }
     
-    func hideUnadded() {
+    func setItemAccess(at level: ItemAccessPermissionLevel) {
         
-        let selector = NSSelectorFromString("setShouldIncludeNonLibraryEntities:")
+        guard level > .standard else { return }
         
-        if responds(to: selector) {
-            
-            perform(selector, with: false)
-        }
+        let selector = NSSelectorFromString(.selectorString(at: level))
+        
+        guard responds(to: selector) else { return }
+        
+        perform(selector, with: true)
     }
     
-    func allShown() -> MPMediaQuery {
+    func itemsAccessed(at level: ItemAccessPermissionLevel) -> MPMediaQuery {
         
-        let selector = NSSelectorFromString("setShouldIncludeNonLibraryEntities:")
-        
-        if responds(to: selector) {
-            
-            perform(selector, with: true)
-        }
+        setItemAccess(at: level)
         
         return self
     }
@@ -798,6 +806,21 @@ extension MPMediaQuery {
     }
     
     class var albumArtists: MPMediaQuery { return MPMediaQuery.init(filterPredicates: [MPMediaPropertyPredicate.init(value: NSNumber.init(value: MPMediaType.music.rawValue), forProperty: MPMediaItemPropertyMediaType, comparisonType: .equalTo)]).grouped(by: .albumArtist) }
+    
+    class func `for`(_ type: EntityType, using entity: MPMediaEntity) -> MPMediaQuery {
+        
+        .init(filterPredicates: [.for(type, using: entity)])
+    }
+    
+    static func `for`(_ type: EntityType, using id: MPMediaEntityPersistentID) -> MPMediaQuery {
+        
+        .init(filterPredicates: [.for(type, using: id)])
+    }
+    
+    static func `for`(_ type: EntityType, using name: String) -> MPMediaQuery {
+        
+        .init(filterPredicates: [.for(type, using: name)])
+    }
 }
 
 // MARK: - MPMediaEntity

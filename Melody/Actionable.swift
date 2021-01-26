@@ -169,6 +169,46 @@ extension SongActionable {
                     
                     vc.present(presentedVC, animated: true, completion: nil)
                 })
+                
+            case .customCollection:
+                
+                return (action: action, title: "Add to Collection...", style: .default, {
+                    
+                    let actions = CollectionItemsTableViewController.Collection.allCases.map({ value -> AlertAction in
+                        
+                        var actualValue = value
+                        
+                        return AlertAction.init(title: actualValue.rawValue, subtitle: array.count.fullCountText(for: .song), style: .default, textAlignment: .center, requiresDismissalFirst: true, handler: {
+                            
+                            let songIDs = array.map({ $0.persistentID })
+                            let nonDuplicates = songIDs.filter({ Set(actualValue.array).contains($0).inverted })
+                            
+                            guard nonDuplicates.count == array.count else {
+                                
+                                let add = AlertAction.init(title: "Add With Duplicates", style: .default, requiresDismissalFirst: true, handler: {
+                                    
+                                    actualValue.array.append(contentsOf: array.map({ $0.persistentID }))
+                                    UniversalMethods.banner(withTitle: "Added to \(actualValue.rawValue)").show(for: 1)
+                                })
+                                
+                                let none = AlertAction.init(title: "Add Without Duplicates", style: .default, requiresDismissalFirst: true, handler: {
+                                    
+                                    actualValue.array.append(contentsOf: nonDuplicates)
+                                    UniversalMethods.banner(withTitle: "Added to \(actualValue.rawValue)").show(for: 1)
+                                })
+                                
+                                vc.showAlert(title: actualValue.rawValue, subtitle: "Add to...", with: add, none)
+                                
+                                return
+                            }
+                            
+                            actualValue.array.append(contentsOf: array.map({ $0.persistentID }))
+                            UniversalMethods.banner(withTitle: "Added to \(actualValue.rawValue)").show(for: 1)
+                        })
+                    })
+                    
+                    vc.showAlert(title: array.count.fullCountText(for: .song), subtitle: "Add to...", with: actions, shouldSortActions: false)
+                })
             
             case .remove:
             
@@ -729,6 +769,49 @@ extension SingleItemActionable {
                         container.saveRecentSearch(withTitle: container.searchBar.text, resignFirstResponder: false)
                     }
                 })
+                
+            case .customCollection:
+                
+                return (action: action, title: "Add to Collection...", style: .default, {
+                    
+                    guard let song = entity as? MPMediaItem else { return }
+                    
+                    let actions = CollectionItemsTableViewController.Collection.allCases.map({ value -> AlertAction in
+                        
+                        var actualValue = value
+                                                
+                        let hasDuplicate = Set(actualValue.array).contains(song.persistentID)
+                        
+                        return AlertAction.init(title: actualValue.rawValue, subtitle: actualValue.array.count.fullCountText(for: .song), style: .default, accessoryType: .check({ hasDuplicate }), textAlignment: .center, requiresDismissalFirst: hasDuplicate, handler: {
+                            
+                            guard hasDuplicate.inverted else {
+                                
+                                let add = AlertAction.init(title: "Add Duplicate", style: .default, requiresDismissalFirst: false, handler: {
+                                    
+                                    actualValue.array.append(song.persistentID)
+                                    UniversalMethods.banner(withTitle: "Added to \(actualValue.rawValue)").show(for: 1)
+                                })
+                                
+                                let remove = AlertAction.init(title: "Remove", style: .destructive, requiresDismissalFirst: false, handler: {
+                                    
+                                    guard let index = actualValue.array.firstIndex(of: song.persistentID) else { return }
+                                    
+                                    actualValue.array.remove(at: index)
+                                    UniversalMethods.banner(withTitle: "Removed from \(actualValue.rawValue)").show(for: 1)
+                                })
+                                
+                                vc.showAlert(title: actualValue.rawValue, with: add, remove)
+                                
+                                return
+                            }
+                            
+                            actualValue.array.append(song.persistentID)
+                            UniversalMethods.banner(withTitle: "Added to \(actualValue.rawValue)").show(for: 1)
+                        })
+                    })
+                    
+                    vc.showAlert(title: song.validTitle, subtitle: "Add to...", with: actions, shouldSortActions: false)
+                })
             
             case .remove(let indexPath):
             
@@ -1075,7 +1158,7 @@ extension SingleItemActionable {
                         
                         let details = self.singleItemActionDetails(for: .info(context: context), entityType: entityType, using: entity, from: vc, useAlternateTitle: true)
                         
-                        actions.insert(.init(title: details.title, handler: details.handler), at: 0)
+                        actions.insert(.init(title: details.title, requiresDismissalFirst: true, handler: details.handler), at: 0)
                         
                         #warning("Add support for Show in Library using a UIAlertController or UIContextMenuInteraction")
 //                        actions.append(.init(title: "Show in \(2.countText(for: entity, compilationOverride: song.isCompilation, capitalised: true))", handler: { verifiable.showInLibrary(entity: item, type: entity, unwinder: vc) }))
@@ -1200,7 +1283,7 @@ extension SingleItemActionable {
                     
                     let actions = Array(0...5).map({ value in
                         
-                        AlertAction.init(title: value == 0 ? "Unrated" : "\(value) stars", style: .default, handler: {
+                        AlertAction.init(title: value == 0 ? "Unrated" : "\(value) stars", style: .default, requiresDismissalFirst: true, handler: {
                             
                             song.set(property: MPMediaItemPropertyRating, to: value)
                             
@@ -1234,7 +1317,7 @@ extension SingleItemActionable {
                             }
                         }
                         
-                        return AlertAction.init(title: title, style: .default, handler: {
+                        return AlertAction.init(title: title, style: .default, requiresDismissalFirst: true, handler: {
                             
                             settable.set(property: entity is MPMediaItem || entity is MPMediaPlaylist ? .likedState : .albumLikedState, to: NSNumber.init(value: value.rawValue))
                             

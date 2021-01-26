@@ -112,7 +112,7 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
     @objc lazy var sorter: Sorter = { Sorter.init(operation: self.operation) }()
     
     @objc var actionableSongs: [MPMediaItem] { return filtering ? filteredSongs : songs }
-    var applicableActions: [SongAction] { return [SongAction.collect, .info(context: .album(at: 0, within: [])), .queue(name: playlist?.name ??? .untitledPlaylist, query: nil), .newPlaylist, .addTo] }
+    var applicableActions: [SongAction] { return [SongAction.collect, .info(context: .album(at: 0, within: [])), .queue(name: playlist?.name ??? .untitledPlaylist, query: nil), .newPlaylist, .addTo]/* + (isInDebugMode ? [.customCollection] : [])*/ }
     @objc lazy var songManager: SongActionManager = { return SongActionManager.init(actionable: self) }()
     
     @objc var playlistQuery: MPMediaQuery? { return entityVC?.query }

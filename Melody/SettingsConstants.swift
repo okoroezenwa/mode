@@ -378,3 +378,45 @@ var playlistSecondaryDetails: [SecondaryCategory] {
         notifier.post(name: .playlistCellCategoriesChanged, object: nil)
     }
 }
+
+var aList: [MPMediaEntityPersistentID] {
+    
+    get { prefs.array(forKey: .aList) as? [MPMediaEntityPersistentID] ?? [] }
+    
+    set { prefs.set(newValue, forKey: .aList) }
+}
+
+var bList: [MPMediaEntityPersistentID] {
+    
+    get { prefs.array(forKey: .bList) as? [MPMediaEntityPersistentID] ?? [] }
+    
+    set { prefs.set(newValue, forKey: .bList) }
+}
+
+var cList: [MPMediaEntityPersistentID] {
+    
+    get { prefs.array(forKey: .cList) as? [MPMediaEntityPersistentID] ?? [] }
+    
+    set { prefs.set(newValue, forKey: .cList) }
+}
+
+var languageList: [MPMediaEntityPersistentID] {
+    
+    get { prefs.array(forKey: .languageList) as? [MPMediaEntityPersistentID] ?? [] }
+    
+    set { prefs.set(newValue, forKey: .languageList) }
+}
+
+var choppingBlock: [MPMediaEntityPersistentID] {
+    
+    get { prefs.array(forKey: .choppingBlock) as? [MPMediaEntityPersistentID] ?? [] }
+    
+    set { prefs.set(newValue, forKey: .choppingBlock) }
+}
+
+var showCustomCollections: Bool {
+    
+    get { prefs.bool(forKey: .showCustomCollections) }
+    
+    set { prefs.set(newValue, forKey: .showCustomCollections) }
+}

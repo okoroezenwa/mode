@@ -359,6 +359,13 @@ extension String {
     static let playlistsSort = "playlistsSort"
     static let playlistsOrder = "playlistsOrder"
     
+    // MARK: - Custom Collections
+    static let aList = "aList"
+    static let bList = "bList"
+    static let cList = "cList"
+    static let languageList = "languageList"
+    static let choppingBlock = "choppingBlock"
+    
     // MARK: - Playback
     static let warnInterruption = "warnInterruption"
     static let playOnlyShortcut = "allowPlayOnly"
@@ -496,6 +503,7 @@ extension String {
     static let showMiniPlayerSongTitles = "showMiniPlayerSongTitles"
     static let showTabBarLabels = "showTabBarLabels"
     static let useQueuePositionMiniPlayerTitle = "useQueuePositionMiniPlayerTitle"
+    static let showCustomCollections = "showCustomCollections"
 }
 
 // MARK: - Notification Settings Constants

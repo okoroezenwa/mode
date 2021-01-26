@@ -147,6 +147,7 @@ class SettingsTableViewCell: UITableViewCell {
         subtitleLabel.text = setting.subtitle
         subtitleLabel.isHidden = setting.subtitle == nil
         subtitleLabel.attributes = setting.attributesInfo?.subtitleAttributes
+        subtitleLabel.textAlignment = preferredAlignment
         updateTertiaryText(with: setting)
         tertiaryLabel.superview?.isHidden = isAlert || setting.tertiaryDetail == nil
         tertiaryLabelTrailingConstraint.constant = {
@@ -415,9 +416,9 @@ struct AlertAction {
         self.previewAction = previewAction
     }
     
-    init(title: String, subtitle: String? = nil, style: UIAlertAction.Style = .default, accessoryType type: Setting.AccessoryType = .none, tertiaryText: (() -> String?)? = nil, image: UIImage? = nil, requiresDismissalFirst: Bool = false, handler: (() -> ())?, accessoryAction: AccessoryButtonAction? = nil, previewAction: PreviewAction? = nil) {
+    init(title: String, subtitle: String? = nil, style: UIAlertAction.Style = .default, accessoryType type: Setting.AccessoryType = .none, tertiaryText: (() -> String?)? = nil, image: UIImage? = nil, textAlignment alignment: NSTextAlignment = .left, requiresDismissalFirst: Bool, handler: (() -> ())?, accessoryAction: AccessoryButtonAction? = nil, previewAction: PreviewAction? = nil) {
         
-        self.info = AlertInfo.init(title: title, subtitle: subtitle, image: image, tertiaryDetail: tertiaryText, accessoryType: type)
+        self.info = AlertInfo.init(title: title, subtitle: subtitle, image: image, tertiaryDetail: tertiaryText, accessoryType: type, textAlignment: alignment)
         self.context = .alert(style)
         self.requiresDismissalFirst = requiresDismissalFirst
         self.handler = handler

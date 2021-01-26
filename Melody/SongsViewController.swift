@@ -121,17 +121,7 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
     var songs = [MPMediaItem]()
     var filteredSongs: [MPMediaItem] { return filteredEntities as! [MPMediaItem] }
     var ignorePropertyChange = false
-    var songsQuery: MPMediaQuery = {
-        
-        let query = showiCloudItems ? MPMediaQuery.songs() : MPMediaQuery.init(filterPredicates: [.offline, MPMediaPropertyPredicate.init(value: MPMediaType.music.rawValue, forProperty: MPMediaItemPropertyMediaType)])
-        
-        if showUnaddedMusic {
-            
-            query.showAll()
-        }
-        
-        return query
-    }()
+    lazy var songsQuery = getCurrentQuery()
     lazy var sections = [SortSectionDetails]()
     lazy var filtering = false
     var filterText: String?
@@ -242,7 +232,7 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
         
         let queue = OperationQueue()
         queue.name = "Songs Sort Operation Queue"
-//        queue.qualityOfService = .userInteractive
+        queue.qualityOfService = .userInitiated
         
         return queue
     }()
@@ -628,17 +618,7 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
         }) as! NSObject)
     }
     
-    func getCurrentQuery() -> MPMediaQuery {
-        
-        let query = showiCloudItems ? MPMediaQuery.songs() : MPMediaQuery.init(filterPredicates: [.offline])
-        
-        if showUnaddedMusic {
-            
-            query.showAll()
-        }
-        
-        return query
-    }
+    func getCurrentQuery() -> MPMediaQuery { MPMediaQuery.songs().cloud.itemsAccessed(at: showUnaddedMusic ? (showiCloudItems ? .all : .unadded) : .standard) }
     
     func adjustInsets(context: InsetContext) {
         

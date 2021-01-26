@@ -38,13 +38,13 @@ class SavedLyricsViewController: UIViewController {
         
         var actions = [AlertAction]()
         
-        actions.append(AlertAction.init(title: "All", style: .destructive, handler: { Song.deleteAllLyrics(completion: { self.resetLyrics() }) }))
+        actions.append(AlertAction.init(title: "All", style: .destructive, requiresDismissalFirst: false, handler: { Song.deleteAllLyrics(completion: { self.resetLyrics() }) }))
         
         if let indexPaths = tableView.indexPathsForSelectedRows {
             
-            actions.append(AlertAction.init(title: "Selected", style: .destructive, handler: { Song.delete(indexPaths.map({ self.songs[$0.row] }), completion: { self.resetLyrics() }) }))
+            actions.append(AlertAction.init(title: "Selected", style: .destructive, requiresDismissalFirst: false, handler: { Song.delete(indexPaths.map({ self.songs[$0.row] }), completion: { self.resetLyrics() }) }))
             
-            actions.append(AlertAction.init(title: "Unselected", style: .destructive, handler: {
+            actions.append(AlertAction.init(title: "Unselected", style: .destructive, requiresDismissalFirst: false, handler: {
                 
                 let set = Set(indexPaths.map({ self.songs[$0.row] }))
                 Song.delete(self.songs.filter({ set.contains($0).inverted }), completion: { self.resetLyrics() })

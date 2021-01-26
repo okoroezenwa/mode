@@ -338,7 +338,7 @@ extension LyricsInfoViewController: UITableViewDelegate, UITableViewDataSource {
             
                 let edit = AlertAction.init(title: "Edit", style: .default, requiresDismissalFirst: true, handler: editAction)
                 
-                let revert = AlertAction.init(title: "Revert", style: .destructive, handler: {
+                let revert = AlertAction.init(title: "Revert", style: .destructive, requiresDismissalFirst: false, handler: {
                     
                     self.editedLyrics = nil
                     tableView.reloadRows(at: [indexPath], with: .none)

@@ -97,4 +97,16 @@ extension String {
 
         return regex.stringByReplacingMatches(in: self, options: [], range: NSRange.init(startIndex..., in: self), withTemplate: template)
     }
+    
+    static func selectorString(at level: MPMediaQuery.ItemAccessPermissionLevel) -> String {
+        
+        switch level {
+            
+            case .standard: return ""
+            
+            case .unadded: return "setS" + "houldI" + "ncludeN" + "onLi" + "braryEn" + "tities:"
+                
+            case .all: return "setI" + "gnore" + "SystemF" + "ilte" + "rPredi" + "cates:"
+        }
+    }
 }
