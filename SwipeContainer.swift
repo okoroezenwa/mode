@@ -10,13 +10,13 @@ import UIKit
 
 typealias SwipeContainerAction = (title: String?, image: UIImage?, handler: (() -> ())?)
 
-protocol SwipeActionsDelegate: class {
+protocol SwipeActionsDelegate: AnyObject {
     
     var leftSwipeActions: [SwipeContainerAction] { get }
     var rightSwipeActions: [SwipeContainerAction] { get }
 }
 
-protocol Swipable: class {
+protocol Swipable: AnyObject {
     
     var trailingConstraint: NSLayoutConstraint! { get set }
     var leadingConstraint: NSLayoutConstraint! { get set }

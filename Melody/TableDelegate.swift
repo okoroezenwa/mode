@@ -407,7 +407,7 @@ extension TableDelegate: UITableViewDelegate, UITableViewDataSource {
                 
                 } else if musicPlayer.nowPlayingItem != nil, leftRect?.contains(foundLocation) == true {
                     
-                    getActionDetails(from: SongAction.queue(name: name, query: query), indexPath: indexPath, vc: container?.filterContainer ?? container as? UIViewController, useAlternateTitle: true)?.handler()
+                    getActionDetails(from: SongAction.queue(type: .all, name: name, query: query), indexPath: indexPath, vc: container?.filterContainer ?? container as? UIViewController, useAlternateTitle: true)?.handler()
                     
                 } else if let count: Int = {
                     
@@ -422,19 +422,26 @@ extension TableDelegate: UITableViewDelegate, UITableViewDataSource {
                     
                     return nil
                 
-                    }(), count > 0, let vc: UIViewController = container?.filterContainer ?? container as? UIViewController, let actionable = vc as? SingleItemActionable {
+                    }(), entity is MPMediaPlaylist || count > 0, let vc: UIViewController = container?.filterContainer ?? container as? UIViewController, let actionable = vc as? SingleItemActionable {
                     
                     var actions = [
                         SongAction.collect,
                         .info(context: infoContext(from: indexPath, collectionViewOverride: fromCollectionView, filtering: container?.filterContainer != nil)),
                         .show(title: name, context: infoContext(from: indexPath, collectionViewOverride: fromCollectionView, filtering: container?.filterContainer != nil), canDisplayInLibrary: canDisplayInLibrary() || fromCollectionView),
-                        .queue(name: name, query: query),
+                        .queue(type: .playNext, name: name, query: query),
+                        .queue(type: .playLater, name: name, query: query),
+                        .queue(type: .all, name: name, query: query),
                         .newPlaylist,
                         .addTo/*,
                         .search(unwinder: container?.filterContainer != nil ? { [weak topViewController] in topViewController?.children.first } : nil)
                         */].map({ actionable.singleItemAlertAction(for: $0, entityType: entityType(), using: entity, from: vc) })
+                    
+                    if entity is MPMediaPlaylist, count < 1 {
+                        
+                        actions = [actions.value(at: 1), actions.value(at: 2)].unpacked()
+                    }
                             
-                    if let item = entity as? MPMediaItem, item.existsInLibrary.inverted {
+                    if let item = entity as? MPMediaItem, item.canBeAddedToLibrary {
                         
                         actions.append(actionable.singleItemAlertAction(for: .library, entityType: .song, using: item, from: vc))
                     }
@@ -856,7 +863,7 @@ extension TableDelegate {
                         case .playlist:
                             
                             let playlist = collection as! MPMediaPlaylist
-                            cell.prepare(with: playlist, count: MPMediaQuery.for(.playlist, using: playlist).itemsAccessed(at: showiCloudItems ? .all : .standard).cloud.collections?.count ?? 0, number: number)
+                            cell.prepare(with: playlist, count: MPMediaQuery.for(.playlist, using: playlist).itemsAccessed(at: (container as? CollectionsViewController)?.presented == true || showiCloudItems ? .all : .standard).overrideOffline(if: (container as? CollectionsViewController)?.presented == true).items?.count ?? 0, number: number) // for some reson .collections works instead of .items, which gives weird results
                             
                             if let collectionsVC = container as? CollectionsViewController, collectionsVC.presented {
                                 
@@ -1274,21 +1281,28 @@ extension TableDelegate: EntityCellDelegate {
             
             return nil
         
-        }(), count > 0, let vc: UIViewController = container.filterContainer ?? container, let actionable = vc as? SingleItemActionable else { return }
+        }(), entity is MPMediaPlaylist || count > 0, let vc: UIViewController = container.filterContainer ?? container, let actionable = vc as? SingleItemActionable else { return }
         
         var actions = [
             SongAction.collect,
             .info(context: infoContext(from: indexPath, filtering: container.filterContainer != nil)),
-            .queue(name: cell.nameLabel.text, query: query(at: indexPath, filtering: container.filterContainer != nil)),
+            .queue(type: .all, name: cell.nameLabel.text, query: query(at: indexPath, filtering: container.filterContainer != nil)),
+            .queue(type: .playNext, name: cell.nameLabel.text, query: query(at: indexPath, filtering: container.filterContainer != nil)),
+            .queue(type: .playLater, name: cell.nameLabel.text, query: query(at: indexPath, filtering: container.filterContainer != nil)),
             .newPlaylist,
             .addTo,
             .show(title: cell.nameLabel.text, context: infoContext(from: indexPath, collectionViewOverride: false, filtering: container.filterContainer != nil), canDisplayInLibrary: canDisplayInLibrary())/*,
             .search(unwinder: container.filterContainer != nil ? { [weak topViewController] in topViewController?.children.first } : nil)
         */].map({ actionable.singleItemAlertAction(for: $0, entityType: entityType(), using: entity, from: vc) })
         
+        if entity is MPMediaPlaylist, count < 1 {
+            
+            actions = [actions.value(at: 1), actions.last].unpacked()
+        }
+        
         if let item = entity as? MPMediaItem {
             
-            if item.existsInLibrary.inverted {
+            if item.canBeAddedToLibrary {
             
                 actions.append(actionable.singleItemAlertAction(for: .library, entityType: .song, using: item, from: vc))
             }
@@ -1411,7 +1425,7 @@ extension TableDelegate: EntityCellDelegate {
         
         guard musicPlayer.nowPlayingItem != nil, let indexPath = container?.tableView.indexPath(for: cell) else { return }
         
-        getActionDetails(from: SongAction.queue(name: cell.nameLabel.text, query: query(at: indexPath, filtering: container?.filterContainer != nil)), indexPath: indexPath, vc: container?.filterContainer ?? container as? UIViewController, useAlternateTitle: true)?.handler()
+        getActionDetails(from: SongAction.queue(type: .all, name: cell.nameLabel.text, query: query(at: indexPath, filtering: container?.filterContainer != nil)), indexPath: indexPath, vc: container?.filterContainer ?? container as? UIViewController, useAlternateTitle: true)?.handler()
     }
 }
 
@@ -1439,13 +1453,13 @@ extension TableDelegate: SwipeTableViewCellDelegate {
                     actionable.songManager.toggleEditing(action)
                 })
                 
-                edit.image = tableView.isEditing ? #imageLiteral(resourceName: "CheckBordered17") : #imageLiteral(resourceName: "EditNoBorder17")
+                edit.image = tableView.isEditing ? #imageLiteral(resourceName: "Done17") : #imageLiteral(resourceName: "EditNoBorder17")
                 
                 array.append(edit)
                 
                 if musicPlayer.nowPlayingItem != nil, let cell = tableView.cellForRow(at: indexPath) as? EntityTableViewCell {
                     
-                    let details = getActionDetails(from: .queue(name: cell.nameLabel.text, query: query(at: indexPath, filtering: container.filterContainer != nil)), indexPath: indexPath, vc: container.filterContainer ?? container as? UIViewController)
+                    let details = getActionDetails(from: .queue(type: .all, name: cell.nameLabel.text, query: query(at: indexPath, filtering: container.filterContainer != nil)), indexPath: indexPath, vc: container.filterContainer ?? container as? UIViewController)
                     
                     let queue = SwipeAction.init(style: .default, title: details?.title.lowercased(), handler: { _, _ in details?.handler() })
                     
@@ -1533,13 +1547,13 @@ extension TableDelegate {
                     editing ? searchViewController.handleLeftSwipe(searchViewController) : searchViewController.handleRightSwipe(searchViewController)
                 })
                 
-                edit.image = editing ? #imageLiteral(resourceName: "CheckBordered17") : #imageLiteral(resourceName: "EditNoBorder17")
+                edit.image = editing ? #imageLiteral(resourceName: "Done17") : #imageLiteral(resourceName: "EditNoBorder17")
                 
                 array.append(edit)
                 
                 if musicPlayer.nowPlayingItem != nil, let cell = searchViewController.tableView.cellForRow(at: indexPath) as? EntityTableViewCell {
                     
-                    let details = searchViewController.getActionDetails(from: .queue(name: cell.nameLabel.text, query: nil), indexPath: indexPath, actionable: searchViewController, vc: searchViewController, entityType: .song, entity: searchViewController.getEntity(at: indexPath)!)
+                    let details = searchViewController.getActionDetails(from: .queue(type: .all, name: cell.nameLabel.text, query: nil), indexPath: indexPath, actionable: searchViewController, vc: searchViewController, entityType: .song, entity: searchViewController.getEntity(at: indexPath)!)
                     
                     let queue = SwipeAction.init(style: .default, title: details?.title.lowercased(), handler: { _, _ in details?.handler() }, image: details?.action.icon)
                     
@@ -1585,7 +1599,7 @@ extension TableDelegate {
                     queueViewController.songManager.toggleEditing(action)
                 })
                 
-                edit.image = editing ? #imageLiteral(resourceName: "CheckBordered17") : #imageLiteral(resourceName: "EditNoBorder17")
+                edit.image = editing ? #imageLiteral(resourceName: "Done17") : #imageLiteral(resourceName: "EditNoBorder17")
                 
                 array.append(edit)
             
@@ -1647,7 +1661,7 @@ extension TableDelegate {
                     collectorItemsViewController.songManager.toggleEditing(collectorItemsViewController.editButton as Any)
                 })
                 
-                edit.image = editing ? #imageLiteral(resourceName: "CheckBordered17") : #imageLiteral(resourceName: "EditNoBorder17")
+                edit.image = editing ? #imageLiteral(resourceName: "Done17") : #imageLiteral(resourceName: "EditNoBorder17")
                 
                 array.append(edit)
                 
@@ -1700,7 +1714,7 @@ extension TableDelegate {
                 newPlaylistViewController.songManager.toggleEditing(newPlaylistViewController)
             })
             
-            edit.image = editing ? #imageLiteral(resourceName: "CheckBordered17") : #imageLiteral(resourceName: "EditNoBorder17")
+            edit.image = editing ? #imageLiteral(resourceName: "Done17") : #imageLiteral(resourceName: "EditNoBorder17")
             
             array.append(edit)
             

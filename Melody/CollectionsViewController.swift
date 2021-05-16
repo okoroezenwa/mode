@@ -8,9 +8,17 @@
 
 import UIKit
 
-class CollectionsViewController: UIViewController, SupplementaryHeaderInfoLoading, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, GenreTransitionable, PlaylistTransitionable, ComposerTransitionable, FilterContextDiscoverable, CellAnimatable, EntityContainer, PillButtonContaining, Refreshable, QueryUpdateable, IndexContaining, LibrarySectionContainer, EntityVerifiable, TopScrollable {
+class CollectionsViewController: UIViewController, SupplementaryHeaderInfoLoading, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, GenreTransitionable, PlaylistTransitionable, ComposerTransitionable, FilterContextDiscoverable, CellAnimatable, EntityContainer, PillButtonContaining, Refreshable, QueryUpdateable, IndexContaining, LibrarySectionContainer, EntityVerifiable, TopScrollable, CollectionActionable {
     
-    @IBOutlet var tableView: MELTableView!
+    @IBOutlet var tableView: MELTableView! {
+        
+        didSet {
+            
+            let gr = UIPanGestureRecognizer.init(target: libraryVC, action: #selector(LibraryViewController.updateSections))
+            gr.delegate = libraryVC
+            tableView.addGestureRecognizer(gr)
+        }
+    }
     @IBOutlet var lastUsedCollectionView: UICollectionView!
     @IBOutlet var lastUsedEmptyLabel: MELLabel!
     @IBOutlet var bottomViewHeightConstraint: NSLayoutConstraint!
@@ -39,6 +47,7 @@ class CollectionsViewController: UIViewController, SupplementaryHeaderInfoLoadin
             
             view.tableHeaderContainer.isHidden = true
             view.showGrouping = true
+            view.buttonDetails.append((.newPlaylist, #imageLiteral(resourceName: "New13"), "New Playlist", { [weak self] in self?.showNewPlaylist() }))
             
             if presented.inverted {
                 
@@ -77,9 +86,16 @@ class CollectionsViewController: UIViewController, SupplementaryHeaderInfoLoadin
         
         didSet {
             
-            let shuffleView = collectionKind == .playlist ? PillButtonView.with(title: "New", image: #imageLiteral(resourceName: "AddNoBorderSmall"), tapAction: .init(action: #selector(showNewPlaylist), target: self)) : PillButtonView.with(title: .shuffleButtonTitle, image: #imageLiteral(resourceName: "Shuffle13"), tapAction: .init(action: #selector(shuffle), target: self))
-            shuffleButton = shuffleView.button
-            self.shuffleView = shuffleView
+            let actionsView: PillButtonView? = {
+                
+                guard !presented else { return nil }
+                
+                let actionsView = PillButtonView.with(title: "Actions", image: #imageLiteral(resourceName: "ActionsMenu15"), tapAction: .init(action: #selector(SongActionManager.showActionsForAll(_:)), target: songManager), longPressAction: .init(action: #selector(SongActionManager.showActionsForAll(_:)), target: songManager))
+                itemActionsButton = actionsView.button
+                self.itemActionsView = actionsView
+                
+                return actionsView
+            }()
             
             let filterView = PillButtonView.with(title: "Filter", image: #imageLiteral(resourceName: "Filter13"), tapClosure: { [weak self] _ in
                 
@@ -93,15 +109,14 @@ class CollectionsViewController: UIViewController, SupplementaryHeaderInfoLoadin
                 
                 guard !presented else { return nil }
                 
-                let editView = PillButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, tapAction: .init(action: #selector(SongActionManager.toggleEditing(_:)), target: songManager), longPressAction: .init(action: #selector(SongActionManager.showActionsForAll(_:)), target: songManager))
-                editView.borderViewContainer.centre(actionableActivityIndicator)
+                let editView = PillButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, tapAction: .init(action: #selector(SongActionManager.toggleEditing(_:)), target: songManager))
                 editButton = editView.button
                 self.editView = editView
                 
                 return editView
             }()
             
-            [shuffleView, filterView, editView].compactMap({ $0 }).forEach({ actionsStackView.addArrangedSubview($0) })
+            [editView, filterView, actionsView].unpacked().forEach({ actionsStackView.addArrangedSubview($0) })
         }
     }
     
@@ -142,21 +157,11 @@ class CollectionsViewController: UIViewController, SupplementaryHeaderInfoLoadin
     @objc var activityIndicator: MELActivityIndicatorView!
     @objc var actionableActivityIndicator = MELActivityIndicatorView.init()
     var shouldFillActionableSongs = false
-    var showActionsAfterFilling = false
-    var collectionsCount: Int { return filterContainer?.filtering == true ? filteredCollections.count : collections.count }
+    var isCollectingSongs = false
     @objc var arrangeButton: MELButton!
-    @objc var editButton: MELButton! {
-        
-        didSet {
-            
-            let allHold = UILongPressGestureRecognizer.init(target: songManager, action: #selector(SongActionManager.showActionsForAll(_:)))
-            allHold.minimumPressDuration = longPressDuration
-            editButton.addGestureRecognizer(allHold)
-            LongPressManager.shared.gestureRecognisers.append(Weak.init(value: allHold))
-        }
-    }
-    @objc var shuffleButton: MELButton!
-    @objc var shuffleView: PillButtonView!
+    @objc var editButton: MELButton!
+    @objc var itemActionsButton: MELButton!
+    @objc var itemActionsView: PillButtonView?
     @objc var filterView: PillButtonView!
     @objc var editView: PillButtonView?
     var totalDurationLabel: MELLabel!
@@ -169,8 +174,17 @@ class CollectionsViewController: UIViewController, SupplementaryHeaderInfoLoadin
     @objc var presentedEmptyPlaylists = true
     @objc var onlineOverride = false
     
-    @objc var actionableSongs: [MPMediaItem] { return songs }
+    @objc var actionableSongs: [MPMediaItem] {
+        
+        get { songs }
+        
+        set { songs = newValue }
+    }
+    var actionableCollections: [MPMediaItemCollection] { /*filterContainer?.filtering == true*/filtering ? filteredCollections : collections }
     var songs = [MPMediaItem]()
+    lazy var actionableAlertController = initialAlertController
+    var actionableDetails: (action: SongAction, vc: UIViewController, useAlternateTitle: Bool)?
+    
     let applicableActions = [SongAction.collect, .info(context: .album(at: 0, within: [])), .newPlaylist, .addTo]
     @objc lazy var songManager: SongActionManager = { return SongActionManager.init(actionable: self) }()
     
@@ -306,7 +320,15 @@ class CollectionsViewController: UIViewController, SupplementaryHeaderInfoLoadin
                 
                 if applySort {
                     
-                    sortAllItems()
+                    if sortCriteria == .random {
+                        
+                        collections.reverse()
+                        tableView.reloadData()
+                        
+                    } else {
+                    
+                        sortAllItems()
+                    }
                 }
             }
         }
@@ -441,6 +463,8 @@ class CollectionsViewController: UIViewController, SupplementaryHeaderInfoLoadin
     var actionableOperation: BlockOperation?
     @objc var supplementaryOperation: BlockOperation?
     lazy var playlistsLoaded = false
+    
+    var refreshControl: UIRefreshControl?
 
     override func viewDidLoad() {
         
@@ -483,6 +507,7 @@ class CollectionsViewController: UIViewController, SupplementaryHeaderInfoLoadin
         let refreshControl = MELRefreshControl.init()
         refreshControl.addTarget(refresher, action: #selector(Refresher.refresh(_:)), for: .valueChanged)
         tableView.addSubview(refreshControl)
+        self.refreshControl = refreshControl
         
         prepareSupplementaryInfo(animated: false)
         updateHeaderView(withCount: collectionKind == .playlist ? 0 : (collectionsQuery.items ?? []).count)
@@ -509,8 +534,8 @@ class CollectionsViewController: UIViewController, SupplementaryHeaderInfoLoadin
     
     func updateTopInset() {
         
-        tableView.contentInset.top = libraryVC?.inset ?? VisualEffectNavigationBar.Location.main.total
-        tableView.scrollIndicatorInsets.top = libraryVC?.inset ?? VisualEffectNavigationBar.Location.main.total
+        tableView.contentInset.top = (libraryVC?.inset ?? VisualEffectNavigationBar.Location.main.total)// + statusBarHeightValue(from: view)
+        tableView.scrollIndicatorInsets.top = (libraryVC?.inset ?? VisualEffectNavigationBar.Location.main.total)// + statusBarHeightValue(from: view)
     }
     
     /*@objc func prepareSupplementaryInfo(animated: Bool = true) {
@@ -655,13 +680,15 @@ class CollectionsViewController: UIViewController, SupplementaryHeaderInfoLoadin
         lastUsedEmptyLabel.alpha = lastUsedController.playlists.isEmpty && state == .visible ? 1 : 0
     }
     
-    @objc func clearHistory(_ sender: UILongPressGestureRecognizer) {
+    @objc func clearHistory(_ gr: UILongPressGestureRecognizer) {
         
         guard lastUsedController.playlists.isEmpty.inverted else { return }
         
-        switch sender.state {
+        let block: () -> Void = { [weak self] in
             
-            case .began: showAlert(title: nil, with: AlertAction.init(title: "Clear History", style: .destructive, requiresDismissalFirst: false, handler: {
+            guard let self = self else { return }
+            
+            self.showAlert(title: nil, with: AlertAction.init(title: "Clear History", style: .destructive, requiresDismissalFirst: false, handler: {
                 
                 playlistHistoryDetails = ([], .reset)
                 self.lastUsedController.playlists = []
@@ -672,44 +699,32 @@ class CollectionsViewController: UIViewController, SupplementaryHeaderInfoLoadin
                 
                 }, completion: { _ in self.lastUsedCollectionView.reloadData() })
             }))
-            
-            case .changed, .ended:
-            
-                guard let top = topViewController as? VerticalPresentationContainerViewController else { return }
-                
-                top.gestureActivated(sender)
-            
-            default: break
         }
+        
+        gr.recogniseContinuously(with: block, and: nil)
     }
     
-    @objc func removeFromHistory(_ sender: UILongPressGestureRecognizer) {
+    @objc func removeFromHistory(_ gr: UILongPressGestureRecognizer) {
         
-        switch sender.state {
+        guard lastUsedController.playlists.isEmpty.inverted else { return }
+        
+        let block: () -> Void = { [weak self] in
             
-            case .began:
-                
-                guard let indexPath = lastUsedCollectionView.indexPathForItem(at: sender.location(in: lastUsedCollectionView)) else { return }
-                
-                let playlist = lastUsedController.playlists[indexPath.item]
-                
-                showAlert(title: playlist.validName, with: AlertAction.init(title: "Remove", style: .destructive, requiresDismissalFirst: false, handler: {
-                
-                    playlistHistoryDetails = ([playlist.persistentID], .remove)
-                    self.lastUsedController.playlists.remove(at: indexPath.item)
-                    self.lastUsedCollectionView.reloadData()
-                    
-                    UIView.animate(withDuration: 0.3, animations: { self.updateCollectionView(to: showPlaylistHistory ? .visible : .hidden) })
-                }))
+            guard let self = self, let indexPath = self.lastUsedCollectionView.indexPathForItem(at: gr.location(in: self.lastUsedCollectionView)) else { return }
             
-            case .changed, .ended:
+            let playlist = self.lastUsedController.playlists[indexPath.item]
             
-                guard let top = topViewController as? VerticalPresentationContainerViewController else { return }
+            self.showAlert(title: playlist.validName, with: AlertAction.init(title: "Remove", style: .destructive, requiresDismissalFirst: false, handler: {
+            
+                playlistHistoryDetails = ([playlist.persistentID], .remove)
+                self.lastUsedController.playlists.remove(at: indexPath.item)
+                self.lastUsedCollectionView.reloadData()
                 
-                top.gestureActivated(sender)
-            
-            default: break
+                UIView.animate(withDuration: 0.3, animations: { self.updateCollectionView(to: showPlaylistHistory ? .visible : .hidden) })
+            }))
         }
+        
+        gr.recogniseContinuously(with: block, and: nil)
     }
 
     @objc func showOptions(_ sender: Any) {
@@ -742,27 +757,27 @@ class CollectionsViewController: UIViewController, SupplementaryHeaderInfoLoadin
         tableView.tableHeaderView?.frame.size.height = 92 + (showRecents ? headerView.collectionViewHeaderHeightConstraint.constant + headerView.collectionViewHeightConstraint.constant : 0)
         tableView.tableHeaderView = headerView
         
-        var array = [shuffleView, filterView, editView].compactMap({ $0 })
+        let array = [editView, filterView, itemActionsView].unpacked()
         
         if presented {
             
             headerView.groupingButton.setTitle(count.fullCountText(for: .playlist, capitalised: true), for: .normal)
         }
         
-        if collectionKind != .playlist {
-            
-            if count < 2 {
-                
-                array.remove(at: 0)
-            }
-            
-            shuffleButton.superview?.isHidden = count < 2
-        
+//        if collectionKind != .playlist {
+//
+//            if count < 2 {
+//
+//                array.remove(at: 0)
+//            }
+//
+//            itemActionsButton.superview?.isHidden = count < 2
+//
 //        } else {
 //            
 //            headerView.showRecents = count > 0
 //            headerView.tableHeaderContainer.isHidden = count < 0
-        }
+//        }
         
         borderedButtons = array
         
@@ -1222,7 +1237,7 @@ class CollectionsViewController: UIViewController, SupplementaryHeaderInfoLoadin
     
     func updateGrouping(animated: Bool) {
         
-        prepare(.grouping, reload: true, animateHeader: true)
+        prepare(.grouping, reload: true, animateHeader: animated)
         headerView.groupingButton.setTitle(playlistsViewText, for: .normal)
         
         guard animated else { return }
@@ -2161,58 +2176,6 @@ extension CollectionsViewController: FullySortable {
         }
         
         sortOperationQueue.addOperation(recentOperation!)
-    }
-}
-
-extension CollectionsViewController: CollectionActionable {
-    
-    func getActionableSongs() {
-        
-        guard shouldFillActionableSongs else { return }
-        
-        actionableOperation?.cancel()
-        actionableOperation = BlockOperation()
-        actionableOperation?.addExecutionBlock { [weak self] in
-            
-            guard let weakSelf = self, let operation = weakSelf.actionableOperation, operation.isCancelled.inverted else {
-                
-                self?.actionableActivityIndicator.stopAnimating()
-                self?.editView?.stackView?.alpha = 1
-                self?.editButton.superview?.isUserInteractionEnabled = true
-                self?.showActionsAfterFilling = false
-                
-                return
-            }
-            
-            let items = weakSelf.collections.reduce([], { $0 + $1.items })
-            
-            OperationQueue.main.addOperation {
-                
-                guard operation.isCancelled.inverted else {
-                    
-                    weakSelf.actionableActivityIndicator.stopAnimating()
-                    weakSelf.editView?.stackView?.alpha = 1
-                    weakSelf.editButton.superview?.isUserInteractionEnabled = true
-                    weakSelf.showActionsAfterFilling = false
-                    
-                    return
-                }
-                
-                weakSelf.songs = items
-                
-                if weakSelf.showActionsAfterFilling {
-                    
-                    weakSelf.showArrayActions(weakSelf.tableView.isEditing ? weakSelf.editButton as Any : weakSelf as Any)
-                }
-                
-                weakSelf.actionableActivityIndicator.stopAnimating()
-                weakSelf.editView?.stackView?.alpha = 1
-                weakSelf.editButton.superview?.isUserInteractionEnabled = true
-                weakSelf.showActionsAfterFilling = false
-            }
-        }
-        
-        actionableQueue.addOperation(actionableOperation!)
     }
 }
 

@@ -43,7 +43,7 @@ extension LoginDetailsTableViewCell: UITextFieldDelegate {
     }
 }
 
-protocol LoginCellDelegate: class {
+protocol LoginCellDelegate: AnyObject {
     
     func login(username: String?, password: String?)
 }

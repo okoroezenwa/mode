@@ -436,12 +436,6 @@ extension EntityVerifiable {
                 
                 let oldChild = libraryVC.activeChildViewController
                 
-//                if let details = container.filterViewContainer.filterView.locationDetails(for: section) {
-//                    
-//                    container.filterViewContainer.filterView.selectCell(at: details.indexPath, usingOtherArray: details.fromOtherArray, arrayIndex: details.index, performTransitions: false)
-//                    container.filterViewContainer.filterView.collectionView.scrollToItem(at: details.indexPath, at: .centeredHorizontally, animated: true)
-//                }
-                
                 prefs.set(section.rawValue, forKey: .lastUsedLibrarySection)
                 
                 if libraryVC.isViewControllerInitialised(for: section).inverted {
@@ -491,6 +485,7 @@ extension EntityVerifiable {
                             details.libraryVC?.view.alpha = 1
                         }
                     })
+                    
                     scrollToRow()
                 }
             }

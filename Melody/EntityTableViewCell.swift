@@ -580,6 +580,7 @@ class EntityTableViewCell: UITableViewCell, ArtworkContainingCell, ThemeStatusPr
         super.layoutSubviews()
         
         collectionViewWidth = supplementaryCollectionView.frame.width
+//        contentView.frame = bounds // this worked
     }
 }
 

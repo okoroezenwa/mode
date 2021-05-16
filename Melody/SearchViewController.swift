@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 import Foundation
 
-class SearchViewController: UIViewController, Filterable, DynamicSections, AlbumTransitionable, Contained, InfoLoading, ArtistTransitionable, GenreTransitionable, ComposerTransitionable, AlbumArtistTransitionable, PlaylistTransitionable, EntityContainer, OptionsContaining, CellAnimatable, IndexContaining, FilterContainer, SingleItemActionable, EntityVerifiable, TopScrollable, Detailing, Navigatable, ArtworkModifying, PillButtonContaining, CentreViewDisplaying {
+class SearchViewController: UIViewController, Filterable, DynamicSections, AlbumTransitionable, Contained, InfoLoading, ArtistTransitionable, GenreTransitionable, ComposerTransitionable, AlbumArtistTransitionable, PlaylistTransitionable, EntityContainer, OptionsContaining, CellAnimatable, IndexContaining, FilterContainer, SingleItemActionable, EntityVerifiable, TopScrollable, Detailing, Navigatable, ArtworkModifying, PillButtonContaining, CentreViewDisplaying, HeaderViewContaining {
 
     @IBOutlet var tableView: MELTableView!
 //    @IBOutlet var emptySubLabel: MELLabel! {
@@ -156,6 +156,18 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         set { }
     }
     let components: Set<CentreView.CurrentView.LabelStackViewComponent> = [.image, .title, .subtitle]
+    var passthroughFrames: [CGRect]? {
+        
+        if let header = tableView.tableHeaderView as? HeaderView, let container = appDelegate.window?.rootViewController as? ContainerViewController {
+            
+            let first = tableView.convert(header.frame, to: view)
+            let second = container.view.convert(first, to: container.centreView)
+            
+            return [second]
+        }
+        
+        return nil
+    }
     
     @objc lazy var songs = [MPMediaItem]()
     @objc lazy var playlists = [MPMediaPlaylist]()
@@ -306,9 +318,9 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         tableView.addGestureRecognizer(hold)
         LongPressManager.shared.gestureRecognisers.append(Weak.init(value: hold))
         
-        let edge = UIScreenEdgePanGestureRecognizer.init(target: self, action: #selector(updateSections))
-        edge.edges = .right
-        view.addGestureRecognizer(edge)
+        let gr = UIPanGestureRecognizer.init(target: self, action: #selector(updateSections))
+        gr.delegate = self
+        tableView.addGestureRecognizer(gr)
         
         searchBar?.textField?.leftView = filterViewContainer.filterView.leftView
         searchBar?.updateTextField(with: placeholder)
@@ -361,20 +373,22 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
                 
                 } else if musicPlayer.nowPlayingItem != nil, cell.mainView.convert(cell.playButton.frame, to: cell).contains(location) == true {
                     
-                    singleItemActionDetails(for: .queue(name: cell.nameLabel.text, query: nil), entityType: sectionDetails[indexPath.section].category.entityType, using: entity, from: self).handler()
+                    singleItemActionDetails(for: .queue(type: .all, name: cell.nameLabel.text, query: nil), entityType: sectionDetails[indexPath.section].category.entityType, using: entity, from: self).handler()
                     
                 } else {
                     
                     var actions = [
                         SongAction.collect,
                         .info(context: context(from: indexPath)),
-                        .queue(name: cell.nameLabel.text, query: nil),
+                        .queue(type: .all, name: cell.nameLabel.text, query: nil),
+                        .queue(type: .playNext, name: cell.nameLabel.text, query: nil),
+                        .queue(type: .playLater, name: cell.nameLabel.text, query: nil),
                         .newPlaylist,
                         .addTo,
                         .show(title: cell.nameLabel.text, context: context(from: indexPath), canDisplayInLibrary: true)/*,
                         .search(unwinder: nil)*/].map({ singleItemAlertAction(for: $0, entityType: sectionDetails[indexPath.section].category.entityType, using: entity, from: self) })
                     
-                    if let item = entity as? MPMediaItem, item.existsInLibrary.inverted {
+                    if let item = entity as? MPMediaItem, item.canBeAddedToLibrary {
                         
                         actions.append(singleItemAlertAction(for: .library, entityType: .song, using: item, from: self))
                     }
@@ -648,7 +662,14 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         
         let keyboardWillShow = notification.name == UIResponder.keyboardWillShowNotification
         
-        filterViewContainer.filterView.filterInputViewBottomConstraint.constant = keyboardWillShow ? keyboardHeightAtEnd - 51 - container.collectedViewHeight - container.sliderHeight - container.titlesHeight : 0
+        filterViewContainer.filterView.filterInputViewBottomConstraint.constant = keyboardWillShow ? keyboardHeightAtEnd - 51 - /*container.collectedViewHeight -*/ container.sliderHeight - container.titlesHeight : 0
+        
+//        if container.queue.isEmpty.inverted {
+//
+            container.setBottomViewTopPrecedence(to: keyboardWillShow ? .bottomEffectView /*.searchBar*/ : container.queue.isEmpty ? .bottomEffectView : .collector)
+//            container.collectedViewTopConstraint.priority = keyboardWillShow ? .defaultHigh : .defaultLow
+//            container.collectedViewBottomConstraint.priority = keyboardWillShow ? .defaultLow : .defaultHigh
+//        }
         
 //        if let controller = navigationController?.delegate as? NavigationAnimationController, controller.disregardViewLayoutDuringKeyboardPresentation.inverted {
 //
@@ -869,7 +890,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
         present(sectionVC, animated: true, completion: nil)
     }
     
-    @objc func updateSections(_ gr: UIScreenEdgePanGestureRecognizer) {
+    @objc func updateSections(_ gr: UIPanGestureRecognizer) {
         
         guard filtering else { return }
         
@@ -887,40 +908,9 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
             
             case .changed:
                 
-                guard let sectionVC = sectionIndexViewController, let view = sectionVC.view, let collectionView = sectionVC.collectionView, let containerView = sectionVC.containerView, let effectView = sectionVC.effectView, let location: CGPoint = {
-                    
-                    if view.convert(effectView.frame, from: containerView).contains(gr.location(in: view)) {
-                        
-                        return gr.location(in: collectionView)
-                        
-                    } else if sectionVC.overflowBahaviour == .squeeze || sectionVC.array.count <= sectionVC.maxRowsAtMaxFontSize, let location: CGPoint = {
-                        
-                        let height: CGFloat = {
-                            
-                            if gr.location(in: collectionView).y < 0 {
-                                
-                                return 1 + 4
-                                
-                            } else if gr.location(in: collectionView).y > collectionView.frame.height {
-                                
-                                return collectionView.frame.height - 1 - 3
-                            }
-                            
-                            return gr.location(in: collectionView).y
-                        }()
-                        
-                        return .init(x: collectionView.center.x, y: height)
-                        
-                    }() {
-                        
-                        return location
-                    }
-                    
-                    return nil
-                    
-                }(), let indexPath = collectionView.indexPathForItem(at: location) else { return }
+                guard let sectionVC = sectionIndexViewController else { return }
                 
-                sectionVC.container?.tableView.scrollToRow(at: .init(row: NSNotFound, section: indexPath.row), at: .top, animated: false)
+                sectionVC.changeSection(gr)
             
             case .ended, .failed/*, .cancelled*/: sectionIndexViewController?.dismissVC()
             
@@ -1025,7 +1015,7 @@ class SearchViewController: UIViewController, Filterable, DynamicSections, Album
                 
                 if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
                 
-                weakSelf.tableView.contentOffset = .init(x: 0, y: -weakSelf.inset)
+                weakSelf.tableView.setContentOffset(.init(x: 0, y: -weakSelf.inset - statusBarHeightValue(from: weakSelf.view)), animated: false)
                 
                 if let operation = weakSelf.filterOperations[text], operation.isCancelled { return }
                 
@@ -1244,7 +1234,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
             case .playlists:
             
                 let playlist = playlists[indexPath.row]
-                cell.prepare(with: playlist, count: MPMediaQuery.for(.playlist, using: playlist).itemsAccessed(at: showiCloudItems ? .all : .standard).cloud.collections?.count ?? 0, number: songCountVisible.inverted ? nil : indexPath.row + 1)
+                cell.prepare(with: playlist, count: MPMediaQuery.for(.playlist, using: playlist).itemsAccessed(at: showiCloudItems ? .all : .standard).cloud.items?.count ?? 0, number: songCountVisible.inverted ? nil : indexPath.row + 1)
                 updateImageView(using: playlist, entityType: .playlist, in: cell, indexPath: indexPath, reusableView: tableView, overridable: self)
             
             case .albums:
@@ -1681,7 +1671,7 @@ extension SearchViewController: EntityCellDelegate {
         
         guard musicPlayer.nowPlayingItem != nil, let indexPath = tableView.indexPath(for: cell) else { return }
         
-        getActionDetails(from: .queue(name: cell.nameLabel.text, query: nil), indexPath: indexPath, actionable: self, vc: self, entityType: .song, entity: getEntity(at: indexPath)!)?.handler()
+        getActionDetails(from: .queue(type: .all, name: cell.nameLabel.text, query: nil), indexPath: indexPath, actionable: self, vc: self, entityType: .song, entity: getEntity(at: indexPath)!)?.handler()
     }
     
     func editButtonTapped(in cell: EntityTableViewCell) {
@@ -1713,13 +1703,15 @@ extension SearchViewController: EntityCellDelegate {
         var actions = [
             SongAction.collect,
             .info(context: context(from: indexPath)),
-            .queue(name: cell.nameLabel.text, query: nil),
+            .queue(type: .all, name: cell.nameLabel.text, query: nil),
+            .queue(type: .playNext, name: cell.nameLabel.text, query: nil),
+            .queue(type: .playLater, name: cell.nameLabel.text, query: nil),
             .newPlaylist,
             .addTo,
             .show(title: cell.nameLabel.text, context: context(from: indexPath), canDisplayInLibrary: true)/*,
             .search(unwinder: nil)*/].map({ singleItemAlertAction(for: $0, entityType: sectionDetails[indexPath.section].category.entityType, using: entity, from: self) })
         
-        if let item = entity as? MPMediaItem, item.existsInLibrary.inverted {
+        if let item = entity as? MPMediaItem, item.canBeAddedToLibrary {
             
             actions.append(singleItemAlertAction(for: .library, entityType: .song, using: item, from: self))
         }
@@ -1821,5 +1813,24 @@ extension SearchViewController: UIPickerViewDelegate, UIPickerViewDataSource {
         
         searchBar.text = array[row]
         searchBar(searchBar, textDidChange: array[row] ?? "")
+    }
+}
+
+extension SearchViewController: UIGestureRecognizerDelegate {
+    
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        
+        guard let gr = gestureRecognizer as? UIPanGestureRecognizer, (gr is UIScreenEdgePanGestureRecognizer).inverted else { return true }
+        
+        guard abs(gr.velocity(in: gr.view).y) > abs(gr.velocity(in: gr.view).x), filtering, sectionDetails.isEmpty.inverted else { return false }
+        
+        return CGRect.init(x: view.frame.size.width - 44, y: 0, width: 44, height: view.bounds.height).contains(gr.location(in: view))
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        
+        guard (gestureRecognizer is UIScreenEdgePanGestureRecognizer).inverted else { return false }
+        
+        return otherGestureRecognizer is UIScreenEdgePanGestureRecognizer
     }
 }

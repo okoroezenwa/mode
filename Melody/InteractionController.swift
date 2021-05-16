@@ -14,6 +14,8 @@ class InteractionController: UIPercentDrivenInteractiveTransition {
     fileprivate var shouldCompleteTransition = false
     fileprivate weak var viewController: UIViewController?
     @objc var presenting = false
+    var operation = UINavigationController.Operation.none
+    weak var operatedObject: AnyObject?
     
     override var completionSpeed: CGFloat {
         
@@ -26,10 +28,14 @@ class InteractionController: UIPercentDrivenInteractiveTransition {
         
         viewController = vc
         
-        let gesture = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(handleGesture(_:)))
-        gesture.edges = !(viewController is PresentedContainerViewController) && !(viewController is UINavigationController) ? .right : .left
+        let leftGR = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(handleGesture(_:)))
+        leftGR.edges = !(viewController is PresentedContainerViewController) && !(viewController is UINavigationController) ? .right : .left
 //        presenting = !(viewController is PresentedContainerViewController) && !(viewController is UINavigationController)
-        vc?.view.addGestureRecognizer(gesture)
+        vc?.view.addGestureRecognizer(leftGR)
+        
+        let rightGR = UIScreenEdgePanGestureRecognizer.init(target: self, action: #selector(handleGesture(_:)))
+        rightGR.edges = .right
+        vc?.view.addGestureRecognizer(rightGR)
     }
     
     @objc func add(to view: UIView, in vc: UIViewController?) {
@@ -40,15 +46,19 @@ class InteractionController: UIPercentDrivenInteractiveTransition {
         gesture.edges = !(viewController is PresentedContainerViewController) && !(viewController is UINavigationController) ? .right : .left
         presenting = !(viewController is PresentedContainerViewController) && !(viewController is UINavigationController)
         view.addGestureRecognizer(gesture)
+        
+        let rightGR = UIScreenEdgePanGestureRecognizer.init(target: self, action: #selector(handleGesture(_:)))
+        rightGR.edges = .right
+        view.addGestureRecognizer(rightGR)
     }
     
-    @objc func handleGesture(_ gestureRecognizer: UIScreenEdgePanGestureRecognizer) {
+    @objc func handleGesture(_ gr: UIScreenEdgePanGestureRecognizer) {
         
         let isNavigationController = viewController is UINavigationController
         
         // 1
-        let translation = gestureRecognizer.translation(in: gestureRecognizer.view)
-        let velocity = gestureRecognizer.velocity(in: gestureRecognizer.view?.superview)
+        let translation = gr.translation(in: gr.view)
+        let velocity = gr.velocity(in: gr.view?.superview)
         var progress: CGFloat = {
             
             if presenting {
@@ -56,38 +66,50 @@ class InteractionController: UIPercentDrivenInteractiveTransition {
                 return translation.x / -UIScreen.main.bounds.width
             }
             
-            return translation.x / (isNavigationController ? 200 : UIScreen.main.bounds.width)
+            return translation.x / (isNavigationController ? (gr.edges == .left ? 200 : -200) : UIScreen.main.bounds.width)
         }()
         
         progress = min(max(progress, 0), 1)
         
-        switch gestureRecognizer.state {
+        switch gr.state {
             
             case .began:
                 // 2
                 interactionInProgress = true
                 
-                if let nVC = viewController as? UINavigationController {
+                if let nVC = viewController as? NavigationController {
                     
-                    guard nVC.topViewController != nVC.viewControllers.first else {
-                        
-                        if let searchVC = nVC.topViewController as? SearchViewController {
+                    if gr.edges == .left {
+                    
+                        guard nVC.topViewController != nVC.viewControllers.first else {
                             
-                            if searchVC.filtering {
+                            if let searchVC = nVC.topViewController as? SearchViewController {
                                 
-                                searchVC.dismissSearch()
-                                
-                            } else if searchVC.onlineOverride {
-                                
-                                searchVC.onlineOverride = false
-//                                    searchVC.updateTempView(hidden: true)
+                                if searchVC.filtering {
+                                    
+                                    searchVC.dismissSearch()
+                                    
+                                } else if searchVC.onlineOverride {
+                                    
+                                    searchVC.onlineOverride = false
+    //                                    searchVC.updateTempView(hidden: true)
+                                }
                             }
+                            
+                            return
                         }
                         
-                        return
+                        nVC.interactive = true
+                        operation = .pop
+                        operatedObject = nVC.popViewController(animated: true)
+                        
+                    } else if gr.edges == .right, let vc = nVC.poppedViewControllers.last {
+                        
+                        nVC.interactive = true
+                        operation = .push
+                        operatedObject = vc
+                        nVC.pushViewController(vc, animated: true)
                     }
-                    
-                    nVC.popViewController(animated: true)
                     
                 } else {
                     
@@ -120,7 +142,39 @@ class InteractionController: UIPercentDrivenInteractiveTransition {
                 } else {
                     
                     finish()
+                    
+                    switch operation {
+                        
+                        case .none: break
+                            
+                        case .push:
+                            
+                            if let nVC = viewController as? NavigationController {
+                                
+                                _ = nVC.poppedViewControllers.removeLast()
+                            }
+                            
+                        case .pop:
+                            
+                            if let nVC = viewController as? NavigationController {
+                                
+                                if let vc = operatedObject as? UIViewController {
+                                
+                                    nVC.poppedViewControllers.append(vc)
+                                
+                                } else if let array = operatedObject as? [UIViewController] {
+                                    
+                                    nVC.poppedViewControllers += array.reversed()
+                                }
+                            }
+                            
+                        @unknown default: break
+                    }
                 }
+                
+                operation = .none
+                operatedObject = nil
+                (viewController as? NavigationController)?.interactive = false
                 
             default: print("Unsupported")
         }

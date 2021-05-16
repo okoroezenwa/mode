@@ -132,7 +132,7 @@ class TextViewController: UIViewController {
                 searchBar.text = newPlaylistVC?.creatorText
                 textView.text = newPlaylistVC?.descriptionText
                 textView.keyboardDismissMode = .onDrag
-                searchBar.becomeFirstResponder()
+//                searchBar.becomeFirstResponder()
             
             case .lyrics:
                 
@@ -165,13 +165,13 @@ class TextViewController: UIViewController {
             
             case .details:
             
-                searchBarBottomConstraint.constant = keyboardWillShow && searchBar.isFirstResponder ? keyboardHeightAtEnd - 6 : 0
+                searchBarBottomConstraint.constant = keyboardWillShow && searchBar.isFirstResponder ? keyboardHeightAtEnd/* - 6*/ : 0
                 
                 UIView.animate(withDuration: 0.3, animations: { self.view.layoutIfNeeded() })
             
             case .lyrics: UIView.animate(withDuration: 0.3, animations: {
                 
-                self.textView.contentInset.bottom = keyboardHeightAtEnd - 6
+                self.textView.contentInset.bottom = keyboardHeightAtEnd/* - 6*/
                 self.textView.scrollIndicatorInsets.bottom = keyboardHeightAtEnd + 4
             })
         }

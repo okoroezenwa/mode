@@ -50,7 +50,7 @@ extension BackgroundHideable {
 }
 
 // MARK: - QueueManager
-protocol QueueManager: class {
+protocol QueueManager: AnyObject {
     
     var queue: [MPMediaItem] { get set }
     var shuffled: Bool { get set }
@@ -84,58 +84,58 @@ extension Contained where Self: UIViewController {
 }
 
 // MARK: - ArtworkContainingCell
-protocol ArtworkContainingCell: class {
+protocol ArtworkContainingCell: AnyObject {
     
     var artworkImageView: (EntityArtworkDisplaying & UIImageView)! { get set }
 }
 
-protocol ArtistTransitionable: class {
+protocol ArtistTransitionable: AnyObject {
     
     var currentItem: MPMediaItem? { get set }
     var currentAlbum: MPMediaItemCollection? { get set }
     var artistQuery: MPMediaQuery? { get set }
 }
 
-protocol AlbumTransitionable: class {
+protocol AlbumTransitionable: AnyObject {
     
     var currentItem: MPMediaItem? { get set }
     var albumQuery: MPMediaQuery? { get set }
 }
 
-protocol PlaylistTransitionable: class {
+protocol PlaylistTransitionable: AnyObject {
     
     var currentItem: MPMediaItem? { get set }
     var playlistQuery: MPMediaQuery? { get set }
 }
 
-protocol PreviewTransitionable: class {
+protocol PreviewTransitionable: AnyObject {
     
     var isCurrentlyTopViewController: Bool { get set }
     var viewController: UIViewController? { get set }
 }
 
-protocol GenreTransitionable: class {
+protocol GenreTransitionable: AnyObject {
     
     var currentItem: MPMediaItem? { get set }
     var currentAlbum: MPMediaItemCollection? { get set }
     var genreQuery: MPMediaQuery? { get set }
 }
 
-protocol ComposerTransitionable: class {
+protocol ComposerTransitionable: AnyObject {
     
     var currentItem: MPMediaItem? { get set }
     var currentAlbum: MPMediaItemCollection? { get set }
     var composerQuery: MPMediaQuery? { get set }
 }
 
-protocol AlbumArtistTransitionable: class {
+protocol AlbumArtistTransitionable: AnyObject {
     
     var currentItem: MPMediaItem? { get set }
     var currentAlbum: MPMediaItemCollection? { get set }
     var albumArtistQuery: MPMediaQuery? { get set }
 }
 
-protocol ArtworkModifying: class {
+protocol ArtworkModifying: AnyObject {
     
     var artwork: UIImage? { get set }
 }
@@ -169,12 +169,12 @@ extension ArtworkModifying {
     }
 }
 
-protocol ArtworkModifierContaining: class {
+protocol ArtworkModifierContaining: AnyObject {
     
     var modifier: ArtworkModifying? { get }
 }
 
-protocol Peekable: class {
+protocol Peekable: AnyObject {
     
     var peeker: UIViewController? { get set }
     var oldArtwork: UIImage? { get set }
@@ -306,7 +306,7 @@ extension TableViewContainer {
         
         let mainBlock: ([MPMediaEntity], [MPMediaPlaylist], [SortSectionDetails], [PlaylistContainer]) -> () = { [weak self] array, recentsArray, details, playlistContainers in
             
-            guard let weakSelf = self, weakSelf.operation?.isCancelled == false else {
+            guard let weakSelf = self, let operation = weakSelf.operation, operation.isCancelled.inverted else {
                 
                 self?.headerView.updateSortActivityIndicator(to: .hidden)
                 
@@ -315,11 +315,66 @@ extension TableViewContainer {
             
             weakSelf.entities = array
             
+            guard operation.isCancelled.inverted else {
+                
+                self?.headerView.updateSortActivityIndicator(to: .hidden)
+                
+                return
+            }
+            
+            if let actionable = weakSelf as? CollectionActionable, let collections = array as? [MPMediaItemCollection] {
+                
+                let items = collections.reduce([], { $0 + $1.items })
+                actionable.actionableSongs = items
+                
+                if actionable.actionableAlertController.presentingViewController != nil {
+                
+                    actionable.actionableAlertController.dismiss(animated: true, completion: {
+                    
+                        if let details = actionable.actionableDetails {
+                        
+                            weakSelf.actionDetails(for: details.action, from: details.vc, using: actionable.actionableSongs, useAlternateTitle: details.useAlternateTitle).handler()
+                            actionable.actionableDetails = nil
+                        }
+                    })
+                }
+            }
+            
+            guard operation.isCancelled.inverted else {
+                
+                self?.headerView.updateSortActivityIndicator(to: .hidden)
+                
+                return
+            }
+            
             if let collectionsVC = weakSelf as? CollectionsViewController, collectionsVC.collectionKind == .playlist {
                 
                 collectionsVC.headerView.playlists = recentsArray
+                
+                guard operation.isCancelled.inverted else {
+                    
+                    self?.headerView.updateSortActivityIndicator(to: .hidden)
+                    
+                    return
+                }
+                
                 collectionsVC.playlistsLoaded = true
+                
+                guard operation.isCancelled.inverted else {
+                    
+                    self?.headerView.updateSortActivityIndicator(to: .hidden)
+                    
+                    return
+                }
+                
                 collectionsVC.libraryVC?.setCurrentOptions()
+                
+                guard operation.isCancelled.inverted else {
+                    
+                    self?.headerView.updateSortActivityIndicator(to: .hidden)
+                    
+                    return
+                }
                 
                 if showPlaylistFolders {
                     
@@ -327,22 +382,64 @@ extension TableViewContainer {
                 }
             }
             
+            guard operation.isCancelled.inverted else {
+                
+                self?.headerView.updateSortActivityIndicator(to: .hidden)
+                
+                return
+            }
+            
             weakSelf.sections = details
+            
+            guard operation.isCancelled.inverted else {
+                
+                self?.headerView.updateSortActivityIndicator(to: .hidden)
+                
+                return
+            }
+            
             weakSelf.headerView.updateSortActivityIndicator(to: .hidden)
             
-            guard weakSelf.operation?.isCancelled == false else { return }
+            guard operation.isCancelled.inverted else {
+                
+                self?.headerView.updateSortActivityIndicator(to: .hidden)
+                
+                return
+            }
             
             if let container = weakSelf as? LibrarySectionContainer {
                 
                 container.updateTopLabels(setTitle: container.libraryVC?.container?.activeViewController?.topViewController == container.libraryVC)
             }
             
+            guard operation.isCancelled.inverted else {
+                
+                self?.headerView.updateSortActivityIndicator(to: .hidden)
+                
+                return
+            }
+            
             if let playlistItemsVC = weakSelf as? PlaylistItemsViewController {
                 
                 playlistItemsVC.updateEmptyLabel(withCount: array.count)
             }
+            
+            guard operation.isCancelled.inverted else {
+                
+                self?.headerView.updateSortActivityIndicator(to: .hidden)
+                
+                return
+            }
 
             weakSelf.updateHeaderView(withCount: array.count)
+            
+            guard operation.isCancelled.inverted else {
+                
+                self?.headerView.updateSortActivityIndicator(to: .hidden)
+                
+                return
+            }
+            
             weakSelf.prepareSupplementaryInfo(animated: true)
             
             if let container = weakSelf as? LibrarySectionContainer {
@@ -367,6 +464,13 @@ extension TableViewContainer {
                 container.libraryVC?.updateEmptyLabel(withCount: array.count, text: text)
             }
             
+            guard operation.isCancelled.inverted else {
+                
+                self?.headerView.updateSortActivityIndicator(to: .hidden)
+                
+                return
+            }
+            
             if weakSelf.filtering, let filterContainer = weakSelf.filterContainer, let text = filterContainer.searchBar?.text {
                 
                 filterContainer.searchBar?(filterContainer.searchBar, textDidChange: text)
@@ -384,14 +488,42 @@ extension TableViewContainer {
                         weakSelf.headerView.showRecents = collectionsVC.showRecents && weakSelf.sortCriteria != .dateAdded
                     }
                     
+                    guard operation.isCancelled.inverted else {
+                        
+                        self?.headerView.updateSortActivityIndicator(to: .hidden)
+                        
+                        return
+                    }
+                    
                     weakSelf.updateHeaderView(withCount: array.count)
+                }
+                
+                guard operation.isCancelled.inverted else {
+                    
+                    self?.headerView.updateSortActivityIndicator(to: .hidden)
+                    
+                    return
                 }
                 
                 weakSelf.tableView.reloadData()
                 
+                guard operation.isCancelled.inverted else {
+                    
+                    self?.headerView.updateSortActivityIndicator(to: .hidden)
+                    
+                    return
+                }
+                
                 if let collectionsVC = weakSelf as? CollectionsViewController, collectionsVC.collectionKind == .playlist {
                     
                     collectionsVC.collectionView?.isHidden = true
+                }
+                
+                guard operation.isCancelled.inverted else {
+                    
+                    self?.headerView.updateSortActivityIndicator(to: .hidden)
+                    
+                    return
                 }
                 
                 if let animator = weakSelf as? CellAnimatable {
@@ -402,10 +534,24 @@ extension TableViewContainer {
                     }
                 }
                 
+                guard operation.isCancelled.inverted else {
+                    
+                    self?.headerView.updateSortActivityIndicator(to: .hidden)
+                    
+                    return
+                }
+                
                 if let collectionsVC = weakSelf as? CollectionsViewController, collectionsVC.collectionKind == .playlist && weakSelf.sortCriteria != .dateAdded {
                     
                     collectionsVC.collectionView?.reloadData()
                     UniversalMethods.performOnMainThread({ collectionsVC.animateCollectionCells() }, afterDelay: 0.1)
+                }
+                
+                guard operation.isCancelled.inverted else {
+                    
+                    self?.headerView.updateSortActivityIndicator(to: .hidden)
+                    
+                    return
                 }
                 
                 weakSelf.scrollToHighlightedRow()
@@ -490,10 +636,10 @@ extension TableViewContainer {
         
         if let collectionsVC = self as? CollectionsViewController, collectionsVC.collectionKind == .playlist { return }
         
-        if let actionable = self as? CollectionActionable {
-            
-            actionable.getActionableSongs()
-        }
+//        if let actionable = self as? CollectionActionable {
+//
+//            actionable.getActionableSongs()
+//        }
         
         if let container = self as? LibrarySectionContainer {
             
@@ -626,12 +772,12 @@ extension TableViewContainer {
     }
 }
 
-protocol HighlightedEntityContaining: class {
+protocol HighlightedEntityContaining: AnyObject {
     
     var highlightedEntities: (song: MPMediaItem?, collection: MPMediaItemCollection?)? { get set }
 }
 
-protocol FilterContaining: class {
+protocol FilterContaining: AnyObject {
     
     var filterContainer: (FilterContainer & UIViewController)? { get set }
 }
@@ -648,7 +794,7 @@ protocol QueryUpdateable {
     func updateWithQuery()
 }
 
-protocol Attributor: class {
+protocol Attributor: AnyObject {
     
     func updateAttributedText(for view: TableHeaderView?, inSection section: Int)
 }
@@ -706,7 +852,7 @@ extension OnlineOverridable {
 //    }
 }
 
-protocol TextContaining: class {
+protocol TextContaining: AnyObject {
     
     var actualFont: UIFont? { get set }
 }
@@ -810,7 +956,7 @@ protocol OptionsContaining {
     var options: LibraryOptions { get }
 }
 
-protocol TableViewContaining: class {
+protocol TableViewContaining: AnyObject {
     
     var tableView: MELTableView! { get set }
 }
@@ -821,7 +967,7 @@ extension TopScrollable {
     
     func scrollToTop() {
         
-        tableView.setContentOffset(.init(x: 0, y: -(navigatable?.inset ?? 0)), animated: true)
+        tableView.setContentOffset(.init(x: 0, y: -(navigatable?.inset ?? 0) - statusBarHeightValue(from: appDelegate.window)), animated: true)
     }
 }
 
@@ -905,14 +1051,15 @@ extension LocationBroadcastable {
     }
 }
 
-protocol EditControlContaining: class {
+protocol EditControlContaining: AnyObject {
     
     var preferredEditingStyle: EditingStyle { get set }
 }
 
-protocol CentreViewDisplaying: class {
+protocol CentreViewDisplaying: PassthroughManaging {
     
     var centreView: CentreView? { get set }
+    #warning("Change property name")
     var currentCentreView: CentreView.CurrentView { get set }
     var centreViewGiantImage: UIImage? { get set }
     var centreViewTitleLabelText: String? { get set }
@@ -1010,4 +1157,9 @@ extension EntityArtworkType {
 extension ThemeStatusProvider {
     
     var isDarkTheme: Bool { darkTheme }
+}
+
+protocol HeaderViewContaining: AnyObject {
+    
+    var headerView: HeaderView { get set }
 }

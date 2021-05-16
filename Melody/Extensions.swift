@@ -13,6 +13,8 @@ import UIKit.UIGeometry
 extension UIEdgeInsets {
     
     public static let zero = UIEdgeInsets()
+    
+    static func equalInsets(of value: CGFloat) -> UIEdgeInsets { .init(top: value, left: value, bottom: value, right: value) }
 }
 #endif
 
@@ -743,6 +745,16 @@ extension MPMediaQuery {
         return self
     }
     
+    func overrideOffline(if condition: Bool) -> MPMediaQuery {
+        
+        if showiCloudItems.inverted && condition.inverted {
+            
+            addFilterPredicate(.offline)
+        }
+        
+        return self
+    }
+    
     func foldersAllowed(_ allowed: Bool) -> MPMediaQuery {
         
         if allowed.inverted {
@@ -1240,4 +1252,25 @@ extension UIViewController: YAxisAnchorable {
     
     var topAnchor: NSLayoutYAxisAnchor { bottomLayoutGuide.topAnchor }
     var bottomAnchor: NSLayoutYAxisAnchor { topLayoutGuide.bottomAnchor }
+}
+
+extension UIGestureRecognizer {
+    
+    func recogniseContinuously(with start: (() -> Void), and end: (() -> Void)?) {
+        
+        switch state {
+            
+            case .began:
+                
+                start()
+                
+            case .changed, .ended:
+                
+                guard let top = topViewController as? VerticalPresentationContainerViewController else { return }
+                
+                top.gestureActivated(self)
+                
+            default: break
+        }
+    }
 }

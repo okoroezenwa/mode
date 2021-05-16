@@ -26,6 +26,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
     @IBOutlet var flowLayout: UICollectionViewFlowLayout!
     @IBOutlet var previousButton: MELButton!
     @IBOutlet var nextButton: MELButton!
+    @IBOutlet var bottomView: UIView!
     
     enum Context {
         
@@ -105,7 +106,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
     var skipsLabel: MELLabel! { return headerView.skipsLabel }
     var updatedLabel: MELLabel! { return headerView.updatedLabel }
     var skipsTitleLabel: MELLabel! { return headerView.skipsTitleLabel }
-    /*@objc */lazy var rateShareView = RateShareView.instance(container: self)
+    lazy var rateShareView = RateShareView.instance(container: self)
     
     var albumButton: MELButton? { return alternateButton2 }
     var artistButton: MELButton? { return alternateButton1 }
@@ -152,7 +153,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
     var albumArtistQuery: MPMediaQuery?
     var viewController: UIViewController?
     var isCurrentlyTopViewController = false
-    var context = Context.song(location: .queue(loaded: false, index: 0), at: 0, within: [musicPlayer.nowPlayingItem].compactMap({ $0 }))
+    var context = Context.song(location: .queue(loaded: false, index: 0), at: 0, within: [musicPlayer.nowPlayingItem].unpacked())
     var tempContext: Context?
     var entityState = EntityState.single
     var container: ContainerViewController? { return appDelegate.window?.rootViewController as? ContainerViewController }
@@ -189,7 +190,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
         
         var actions = [SongAction.collect, .newPlaylist, .addTo]
         
-        if case .song(location: _, at: let index, within: let items) = context, !items[index].existsInLibrary {
+        if case .song(location: _, at: let index, within: let items) = context, items[index].canBeAddedToLibrary {
             
             actions.append(.library)
         }
@@ -215,6 +216,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
         
         let queue = OperationQueue()
         queue.name = "Image Operation Queue"
+        queue.qualityOfService = .userInitiated
         
         return queue
     }()
@@ -275,6 +277,18 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
         
         collectionView.register(UINib.init(nibName: "PlaylistCollectionCell", bundle: nil), forCellWithReuseIdentifier: "playlistCell")
         
+        let inset = 56 as CGFloat
+        collectionView.contentInset.bottom = inset
+        
+        if #available(iOS 13, *) {
+
+            collectionView.verticalScrollIndicatorInsets.bottom = inset// - 6
+
+        } else {
+
+            collectionView.scrollIndicatorInsets.bottom = inset// - 6
+        }
+        
         let hold = UILongPressGestureRecognizer.init(target: self, action: #selector(getInfo(_:)))
         hold.minimumPressDuration = longPressDuration
         hold.delegate = self
@@ -282,6 +296,11 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
         LongPressManager.shared.gestureRecognisers.append(Weak.init(value: hold))
         
         prepareTapGestures()
+        
+        if animateWithPresentation {
+        
+            bottomView.transform = .init(translationX: 0, y: inset/*collectionView.contentInset.bottom*/)
+        }
         
         registerForPreviewing(with: self, sourceView: collectionView)
         
@@ -525,7 +544,7 @@ class InfoViewController: UIViewController, SongActionable, Boldable, AlbumTrans
     
     @objc func addToQueue() {
         
-        Transitioner.shared.addToQueue(from: self, kind: .queries([query]), context: .other, index: (parent as? PresentedContainerViewController)?.index ?? -1, title: titleButton.title(for: .normal))
+        Transitioner.shared.addToQueue(from: self, kind: .queries([query]), context: .other, index: /*(parent as? PresentedContainerViewController)?.index ?? -1*/0, title: titleButton.title(for: .normal))
     }
 
     @IBAction func viewInContext() {
@@ -803,7 +822,7 @@ extension InfoViewController: UICollectionViewDelegate, UICollectionViewDataSour
             }
         }()
         
-        cell.prepare(with: playlist, count: MPMediaQuery.for(.playlist, using: playlist).itemsAccessed(at: showiCloudItems ? .all : .standard).cloud.collections?.count ?? 0, direction: .vertical, position: position, topConstraint: indexPath.row < 3 ? 4 : 2)
+        cell.prepare(with: playlist, count: MPMediaQuery.for(.playlist, using: playlist).itemsAccessed(at: showiCloudItems ? .all : .standard).cloud.items?.count ?? 0, direction: .vertical, position: position, topConstraint: indexPath.row < 3 ? 4 : 2)
         cell.details = (.playlist, width)
         
         return cell
@@ -979,34 +998,6 @@ extension InfoViewController: UIViewControllerPreviewingDelegate {
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
         
         performCommitActions(on: viewControllerToCommit)
-        
-//        if let vc = viewControllerToCommit as? BackgroundHideable {
-//
-//            vc.modifyBackgroundView(forState: .removed)
-//        }
-//
-//        if let vc = viewControllerToCommit as? Peekable {
-//
-//            vc.peeker = nil
-//            vc.oldArtwork = nil
-//        }
-//
-//        if let vc = viewControllerToCommit as? Navigatable, let indexer = vc.activeChildViewController as? IndexContaining {
-//
-//            indexer.tableView.contentInset.top = vc.inset
-//            indexer.tableView.scrollIndicatorInsets.top = vc.inset
-//
-//            if let sortable = indexer as? FullySortable, sortable.highlightedIndex == nil {
-//
-//                indexer.tableView.contentOffset.y = -vc.inset
-//            }
-//
-//            container?.imageView.image = vc.artworkType.image
-//            container?.visualEffectNavigationBar.backBorderView.alpha = 1
-//            container?.visualEffectNavigationBar.backView.isHidden = false
-//            container?.visualEffectNavigationBar.backLabel.text = vc.backLabelText
-//            container?.visualEffectNavigationBar.titleLabel.text = vc.title
-//        }
         
         viewController = viewControllerToCommit
         

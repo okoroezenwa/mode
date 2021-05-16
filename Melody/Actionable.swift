@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol SongActionable: class {
+protocol SongActionable: AnyObject {
     
     var applicableActions: [SongAction] { get }
     var actionableSongs: [MPMediaItem] { get }
@@ -28,7 +28,7 @@ extension SongActionable {
      */
     func showArrayActions(_ sender: Any) {
         
-        guard !actionableSongs.isEmpty, let vc = self as? UIViewController else { return }
+        guard /*!actionableSongs.isEmpty,*/ let vc = self as? UIViewController else { return }
         
 //        var selection: [AlertAction] {
 //
@@ -53,26 +53,28 @@ extension SongActionable {
             
             if vc is NewPlaylistViewController { return "Remove..." }
             
-            guard actionableSongs.count > 1 else { return actionableSongs.first?.validTitle }
+            if vc is CollectorViewController { return "Collected Songs" }
+            
+            guard actionableSongs.count /*>*/ != 1 else { return actionableSongs.first?.validTitle }
             
             var collectionTitle: String? {
-                
+
                 guard let collectionActionable = self as? CollectionActionable else { return nil }
-                
-                return collectionActionable.collectionsCount.fullCountText(for: collectionActionable.collectionKind.entityType) + ", "
+
+                return collectionActionable.collectionCount.fullCountText(for: collectionActionable.collectionKind.entityType)// + ", "
             }
             
-            return (collectionTitle ?? "") + actionableSongs.count.fullCountText(for: .song)
+            return collectionTitle ?? actionableSongs.count.fullCountText(for: .song)
         }()
         
-        let infoAccessory: () -> AccessoryButtonAction? = { [weak vc] in
-            
-            guard let vc = vc, let entityVC = vc.parent as? EntityItemsViewController else { return nil }
-            
-            return { _, presenter in presenter.dismiss(animated: true, completion: { entityVC.showOptions() }) }
-        }
+//        let infoAccessory: () -> AccessoryButtonAction? = { [weak vc] in
+//
+//            guard let vc = vc, let entityVC = vc.parent as? EntityItemsViewController else { return nil }
+//
+//            return { _, presenter in presenter.dismiss(animated: true, completion: { entityVC.showOptions() }) }
+//        }
         
-        vc.showAlert(title: title, with: actions, segmentDetails: (isInDebugMode && (vc is InfoViewController).inverted) ? ([.init(title: "All"), .init(title: "Selected")], [{ _ in }, { _ in }]) : ([], []), rightAction: infoAccessory())
+        vc.showAlert(title: title, with: actions, segmentDetails: (isInDebugMode && (vc is InfoViewController).inverted) && (vc as? TableViewContaining)?.tableView.isEditing == true ? ([.init(title: "All"), .init(title: "Selected")], [{ _ in }, { _ in }]) : ([], [])/*, rightAction: infoAccessory()*/)
     }
     
     func alertActions(from vc: UIViewController) -> [AlertAction] {
@@ -84,7 +86,7 @@ extension SongActionable {
         
         let details = actionDetails(for: action, from: vc, using: array, useAlternateTitle: useAlternateTitle)
         
-        return AlertAction.init(title: details.title, style: details.style, requiresDismissalFirst: action.requiresDismissalFirst, handler: { details.handler() })
+        return AlertAction.init(title: details.title, style: details.style, image: action.icon22, requiresDismissalFirst: (self as? CollectionActionable)?.actionableSongs.isEmpty == true || (vc as? FullySortable)?.operation?.isExecuting == true ? true : action.requiresDismissalFirst, handler: { details.handler() })
     }
     
     func systemAlertActions(from vc: UIViewController) -> [UIAlertAction] {
@@ -111,11 +113,36 @@ extension SongActionable {
     */
     func actionDetails(for action: SongAction, from vc: UIViewController, using array: [MPMediaItem], useAlternateTitle: Bool) -> ActionDetails {
         
+        let collectionActionableBlock: () -> Bool = {
+            
+            if let actionable = self as? CollectionActionable {
+                
+                if array.isEmpty || (vc as? FullySortable)?.operation?.isExecuting == true {
+                    
+                    actionable.actionableDetails = (action, vc, useAlternateTitle)
+                    vc.present(actionable.actionableAlertController, animated: true, completion: nil)
+                }
+                
+                if array.isEmpty && (vc as? FullySortable)?.operation?.isExecuting != true {
+                    
+                    actionable.shouldFillActionableSongs = true
+                    actionable.actionableDetails = (action, vc, useAlternateTitle)
+                    actionable.getActionableSongs()
+                }
+                
+                return false
+            }
+            
+            return true
+        }
+        
         switch action {
             
             case .collect:
                 
                 return (action: action, title: useAlternateTitle ? "Collector" : "Collect", style: .default, {
+                    
+                    guard collectionActionableBlock() else { return }
                 
                     notifier.post(name: .addedToQueue, object: nil, userInfo: [DictionaryKeys.queueItems: array])
                     
@@ -129,7 +156,9 @@ extension SongActionable {
             
             case .addTo:
             
-                return (action: action, title: useAlternateTitle ? "Existing Playlists..." : "Add to Playlists...", style: .default, handler: {
+                return (action: action, title: useAlternateTitle ? "Existing Playlists..." : "Add to Existing Playlists...", style: .default, handler: {
+                    
+                    guard collectionActionableBlock() else { return }
                     
                     guard let presentedVC = presentedStoryboard.instantiateViewController(withIdentifier: "presentedVC") as? PresentedContainerViewController else { return }
                     
@@ -151,7 +180,9 @@ extension SongActionable {
             
             case .newPlaylist:
             
-                return (action: action, title: useAlternateTitle ? "New Playlist..." : "Create Playlist...", style: .default, handler: {
+                return (action: action, title: useAlternateTitle ? "New Playlist..." : "Add to New Playlist...", style: .default, handler: {
+                    
+                    guard collectionActionableBlock() else { return }
                     
                     guard let presentedVC = presentedStoryboard.instantiateViewController(withIdentifier: "presentedVC") as? PresentedContainerViewController else { return }
                     
@@ -173,6 +204,8 @@ extension SongActionable {
             case .customCollection:
                 
                 return (action: action, title: "Add to Collection...", style: .default, {
+                    
+                    guard collectionActionableBlock() else { return }
                     
                     let actions = CollectionItemsTableViewController.Collection.allCases.map({ value -> AlertAction in
                         
@@ -214,6 +247,8 @@ extension SongActionable {
             
                 return (action: action, title: "All", style: .destructive, handler: {
                     
+                    guard collectionActionableBlock() else { return }
+                    
                     guard let vc = vc as? NewPlaylistViewController/*, let parent = vc.parent as? PresentedContainerViewController*/ else { return }
                     
                     if vc.tableView.isEditing {
@@ -228,6 +263,8 @@ extension SongActionable {
             case .library:
             
                 return (action: action, title: useAlternateTitle ? "Library" : "Add to Library", style: .default, handler: {
+                    
+                    guard collectionActionableBlock() else { return }
                     
                     if #available(iOS 10.3, *), let item = musicPlayer.nowPlayingItem {
                         
@@ -270,23 +307,86 @@ extension SongActionable {
                     })
                 })
             
-            case .queue(name: let name, query: _):
+            case .queue(type: let type, name: let name, query: _):
             
-                return (action: action, title: "Queue...", style: .default, {
+                return (action: action, title: type.title, style: .default, {
                     
-                    Transitioner.shared.addToQueue(from: vc, kind: .items(array), context: .other, title: name)
+                    guard collectionActionableBlock() else { return }
+                    
+                    switch type {
+                        
+                        case .all:
+                            
+                            var context: QueueInsertController.Context {
+                                
+                                if let container = vc as? FilterContainer & UIViewController {
+                                    
+                                    return .filterContainer(container)
+                                
+                                } else if let container = vc as? CollectorViewController {
+                                    
+                                    return .collector(manager: container.manager)
+                                }
+                                
+                                return .other
+                            }
+                            
+                            Transitioner.shared.addToQueue(from: vc, kind: .items(array), context: context, title: name)
+                            
+                        case .playNext, .playLater, .shuffleNext, .shuffleLater: musicPlayer.insert(
+                            .items([SongAction.QueueAdditionType.playLater, .playNext].contains(type) ? array : array.shuffled()),
+                            [SongAction.QueueAdditionType.shuffleNext, .playNext].contains(type) ? .next : .last,
+                            alertType: .arbitrary(count: array.count),
+                            from: vc,
+                            withTitle: array.count.fullCountText(for: .song),
+                            subtitle: nil,
+                            alertTitle: type.title)
+                                                        
+                        case .playAfter, .shuffleAfter:
+                            
+                            guard let presentedVC = presentedStoryboard.instantiateViewController(withIdentifier: "presentedVC") as? PresentedContainerViewController else { return }
+                            
+                            presentedVC.itemsToAdd = type == .playAfter ? array : array.shuffled()
+                            presentedVC.context = .playAfter
+                            presentedVC.playAfterVC.title = array.count.fullCountText(for: .song)
+                            vc.present(presentedVC, animated: true, completion: nil)
+                    }
                 })
             
-            case .likedState, .rate, .insert, .show, .reveal, .play, .shuffle, .search:
+            case .likedState, .rate, .insert, .show, .reveal, .search:
             
                 return (action: action, title: "", style: .default, {
                     
                     
                 })
+                
+            case .play(title: _, completion: let completion):
+                
+                return (action: action, title: "Play", style: .default, {
+                    
+                    guard collectionActionableBlock() else { return }
+                    
+                    musicPlayer.play(array, startingFrom: array.first, from: vc, withTitle: array.count.fullCountText(for: .song), alertTitle: "Play", completion: completion)
+                })
+                
+            case .shuffle(mode: let mode, title: _, completion: let completion):
+                
+                return (action: action, title: .shuffle(mode), style: .default, {
+                    
+                    guard collectionActionableBlock() else { return }
+                    
+                    musicPlayer.play(mode == .albums ? array.albumsShuffled : array, startingFrom: nil, shuffleMode: mode == .songs ? .songs : .off, from: vc, withTitle: array.count.fullCountText(for: .song), alertTitle: .shuffle(mode), completion: completion)
+                })
             
             case .info:
             
                 return (action: action, title: useAlternateTitle ? "Info" : "Get Info", style: .default, {
+                    
+                    if let collectionActionable = vc as? CollectionActionable {
+                        
+                        Transitioner.shared.showInfo(from: vc, with: collectionActionable.infoContext)
+                    
+                    }/*
                     
                     if let artistAlbumsVC = vc as? ArtistAlbumsViewController {
                         
@@ -303,7 +403,7 @@ extension SongActionable {
                             default: Transitioner.shared.showInfo(from: collectionsVC, with: .collection(kind: collectionsVC.collectionKind.albumBasedCollectionKind, at: 0, within: collectionsVC.collections))
                         }
                         
-                    } else {
+                    }*/ else {
                         
                         Transitioner.shared.showInfo(from: vc, with: .song(location: .list, at: 0, within: array))
                     }
@@ -361,34 +461,8 @@ class SongActionManager: NSObject {
                 
                 return
             }
-            
-            if let collectionActionable = actionable as? CollectionActionable {
                 
-//                guard collectionActionable.collectionKind != .playlist else { return }
-                
-                if collectionActionable.actionableSongs.isEmpty || collectionActionable.actionableOperation?.isExecuting == true {
-                    
-                    collectionActionable.actionableActivityIndicator.startAnimating()
-                    collectionActionable.shouldFillActionableSongs = true
-                    collectionActionable.showActionsAfterFilling = true
-                    (collectionActionable.editButton?.superview as? PillButtonView)?.stackView?.alpha = 0
-                    
-                    if collectionActionable.actionableSongs.isEmpty {
-                        
-                        if let operation = collectionActionable.actionableOperation, operation.isExecuting { return }
-                        
-                        collectionActionable.getActionableSongs()
-                    }
-                    
-                    return
-                }
-                
-                block()
-            
-            } else {
-                
-                block()
-            }
+            block()
             
             return
         }
@@ -398,7 +472,7 @@ class SongActionManager: NSObject {
     
     @objc func toggleEditing(_ sender: Any) {
         
-        if actionable is QueueViewController, Queue.shared.queueCount < 2 { return }
+        if actionable is QueueViewController, let gr = sender as? UISwipeGestureRecognizer, gr.direction == .right && Queue.shared.queueCount < 2 { return }
         
         if let searchVC = actionable as? SearchViewController {
             
@@ -411,7 +485,7 @@ class SongActionManager: NSObject {
             
             if let collectionActionable = actionable as? CollectionActionable {
                 
-                return collectionActionable.collectionsCount > 0
+                return collectionActionable.actionableCollections.isEmpty.inverted
             
             } else {
                 
@@ -443,7 +517,7 @@ class SongActionManager: NSObject {
             
             if isEditing {
                 
-                let details: (title: String?, image: UIImage) = (editButtonHasTitle ? .inactiveEditButtonTitle : nil, editButtonHasTitle ? .inactiveEditImage : .inactiveEditBorderlessImage)
+                let details: (title: String?, image: UIImage) = (editButtonHasTitle ? .inactiveEditButtonTitle : nil, editButtonHasTitle ? .inactiveEditImage : actionable is NewPlaylistViewController ? #imageLiteral(resourceName: "EditNoBorder17") : .inactiveEditBorderlessImage)
                 
                 if let superview = actionable.editButton?.superview as? PillButtonView {
                     
@@ -501,7 +575,7 @@ class SongActionManager: NSObject {
             
             if !isEditing {
                 
-                let details: (title: String?, image: UIImage) = (editButtonHasTitle ? "Done" : nil, editButtonHasTitle ? .doneImage : .doneBorderlessImage)
+                let details: (title: String?, image: UIImage) = (editButtonHasTitle ? "Done" : nil, editButtonHasTitle ? .doneImage : actionable is NewPlaylistViewController ? #imageLiteral(resourceName: "Done17") : .doneBorderlessImage)
                 
                 if let vc = container as? NewPlaylistViewController {
                     
@@ -550,7 +624,7 @@ class SongActionManager: NSObject {
             
             if let collectionActionable = actionable as? CollectionActionable {
                 
-                return collectionActionable.collectionsCount > 0
+                return collectionActionable.actionableCollections.isEmpty.inverted
             }
             
             return actionable.actionableSongs.isEmpty.inverted
@@ -559,7 +633,7 @@ class SongActionManager: NSObject {
         
         if let indexPaths = container.tableView.indexPathsForVisibleRows {
             
-            let views = Set(indexPaths.map({ $0.section })).map({ container.tableView.headerView(forSection: $0) as? TableHeaderView }).compactMap({ $0 })
+            let views = Set(indexPaths.map({ $0.section })).map({ container.tableView.headerView(forSection: $0) as? TableHeaderView }).unpacked()
             
             for view in views {
                 
@@ -641,7 +715,7 @@ extension SingleItemActionable {
             }
         }()
         
-        return AlertAction.init(title: details.title, style: details.style, requiresDismissalFirst: requiresDismissalFirst, handler: details.handler)
+        return AlertAction.init(title: details.title, style: details.style, image: action.icon22, requiresDismissalFirst: requiresDismissalFirst, handler: details.handler)
     }
     
     /**
@@ -709,7 +783,7 @@ extension SingleItemActionable {
             
             case .addTo:
             
-                return (action: action, title: "Add to Playlists...", style: .default, handler: {
+                return (action: action, title: "Add to Existing Playlists...", style: .default, handler: {
                     
                     guard let presentedVC = presentedStoryboard.instantiateViewController(withIdentifier: "presentedVC") as? PresentedContainerViewController, let array: [MPMediaItem] = {
                         
@@ -741,7 +815,7 @@ extension SingleItemActionable {
             
             case .newPlaylist:
             
-                return (action: action, title: "Create Playlist...", style: .default, handler: {
+                return (action: action, title: "Add to New Playlist...", style: .default, handler: {
                     
                     guard let presentedVC = presentedStoryboard.instantiateViewController(withIdentifier: "presentedVC") as? PresentedContainerViewController, let array: [MPMediaItem] = {
                         
@@ -915,9 +989,9 @@ extension SingleItemActionable {
                     }
                 })
             
-            case .queue(name: let name, query: let query):
+            case .queue(type: let type, name: let name, query: let query):
             
-                return (action: action, title: "Queue...", style: .default, {
+                return (action: action, title: type.title, style: .default, {
                     
                     guard let kind: MPMusicPlayerController.QueueKind = {
                         
@@ -948,7 +1022,36 @@ extension SingleItemActionable {
                         return .other
                     }
                     
-                    Transitioner.shared.addToQueue(from: vc, kind: kind, context: context, title: name)
+                    switch type {
+                        
+                        case .playNext, .playLater, .shuffleNext, .shuffleLater: musicPlayer.insert(
+                            kind,
+                            [SongAction.QueueAdditionType.shuffleNext, .playNext].contains(type) ? .next : .last,
+                            alertType: .entity(name: name ?? .unknownEntity),
+                            from: vc,
+                            withTitle: name,
+                            subtitle: nil,
+                            alertTitle: type.title)
+                            
+                        case .playAfter, .shuffleAfter: guard let presentedVC = presentedStoryboard.instantiateViewController(withIdentifier: "presentedVC") as? PresentedContainerViewController else { return }
+                            
+                            if let query = query {
+                                
+                                presentedVC.query = query
+                                
+                            } else {
+                                
+                                let array = (entity as? MPMediaItemCollection)?.items ?? [entity as? MPMediaItem].unpacked()
+                            
+                                presentedVC.itemsToAdd = type == .playAfter ? array : array.shuffled()
+                            }
+                            
+                            presentedVC.context = .playAfter
+                            presentedVC.playAfterVC.title = name
+                            vc.present(presentedVC, animated: true, completion: nil)
+                        
+                        case .all: Transitioner.shared.addToQueue(from: vc, kind: kind, context: context, title: name)
+                    }
                 })
             
             case .info(let context):
@@ -984,7 +1087,9 @@ extension SingleItemActionable {
                         
                         return nil
                     
-                    }(), let song: MPMediaItem = (entity as? MPMediaItemCollection)?.items.first ?? entity as? MPMediaItem, let verifiable = vc as? EntityVerifiable else { return }
+                    }()/*, let song: MPMediaItem = (entity as? MPMediaItemCollection)?.items.first ?? entity as? MPMediaItem*/, let verifiable = vc as? EntityVerifiable else { return }
+                    
+                    let song: MPMediaItem = (entity as? MPMediaItemCollection)?.items.first ?? entity as? MPMediaItem ?? .init()
                     
                     var actions = [AlertAction]()
                     var parameters = [ShowMenuParameters]()
@@ -1299,25 +1404,13 @@ extension SingleItemActionable {
             
             case .likedState:
             
-                return (action: action, title: "Like...", style: .default, {
+                return (action: action, title: "Change Affinity...", style: .default, {
                     
                     guard let settable = entity as? Settable, let title = entity.title(for: entityType, basedOn: entityType) else { return }
                     
                     let actions = [.none, LikedState.liked, .disliked].map({ value -> AlertAction in
                         
-                        var title: String {
-                            
-                            switch value {
-                                
-                                case .liked: return "Liked"
-                                
-                                case .none: return "Neutral"
-                                
-                                case .disliked: return "Disliked"
-                            }
-                        }
-                        
-                        return AlertAction.init(title: title, style: .default, requiresDismissalFirst: true, handler: {
+                        return AlertAction.init(title: value.title, style: .default, image: value.alertImage, requiresDismissalFirst: true, handler: {
                             
                             settable.set(property: entity is MPMediaItem || entity is MPMediaPlaylist ? .likedState : .albumLikedState, to: NSNumber.init(value: value.rawValue))
                             
@@ -1328,7 +1421,7 @@ extension SingleItemActionable {
                         })
                     })
                     
-                    vc.showAlert(title: title, subtitle: "Set Affinity as...", with: actions)
+                    vc.showAlert(title: title, subtitle: "Set affinity ts...", with: actions)
                 })
             
             case .reveal(indexPath: let indexPath):
@@ -1397,11 +1490,68 @@ extension SingleItemActionable {
 protocol CollectionActionable: SingleItemActionable {
     
     var collectionKind: CollectionsKind { get }
-    var collectionsCount: Int { get }
-    var actionableActivityIndicator: MELActivityIndicatorView { get }
+    var actionableCollections: [MPMediaItemCollection] { get }
     var shouldFillActionableSongs: Bool { get set }
-    var showActionsAfterFilling: Bool { get set }
     var actionableOperation: BlockOperation? { get set }
     var actionableQueue: OperationQueue { get }
-    func getActionableSongs()
+    var actionableSongs: [MPMediaItem] { get set }
+    var actionableAlertController: UIAlertController { get set }
+    var actionableDetails: (action: SongAction, vc: UIViewController, useAlternateTitle: Bool)? { get set }
+}
+
+extension CollectionActionable {
+    
+    var infoContext: InfoViewController.Context {
+        
+        switch collectionKind {
+                
+            case .albumArtist, .artist, .composer, .genre: return .collection(kind: collectionKind.albumBasedCollectionKind, at: 0, within: actionableCollections)
+                
+            case .compilation, .album: return .album(at: 0, within: actionableCollections)
+                
+            case .playlist: return .playlist(at: 0, within: (actionableCollections as? [MPMediaPlaylist])?.filter({ $0.isFolder.inverted }) ?? [])
+        }
+    }
+    
+    var collectionCount: Int { return actionableCollections.value(given: actionableCollections.isEmpty.inverted)?.count ?? (self as? Arrangeable)?.query?.collections?.count ?? 0 }
+    
+    func getActionableSongs() {
+        
+        guard (self as? FullySortable)?.operation?.isExecuting != true, shouldFillActionableSongs else { return }
+        
+        actionableOperation?.cancel()
+        actionableOperation = BlockOperation()
+        actionableOperation?.addExecutionBlock { [weak self] in
+            
+            guard let weakSelf = self, let operation = weakSelf.actionableOperation, operation.isCancelled.inverted else { return }
+            
+            let items = weakSelf.actionableCollections.reduce([], { $0 + $1.items })
+            
+            OperationQueue.main.addOperation {
+                
+                guard operation.isCancelled.inverted else { return }
+                
+                weakSelf.actionableSongs = items
+                
+                guard operation.isCancelled.inverted, let details = weakSelf.actionableDetails else { return }
+                
+                weakSelf.actionableAlertController.dismiss(animated: true, completion: {
+                                                            
+                    weakSelf.actionDetails(for: details.action, from: details.vc, using: weakSelf.actionableSongs, useAlternateTitle: details.useAlternateTitle).handler()
+                    weakSelf.actionableDetails = nil
+                })
+            }
+        }
+        
+        actionableQueue.addOperation(actionableOperation!)
+    }
+    
+    var initialAlertController: UIAlertController {
+        
+        let cancel = UIAlertAction.cancel(withTitle: "Stop", handler: { [weak self] _ in self?.actionableOperation?.cancel() })
+        let controller = UIAlertController.withTitle("Compiling Songs...", message: nil, style: .alert, actions: cancel)
+        controller.view.tintColor = .red
+        
+        return controller
+    }
 }

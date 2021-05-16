@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15510"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -39,7 +39,7 @@
                             <constraint firstAttribute="trailing" secondItem="Cne-NG-ofN" secondAttribute="trailing" id="6Wp-qG-Zrx"/>
                             <constraint firstItem="22h-In-siD" firstAttribute="top" secondItem="Cne-NG-ofN" secondAttribute="bottom" id="Epm-17-vaw"/>
                             <constraint firstItem="Cne-NG-ofN" firstAttribute="leading" secondItem="Ony-9X-tyh" secondAttribute="leading" id="abZ-4A-aab"/>
-                            <constraint firstItem="Cne-NG-ofN" firstAttribute="top" secondItem="h7h-7a-XUw" secondAttribute="bottom" id="mtt-zH-8hw"/>
+                            <constraint firstItem="Cne-NG-ofN" firstAttribute="top" secondItem="Ony-9X-tyh" secondAttribute="top" id="mtt-zH-8hw"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="ZHF-bo-26T"/>
@@ -156,17 +156,17 @@
                                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="ZuA-EM-iOk">
                                                 <rect key="frame" x="0.0" y="49" width="375" height="44"/>
                                                 <subviews>
-                                                    <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ovN-Tz-C5B" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                                    <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ovN-Tz-C5B" customClass="MELButton" customModule="Mode" customModuleProvider="target">
                                                         <rect key="frame" x="0.0" y="0.0" width="125" height="44"/>
                                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                         <inset key="titleEdgeInsets" minX="6" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="6" maxY="2"/>
-                                                        <state key="normal" title="Add (0)" image="Check"/>
+                                                        <state key="normal" title="Add (0)" image="Done13"/>
                                                         <connections>
                                                             <action selector="addItemsToSelectedPlaylists" destination="XKQ-q3-rxA" eventType="touchUpInside" id="eMY-Kt-JR2"/>
                                                         </connections>
                                                     </button>
-                                                    <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JQG-PG-LX1" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                                    <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JQG-PG-LX1" customClass="MELButton" customModule="Mode" customModuleProvider="target">
                                                         <rect key="frame" x="125" y="0.0" width="125" height="44"/>
                                                         <inset key="titleEdgeInsets" minX="6" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="6" maxY="2"/>
@@ -175,7 +175,7 @@
                                                             <action selector="updateHistoryView" destination="XKQ-q3-rxA" eventType="touchUpInside" id="xqz-29-qEV"/>
                                                         </connections>
                                                     </button>
-                                                    <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OAD-Mw-VwW" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                                    <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OAD-Mw-VwW" customClass="MELButton" customModule="Mode" customModuleProvider="target">
                                                         <rect key="frame" x="250" y="0.0" width="125" height="44"/>
                                                         <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                         <inset key="titleEdgeInsets" minX="6" minY="0.0" maxX="0.0" maxY="0.0"/>
@@ -218,7 +218,7 @@
                             <constraint firstItem="1Ff-Yl-YFy" firstAttribute="leading" secondItem="6xh-h1-qgj" secondAttribute="leading" id="YB8-sc-Ei2"/>
                             <constraint firstItem="2UH-Vr-mfF" firstAttribute="top" secondItem="6xh-h1-qgj" secondAttribute="bottom" id="eTx-nc-Tt7"/>
                             <constraint firstItem="1Ff-Yl-YFy" firstAttribute="bottom" secondItem="6xh-h1-qgj" secondAttribute="bottom" id="hJT-Ax-DxP"/>
-                            <constraint firstItem="EdZ-yH-ZX1" firstAttribute="top" secondItem="7Uv-tU-AdR" secondAttribute="bottom" id="iW2-Zl-vAN"/>
+                            <constraint firstItem="EdZ-yH-ZX1" firstAttribute="top" secondItem="UDs-Td-DUe" secondAttribute="top" id="iW2-Zl-vAN"/>
                             <constraint firstAttribute="trailing" secondItem="EdZ-yH-ZX1" secondAttribute="trailing" id="pAn-9e-XSj"/>
                             <constraint firstItem="2UH-Vr-mfF" firstAttribute="top" secondItem="EdZ-yH-ZX1" secondAttribute="bottom" id="q6l-J6-1cM"/>
                             <constraint firstItem="1Ff-Yl-YFy" firstAttribute="trailing" secondItem="6xh-h1-qgj" secondAttribute="trailing" id="zmx-Cp-lT6"/>
@@ -271,14 +271,14 @@
             <point key="canvasLocation" x="1460" y="-154"/>
         </scene>
     </scenes>
-    <resources>
-        <image name="Check" width="11" height="8"/>
-        <image name="History14" width="14" height="14"/>
-        <image name="List" width="13" height="12"/>
-    </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Vs4-ch-VuS"/>
+        <segue reference="KgG-Rc-Xkn"/>
         <segue reference="0B1-yw-O8t"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+    <resources>
+        <image name="Done13" width="13" height="13"/>
+        <image name="History14" width="14" height="14"/>
+        <image name="List" width="13" height="12"/>
+    </resources>
 </document>

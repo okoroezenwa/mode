@@ -18,6 +18,8 @@ extension Array {
         return self[index]
     }
     
+    func unpacked<T>() -> [T] where Element == Optional<T> { compactMap({ $0 }) }
+    
     func inserting(_ element: Element, at index: Index) -> [Element] {
         
         var array = self

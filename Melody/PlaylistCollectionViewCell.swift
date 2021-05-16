@@ -319,7 +319,7 @@ class PlaylistCollectionViewCell: UICollectionViewCell, ArtworkContainingCell, T
     }
 }
 
-protocol PlaylistCollectionCellDelegate: class {
+protocol PlaylistCollectionCellDelegate: AnyObject {
     
     func playThrough(in cell: PlaylistCollectionViewCell)
     func accessoryButtonTapped(in cell: PlaylistCollectionViewCell)

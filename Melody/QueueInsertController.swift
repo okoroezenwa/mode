@@ -122,7 +122,7 @@ class QueueInsertController {
             if case .collector(let queueManager) = context, let manager = queueManager {
                 
                 presentedVC.manager = manager
-                presentedVC.queueTVC.shuffleMode = {
+                presentedVC.playAfterVC.shuffleMode = {
                     
                     switch activeShuffle {
                         
@@ -143,8 +143,8 @@ class QueueInsertController {
                 presentedVC.itemsToAdd = requiredSongs()
             }
             
-            presentedVC.context = .upNext
-            presentedVC.queueTVC.title = labelTitle
+            presentedVC.context = .playAfter
+            presentedVC.playAfterVC.title = labelTitle
             
             alertVC?.present(presentedVC, animated: true, completion: { [weak self] in
                 
@@ -167,7 +167,7 @@ class QueueInsertController {
                 
                 } else if let query = query, activeShuffle == .none {
                     
-                    return .queries([query].compactMap({ $0 }))
+                    return .queries([query].unpacked())
                 
                 } else {
                     
@@ -186,8 +186,8 @@ class QueueInsertController {
                     default: return .shuffle(activeShuffle)
                 }
             }()
-            
-            musicPlayer.insert(kind, sender == .next ? .next : .last, alertType: alertType, from: alertVC, withTitle: labelTitle, subtitle: nil, alertTitle: "\(alertTitle) \(sender == .next ? "Next" : "Later")", completionKind: .completion({
+            #warning("Setting to allow guarding even after presenting QueueInsertVC?")
+            musicPlayer.insert(kind, sender == .next ? .next : .last, alertType: alertType, from: /*warnForQueueInterruption && addGuard ? alertVC : */nil, withTitle: labelTitle, subtitle: nil, alertTitle: "\(alertTitle) \(sender == .next ? "Next" : "Last")", completionKind: .completion({
                 
                 if case .collector = self.context {
                     

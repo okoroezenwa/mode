@@ -63,6 +63,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         musicPlayer.beginGeneratingPlaybackNotifications()
         
         prefs.removeObject(forKey: .activeFont)
+        prefs.removeObject(forKey: .barBlurBehaviour)
         
         if #available(iOS 11, *) {
             
@@ -143,7 +144,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             window?.tintColor = .black
         }
         
-        window?.backgroundColor = darkTheme ? .black : .white
+        window?.backgroundColor = .black//darkTheme ? .black : .white
         
         notifier.addObserver(forName: .themeChanged, object: nil, queue: nil, using: { [weak self] _ in
             
@@ -164,7 +165,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 self?.setTintColour()
             }
             
-            self?.window?.backgroundColor = darkTheme ? .black : .white
+//            self?.window?.backgroundColor = .black//darkTheme ? .black : .white
         })
     }
     
@@ -267,7 +268,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 
                 } else {
                     
-                    Transitioner.shared.showInfo(from: topVC, with: .song(location: .queue(loaded: false, index: Queue.shared.indexToUse), at: 0, within: [musicPlayer.nowPlayingItem].compactMap({ $0 })))
+                    Transitioner.shared.showInfo(from: topVC, with: .song(location: .queue(loaded: false, index: Queue.shared.indexToUse), at: 0, within: [musicPlayer.nowPlayingItem].unpacked()))
                 }
             
             case .nowPlaying:

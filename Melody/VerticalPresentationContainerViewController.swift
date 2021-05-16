@@ -63,7 +63,7 @@ class VerticalPresentationContainerViewController: UIViewController, PreviewTran
     
     enum Context { case sort, actions, alert } // actions referring to actionsVC
     enum RelevantView { case collectionView, tableView, topTableView }
-    enum TopHeaderMode { case bar, entityImage(EntityArtworkType, type: EntityType), themedImage(name: String, height: CGFloat) }
+    enum TopHeaderMode: Equatable { case bar, entityImage(EntityArtworkType, type: EntityType), themedImage(name: String, height: CGFloat) }
     
     var viewController: UIViewController?
     var isCurrentlyTopViewController: Bool = false
@@ -91,6 +91,8 @@ class VerticalPresentationContainerViewController: UIViewController, PreviewTran
     var topPreviewAction: PreviewAction?
     var leftButtonAction: AccessoryButtonAction?
     var rightButtonAction: AccessoryButtonAction?
+    
+    var configurationActions: ((VerticalPresentationContainerViewController) -> ())?
     
     lazy var images: HeaderButtonImages = {
         
@@ -240,6 +242,7 @@ class VerticalPresentationContainerViewController: UIViewController, PreviewTran
         }
         
         prepareTopHeader()
+        configurationActions?(self)
         
         topTableView.isUserInteractionEnabled = topAction != nil
         topTableView.isHidden = topAction == nil
@@ -279,10 +282,10 @@ class VerticalPresentationContainerViewController: UIViewController, PreviewTran
                 
                 case .themedImage(name: _, height: _): return context == .alert && alertVC.actions.first?.info.subtitle == nil ? 0 : 8
                 
-                default: return requiresTopView ? 0 : 8
+                default: return requiresTopView ? 0 : (alertVC.actions.isEmpty.inverted && (alertVC.actions.first?.info.subtitle == nil || requiresTopView.inverted) ? 16 : 8)//8
             }
         }()
-        labelsStackView.layoutMargins.bottom = context == .alert && (alertVC.actions.isEmpty.inverted && alertVC.actions.first?.info.subtitle == nil) ? 20 : 8
+        labelsStackView.layoutMargins.bottom = context == .alert && (alertVC.actions.isEmpty.inverted && (alertVC.actions.first?.info.subtitle == nil || requiresTopView.inverted)) ? 16 : 8
         topView.isHidden = requiresTopView.inverted
         topBorderView.isHidden = requiresTopBorderView.inverted
         labelsStackView.isHidden = title == nil && subtitle == nil

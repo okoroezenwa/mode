@@ -170,7 +170,17 @@ class SectionIndexViewController: UIViewController {
                 
                 if hasHeader, indexPath.row == 0 {
                     
-                    container?.tableView.setContentOffset(.init(x: 0, y: -((container?.navigatable?.activeChildViewController as? CollectionsViewController)?.presented == true ? 0 : container?.navigatable?.inset ?? 0)), animated: false)
+                    let yValue: CGFloat = {
+                        
+                        if (container?.navigatable?.activeChildViewController as? CollectionsViewController)?.presented == true {
+                            
+                            return 0
+                        }
+                        
+                        return -(container?.navigatable?.inset ?? 0) - statusBarHeightValue(from: appDelegate.window)
+                    }()
+                    
+                    container?.tableView.setContentOffset(.init(x: 0, y: yValue), animated: false)
                     
                 } else {
                     
@@ -297,7 +307,7 @@ extension SectionIndexViewController: UICollectionViewDelegate, UICollectionView
         
         if hasHeader, indexPath.row == 0 {
             
-            container?.tableView.setContentOffset(.zero, animated: false)
+            container?.tableView.setContentOffset(.init(x: 0, y: -(container?.navigatable?.inset ?? 0) - statusBarHeightValue(from: appDelegate.window)), animated: false)
             
         } else {
             

@@ -9,9 +9,10 @@
 import UIKit
 import CoreData
 
-class FilterViewController: UIViewController, InfoLoading, SingleItemActionable, CellAnimatable, FilterContainer, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, GenreTransitionable, ComposerTransitionable, PlaylistTransitionable, EntityVerifiable, Arrangeable, Refreshable, PillButtonContaining, Navigatable, Contained, ArtworkModifying, TopScrollable, CentreViewDisplaying {
+class FilterViewController: UIViewController, InfoLoading, SingleItemActionable, CellAnimatable, FilterContainer, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, GenreTransitionable, ComposerTransitionable, PlaylistTransitionable, EntityVerifiable, Arrangeable, Refreshable, PillButtonContaining, Navigatable, Contained, ArtworkModifying, TopScrollable, CentreViewDisplaying, HeaderViewContaining {
     
     @IBOutlet var tableView: MELTableView!
+    @IBOutlet var bottomView: UIView!
     @IBOutlet var filterViewContainer: FilterViewContainer! {
         
         didSet {
@@ -132,6 +133,18 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         set { }
     }
     let components: Set<CentreView.CurrentView.LabelStackViewComponent> = [.image, .title, .subtitle]
+    var passthroughFrames: [CGRect]? {
+        
+        if let header = tableView.tableHeaderView as? HeaderView, let container = appDelegate.window?.rootViewController as? ContainerViewController {
+            
+            let first = tableView.convert(header.frame, to: view)
+            let second = container.view.convert(first, to: container.centreView)
+            
+            return [second]
+        }
+        
+        return nil
+    }
     
     var searchBar: MELSearchBar! { filterViewContainer.filterView.searchBar }
     
@@ -305,16 +318,28 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         
         if let container = container {
             
-            filterViewContainer.removeFromSuperview()
+            bottomView.removeFromSuperview()
             filterViewContainer = container.filterViewContainer
         
         } else {
             
-            internalCentreView.add(to: view, below: self, above: filterViewContainer)
+            internalCentreView.add(to: view, below: self, above: bottomView)
             
+            let inset = 59 as CGFloat
+            
+            filterViewContainer.filterView.borderView.isHidden = true
             filterViewContainer.filterView.alpha = 1
-            tableView.scrollIndicatorInsets.bottom = 53
-            tableView.contentInset.bottom = 53
+            
+            if #available(iOS 13, *) {
+
+                tableView.verticalScrollIndicatorInsets.bottom = inset
+
+            } else {
+
+                tableView.scrollIndicatorInsets.bottom = inset
+            }
+            
+            tableView.contentInset.bottom = inset
         }
         
         centreViewLabelsImage = #imageLiteral(resourceName: "Filter100")
@@ -410,9 +435,14 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
             weakSelf.wasFirstResponder = false
         }
         
-        if searchBar.text?.isEmpty == true, container == nil {
+//        if searchBar.text?.isEmpty == true, container == nil {
+//        
+//            searchBar.becomeFirstResponder()
+//        }
         
-            searchBar.becomeFirstResponder()
+        if animateWithPresentation, container == nil {
+        
+            bottomView.transform = .init(translationX: 0, y: inset)
         }
     }
     
@@ -661,11 +691,11 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         
         let constraint = container == nil ? bottomViewBottomConstraint : filterViewContainer.filterView.filterInputViewBottomConstraint
         let view = container == nil ? self.view : container?.view
-        let negativeConstant: CGFloat = container == nil ? 6 : {
+        let negativeConstant: CGFloat = container == nil ? 0/*6*/ : {
             
             if let container = container {
 
-                return 51 + container.collectedViewHeight + container.sliderHeight + container.titlesHeight
+                return 51 + /*container.collectedViewHeight +*/ container.sliderHeight + container.titlesHeight
             }
             
             return 0
@@ -673,9 +703,14 @@ class FilterViewController: UIViewController, InfoLoading, SingleItemActionable,
         
         constraint?.constant = keyboardWillShow ? keyboardHeightAtEnd - negativeConstant : 0
         
-        if let _ = container, let controller = navigationController?.delegate as? NavigationAnimationController, controller.disregardViewLayoutDuringKeyboardPresentation {
+        if let container = container {
+           
+            if let controller = navigationController?.delegate as? NavigationAnimationController, controller.disregardViewLayoutDuringKeyboardPresentation {
+                
+                return
+            }
             
-            return
+            container.setBottomViewTopPrecedence(to: keyboardWillShow ? .bottomEffectView /*.searchBar*/ : container.queue.isEmpty ? .bottomEffectView : .collector)
         }
         
         UIView.animate(withDuration: duration, animations: {
@@ -1034,7 +1069,7 @@ extension FilterViewController: UIGestureRecognizerDelegate {
 //        showRightButtonOptions()
 //    }
 //
-//    func modifyCollectedView(forState state: QueueViewState, animated: Bool = true) {
+//    func modifyCollectedView(forState state: CollectedViewState, animated: Bool = true) {
 //
 //        UIView.animate(withDuration: animated ? 0.3 : 0, animations: {
 //

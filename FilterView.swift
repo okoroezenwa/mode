@@ -32,6 +32,7 @@ class FilterViewContainer: UIView {
 class FilterView: UIView {
 
     @IBOutlet var searchBar: MELSearchBar!
+    @IBOutlet var borderView: MELBorderView!
     lazy var filterTestButton: MELButton = leftView.testButton
     lazy var propertyButton: MELButton = leftView.propertyButton
     @IBOutlet var filterInputViewBottomConstraint: NSLayoutConstraint!

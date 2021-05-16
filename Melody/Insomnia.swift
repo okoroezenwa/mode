@@ -51,7 +51,7 @@ public enum InsomniaMode: Int {
 /**
  This protocol describes ability to set `batteryStateHandler` and be notified about battery state changes.
  */
-public protocol BatteryStateReporting: class {
+public protocol BatteryStateReporting: AnyObject {
     /**
      You can set this closure to be notified when your device is being plugged/unplugged from charger.
      */

@@ -18,7 +18,7 @@ class Settings {
             
         #else
             
-            return false
+            return Bundle.main.bundleIdentifier?.contains("personal") == true
             
         #endif
     }
@@ -26,6 +26,13 @@ class Settings {
     class func registerDefaults() {
         
         let defaultSortDetails: (sorts: [String: Int], orders: [String: Bool]) = [Location.album, .playlist, .collection(kind: .artist, point: .songs), .collection(kind: .artist, point: .albums), .collection(kind: .albumArtist, point: .songs), .collection(kind: .albumArtist, point: .albums), .collection(kind: .genre, point: .songs), .collection(kind: .genre, point: .albums), .collection(kind: .composer, point: .songs), .collection(kind: .composer, point: .albums)].map({ EntityType.collectionEntityDetails(for: $0) }).map({ $0.type.title(matchingPropertyName: true) + $0.startPoint.title }).reduce(([String: Int](), [String: Bool]()), { ($0.0.appending(key: $1, value: ($1.contains("rtistson") ? .albumName : SortCriteria.standard).rawValue), $0.1.appending(key: $1, value: true)) })
+        
+        let use3D: Bool = {
+            
+            if #available(iOS 14, *) { return true }
+            
+            return false
+        }()
         
         prefs.register(defaults: [
             
@@ -181,7 +188,10 @@ class Settings {
             .useExpandedSlider: false,
             .showMiniPlayerSongTitles: false,
             .showTabBarLabels: true,
-            .useQueuePositionMiniPlayerTitle: true
+            .useQueuePositionMiniPlayerTitle: true,
+            .animateWithPresentation: true,
+            .use3DTransforms: use3D,
+            .hideMiniPlayerTabLabel: false
         ])
         
         sharedDefaults.register(defaults: [
@@ -504,6 +514,7 @@ extension String {
     static let showTabBarLabels = "showTabBarLabels"
     static let useQueuePositionMiniPlayerTitle = "useQueuePositionMiniPlayerTitle"
     static let showCustomCollections = "showCustomCollections"
+    static let hideMiniPlayerTabLabel = "hideMiniPlayerTabLabel"
 }
 
 // MARK: - Notification Settings Constants
@@ -578,6 +589,7 @@ extension NSNotification.Name {
     static let showMiniPlayerSongTitlesChanged = nameByAppending(to: .showMiniPlayerSongTitles)
     static let showTabBarLabelsChanged = nameByAppending(to: .showTabBarLabels)
     static let useQueuePositionMiniPlayerTitleChanged = nameByAppending(to: .useQueuePositionMiniPlayerTitle)
+    static let hideMiniPlayerTabLabelChanged = nameByAppending(to: .hideMiniPlayerTabLabel)
     
     static func nameByAppending(to text: String) -> Notification.Name {
         

@@ -12,7 +12,6 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
 
     @IBOutlet var tableView: MELTableView!
     @IBOutlet var bottomView: UIView!
-    @IBOutlet var editView: UIView!
     @IBOutlet var editButton: MELButton!
     @IBOutlet var nameTextField: MELTextField!
     @IBOutlet var bottomViewBottomConstraint: NSLayoutConstraint!
@@ -75,11 +74,23 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
         view.layoutIfNeeded()
         
         centreView?.add(to: view, below: self, above: bottomView)
-        centreViewLabelsImage = #imageLiteral(resourceName: "AddToPlaylist100")
+        centreViewLabelsImage = #imageLiteral(resourceName: "AddNoBorder100")
         centreViewTitleLabelText = "Playlist Empty"
         centreViewSubtitleLabelText = "Tap ... to add songs to this playlist"
         
         updateEditButton(animated: false)
+        
+        let inset = 56 as CGFloat
+        tableView.contentInset.bottom = inset
+        
+        if #available(iOS 13, *) {
+
+            tableView.verticalScrollIndicatorInsets.bottom = inset
+
+        } else {
+
+            tableView.scrollIndicatorInsets.bottom = inset
+        }
         
         notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         notifier.addObserver(self, selector: #selector(adjustKeyboard(with:)), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -101,7 +112,7 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
         [Notification.Name.entityCountVisibilityChanged, .showExplicitnessChanged].forEach({ notifier.addObserver(self, selector: #selector(updateEntityCountVisibility), name: $0, object: nil) }) 
         [Notification.Name.playerChanged, .MPMusicPlayerControllerNowPlayingItemDidChange].forEach({ notifier.addObserver(self, selector: #selector(updateNowPlaying), name: $0, object: /*musicPlayer*/nil) })
         
-        nameTextField.becomeFirstResponder()
+//        nameTextField.becomeFirstResponder()
         
         (parent as? PresentedContainerViewController)?.transitionStart = { [weak self] in
             
@@ -128,6 +139,11 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
         }
         
         editButton.addTarget(songManager, action: #selector(SongActionManager.toggleEditing(_:)), for: .touchUpInside)
+        
+        if animateWithPresentation {
+        
+            bottomView.transform = .init(translationX: 0, y: inset)
+        }
     }
     
     @objc func updateEntityCountVisibility() {
@@ -209,7 +225,7 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
         
         let keyboardWillShow = notification.name == UIResponder.keyboardWillShowNotification
         
-        bottomViewBottomConstraint.constant = keyboardWillShow ? keyboardHeightAtEnd - 6 : 0
+        bottomViewBottomConstraint.constant = keyboardWillShow ? keyboardHeightAtEnd : 0
         
         UIView.animate(withDuration: duration, animations: { self.view.layoutIfNeeded() })
     }
@@ -424,7 +440,7 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
         if (manager?.queue ?? playlistItems).isEmpty, tableView.isEditing, let button = editButton {
             
             tableView.isEditing = false
-            editButton.setImage(.inactiveEditBorderlessImage, for: .normal)
+            button.setImage(.inactiveEditBorderlessImage, for: .normal)
         }
     }
     
@@ -432,8 +448,8 @@ class NewPlaylistViewController: UIViewController, InfoLoading, EntityContainer,
         
         var array = [AlertAction]()
         
-        let clearAll = alertAction(for: .remove(nil), from: self, using: manager?.queue ?? playlistItems)
-        array.append(clearAll)
+        let clearAll = actionDetails(for: .remove(nil), from: self, using: manager?.queue ?? playlistItems, useAlternateTitle: false)
+        array.append(AlertAction.init(title: clearAll.title, style: clearAll.style, requiresDismissalFirst: clearAll.action.requiresDismissalFirst, handler: clearAll.handler))
         
         if let indexPaths = tableView.indexPathsForSelectedRows, !indexPaths.isEmpty {
             
@@ -519,7 +535,7 @@ extension NewPlaylistViewController: MPMediaPickerControllerDelegate {
             
             parent.prepare(animated: true)
             
-            if let presenter = presentingViewController as? PresentedContainerViewController, presenter.context == .items {
+            if let presenter = presentingViewController as? PresentedContainerViewController, presenter.context == .collector {
                 
                 presenter.prepare(animated: false)
                 presenter.queueVC.tableView.reloadData()
@@ -622,7 +638,7 @@ extension NewPlaylistViewController: UITableViewDelegate, UITableViewDataSource 
                 tableView.reloadData()
             }
             
-            if let presenter = presentingViewController as? PresentedContainerViewController, presenter.context == .items {
+            if let presenter = presentingViewController as? PresentedContainerViewController, presenter.context == .collector {
                 
                 presenter.queueVC.tableView.reloadData()
             }

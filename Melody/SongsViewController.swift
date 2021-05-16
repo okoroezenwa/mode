@@ -10,7 +10,15 @@ import UIKit
 
 class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, ComposerTransitionable, GenreTransitionable, SupplementaryHeaderInfoLoading, CellAnimatable, SingleItemActionable, PillButtonContaining, Refreshable, IndexContaining, LibrarySectionContainer, EntityVerifiable, TopScrollable, EntityContainer {
 
-    @IBOutlet var tableView: MELTableView!
+    @IBOutlet var tableView: MELTableView! {
+        
+        didSet {
+            
+            let gr = UIPanGestureRecognizer.init(target: libraryVC, action: #selector(LibraryViewController.updateSections))
+            gr.delegate = libraryVC
+            tableView.addGestureRecognizer(gr)
+        }
+    }
     lazy var headerView: HeaderView = {
         
         let view = HeaderView.instance
@@ -32,9 +40,9 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
         
         didSet {
             
-            let shuffleView = PillButtonView.with(title: .shuffleButtonTitle, image: #imageLiteral(resourceName: "Shuffle13"), tapAction: .init(action: #selector(shuffle), target: self))
-            shuffleButton = shuffleView.button
-            self.shuffleView = shuffleView
+            let actionsView = PillButtonView.with(title: "Actions", image: #imageLiteral(resourceName: "ActionsMenu15"), tapAction: .init(action: #selector(SongActionManager.showActionsForAll(_:)), target: songManager), longPressAction: .init(action: #selector(SongActionManager.showActionsForAll(_:)), target: songManager))
+            itemActionsButton = actionsView.button
+            self.itemActionsView = actionsView
             
             let filterView = PillButtonView.with(title: "Filter", image: #imageLiteral(resourceName: "Filter13"), tapClosure: { [weak self] _ in
                 
@@ -44,11 +52,11 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
             })
             self.filterView = filterView
             
-            let editView = PillButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, tapAction: .init(action: #selector(SongActionManager.toggleEditing(_:)), target: songManager), longPressAction: .init(action: #selector(SongActionManager.showActionsForAll(_:)), target: songManager))
+            let editView = PillButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, tapAction: .init(action: #selector(SongActionManager.toggleEditing(_:)), target: songManager))
             editButton = editView.button
             self.editView = editView
             
-            [shuffleView, filterView, editView].forEach({ actionsStackView.addArrangedSubview($0) })
+            [editView, filterView, actionsView].forEach({ actionsStackView.addArrangedSubview($0) })
         }
     }
     
@@ -74,18 +82,9 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
     
     var activityIndicator = MELActivityIndicatorView.init()
     var arrangeButton: MELButton!
-    var editButton: MELButton! {
-        
-        didSet {
-            
-            let allHold = UILongPressGestureRecognizer.init(target: songManager, action: #selector(SongActionManager.showActionsForAll(_:)))
-            allHold.minimumPressDuration = longPressDuration
-            editButton.addGestureRecognizer(allHold)
-            LongPressManager.shared.gestureRecognisers.append(Weak.init(value: allHold))
-        }
-    }
-    var shuffleButton: MELButton!
-    var shuffleView: PillButtonView!
+    var editButton: MELButton!
+    var itemActionsButton: MELButton!
+    var itemActionsView: PillButtonView!
     var filterView: PillButtonView!
     var editView: PillButtonView!
     var totalDurationLabel: MELLabel!
@@ -190,8 +189,17 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
                 
                 if applySort {
                     
-                    sortAllItems()
+                    if sortCriteria == .random {
+                        
+                        songs.reverse()
+                        tableView.reloadData()
+                        
+                    } else {
+                    
+                        sortAllItems()
+                    }
                 }
+                
                 prefs.set(ascending, forKey: .songsOrder)
             }
         }
@@ -364,15 +372,15 @@ class SongsViewController: UIViewController, FilterContextDiscoverable, AlbumTra
     func updateHeaderView(withCount count: Int) {
         
         tableView.tableHeaderView?.frame.size.height = 92 + (showRecentSongs ? headerView.collectionViewHeaderHeightConstraint.constant + headerView.collectionViewHeightConstraint.constant : 0)
-        shuffleButton.superview?.isHidden = count < 2
+//        itemActionsButton.superview?.isHidden = count < 2
         tableView.tableHeaderView = headerView
         
-        var array = [shuffleView, filterView, editView]
+        var array = [editView, filterView, itemActionsView]
         
-        if count < 2 {
-            
-            array.remove(at: 0)
-        }
+//        if count < 2 {
+//
+//            array.remove(at: 0)
+//        }
         
         borderedButtons = array
         

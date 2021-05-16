@@ -8,16 +8,30 @@
 
 import UIKit
 
-class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, SupplementaryHeaderInfoLoading, ArtistTransitionable, AlbumArtistTransitionable, GenreTransitionable, QueryUpdateable, CellAnimatable, EntityContainer, PillButtonContaining, Refreshable, IndexContaining, EntityVerifiable, TopScrollable, AlbumTransitionable {
+class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, SupplementaryHeaderInfoLoading, ArtistTransitionable, AlbumArtistTransitionable, GenreTransitionable, QueryUpdateable, CellAnimatable, EntityContainer, PillButtonContaining, Refreshable, IndexContaining, EntityVerifiable, TopScrollable, AlbumTransitionable, CollectionActionable {
     
-    @IBOutlet var tableView: MELTableView!
+    @IBOutlet var tableView: MELTableView! {
+        
+        didSet {
+            
+            let gr = UIPanGestureRecognizer.init(target: entityVC, action: #selector(EntityItemsViewController.updateSections))
+            gr.delegate = entityVC
+            tableView.addGestureRecognizer(gr)
+        }
+    }
     
     @objc lazy var headerView: HeaderView = {
         
         let view = HeaderView.instance
         self.actionsStackView = view.actionsStackView
         self.stackView = view.scrollStackView
-        view.buttonDetails = [(.grouping, #imageLiteral(resourceName: "Grouping13"), currentArtistQuery?.collections?.count.fullCountText(for: .album, capitalised: false), { [weak self] in self?.entityVC?.showGroupings() }), (.sort, #imageLiteral(resourceName: "Order13"), arrangementLabelText, { [weak self] in self?.showArranger() }), (.info, #imageLiteral(resourceName: "InfoNoBorder13"), nil, { [weak self] in self?.entityVC?.showOptions() })]
+        view.buttonDetails = [
+            
+            (.grouping, #imageLiteral(resourceName: "Grouping13"), currentArtistQuery?.collections?.count.fullCountText(for: .album, capitalised: false), { [weak self] in self?.entityVC?.showGroupings() }),
+            (.sort, #imageLiteral(resourceName: "Order13"), arrangementLabelText, { [weak self] in self?.showArranger() }),
+            (.info, #imageLiteral(resourceName: "InfoNoBorder13"), nil, { [weak self] in self?.entityVC?.showOptions() }),
+            (.share, #imageLiteral(resourceName: "Share14"), nil, { })
+        ]
         view.showInfo = true
         view.showGrouping = true
         view.sortButton.setTitle(arrangementLabelText, for: .normal)
@@ -32,9 +46,9 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, S
         
         didSet {
             
-            let shuffleView = PillButtonView.with(title: .shuffleButtonTitle, image: #imageLiteral(resourceName: "Shuffle13"), tapAction: .init(action: #selector(shuffle), target: self))
-            shuffleButton = shuffleView.button
-            self.shuffleView = shuffleView
+            let actionsView = PillButtonView.with(title: "Actions", image: #imageLiteral(resourceName: "ActionsMenu15"), tapAction: .init(action: #selector(SongActionManager.showActionsForAll(_:)), target: songManager), longPressAction: .init(action: #selector(SongActionManager.showActionsForAll(_:)), target: songManager))
+            itemActionsButton = actionsView.button
+            self.itemActionsView = actionsView
             
             let filterView = PillButtonView.with(title: "Filter", image: #imageLiteral(resourceName: "Filter13"), tapClosure: { [weak self] _ in
                 
@@ -44,12 +58,11 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, S
             })
             self.filterView = filterView
             
-            let editView = PillButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, tapAction: .init(action: #selector(SongActionManager.toggleEditing(_:)), target: songManager), longPressAction: .init(action: #selector(SongActionManager.showActionsForAll(_:)), target: songManager))
-            editView.borderViewContainer.centre(actionableActivityIndicator)
+            let editView = PillButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, tapAction: .init(action: #selector(SongActionManager.toggleEditing(_:)), target: songManager))
             editButton = editView.button
             self.editView = editView
             
-            [shuffleView, filterView, editView].forEach({ actionsStackView.addArrangedSubview($0) })
+            [editView, filterView, actionsView].forEach({ actionsStackView.addArrangedSubview($0) })
         }
     }
     @objc var stackView: UIStackView! {
@@ -77,23 +90,14 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, S
     
     @objc var activityIndicator: MELActivityIndicatorView!
     @objc var arrangeButton: MELButton!
-    @objc var editButton: MELButton! {
-        
-        didSet {
-            
-            let allHold = UILongPressGestureRecognizer.init(target: songManager, action: #selector(SongActionManager.showActionsForAll(_:)))
-            allHold.minimumPressDuration = longPressDuration
-            editButton.addGestureRecognizer(allHold)
-            LongPressManager.shared.gestureRecognisers.append(Weak.init(value: allHold))
-        }
-    }
-    @objc var shuffleButton: MELButton!
+    @objc var editButton: MELButton!
+    @objc var itemActionsButton: MELButton!
     @objc var totalDurationLabel: MELLabel!
     @objc var dateCreatedLabel: MELLabel!
     @objc var playsLabel: MELLabel!
     @objc var sizeLabel: MELLabel!
     
-    @objc var shuffleView: PillButtonView!
+    @objc var itemActionsView: PillButtonView!
     @objc var filterView: PillButtonView!
     @objc var editView: PillButtonView!
     @objc var actionableActivityIndicator = MELActivityIndicatorView.init()
@@ -105,11 +109,20 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, S
     
     @objc lazy var sorter: Sorter = { Sorter.init(operation: self.operation) }()
     
-    @objc var actionableSongs: [MPMediaItem] { return songs }
+    @objc var actionableSongs: [MPMediaItem] {
+        
+        get { songs }
+        
+        set { songs = newValue }
+    }
+    var actionableCollections: [MPMediaItemCollection] { return filtering ? filteredAlbums : albums }
     var shouldFillActionableSongs = false
-    var showActionsAfterFilling = false
-    var collectionsCount: Int { return albums.count }
+    var isCollectingSongs = false
     var songs = [MPMediaItem]()
+    #warning("Add filteredSongs array for this and CollectionsVC for Actionable actions during filtering")
+    lazy var actionableAlertController = initialAlertController
+    var actionableDetails: (action: SongAction, vc: UIViewController, useAlternateTitle: Bool)?
+    
     var collectionKind: CollectionsKind { return entityVC?.kind.collectionKind ?? .artist }
     var applicableActions: [SongAction] {
         
@@ -129,7 +142,7 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, S
             }
         }
         
-        return [SongAction.collect, .info(context: .album(at: 0, within: [])), .queue(name: name, query: nil), .newPlaylist, .addTo]
+        return [SongAction.collect, .info(context: .album(at: 0, within: [])), .queue(type: .playNext, name: name, query: nil), .queue(type: .playLater, name: name, query: nil), .queue(type: .all, name: name, query: nil), .newPlaylist, .addTo]
     }
     @objc lazy var songManager: SongActionManager = { return SongActionManager.init(actionable: self) }()
     
@@ -195,7 +208,15 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, S
                 
                 if applySort {
                     
-                    sortAllItems()
+                    if sortCriteria == .random {
+                        
+                        albums.reverse()
+                        tableView.reloadData()
+                        
+                    } else {
+                    
+                        sortAllItems()
+                    }
                 }
                 
                 if let collection = entityVC?.collection {
@@ -587,16 +608,16 @@ class ArtistAlbumsViewController: UIViewController, FilterContextDiscoverable, S
     
     @objc func updateHeaderView(withCount count: Int) {
         
-        shuffleButton.superview?.isHidden = count < 2
+//        itemActionsButton.superview?.isHidden = count < 2
         tableView.tableHeaderView?.frame.size.height = 92
         tableView.tableHeaderView = headerView
         
-        var array = [shuffleView, filterView, editView]
+        let array = [editView, filterView, itemActionsView]
         
-        if count < 2 {
-            
-            array.remove(at: 0)
-        }
+//        if count < 2 {
+//
+//            array.remove(at: 0)
+//        }
         
         borderedButtons = array
         
@@ -868,56 +889,4 @@ extension ArtistAlbumsViewController: FullySortable {
         
         getActionableSongs()
     }*/
-}
-
-extension ArtistAlbumsViewController: CollectionActionable {
-    
-    func getActionableSongs() {
-        
-        guard shouldFillActionableSongs else { return }
-        
-        actionableOperation?.cancel()
-        actionableOperation = BlockOperation()
-        actionableOperation?.addExecutionBlock { [weak self] in
-            
-            guard let weakSelf = self, let operation = weakSelf.actionableOperation, operation.isCancelled.inverted else {
-                
-                self?.actionableActivityIndicator.stopAnimating()
-                self?.editView.stackView?.alpha = 1
-                self?.editButton.superview?.isUserInteractionEnabled = true
-                self?.showActionsAfterFilling = false
-                
-                return
-            }
-            
-            let items = weakSelf.albums.reduce([], { $0 + $1.items })
-            
-            OperationQueue.main.addOperation {
-                
-                guard operation.isCancelled.inverted else {
-                    
-                    weakSelf.actionableActivityIndicator.stopAnimating()
-                    weakSelf.editView.stackView?.alpha = 1
-                    weakSelf.editButton.superview?.isUserInteractionEnabled = true
-                    weakSelf.showActionsAfterFilling = false
-                    
-                    return
-                }
-                
-                weakSelf.songs = items
-                
-                if weakSelf.showActionsAfterFilling {
-                    
-                    weakSelf.showArrayActions(weakSelf.tableView.isEditing ? weakSelf.editButton as Any : weakSelf as Any)
-                }
-                
-                weakSelf.actionableActivityIndicator.stopAnimating()
-                weakSelf.editView.stackView?.alpha = 1
-                weakSelf.editButton.superview?.isUserInteractionEnabled = true
-                weakSelf.showActionsAfterFilling = false
-            }
-        }
-        
-        actionableQueue.addOperation(actionableOperation!)
-    }
 }

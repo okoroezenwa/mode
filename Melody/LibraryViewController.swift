@@ -155,6 +155,18 @@ class LibraryViewController: UIViewController, Contained, OptionsContaining, Nav
         
         set { }
     }
+    var passthroughFrames: [CGRect]? {
+        
+        if let vc = activeChildViewController as? SupplementaryHeaderInfoLoading & TableViewContaining & UIViewController, let tableView = vc.tableView, let header = tableView.tableHeaderView as? HeaderView, let container = appDelegate.window?.rootViewController as? ContainerViewController {
+            
+            let first = tableView.convert(header.frame, to: vc.view)
+            let second = containerView.convert(first, to: container.centreView)
+            
+            return [second]
+        }
+        
+        return nil
+    }
 
     override func viewDidLoad() {
         
@@ -187,19 +199,12 @@ class LibraryViewController: UIViewController, Contained, OptionsContaining, Nav
 
         container?.visualEffectNavigationBar.titleLabel.text = title
         
-        let edge = UIScreenEdgePanGestureRecognizer.init(target: self, action: #selector(updateSections))
-        edge.edges = .right
-        view.addGestureRecognizer(edge)
-        
-        if let parent = parent as? PresentedContainerViewController {
-            
-            let edge = UIScreenEdgePanGestureRecognizer.init(target: self, action: #selector(updateSections))
-            edge.edges = .right
-            parent.view.addGestureRecognizer(edge)
-        }
+        let gr = UIPanGestureRecognizer.init(target: self, action: #selector(updateSections))
+        gr.delegate = self
+        (activeChildViewController as? TableViewContaining)?.tableView?.addGestureRecognizer(gr)
     }
     
-    @objc func updateSections(_ gr: UIScreenEdgePanGestureRecognizer) {
+    @objc func updateSections(_ gr: UIPanGestureRecognizer) {
         
         guard let tableDelegate = (activeChildViewController as? TableViewContainer)?.tableDelegate else { return }
         
@@ -208,48 +213,10 @@ class LibraryViewController: UIViewController, Contained, OptionsContaining, Nav
             case .began: tableDelegate.viewSections()
             
             case .changed:
-            
-                guard let sectionVC = (activeChildViewController as? IndexContaining)?.sectionIndexViewController, let view = sectionVC.view, let collectionView = sectionVC.collectionView, let containerView = sectionVC.containerView, let effectView = sectionVC.effectView, let location: CGPoint = {
-                    
-                    if view.convert(effectView.frame, from: containerView).contains(gr.location(in: view)) {
-
-                        return gr.location(in: collectionView)
-                        
-                    } else if sectionVC.overflowBahaviour == .squeeze || sectionVC.array.count <= sectionVC.maxRowsAtMaxFontSize, let location: CGPoint = {
-                        
-                        let height: CGFloat = {
-                            
-                            if gr.location(in: collectionView).y < 0 {
-                                
-                                return 1 + 4
-                                
-                            } else if gr.location(in: collectionView).y > collectionView.frame.height {
-                                
-                                return collectionView.frame.height - 1 - 3
-                            }
-                            
-                            return gr.location(in: collectionView).y
-                        }()
-                        
-                        return .init(x: collectionView.center.x, y: height)
-                        
-                    }() {
-                        
-                        return location
-                    }
-                    
-                    return nil
-                    
-                }(), let indexPath = collectionView.indexPathForItem(at: location) else { return }
-        
-                if sectionVC.hasHeader, indexPath.row == 0 {
-                    
-                    sectionVC.container?.tableView.setContentOffset(.init(x: 0, y: (activeChildViewController as? CollectionsViewController)?.presented == true ? 0 : -inset), animated: false)
-                    
-                } else {
-                    
-                    sectionVC.container?.tableView.scrollToRow(at: .init(row: NSNotFound, section: indexPath.row - (sectionVC.hasHeader ? 1 : 0)), at: .top, animated: false)
-                }
+                
+                guard let sectionVC = (activeChildViewController as? IndexContaining)?.sectionIndexViewController else { return }
+                
+                sectionVC.changeSection(gr)
             
             case .ended, .failed: (activeChildViewController as? IndexContaining)?.sectionIndexViewController?.dismissVC()
             
@@ -469,6 +436,25 @@ extension LibraryViewController {
         vc.collectionKind = collectionKind
         
         return vc
+    }
+}
+
+extension LibraryViewController: UIGestureRecognizerDelegate {
+    
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        
+        guard let gr = gestureRecognizer as? UIPanGestureRecognizer, (gr is UIScreenEdgePanGestureRecognizer).inverted else { return true }
+        
+        guard abs(gr.velocity(in: gr.view).y) > abs(gr.velocity(in: gr.view).x), let vc = activeChildViewController as? TableViewContainer, vc.tableDelegate.sectionIndexTitles(for: vc.tableView, filtering: false) != nil else { return false }
+        
+        return CGRect.init(x: view.frame.size.width - 44, y: 0, width: 44, height: view.bounds.height).contains(gr.location(in: view))
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        
+        guard (gestureRecognizer is UIScreenEdgePanGestureRecognizer).inverted else { return false }
+        
+        return otherGestureRecognizer is UIScreenEdgePanGestureRecognizer
     }
 }
 

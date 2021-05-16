@@ -29,7 +29,7 @@ enum ModeBuild: String {
     case release = "com.okoroezenwa.ModePlayer"
 }
 
-enum EntityArtworkType {
+enum EntityArtworkType: Equatable {
     
     enum Size { case small, regular, large, extraLarge }
     enum GranularEntityType { case song, album, compilation, artist, albumArtist, genre, composer, playlist, smartPlaylist, geniusPlaylist }
@@ -89,7 +89,7 @@ enum EntityArtworkType {
     }
 }
 
-protocol EntityArtworkDisplaying: class {
+protocol EntityArtworkDisplaying: AnyObject {
     
     var artworkType: EntityArtworkType { get set }
 }

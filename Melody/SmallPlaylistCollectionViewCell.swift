@@ -96,14 +96,14 @@ class SmallPlaylistCollectionViewCell: UICollectionViewCell, ArtworkContainingCe
         })
     }
     
-    @objc func prepare(with playlist: MPMediaPlaylist, shouldHideChevron hideChevron: Bool) {
+    @objc func prepare(with playlist: MPMediaPlaylist, shouldHideChevron hideChevron: Bool, vc: Any? = nil) {
         
         nameLabel.text = playlist.validName
         chevron.isHidden = hideChevron
         chevronLeadingConstraint.constant = hideChevron ? 0 : 8
         chevronWidthConstraint.constant = hideChevron ? 0 : 10
         
-        songCountLabel.text = playlist.items.count.fullCountText(for: .song)
+        songCountLabel.text = MPMediaQuery.for(.playlist, using: playlist).itemsAccessed(at: vc is LastUsedController || showiCloudItems ? .all : .standard).overrideOffline(if: vc is LastUsedController).items?.count.fullCountText(for: .song)
         
         let granularType: EntityArtworkType.GranularEntityType = {
             

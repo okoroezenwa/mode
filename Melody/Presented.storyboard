@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_0" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15510"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -28,10 +28,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XpN-em-90f">
-                                <rect key="frame" x="6" y="20" width="308" height="542"/>
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <subviews>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="kXk-gR-kLO" customClass="ShadowImageView" customModule="Mode" customModuleProvider="target">
-                                        <rect key="frame" x="-30" y="-30" width="368" height="602"/>
+                                    <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="kXk-gR-kLO" customClass="ShadowImageView" customModule="Mode" customModuleProvider="target">
+                                        <rect key="frame" x="-30" y="-30" width="380" height="628"/>
                                         <userDefinedRuntimeAttributes>
                                             <userDefinedRuntimeAttribute type="number" keyPath="radius">
                                                 <integer key="value" value="14"/>
@@ -45,16 +45,16 @@
                                         </userDefinedRuntimeAttributes>
                                     </imageView>
                                     <view clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Xsi-BV-UjQ">
-                                        <rect key="frame" x="0.0" y="0.0" width="308" height="542"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                         <subviews>
                                             <visualEffectView opaque="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="trW-Zk-lgl" customClass="MELVisualEffectView" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="0.0" width="308" height="542"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="7kP-HA-DyU">
-                                                    <rect key="frame" x="0.0" y="0.0" width="308" height="542"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
                                                         <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gIU-j1-DAl">
-                                                            <rect key="frame" x="0.0" y="0.0" width="308" height="44"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                                                             <subviews>
                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="y9v-xd-7i8">
                                                                     <rect key="frame" x="0.0" y="0.0" width="44" height="44"/>
@@ -72,11 +72,12 @@
                                                                                 </userDefinedRuntimeAttribute>
                                                                             </userDefinedRuntimeAttributes>
                                                                         </view>
-                                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="a5S-FY-eFj" userLabel="Dismiss" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="a5S-FY-eFj" userLabel="Dismiss" customClass="MELButton" customModule="Mode" customModuleProvider="target">
                                                                             <rect key="frame" x="0.0" y="0.0" width="44" height="44"/>
                                                                             <gestureRecognizers/>
                                                                             <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                                            <state key="normal" image="DismissNoBorder"/>
+                                                                            <inset key="contentEdgeInsets" minX="0.0" minY="2" maxX="0.0" maxY="0.0"/>
+                                                                            <state key="normal" image="DownArrow12"/>
                                                                             <connections>
                                                                                 <action selector="dismissVC" destination="UAb-mW-r6B" eventType="touchUpInside" id="qEF-aT-179"/>
                                                                             </connections>
@@ -93,10 +94,10 @@
                                                                     </constraints>
                                                                 </view>
                                                                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="toS-GL-p50">
-                                                                    <rect key="frame" x="44" y="0.0" width="220" height="44"/>
+                                                                    <rect key="frame" x="44" y="0.0" width="232" height="44"/>
                                                                     <subviews>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ts5-i7-xxd" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="0.0" y="8" width="220" height="28"/>
+                                                                            <rect key="frame" x="0.0" y="8" width="232" height="28"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Bold" family="Myriad Pro" pointSize="22"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
@@ -108,7 +109,7 @@
                                                                             </userDefinedRuntimeAttributes>
                                                                         </label>
                                                                         <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Prompt" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BP0-qZ-7G2" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                                            <rect key="frame" x="0.0" y="0.0" width="220" height="0.0"/>
+                                                                            <rect key="frame" x="0.0" y="0.0" width="232" height="0.0"/>
                                                                             <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="15"/>
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
@@ -123,7 +124,7 @@
                                                                     <edgeInsets key="layoutMargins" top="8" left="0.0" bottom="8" right="0.0"/>
                                                                 </stackView>
                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="KRv-le-0ra">
-                                                                    <rect key="frame" x="264" y="0.0" width="44" height="44"/>
+                                                                    <rect key="frame" x="276" y="0.0" width="44" height="44"/>
                                                                     <subviews>
                                                                         <view userInteractionEnabled="NO" alpha="0.059999999999999998" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ocE-Yg-Hlm" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
                                                                             <rect key="frame" x="10" y="10" width="24" height="24"/>
@@ -142,7 +143,7 @@
                                                                             <rect key="frame" x="12" y="12" width="20" height="20"/>
                                                                             <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                         </activityIndicatorView>
-                                                                        <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rSP-qP-tm4" userLabel="Discard" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                                                        <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rSP-qP-tm4" userLabel="Discard" customClass="MELButton" customModule="Mode" customModuleProvider="target">
                                                                             <rect key="frame" x="0.0" y="0.0" width="44" height="44"/>
                                                                             <constraints>
                                                                                 <constraint firstAttribute="width" constant="44" id="7WU-oj-cVx"/>
@@ -173,13 +174,13 @@
                                                             </constraints>
                                                         </stackView>
                                                         <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="y7R-9t-1tT" customClass="MELActivityIndicatorView" customModule="Mode" customModuleProvider="target">
-                                                            <rect key="frame" x="135.5" y="252.5" width="37" height="37"/>
+                                                            <rect key="frame" x="141.5" y="265.5" width="37" height="37"/>
                                                         </activityIndicatorView>
                                                         <containerView opaque="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wTT-Wj-puz">
-                                                            <rect key="frame" x="0.0" y="45" width="308" height="497"/>
+                                                            <rect key="frame" x="0.0" y="45" width="320" height="523"/>
                                                         </containerView>
                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ymt-Wm-2e6" userLabel="Top Divider View" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                                            <rect key="frame" x="0.0" y="44" width="308" height="1"/>
+                                                            <rect key="frame" x="0.0" y="44" width="320" height="1"/>
                                                             <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.050000000000000003" colorSpace="calibratedRGB"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="1" id="I7i-Yb-2rR"/>
@@ -236,14 +237,15 @@
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="XpN-em-90f" firstAttribute="top" secondItem="sdZ-Vy-LbL" secondAttribute="bottom" constant="20" id="7MB-Pb-l1F"/>
-                            <constraint firstItem="qUm-45-FJC" firstAttribute="top" secondItem="XpN-em-90f" secondAttribute="bottom" constant="6" id="Wp3-iK-blM"/>
-                            <constraint firstAttribute="trailing" secondItem="XpN-em-90f" secondAttribute="trailing" constant="6" id="jAc-jB-QSq"/>
-                            <constraint firstItem="XpN-em-90f" firstAttribute="leading" secondItem="c1A-6r-F3Y" secondAttribute="leading" constant="6" id="soI-GM-71o"/>
+                            <constraint firstItem="XpN-em-90f" firstAttribute="top" secondItem="sdZ-Vy-LbL" secondAttribute="bottom" id="7MB-Pb-l1F"/>
+                            <constraint firstAttribute="bottom" secondItem="XpN-em-90f" secondAttribute="bottom" id="Wp3-iK-blM"/>
+                            <constraint firstAttribute="trailing" secondItem="XpN-em-90f" secondAttribute="trailing" id="jAc-jB-QSq"/>
+                            <constraint firstItem="XpN-em-90f" firstAttribute="leading" secondItem="c1A-6r-F3Y" secondAttribute="leading" id="soI-GM-71o"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="activityIndicator" destination="agQ-Ri-6PA" id="hVV-ZT-nRG"/>
+                        <outlet property="bottomConstraint" destination="JoX-dY-C1L" id="N49-Y6-ocS"/>
                         <outlet property="containerView" destination="wTT-Wj-puz" id="fPS-3V-0X0"/>
                         <outlet property="cornerRadiusView" destination="Xsi-BV-UjQ" id="KbE-vx-AmZ"/>
                         <outlet property="effectView" destination="trW-Zk-lgl" id="hC3-Ti-DZ5"/>
@@ -263,12 +265,12 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9Mc-zE-dUg" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="aze-Lj-L9L" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="-1180" y="-114.53201970443351"/>
+            <point key="canvasLocation" x="-1181.25" y="-115.14084507042254"/>
         </scene>
     </scenes>
+    <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
     <resources>
         <image name="Discard" width="9" height="13"/>
-        <image name="DismissNoBorder" width="10" height="10"/>
+        <image name="DownArrow12" width="12" height="7"/>
     </resources>
-    <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
 </document>

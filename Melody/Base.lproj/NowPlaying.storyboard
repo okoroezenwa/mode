@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -27,10 +27,10 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="3Ga-oI-rRe" customClass="InvertIgnoringImageView" customModule="Mode" customModuleProvider="target">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="3Ga-oI-rRe" customClass="InvertIgnoringImageView" customModule="Mode" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                             </imageView>
-                            <visualEffectView hidden="YES" opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="QiR-xC-ryb" customClass="MELVisualEffectView" customModule="Mode" customModuleProvider="target">
+                            <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="QiR-xC-ryb" customClass="MELVisualEffectView" customModule="Mode" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="nZQ-NW-Rnh">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
@@ -125,9 +125,9 @@
                                             </view>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="exb-sL-4bo">
                                                 <rect key="frame" x="0.0" y="0.0" width="60" height="60"/>
-                                                <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="10" maxY="10"/>
+                                                <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="8" maxY="7"/>
                                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2" maxY="0.0"/>
-                                                <state key="normal" image="BackArrow12"/>
+                                                <state key="normal" image="DownArrow"/>
                                                 <connections>
                                                     <action selector="dismissVC:" destination="DFa-JA-3bC" eventType="touchUpInside" id="ceJ-zz-25d"/>
                                                 </connections>
@@ -648,7 +648,9 @@
                         <outlet property="albumWidthConstraint" destination="DhW-dC-TvC" id="jxq-Jf-XMi"/>
                         <outlet property="artistButton" destination="2Rd-zT-DKs" id="fku-be-Sdj"/>
                         <outlet property="artworkIntermediaryView" destination="Pa1-4g-ggR" id="xDa-6k-001"/>
+                        <outlet property="bottomConstraint" destination="V3o-HY-Kgr" id="nA0-6k-sTT"/>
                         <outlet property="closeButtonBorder" destination="idn-zO-EVL" id="h6m-zZ-Auo"/>
+                        <outlet property="closeViewTopConstraint" destination="mqQ-GQ-SwA" id="b5S-N3-NYi"/>
                         <outlet property="detailsView" destination="1Ta-zc-EQX" id="KAw-cu-Asp"/>
                         <outlet property="divider" destination="0jE-jh-LqI" id="4ay-Sm-bsG"/>
                         <outlet property="editButton" destination="1oq-MD-A6s" id="i4r-2h-DIo"/>
@@ -729,8 +731,8 @@
     <resources>
         <image name="AddNoBorder" width="13" height="13"/>
         <image name="Back" width="17" height="15"/>
-        <image name="BackArrow12" width="7" height="12"/>
         <image name="BackArrow9" width="7" height="9"/>
+        <image name="DownArrow" width="14" height="8"/>
         <image name="Forward" width="17" height="15"/>
         <image name="Lyrics" width="11" height="13"/>
         <image name="Play" width="14" height="17"/>

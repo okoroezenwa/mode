@@ -79,7 +79,7 @@ class Queue {
     
     func clearAllButNowPlaying(completion: EmptyCompletion?) {
         
-        currentQueue = [musicPlayer.nowPlayingItem].compactMap({ $0 })
+        currentQueue = [musicPlayer.nowPlayingItem].unpacked()
         performQueueModificationCompletion()
         
         completion?()

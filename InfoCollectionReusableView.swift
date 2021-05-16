@@ -51,8 +51,8 @@ class InfoCollectionReusableView: UICollectionReusableView, ThemeStatusProvider 
     @IBOutlet var scrollViews: [UIScrollView]!
     
     @objc let queueView = PillButtonView.with(title: "Queue...", image: #imageLiteral(resourceName: "AddSong10"), tapAction: nil)
-    @objc let insertView = PillButtonView.with(title: "Insert...", image: #imageLiteral(resourceName: "AddToPlaylist10"), tapAction: nil)
-    @objc let addToView = PillButtonView.with(title: "Add to...", image: #imageLiteral(resourceName: "AddNoBorderSmall"), tapAction: nil)
+    @objc let insertView = PillButtonView.with(title: "Insert...", image: #imageLiteral(resourceName: "AddToPlaylist13"), tapAction: nil)
+    @objc let addToView = PillButtonView.with(title: "Add to...", image: #imageLiteral(resourceName: "AddNoBorder11"), tapAction: nil)
     
     override func awakeFromNib() {
         

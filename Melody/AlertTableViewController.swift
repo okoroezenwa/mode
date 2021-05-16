@@ -19,6 +19,7 @@ class AlertTableViewController: UITableViewController, PreviewTransitionable {
     var context = Context.show
     var verticalPresentedVC: VerticalPresentationContainerViewController? { return parent as? VerticalPresentationContainerViewController }
     
+    let scrollInset = 10 as CGFloat
     var isCurrentlyTopViewController: Bool = false
     var viewController: UIViewController?
     var selectedIndexPath: IndexPath? {
@@ -73,8 +74,8 @@ class AlertTableViewController: UITableViewController, PreviewTransitionable {
         }
         
         verticalPresentedVC?.view.layoutIfNeeded()
-//        tableView.scrollIndicatorInsets.top = 15
-        tableView.scrollIndicatorInsets.bottom = 15
+        tableView.scrollIndicatorInsets.top = verticalPresentedVC?.requiresTopBorderView == false ? scrollInset : 0
+        tableView.scrollIndicatorInsets.bottom = scrollInset
         tableView.separatorInset.left = actions.first?.info.subtitle == nil && actions.first?.info.image == nil ? 0 : 54
         tableView.tableFooterView = UIView.init(frame: .zero)
         

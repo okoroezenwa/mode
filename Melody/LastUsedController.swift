@@ -117,7 +117,7 @@ extension LastUsedController: UICollectionViewDataSource, UICollectionViewDelega
         
         cell.topConstraint = 6
         cell.bottomConstraint = 0
-        cell.prepare(with: playlist, shouldHideChevron: true)
+        cell.prepare(with: playlist, shouldHideChevron: true, vc: self)
         
         return cell
     }
@@ -154,22 +154,12 @@ extension LastUsedController: UICollectionViewDataSource, UICollectionViewDelega
         
         let playlist = playlists[indexPath.item]
         
-        if collectionsVC.selectedPlaylists.firstIndex(of: playlist) == nil/*, let _ = collectionsVC.libraryVC?.parent as? PresentedContainerViewController*/ {
+        if collectionsVC.selectedPlaylists.firstIndex(of: playlist) == nil {
             
             collectionsVC.selectedPlaylists.append(playlist)
             collectionsVC.addButton.setTitle("Add (\(collectionsVC.selectedPlaylists.count.formatted))", for: .normal)
             
             notifier.post(name: .playlistSelected, object: nil, userInfo: ["playlist": playlist, "type": CellSelectionType.select, "location": PlaylistModificationLocation.history])
-            
-//            if let selectedIndexPath = collectionsVC.tableView.indexPathsForVisibleRows?.first(where: { collectionsVC.getCollection(from: $0) == playlist }), let cell = collectionsVC.tableView.cellForRow(at: selectedIndexPath), cell.isSelected.inverted {
-//
-//                collectionsVC.tableView.selectRow(at: selectedIndexPath, animated: false, scrollPosition: .none)
-//            }
-//
-//            if let selectedIndexPath = collectionsVC.collectionView?.indexPathsForVisibleItems.first(where: { collectionsVC.headerView.playlists.value(at: $0.row) == playlist }), let cell = collectionsVC.collectionView?.cellForItem(at: selectedIndexPath), cell.isSelected.inverted {
-//
-//                collectionsVC.collectionView?.selectItem(at: selectedIndexPath, animated: false, scrollPosition: [])
-//            }
         }
     }
     
@@ -177,22 +167,12 @@ extension LastUsedController: UICollectionViewDataSource, UICollectionViewDelega
         
         guard let collectionsVC = collectionsVC else { return }
         
-        if let playlist = playlists.value(at: indexPath.row), let index = collectionsVC.selectedPlaylists.firstIndex(of: playlist)/*, let _ = collectionsVC.libraryVC?.parent as? PresentedContainerViewController*/ {
+        if let playlist = playlists.value(at: indexPath.row), let index = collectionsVC.selectedPlaylists.firstIndex(of: playlist) {
             
             collectionsVC.selectedPlaylists.remove(at: index)
             collectionsVC.addButton.setTitle("Add (\(collectionsVC.selectedPlaylists.count.formatted))", for: .normal)
             
             notifier.post(name: .playlistSelected, object: nil, userInfo: ["playlist": playlist, "type": CellSelectionType.deselect, "location": PlaylistModificationLocation.history])
-            
-//            if let selectedIndexPath = collectionsVC.tableView.indexPathsForVisibleRows?.first(where: { collectionsVC.getCollection(from: $0) == playlist }), let indexPaths = collectionsVC.tableView.indexPathsForSelectedRows, Set(indexPaths).contains(selectedIndexPath) {
-//
-//                collectionsVC.tableView.deselectRow(at: selectedIndexPath, animated: false)
-//            }
-//
-//            if let selectedIndexPath = collectionsVC.collectionView?.indexPathsForVisibleItems.first(where: { collectionsVC.headerView.playlists.value(at: $0.row) == playlist }), let indexPaths = collectionsVC.collectionView?.indexPathsForSelectedItems, Set(indexPaths).contains(selectedIndexPath) {
-//
-//                collectionsVC.collectionView?.deselectItem(at: selectedIndexPath, animated: false)
-//            }
         }
     }
 }
@@ -201,7 +181,7 @@ extension LastUsedController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        .init(width: (screenWidth - 12 - 22 - 9 - 4 - 5) / 2.25, height: 48 - 0.00001)
+        .init(width: (screenWidth - 52) / 2.25, height: 48 - 0.00001) //  52 = -12 - 22 - 9 - 4 - 5
     }
 }
 

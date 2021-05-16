@@ -1,0 +1,16 @@
+//
+//  Personal.xcconfig
+//  Melody
+//
+//  Created by Ezenwa Okoro on 16/05/2021.
+//  Copyright © 2021 Ezenwa Okoro. All rights reserved.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+#include "Base.xcconfig"
+
+APP_NAME = $(inherited)
+MODE_BUNDLE_ID = $(DEBUG_BUNDLE_ID_BASE).personal
+MODE_WIDGET_BUNDLE_ID = $(MODE_BUNDLE_ID).Widget

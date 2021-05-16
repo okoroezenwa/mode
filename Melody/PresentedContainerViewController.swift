@@ -8,7 +8,7 @@
 
 import UIKit
 
-class PresentedContainerViewController: UIViewController, ArtworkModifierContaining {
+class PresentedContainerViewController: UIViewController, ArtworkModifierContaining, ScrollViewDismissable, StatusBarControlling {
     
     @IBOutlet var containerView: UIView!
     @IBOutlet var effectView: MELVisualEffectView!
@@ -17,24 +17,25 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
     @IBOutlet var rightButton: MELButton!
     @IBOutlet var activityIndicator: UIActivityIndicatorView!
     @IBOutlet var topConstraint: NSLayoutConstraint!
-    @IBOutlet var cornerRadiusView: UIView! {
+    @IBOutlet var cornerRadiusView: UIView!/* {
         
         didSet {
             
             cornerRadiusView.layer.setRadiusTypeIfNeeded()
             cornerRadiusView.layer.cornerRadius = 14
         }
-    }
+    }*/
     @IBOutlet var rightBorderView: MELBorderView!
     @IBOutlet var parentViewLeadingConstraint: NSLayoutConstraint!
     @IBOutlet var parentViewTrailingConstraint: NSLayoutConstraint!
     @IBOutlet var largeActivityIndicator: MELActivityIndicatorView!
     @IBOutlet var promptLabel: MELLabel!
     @IBOutlet var topStackViewConstraint: NSLayoutConstraint!
+    @IBOutlet var bottomConstraint: NSLayoutConstraint!
     
-    enum ChildContext { case items, playlists, upNext, newPlaylist, settings, tips, queue, playlistDetails, info, songDetails, queueGuard, theme, gestures, playback, tabBar, background, filter, artwork, icon, fullPlayer, libraryRefresh, recents, properties, propertySettings, lyricsInfo, lyricsEdit, savedLyrics, lastFM, customCollection }
+    enum ChildContext { case collector, playlists, playAfter, newPlaylist, settings, tips, queue, playlistDetails, info, songDetails, queueGuard, theme, gestures, playback, tabBar, background, filter, artwork, icon, fullPlayer, libraryRefresh, recents, properties, propertySettings, lyricsInfo, lyricsEdit, savedLyrics, lastFM, customCollection }
     
-    var context = ChildContext.items
+    var context = ChildContext.collector
     var manager: QueueManager?
     var prompt: String?
     @objc var query: MPMediaQuery?
@@ -44,12 +45,12 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
     @objc lazy var shuffled = false
     @objc weak var container: ContainerViewController?
     @objc weak var newVC: NewPlaylistViewController?
-    @objc var index: CGFloat {
-        
-        get { return modalIndex }
-        
-        set { }
-    }
+//    @objc var index: CGFloat {
+//
+//        get { return modalIndex }
+//
+//        set { }
+//    }
     @objc lazy var indexPath = IndexPath.init()
     @objc var showLyrics = false
     @objc var useConstraintConstant = false
@@ -57,28 +58,159 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
     var transitionStart: (() -> ())?
     var transitionAnimation: (() -> ())?
     var transitionCancellation: (() -> ())?
-    lazy var optionsContext = InfoViewController.Context.song(location: .queue(loaded: true, index: Queue.shared.indexToUse), at: 0, within: [musicPlayer.nowPlayingItem].compactMap({ $0 }))
+    lazy var optionsContext = InfoViewController.Context.song(location: .queue(loaded: true, index: Queue.shared.indexToUse), at: 0, within: [musicPlayer.nowPlayingItem].unpacked())
     lazy var filterContext = FilterViewContext.library
-    override var transitioningDelegate: UIViewControllerTransitioningDelegate? {
-        
-        get { return self.altAnimator ?? self.animator }
-        
-        set { }
-    }
+    
+    lazy var presenter = PresentationManager(interactor: PresentationInteractor())
+    
     override var modalPresentationStyle: UIModalPresentationStyle {
         
-        get { return .overFullScreen }
+        get { .custom }
         
         set { }
     }
+    
+    override var transitioningDelegate: UIViewControllerTransitioningDelegate? {
+        
+        get { presenter }
+        
+        set { }
+    }
+    
+//    override var transitioningDelegate: UIViewControllerTransitioningDelegate? {
+//
+//        get { return self.altAnimator ?? self.animator }
+//
+//        set { }
+//    }
+//    override var modalPresentationStyle: UIModalPresentationStyle {
+//
+//        get { return .overFullScreen }
+//
+//        set { }
+//    }
     
     var modifier: ArtworkModifying? {
         
         switch context {
             
-            case .info: return newOptionsVC
+            case .info: return infoVC
             
             default: return nil
+        }
+    }
+    
+    var currentOffset = 0 as CGFloat
+    let preferredOffset = 0 as CGFloat
+    
+    var gestureRecogniser: UIPanGestureRecognizer? { scroller?.panGestureRecognizer }
+    
+    var scroller: UIScrollView? {
+        
+        switch context {
+            
+            case .playlists: return playlistsVC.playlistsViewController?.tableView
+            
+            case .playAfter: return playAfterVC.tableView
+            
+            case .collector: return collectorVC.tableView
+            
+            case .newPlaylist: return newPlaylistVC.tableView
+            
+            case .settings: return settingsVC.tableView
+            
+            case .tips: return (tipsVC.children.first as? TipsTableViewController)?.tableView
+            
+            case .queue: return queueVC.tableView
+            
+            case .playlistDetails, .lyricsEdit: return textVC.textView
+            
+            case .info: return infoVC.collectionView
+            
+            case .songDetails: return songDetailsVC.tableView
+            
+            case .queueGuard: return queueGuardVC.tableView
+            
+            case .theme: return (themeVC.children.first as? ThemeTableViewController)?.tableView
+            
+            case .gestures: return gesturesVC.tableView
+            
+            case .playback: return playbackVC.tableView
+            
+            case .tabBar: return tabBarVC.tableView
+            
+            case .background: return backgroundVC.tableView
+            
+            case .filter: return filterVC.tableView
+            
+            case .artwork: return artworkVC.tableView
+            
+            case .icon: return iconVC.tableView
+            
+            case .fullPlayer: return fullPlayerVC.tableView
+            
+            case .libraryRefresh: return libraryRefreshVC.tableView
+            
+            case .recents: return recentsVC.tableView
+            
+            case .properties: return propertiesVC.tableView
+            
+            case .lyricsInfo: return lyricsInfoVC.tableView
+            
+            case .propertySettings: return propertySettingsVC.tableView
+            
+            case .savedLyrics: return savedLyricsVC.tableView
+            
+            case .lastFM: return lastFMVC.tableView
+                
+            case .customCollection: return customVC.tableView
+        }
+    }
+    
+    var isAtTop: Bool {
+        
+        guard let scroller = scroller else { return true }
+        
+        return scroller.contentOffset.y <= -preferredOffset
+    }
+    
+    var refreshControl: UIRefreshControl? {
+        
+        switch context {
+            
+            case .playlists: return (playlistsVC.activeChildViewController as? CollectionsViewController)?.refreshControl
+                
+            default: return nil
+        }
+    }
+    
+    let shouldUseBackingSnapshots = true
+    
+    var presentationAnimation: (() -> ())? {
+        
+        switch context {
+            
+            case .info: return { [weak self] in self?.infoVC.bottomView.transform = .identity }
+                
+            case .collector: return { [weak self] in self?.collectorVC.bottomView.transform = .identity }
+                
+            case .queue: return { [weak self] in self?.queueVC.bottomView.transform = .identity }
+                
+            case .newPlaylist: return { [weak self] in self?.newPlaylistVC.bottomView.transform = .identity }
+                
+            case .filter: return { [weak self] in self?.filterVC.bottomView.transform = .identity }
+                
+            default: return nil
+        }
+    }
+    
+    var useLightStatusBar = false {
+        
+        didSet {
+            
+            guard oldValue != useLightStatusBar else { return }
+            
+            UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseInOut, .allowUserInteraction], animations: { self.setNeedsStatusBarAppearanceUpdate() })
         }
     }
     
@@ -96,7 +228,7 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
         
         return vc
     }()
-    @objc lazy var queueTVC: QueueViewController = {
+    @objc lazy var playAfterVC: QueueViewController = {
         
         let vc = presentedChilrenStoryboard.instantiateViewController(withIdentifier: "queueTVC") as! QueueViewController
         if !self.itemsToAdd.isEmpty { vc.itemsToAdd = self.itemsToAdd }
@@ -106,7 +238,7 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
         
         return vc
     }()
-    @objc lazy var queueVC: CollectorViewController = {
+    @objc lazy var collectorVC: CollectorViewController = {
         
         let vc = presentedChilrenStoryboard.instantiateViewController(withIdentifier: "queueVC") as! CollectorViewController
         vc.manager = self.manager
@@ -135,7 +267,7 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
         
         return vc
     }()
-    @objc lazy var qVC: QueueViewController = {
+    @objc lazy var queueVC: QueueViewController = {
         
         let vc = presentedChilrenStoryboard.instantiateViewController(withIdentifier: "queueTVC") as! QueueViewController
         
@@ -157,7 +289,7 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
         
         return vc
     }()
-    @objc lazy var newOptionsVC: InfoViewController = {
+    @objc lazy var infoVC: InfoViewController = {
         
         let vc = presentedChilrenStoryboard.instantiateViewController(withIdentifier: "newOptions") as! InfoViewController
         vc.context = self.optionsContext
@@ -300,16 +432,18 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
         
         super.viewDidLoad()
         
-        animator.interactor.add(to: self)
+        presenter.interactor.addToVC(self)
+        modalPresentationCapturesStatusBarAppearance = true
+//        animator.interactor.add(to: self)
         prepare(animated: false, updateConstraintsAndButtons: true)
         
-        modalIndex += 1
-        
-        if useConstraintConstant {
-            
-            parentViewLeadingConstraint.constant = UIScreen.main.bounds.width * 0.6
-            parentViewTrailingConstraint.constant = -UIScreen.main.bounds.width * 0.6
-        }
+//        modalIndex += 1
+//
+//        if useConstraintConstant {
+//
+//            parentViewLeadingConstraint.constant = UIScreen.main.bounds.width * 0.6
+//            parentViewTrailingConstraint.constant = -UIScreen.main.bounds.width * 0.6
+//        }
         
         activeViewController = {
             
@@ -317,9 +451,9 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
                 
                 case .playlists: return playlistsVC
                 
-                case .upNext: return queueTVC
+                case .playAfter: return playAfterVC
                 
-                case .items: return queueVC
+                case .collector: return collectorVC
                 
                 case .newPlaylist: return newPlaylistVC
                 
@@ -327,11 +461,11 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
                 
                 case .tips: return tipsVC
                 
-                case .queue: return qVC
+                case .queue: return queueVC
                 
                 case .playlistDetails, .lyricsEdit: return textVC
                 
-                case .info: return newOptionsVC
+                case .info: return infoVC
                 
                 case .songDetails: return songDetailsVC
                 
@@ -372,6 +506,8 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
                 case .customCollection: return customVC
             }
         }()
+        
+        bottomConstraint.constant = 20 + DrawerConstants.cornerRadius
         
         notifier.addObserver(self, selector: #selector(unwindToStart), name: .endQueueModification, object: nil)
         notifier.addObserver(self, selector: #selector(updateStatusBar), name: .themeChanged, object: nil)
@@ -476,6 +612,8 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         
+        guard useLightStatusBar.inverted else { return .lightContent }
+        
         return darkTheme ? .lightContent : {
             
             if #available(iOS 13, *) { return .darkContent }
@@ -486,16 +624,16 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
     
     @objc func prepare(animated: Bool, updateConstraintsAndButtons: Bool = false) {
         
-        if updateConstraintsAndButtons {
-            
-            topConstraint.constant = 6 + (index * 10)
-        }
+//        if updateConstraintsAndButtons {
+//
+//            topConstraint.constant = 6 + (index * 10)
+//        }
         
         let text: String = {
             
             switch context {
                 
-                case .items: return "\((self.manager?.queue ?? self.itemsToAdd).count.formatted) Collected \((self.manager?.queue ?? self.itemsToAdd).count.countText(for: .song).capitalized)"
+                case .collector: return "\((self.manager?.queue ?? self.itemsToAdd).count.formatted) Collected \((self.manager?.queue ?? self.itemsToAdd).count.countText(for: .song).capitalized)"
                     
                 case .newPlaylist: return self.manager != nil || !itemsToAdd.isEmpty ? "New Playlist " + "(" + (self.manager?.queue ?? self.itemsToAdd).count.formatted + ")" : "New Playlist"
                     
@@ -538,7 +676,7 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
                 
                 case .playlistDetails: return "Playlist Details"
                     
-                case .upNext: return "\(shuffled ? .shuffle() : "Play") \((self.manager?.queue ?? query?.items ?? self.itemsToAdd).count.fullCountText(for: .song).capitalized) After..."
+                case .playAfter: return "\(shuffled ? .shuffle() : "Play") \((self.manager?.queue ?? query?.items ?? self.itemsToAdd).count.fullCountText(for: .song).capitalized) After..."
                 
                 case .songDetails: return "Secondary Info"
                 
@@ -606,7 +744,7 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
         
         switch context {
             
-            case /*.items, */.upNext, .savedLyrics, .customCollection: break
+            case /*.items, */.playAfter, .savedLyrics, .customCollection: break
             
             case .filter:
             
@@ -651,12 +789,21 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
                     rightButton.setImage(#imageLiteral(resourceName: "Lightbulb"), for: .normal)
                 }
             
-            case .tips, .playlists, .songDetails, .queueGuard, .theme, .gestures, .playback, .tabBar, .background, .artwork, .icon, .fullPlayer, .libraryRefresh, .recents, .items, .properties, .propertySettings, .lastFM:
+            case .tips, .playlists, .songDetails, .queueGuard, .theme, .gestures, .playback, .tabBar, .background, .artwork, .icon, .fullPlayer, .libraryRefresh, .recents, .properties, .propertySettings, .lastFM:
                 
                 if updateConstraintsAndButtons {
                     
                     rightButton.isHidden = true
                     rightBorderView.isHidden = true
+                }
+                
+            case .collector:
+                
+                if updateConstraintsAndButtons {
+                    
+                    rightButton.isHidden = false
+                    rightBorderView.isHidden = false
+                    rightButton.setImage(#imageLiteral(resourceName: "Discard"), for: .normal)
                 }
             
             case .queue:
@@ -673,7 +820,7 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
                     
                     rightButton.isHidden = false
                     rightBorderView.isHidden = false
-                    rightButton.setImage(#imageLiteral(resourceName: "More13"), for: .normal)
+                    rightButton.setImage(#imageLiteral(resourceName: "Discard"), for: .normal)
                 }
         }
     }
@@ -774,7 +921,7 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
             
             case .settings: settingsVC.performSegue(withIdentifier: "toTips", sender: nil)
             
-            case .queue: qVC.songManager.showActionsForAll(qVC)
+            case .queue: queueVC.clearQueue(queueVC)
             
             case .playlists: break
             
@@ -797,7 +944,7 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
             
                 guard isInDebugMode else { break }
             
-                Transitioner.shared.showProperties(of: entity(), entityType: newOptionsVC.context.entityType, title: titleLabel.text?.replacingOccurrences(of: "Info", with: "Properties") ?? "", from: self)
+                Transitioner.shared.showProperties(of: entity(), entityType: infoVC.context.entityType, title: titleLabel.text?.replacingOccurrences(of: "Info", with: "Properties") ?? "", from: self)
             
             case .playlistDetails:
             
@@ -839,10 +986,12 @@ class PresentedContainerViewController: UIViewController, ArtworkModifierContain
                 }
             
                 dismissVC()
+                
+            case .collector: collectorVC.clear()
             
-            case .songDetails, .tips, .queueGuard, .theme, .gestures, .playback, .tabBar, .background, .artwork, .icon, .fullPlayer, .libraryRefresh, .recents, .items, .properties, .propertySettings, .lastFM: break
+            case .songDetails, .tips, .queueGuard, .theme, .gestures, .playback, .tabBar, .background, .artwork, .icon, .fullPlayer, .libraryRefresh, .recents, .properties, .propertySettings, .lastFM: break
             
-            case /*.items,*/ .upNext:
+            case /*.items,*/ .playAfter:
                 
                 let remove = AlertAction.init(title: "Discard Collected", style: .destructive, requiresDismissalFirst: false, handler: { notifier.post(name: .endQueueModification, object: nil) })
                 
@@ -878,7 +1027,7 @@ extension PresentedContainerViewController {
     
     @objc func entity() -> MPMediaEntity {
         
-        switch newOptionsVC.context {
+        switch infoVC.context {
             
             case .song(location: _, at: let index, within: let items): return items[index]
             
@@ -887,6 +1036,71 @@ extension PresentedContainerViewController {
             case .playlist(at: let index, within: let playlists): return playlists[index]
             
             case .collection(kind: _, at: let index, within: let collections): return collections[index]
+        }
+    }
+}
+
+extension PresentedContainerViewController {
+    
+    func scrollerDoesNotContainTouch(from gr: UIPanGestureRecognizer) -> Bool {
+        
+        return !containerView.frame.contains(gr.location(in: view))
+    }
+    
+    func complementaryPresentationAnimation() {
+        
+        switch context {
+            
+            case .newPlaylist: newPlaylistVC.nameTextField.becomeFirstResponder()
+                
+            case .filter:
+                
+                if filterVC.searchBar.text?.isEmpty == true, filterVC.container == nil {
+                
+                    filterVC.searchBar.becomeFirstResponder()
+                }
+                
+            case .playlistDetails: textVC.searchBar.becomeFirstResponder()
+                
+            default: break
+        }
+    }
+    
+    func gesturesToBeRecognised(with gr: UIGestureRecognizer) -> Set<UIGestureRecognizer> {
+        
+        guard (gr is UIScreenEdgePanGestureRecognizer).inverted else { return [] }
+        
+        switch context {
+            
+            case .queue, .newPlaylist, .filter:
+                
+                guard let scrollView = (activeViewController as? CentreViewDisplaying)?.centreView?.tableView else { return [] }
+                
+                return [scrollView.panGestureRecognizer]
+                
+            default: return []
+        }
+    }
+    
+    func allowRecognition(of gr: UIGestureRecognizer) -> Bool {
+        
+        guard (gr is UIScreenEdgePanGestureRecognizer).inverted else { return true }
+        
+        switch context {
+            
+            case .propertySettings:
+                
+                guard let tableView = propertySettingsVC.tableView, let indexPath = tableView.indexPathForRow(at: gr.location(in: view)), let cell = tableView.cellForRow(at: indexPath) else { return true }
+                
+                return CGRect.init(x: UIScreen.main.bounds.width - 42, y: 0, width: 42, height: cell.frame.height).contains(gr.location(in: cell)).inverted
+                
+            case .queue:
+                
+                guard let tableView = queueVC.tableView, let indexPath = tableView.indexPathForRow(at: gr.location(in: view)), tableView.isEditing, indexPath.section != 1, let cell = tableView.cellForRow(at: indexPath), queueVC.tableView(tableView, canMoveRowAt: indexPath) else { return true }
+                
+                return CGRect.init(x: UIScreen.main.bounds.width - 42, y: 0, width: 42, height: cell.frame.height).contains(gr.location(in: cell)).inverted
+                
+            default: return true
         }
     }
 }

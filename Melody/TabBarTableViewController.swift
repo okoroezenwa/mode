@@ -18,19 +18,27 @@ class TabBarTableViewController: UITableViewController {
         3: ("collector", nil)
     ]
     
-    lazy var settings: SettingsDictionary = [
+    lazy var settings = [
         
-        .init(0, 0): .init(title: "Show Tab Titles", accessoryType: .onOff(isOn: { showTabBarLabels }, action: { showTabBarLabels.toggle() })),
-        .init(1, 0): .init(title: "Do Nothing", accessoryType: .check({ tabBarTapBehaviour == .nothing })),
-        .init(1, 1): .init(title: "Scroll to Top", accessoryType: .check({ tabBarTapBehaviour == .scrollToTop })),
-        .init(1, 2): .init(title: "Return to Start", accessoryType: .check({ tabBarTapBehaviour == .returnToStart })),
-        .init(1, 3): .init(title: "Return, then Scroll to Top", accessoryType: .check({ tabBarTapBehaviour == .returnThenScroll })),
-        .init(2, 0): .init(title: "Show Song Titles", accessoryType: .onOff(isOn: { showMiniPlayerSongTitles }, action: { showMiniPlayerSongTitles.toggle() })),
-        .init(2, 1): .init(title: "Show Full Scrubber", accessoryType: .onOff(isOn: { useExpandedSlider }, action: { useExpandedSlider.toggle() })),
-        .init(2, 2): .init(title: "Always Hide Title", accessoryType: .onOff(isOn: { false }, action: { })),
-        .init(2, 3): .init(title: "Prefer Queue Position", subtitle: "Replaces the static mini player title with the current position in the queue.", attributesInfo: .init(subtitleAttributes: [.init(name: .paragraphStyle, value: .other(NSMutableParagraphStyle.withLineHeight(.settingsSubtitleLineHeight)), range: "Replaces the \"Queue\" label title with the current position in the queue.".nsRange())]), accessoryType: .onOff(isOn: { useQueuePositionMiniPlayerTitle }, action: { useQueuePositionMiniPlayerTitle.toggle() })),
-        .init(3, 0): .init(title: "Compact", accessoryType: .onOff(isOn: { useCompactCollector }, action: { [weak self] in self?.toggleCompactCollector() })),
-        .init(3, 1): .init(title: "Prevent Duplicates", accessoryType: .onOff(isOn: { collectorPreventsDuplicates }, action: { [weak self] in self?.toggleDuplicates() })),
+        [
+            Setting.init(title: "Show Tab Titles", accessoryType: .onOff(isOn: { showTabBarLabels }, action: { showTabBarLabels.toggle() }))
+        ],
+        [
+            .init(title: "Do Nothing", accessoryType: .check({ tabBarTapBehaviour == .nothing })),
+            .init(title: "Scroll to Top", accessoryType: .check({ tabBarTapBehaviour == .scrollToTop })),
+            .init(title: "Return to Start", accessoryType: .check({ tabBarTapBehaviour == .returnToStart })),
+            .init(title: "Return, then Scroll to Top", accessoryType: .check({ tabBarTapBehaviour == .returnThenScroll }))
+        ],
+        [
+            .init(title: "Always Hide Title", accessoryType: .onOff(isOn: { hideMiniPlayerTabLabel }, action: { hideMiniPlayerTabLabel.toggle() })),
+            .init(title: "Show Song Titles", accessoryType: .onOff(isOn: { showMiniPlayerSongTitles }, action: { showMiniPlayerSongTitles.toggle() })),
+            .init(title: "Show Full Scrubber", accessoryType: .onOff(isOn: { useExpandedSlider }, action: { useExpandedSlider.toggle() })),
+            .init(title: "Prefer Queue Position", subtitle: "Replaces the static mini player title with the current position in the queue.", attributesInfo: .init(subtitleAttributes: [.init(name: .paragraphStyle, value: .other(NSMutableParagraphStyle.withLineHeight(.settingsSubtitleLineHeight)), range: "Replaces the \"Queue\" label title with the current position in the queue.".nsRange())]), accessoryType: .onOff(isOn: { useQueuePositionMiniPlayerTitle }, action: { useQueuePositionMiniPlayerTitle.toggle() }))
+        ],
+        [
+            .init(title: "Compact", accessoryType: .onOff(isOn: { useCompactCollector }, action: { [weak self] in self?.toggleCompactCollector() })),
+            .init(title: "Prevent Duplicates", accessoryType: .onOff(isOn: { collectorPreventsDuplicates }, action: { [weak self] in self?.toggleDuplicates() }))
+        ]
     ]
     
     override func viewDidLoad() {
@@ -60,21 +68,18 @@ class TabBarTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        settings.filter({ $0.key.section == section }).count
+        settings[section].count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.settingCell(for: indexPath)
         
-        if let setting = settings[indexPath.settingsSection] {
+        cell.prepare(with: settings[indexPath.section][indexPath.row])
+        
+        if cell.subtitleLabel.numberOfLines > 0 {
             
-            cell.prepare(with: setting)
-            
-            if cell.subtitleLabel.numberOfLines > 0 {
-                
-                cell.subtitleLabel.numberOfLines = 0
-            }
+            cell.subtitleLabel.numberOfLines = 0
         }
         
         return cell
@@ -88,10 +93,10 @@ class TabBarTableViewController: UITableViewController {
         
         for (index, cell) in (0..<tableView.numberOfRows(inSection: indexPath.section)).compactMap({ ($0, tableView.cellForRow(at: .init(item: $0, section: indexPath.section))) as? (Int, SettingsTableViewCell) }) {
             
-            if let setting = settings[IndexPath.init(item: index, section: indexPath.section).settingsSection] {
+//            if let setting = settings[IndexPath.init(item: index, section: indexPath.section).settingsSection] {
                 
-                cell.prepare(with: setting)
-            }
+                cell.prepare(with: settings[indexPath.section][index])
+//            }
         }
                     
         tableView.deselectRow(at: indexPath, animated: true)
@@ -113,16 +118,23 @@ class TabBarTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         
-        Set(settings.filter({
+        switch settings[indexPath.section][indexPath.row].accessoryType {
             
-            switch $0.value.accessoryType {
-                
-                case .check: return true
-                
-                default: return false
-            }
+            case .check: return true
+            
+            default: return false
+        }
         
-        }).keys.map({ $0.section })).contains(indexPath.section)
+//        Set(settings.filter({
+//
+//            switch $0.value.accessoryType {
+//
+//                case .check: return true
+//
+//                default: return false
+//            }
+//
+//        }).keys.map({ $0.section })).contains(indexPath.section)
     }
     
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
@@ -148,12 +160,12 @@ class TabBarTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         
-        settings[indexPath.settingsSection]?.subtitle?.isEmpty == false ? 54 : 0
+        settings[indexPath.section][indexPath.row].subtitle?.isEmpty == false ? 54 : 0
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
-        settings[indexPath.settingsSection]?.subtitle?.isEmpty == false ? UITableView.automaticDimension : 54
+        settings[indexPath.section][indexPath.row].subtitle?.isEmpty == false ? UITableView.automaticDimension : 54
     }
     
     override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {

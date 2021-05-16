@@ -54,7 +54,8 @@ class VisualEffectNavigationBar: MELVisualEffectView, ThemeStatusProvider {
     @IBOutlet var rightViewWidthConstraint: NSLayoutConstraint!
     @IBOutlet var entityTypeLabel: MELLabel!
     
-    var stackViewTopConstraint: NSLayoutConstraint!
+    var statusBarHeight = 0 as CGFloat
+    var stackViewTopSafeAreaConstraint: NSLayoutConstraint!
     
     enum ArtworkMode: Int, CaseIterable {
         
@@ -319,9 +320,12 @@ class VisualEffectNavigationBar: MELVisualEffectView, ThemeStatusProvider {
         }
     }
     
-    func animateViews(direction: AnimationDirection, section: AnimationSection, with initialVC: Navigatable?, and finalVC: Navigatable?, preferVerticalTransition: Bool = false) {
+    func animateViews(direction: AnimationDirection, section: AnimationSection, with initialVC: Navigatable?, and finalVC: Navigatable?, preferVerticalTransition: Bool = false, updateConstraint: Bool = true) {
         
-        updateTopConstraint(for: section, with: initialVC, and: finalVC)
+        if updateConstraint {
+        
+            updateTopConstraint(for: section, with: initialVC, and: finalVC)
+        }
         
         switch section {
             
@@ -350,7 +354,10 @@ class VisualEffectNavigationBar: MELVisualEffectView, ThemeStatusProvider {
                         backView.isHidden = false
                     }
                     
-                    layoutIfNeeded()
+                    if updateConstraint {
+                    
+                        layoutIfNeeded()
+                    }
                 }
             
             case .firstHalf:
@@ -420,7 +427,7 @@ class VisualEffectNavigationBar: MELVisualEffectView, ThemeStatusProvider {
         
         if case .preparation = section {
             
-            stackViewTopConstraint.constant = {
+            stackViewTopSafeAreaConstraint.constant = statusBarHeight + {
                 
                 if Location.main.total - Location.entity.total == 0, initialVC != nil {
                     
@@ -434,7 +441,7 @@ class VisualEffectNavigationBar: MELVisualEffectView, ThemeStatusProvider {
             
         } else if case .end(completed: let completed) = section {
             
-            stackViewTopConstraint.constant = location(from: completed ? finalVC : initialVC).constant
+            stackViewTopSafeAreaConstraint.constant = statusBarHeight + location(from: completed ? finalVC : initialVC).constant
         }
     }
     
@@ -508,27 +515,60 @@ class VisualEffectNavigationBar: MELVisualEffectView, ThemeStatusProvider {
     
     @IBAction func showActions() {
         
-        if let navigatable = containerVC?.activeViewController?.topViewController as? Navigatable, let child = navigatable.activeChildViewController as? SongActionable {
+        if let navigatable = containerVC?.activeViewController?.topViewController as? Navigatable, let child = navigatable.activeChildViewController as? HeaderViewContaining & UIViewController {
             
-            if let collectionActionable = child as? CollectionActionable, collectionActionable.actionableSongs.isEmpty || collectionActionable.actionableOperation?.isExecuting == true {
+            guard child.headerView.buttonDetails.isEmpty.inverted else { return }
+            
+            var array = child.headerView.buttonDetails.enumerated().map({ item -> AlertAction in
                 
-                collectionActionable.actionableActivityIndicator.startAnimating()
-                collectionActionable.shouldFillActionableSongs = true
-                collectionActionable.showActionsAfterFilling = true
-                (collectionActionable.editButton.superview as? PillButtonView)?.stackView?.alpha = 0
-                collectionActionable.editButton.superview?.isUserInteractionEnabled = false
-                
-                if collectionActionable.actionableSongs.isEmpty {
+                let type = (navigatable as? EntityItemsViewController)?.entityTypeForContainerType()
+                let entity = (navigatable as? EntityItemsViewController)?.collection
+                let altTitle = (child.headerView.supplementaryCollectionView.cellForItem(at: .init(item: item.offset, section: 0)) as? HeaderButtonsCollectionViewCell)?.label?.text
+                let assistiveText: String? = {
                     
-                    if let operation = collectionActionable.actionableOperation, operation.isExecuting { return }
-                    
-                    collectionActionable.getActionableSongs()
-                }
+                    switch item.element.type {
+                        
+                        case .grouping:
+                            
+                            if let entityVC = navigatable as? EntityItemsViewController {
+                                
+                                return entityVC.currentStartPoint.title.capitalized
+                                
+                            } else if let collectionsVC = child as? CollectionsViewController, collectionsVC.collectionKind == .playlist, collectionsVC.presented.inverted {
+                                
+                                return collectionsVC.playlistsViewText
+                            }
+                            
+                            return nil
+                            
+                        case .sort:
+                            
+                            guard let arrangeable = child as? Arrangeable else { return nil }
+                            
+                            return arrangeable.arrangementLabelText + ", " + "\(arrangeable.ascending ? "Ascending" : "Descending")"
+                            
+                        default: return nil
+                    }
+                }()
+                let subtitleDetails = item.element.type.subtitleDetails(with: assistiveText, basedOn: type, for: entity)
+                                                                            
+                return AlertAction.init(info: AlertInfo.init(title: item.element.type.rawValue, subtitle: item.element.type == .newPlaylist ? nil : (subtitleDetails?.text ?? altTitle), attributesInfo: SettingsAttributesInfo.init(titleAttributes: nil, subtitleAttributes: subtitleDetails?.attributes, tertiaryAttributes: nil, accessoryButtonAttributes: nil), image: item.element.type.image, accessoryType: .none), requiresDismissalFirst: item.element.type.requiresDismissalFirst, handler: item.element.type.action(at: item.offset, for: entity, basedOn: child))
+            })
+            
+            if let editable = child as? SongActionable & TableViewContaining {
                 
-            } else {
+                array.append(.init(title: editable.tableView.isEditing ? "End Editing" : "Begin Editing", image: #imageLiteral(resourceName: "EditNoBorder22"), requiresDismissalFirst: false, handler: { editable.songManager.toggleEditing(editable) }))
                 
-                child.songManager.showActionsForAll(child)
+                array.append(.init(title: "View Actions", image: #imageLiteral(resourceName: "ActionsMenu22"), requiresDismissalFirst: true, handler: { editable.songManager.showActionsForAll(editable) }))
             }
+            
+            if let filterable = child as? Filterable {
+                
+                array.append(.init(title: "Filter", image: #imageLiteral(resourceName: "Filter22"), requiresDismissalFirst: (child as? CollectionsViewController)?.presented == true, handler: { filterable.invokeSearch() }))
+            }
+            
+            child.showAlert(title: navigatable.title, with: array)
+            
         } else if let searchVC = containerVC?.activeViewController?.topViewController as? SearchViewController, searchVC.filtering.inverted, searchVC.recentSearches.isEmpty.inverted {
             
             searchVC.deleteRecentSearches()

@@ -126,7 +126,7 @@ class ActionsViewController: UIViewController {
     lazy var volumeView = VolumeView.instance(leadingWith: 20)
     
 //    @objc lazy var index: CGFloat = 0
-    lazy var context = InfoViewController.Context.song(location: .queue(loaded: false, index: Queue.shared.indexToUse), at: 0, within: [musicPlayer.nowPlayingItem].compactMap({ $0 }))
+    lazy var context = InfoViewController.Context.song(location: .queue(loaded: false, index: Queue.shared.indexToUse), at: 0, within: [musicPlayer.nowPlayingItem].unpacked())
     @objc var libraryVC: LibraryViewController? { return sender as? LibraryViewController ?? sender?.parent as? LibraryViewController }
     var filterer: Filterable? { return sender as? Filterable }
     var overridable: OnlineOverridable? { return sender as? OnlineOverridable }
@@ -806,7 +806,7 @@ class ActionsViewController: UIViewController {
         
         if let sender = sender as? InfoViewController {
             
-            let context = InfoViewController.Context.song(location: .queue(loaded: false, index: Queue.shared.indexToUse), at: 0, within: [musicPlayer.nowPlayingItem].compactMap({ $0 }))
+            let context = InfoViewController.Context.song(location: .queue(loaded: false, index: Queue.shared.indexToUse), at: 0, within: [musicPlayer.nowPlayingItem].unpacked())
 
             if persistActionsView || persistPopovers {
                 

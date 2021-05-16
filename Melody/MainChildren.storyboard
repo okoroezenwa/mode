@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Previous Searches-->
+        <!--Search View Controller-->
         <scene sceneID="bxz-Jj-abK">
             <objects>
-                <viewController title="Previous Searches" automaticallyAdjustsScrollViewInsets="NO" id="vys-ey-0VG" customClass="SearchViewController" customModule="Mode" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController automaticallyAdjustsScrollViewInsets="NO" id="vys-ey-0VG" customClass="SearchViewController" customModule="Mode" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="EbB-7f-cf6"/>
                         <viewControllerLayoutGuide type="bottom" id="FE9-9B-csM"/>
@@ -40,12 +40,15 @@
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="FE9-9B-csM" firstAttribute="top" secondItem="luB-KF-Ugi" secondAttribute="bottom" id="G26-MX-UVi"/>
-                            <constraint firstItem="luB-KF-Ugi" firstAttribute="top" secondItem="EbB-7f-cf6" secondAttribute="bottom" id="Gd9-Z7-Gzc"/>
+                            <constraint firstItem="luB-KF-Ugi" firstAttribute="top" secondItem="MF8-4x-mUS" secondAttribute="top" id="Gd9-Z7-Gzc"/>
                             <constraint firstItem="luB-KF-Ugi" firstAttribute="leading" secondItem="MF8-4x-mUS" secondAttribute="leading" id="WWv-MP-pYm"/>
                             <constraint firstAttribute="trailing" secondItem="luB-KF-Ugi" secondAttribute="trailing" id="pZO-nQ-11O"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="QDL-Bx-OiL"/>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="string" keyPath="title" value="Previous Searches"/>
+                    </userDefinedRuntimeAttributes>
                     <connections>
                         <outlet property="tableView" destination="luB-KF-Ugi" id="9Ry-Ev-c9f"/>
                         <segue destination="OGS-Yh-uZQ" kind="unwind" identifier="toAlbumUnwind" unwindAction="albumUnwind:" id="XF9-3b-fiC"/>
@@ -83,7 +86,7 @@
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="goR-T2-9VQ" firstAttribute="top" secondItem="wOM-cu-8F6" secondAttribute="bottom" id="Inr-NK-yvA"/>
+                            <constraint firstItem="goR-T2-9VQ" firstAttribute="top" secondItem="zxg-Sg-eSl" secondAttribute="top" id="Inr-NK-yvA"/>
                             <constraint firstAttribute="trailing" secondItem="goR-T2-9VQ" secondAttribute="trailing" id="f8T-2z-hRM"/>
                             <constraint firstItem="Ri1-Qe-s8e" firstAttribute="top" secondItem="goR-T2-9VQ" secondAttribute="bottom" id="hYq-Mx-dwa"/>
                             <constraint firstItem="goR-T2-9VQ" firstAttribute="leading" secondItem="zxg-Sg-eSl" secondAttribute="leading" id="yRT-vd-ezp"/>
@@ -103,7 +106,7 @@
         <!--Navigation Controller-->
         <scene sceneID="rp2-jX-2ef">
             <objects>
-                <navigationController storyboardIdentifier="searchNav" autoresizesArchivedViewToFullSize="NO" automaticallyAdjustsScrollViewInsets="NO" navigationBarHidden="YES" id="gOl-Dt-RoP" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="searchNav" autoresizesArchivedViewToFullSize="NO" automaticallyAdjustsScrollViewInsets="NO" navigationBarHidden="YES" id="gOl-Dt-RoP" customClass="NavigationController" customModule="Mode" customModuleProvider="target" sceneMemberID="viewController">
                     <toolbarItems/>
                     <nil key="simulatedTopBarMetrics"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="fsA-5P-taQ">
@@ -121,7 +124,7 @@
         <!--Navigation Controller-->
         <scene sceneID="f2q-Cc-10J">
             <objects>
-                <navigationController storyboardIdentifier="libraryNav" automaticallyAdjustsScrollViewInsets="NO" navigationBarHidden="YES" id="lny-rD-qFY" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="libraryNav" automaticallyAdjustsScrollViewInsets="NO" navigationBarHidden="YES" id="lny-rD-qFY" customClass="NavigationController" customModule="Mode" customModuleProvider="target" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="N4j-hi-jEw">
                         <autoresizingMask key="autoresizingMask"/>

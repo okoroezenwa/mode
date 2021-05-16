@@ -27,6 +27,14 @@ class MELTableView: UITableView {
     @objc var settings = false { didSet { register(UINib.init(nibName: .settingsCell, bundle: nil), forCellReuseIdentifier: .settingsCell) } }
     
     @objc var login = false { didSet { register(UINib.init(nibName: .loginCell, bundle: nil), forCellReuseIdentifier: .loginCell) } }
+    
+//    weak var gestureRequiredToFail: UIGestureRecognizer? {
+//
+//        didSet {
+//
+//            panGestureRecognizer.delegate = self
+//        }
+//    }
 
     override func awakeFromNib() {
         
@@ -49,3 +57,11 @@ class MELTableView: UITableView {
         indicatorStyle = darkTheme ? .white : .black
     }
 }
+
+//extension MELTableView: UIGestureRecognizerDelegate {
+//
+//    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+//
+//        otherGestureRecognizer == gestureRequiredToFail
+//    }
+//}

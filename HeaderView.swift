@@ -522,7 +522,7 @@ extension HeaderView: UICollectionViewDelegate, UICollectionViewDataSource {
                         }
                     }
                     
-                    cell.prepare(with: playlist, count: MPMediaQuery.for(.playlist, using: playlist).itemsAccessed(at: showiCloudItems ? .all : .standard).cloud.collections?.count ?? 0, editingMode: collectionsVC.tableView.isEditing)
+                    cell.prepare(with: playlist, count: MPMediaQuery.for(.playlist, using: playlist).itemsAccessed(at: (viewController as? CollectionsViewController)?.presented == true || showiCloudItems ? .all : .standard).overrideOffline(if: (viewController as? CollectionsViewController)?.presented == true).items?.count ?? 0, editingMode: collectionsVC.tableView.isEditing)
                     cell.details = (.playlist, width)
                 }
             
@@ -857,21 +857,28 @@ extension HeaderView: PlaylistCollectionCellDelegate {
             
             return nil
             
-        }(), count > 0, let vc = viewController as? UIViewController & SingleItemActionable else { return }
+        }(), entity is MPMediaPlaylist || count > 0, let vc = viewController as? UIViewController & SingleItemActionable else { return }
         
         var actions = [
             SongAction.collect,
             .info(context: context.infoContext(at: indexPath)),
-            .queue(name: cell.nameLabel.text, query: .init(filterPredicates: [.for(entityType, using: entity)])),
+            .queue(type: .all, name: cell.nameLabel.text, query: .init(filterPredicates: [.for(entityType, using: entity)])),
+            .queue(type: .playNext, name: cell.nameLabel.text, query: .init(filterPredicates: [.for(entityType, using: entity)])),
+            .queue(type: .playLater, name: cell.nameLabel.text, query: .init(filterPredicates: [.for(entityType, using: entity)])),
             .show(title: cell.nameLabel.text, context: context.infoContext(at: indexPath), canDisplayInLibrary: true),
             .newPlaylist,
             .addTo/*,
             .search(unwinder: nil)
         */].map({ vc.singleItemAlertAction(for: $0, entityType: entityType, using: entity, from: vc) })
         
+        if entity is MPMediaPlaylist, count < 1 {
+            
+            actions = [actions.value(at: 1), actions.value(at: 5)].unpacked()
+        }
+        
 //        actions.insert(vc.singleItemAlertAction(for: .show(title: cell.nameLabel.text, context: context.infoContext(at: indexPath), canDisplayInLibrary: true), entity: entityType, using: item, from: vc, useAlternateTitle: true), at: 1)
         
-        if let item = entity as? MPMediaItem, item.existsInLibrary.inverted {
+        if let item = entity as? MPMediaItem, item.canBeAddedToLibrary {
             
             actions.append(vc.singleItemAlertAction(for: .library, entityType: .song, using: item, from: vc))
         }
@@ -880,7 +887,7 @@ extension HeaderView: PlaylistCollectionCellDelegate {
     }
 }
 
-protocol HeaderViewTextViewTapDelegate: class {
+protocol HeaderViewTextViewTapDelegate: AnyObject {
     
     func textViewTapped()
 }

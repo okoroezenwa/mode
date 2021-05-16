@@ -17,6 +17,7 @@ class CentreView: UIView {
     @IBOutlet var titleLabel: MELLabel!
     @IBOutlet var subtitleLabel: MELLabel!
     @IBOutlet var labelsImageView: UIImageView!
+    @IBOutlet var tableView: UITableView!
     
     enum CurrentView: Equatable {
         
@@ -26,12 +27,23 @@ class CentreView: UIView {
     }
     
     let imageAlpha: CGFloat = 0.4
+    weak var manager: PassthroughManaging?
     
     override func awakeFromNib() {
         
         super.awakeFromNib()
         
         labelsImageView.alpha = imageAlpha
+    }
+    
+    override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+        
+        if let frames = manager?.passthroughFrames, frames.contains(where: { $0.contains(point) }) {
+            
+            return false
+        }
+        
+        return super.point(inside: point, with: event)
     }
     
     func updateCurrentView(to type: CurrentView, animated: Bool, setAlpha: Bool = true, completion: (() -> ())? = nil) {
@@ -144,4 +156,14 @@ class CentreView: UIView {
             self.bottomAnchor.constraint(equalTo: bottomView.topAnchor)
         ])
     }
+}
+
+protocol PassthroughManaging: AnyObject {
+    
+    var passthroughFrames: [CGRect]? { get }
+}
+
+extension PassthroughManaging {
+    
+    var passthroughFrames: [CGRect]? { nil }
 }

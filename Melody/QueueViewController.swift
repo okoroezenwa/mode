@@ -14,7 +14,18 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
     
     @IBOutlet var tableView: MELTableView!
     @IBOutlet var bottomView: UIView!
-    @IBOutlet var clearButton: MELButton!
+    @IBOutlet var itemActionsButton: MELButton! {
+        
+        didSet {
+            
+            itemActionsButton.addTarget(songManager, action: #selector(SongActionManager.showActionsForAll(_:)), for: .touchUpInside)
+            
+            let gr = UILongPressGestureRecognizer.init(target: songManager, action: #selector(SongActionManager.showActionsForAll(_:)))
+            gr.minimumPressDuration = longPressDuration
+            itemActionsButton.addGestureRecognizer(gr)
+            LongPressManager.shared.gestureRecognisers.append(Weak.init(value: gr))
+        }
+    }
     @IBOutlet var queueStackView: UIStackView!
     @IBOutlet var queueStackViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet var activityIndicator: MELActivityIndicatorView!
@@ -35,8 +46,8 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         
         didSet {
             
-            editButton.setImage(.inactiveEditImage, for: .normal)
-            editButton.setTitle(.inactiveEditButtonTitle, for: .normal)
+//            editButton.setImage(.inactiveEditImage, for: .normal)
+//            editButton.setTitle(.inactiveEditButtonTitle, for: .normal)
             
             editButton.addTarget(songManager, action: #selector(SongActionManager.toggleEditing(_:)), for: .touchUpInside)
         }
@@ -98,12 +109,13 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
     
     var centreViewGiantImage: UIImage?
     var centreViewTitleLabelText: String? = "Queue Empty"
-    var centreViewSubtitleLabelText: String? = "Play a song or two to show the queue"
+    var centreViewSubtitleLabelText: String? = "Play a song or collection to populate the queue"
     var centreViewLabelsImage: UIImage? = #imageLiteral(resourceName: "Queue100")
     lazy var centreView: CentreView? = .instance
     var currentCentreView = CentreView.CurrentView.none
     
     var manager: QueueManager?
+    
     var sectionIndexViewController: SectionIndexViewController?
     var navigatable: Navigatable?
     let requiresLargerTrailingConstraint = true
@@ -179,6 +191,18 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         updateCentreView()
         updateSideButtonsForPlayback()
         
+        let inset = 56 as CGFloat
+        tableView.contentInset.bottom = inset
+        
+        if #available(iOS 13, *) {
+
+            tableView.verticalScrollIndicatorInsets.bottom = inset
+
+        } else {
+
+            tableView.scrollIndicatorInsets.bottom = inset
+        }
+        
         notifier.addObserver(self, selector: #selector(applicationChangedState(_:)), name: UIApplication.willEnterForegroundNotification, object: UIApplication.shared)
         
         notifier.addObserver(self, selector: #selector(applicationChangedState(_:)), name: UIApplication.didEnterBackgroundNotification, object: UIApplication.shared)
@@ -233,15 +257,16 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             allHold.minimumPressDuration = longPressDuration
             editButton.addGestureRecognizer(allHold)
             LongPressManager.shared.gestureRecognisers.append(Weak.init(value: allHold))
+            
+            if animateWithPresentation {
+            
+                bottomView.transform = .init(translationX: 0, y: inset)
+            }
         }
         
-        let edge = UIScreenEdgePanGestureRecognizer.init(target: self, action: #selector(updateSections))
-        edge.edges = .right
-        parent?.view.addGestureRecognizer(edge)
-        
-        let ownEdge = UIScreenEdgePanGestureRecognizer.init(target: self, action: #selector(updateSections))
-        ownEdge.edges = .right
-        view.addGestureRecognizer(ownEdge)
+        let gr = UIPanGestureRecognizer.init(target: self, action: #selector(updateSections))
+        gr.delegate = self
+        tableView.addGestureRecognizer(gr)
         
         tableView.tableFooterView = UIView.init(frame: .zero)
         
@@ -321,7 +346,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                     
                     var actions = [SongAction.collect, .info(context: context(from: indexPath)), .newPlaylist, .addTo, .show(title: cell.nameLabel.text, context: context(from: indexPath), canDisplayInLibrary: true)/*, .search(unwinder: { [weak self] in self?.parent })*/].map({ singleItemAlertAction(for: $0, entityType: .song, using: item, from: self) })
                     
-                    if item.existsInLibrary.inverted {
+                    if item.canBeAddedToLibrary {
                         
                         actions.append(singleItemAlertAction(for: .library, entityType: .song, using: item, from: self))
                     }
@@ -384,12 +409,12 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                 
             } else {
                 
-                return .song(location: .queue(loaded: false, index: index), at: 0, within: [getSong(from: indexPath)].compactMap({ $0 }))
+                return .song(location: .queue(loaded: false, index: index), at: 0, within: [getSong(from: indexPath)].unpacked())
             }
             
         } else {
             
-            return .song(location: .queue(loaded: true, index: Queue.shared.indexToUse), at: 0, within: [musicPlayer.nowPlayingItem].compactMap({ $0 }))
+            return .song(location: .queue(loaded: true, index: Queue.shared.indexToUse), at: 0, within: [musicPlayer.nowPlayingItem].unpacked())
         }
     }
     
@@ -428,7 +453,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
     
     func updateSideButtonsForPlayback() {
         
-        [clearButton, editButton].forEach({
+        [(parent as? PresentedContainerViewController)?.rightButton, editButton, itemActionsButton].forEach({
             
             $0?.lightOverride = musicPlayer.nowPlayingItem == nil
             $0?.isUserInteractionEnabled = musicPlayer.nowPlayingItem != nil
@@ -504,7 +529,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
         present(sectionVC, animated: true, completion: nil)
     }
     
-    @objc func updateSections(_ gr: UIScreenEdgePanGestureRecognizer) {
+    @objc func updateSections(_ gr: UIPanGestureRecognizer) {
         
         switch gr.state {
             
@@ -520,40 +545,9 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
             
             case .changed:
                 
-                guard let sectionVC = sectionIndexViewController, let view = sectionVC.view, let collectionView = sectionVC.collectionView, let containerView = sectionVC.containerView, let effectView = sectionVC.effectView, let location: CGPoint = {
-                    
-                    if view.convert(effectView.frame, from: containerView).contains(gr.location(in: view)) {
-                        
-                        return gr.location(in: collectionView)
-                        
-                    } else if sectionVC.overflowBahaviour == .squeeze || sectionVC.array.count <= sectionVC.maxRowsAtMaxFontSize, let location: CGPoint = {
-                        
-                        let height: CGFloat = {
-                            
-                            if gr.location(in: collectionView).y < 0 {
-                                
-                                return 1 + 4
-                                
-                            } else if gr.location(in: collectionView).y > collectionView.frame.height {
-                                
-                                return collectionView.frame.height - 1 - 3
-                            }
-                            
-                            return gr.location(in: collectionView).y
-                        }()
-                        
-                        return .init(x: collectionView.center.x, y: height)
-                        
-                    }() {
-                        
-                        return location
-                    }
-                    
-                    return nil
-                    
-                }(), let indexPath = collectionView.indexPathForItem(at: location) else { return }
+                guard let sectionVC = sectionIndexViewController else { return }
                 
-                sectionVC.container?.tableView.scrollToRow(at: .init(row: NSNotFound, section: indexPath.row), at: .top, animated: false)
+                sectionVC.changeSection(gr)
             
             case .ended, .failed/*, .cancelled*/: sectionIndexViewController?.dismissVC()
             
@@ -704,7 +698,7 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
                 
                 guard let weakSelf = self else { return }
                 
-                let set = Set(indexPaths.map({ weakSelf.getSong(from: $0) }).compactMap({ $0 }) + [musicPlayer.nowPlayingItem].compactMap({ $0 }))
+                let set = Set(indexPaths.map({ weakSelf.getSong(from: $0) }).unpacked() + [musicPlayer.nowPlayingItem].unpacked())
                 
                 var removedItems = [MPMediaItem]()
                 
@@ -1969,18 +1963,46 @@ class QueueViewController: UIViewController, UIGestureRecognizerDelegate, UITabl
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
         
-        guard !tableView.isEditing else { return false }
+        if gestureRecognizer is UILongPressGestureRecognizer {
         
-        if touch.location(in: parent?.view).x < 23 {
+            guard !tableView.isEditing else { return false }
             
-            return false
-        
-        } else if let indexPath = tableView.indexPathForRow(at: touch.location(in: tableView)), let _ = tableView.cellForRow(at: indexPath) as? PlaybackTableViewCell {
+            if touch.location(in: parent?.view).x < 23 {
+                
+                return false
+            
+            } else if let indexPath = tableView.indexPathForRow(at: touch.location(in: tableView)), let _ = tableView.cellForRow(at: indexPath) as? PlaybackTableViewCell {
+                
+                return false
+            }
+            
+        } else if let gr = gestureRecognizer as? UIPanGestureRecognizer, (gr is UIScreenEdgePanGestureRecognizer).inverted, tableView.isEditing, let indexPath = tableView.indexPathForRow(at: gr.location(in: tableView)), tableView(self.tableView, canMoveRowAt: indexPath) {
             
             return false
         }
         
         return true
+    }
+    
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        
+        guard let gr = gestureRecognizer as? UIPanGestureRecognizer, (gr is UIScreenEdgePanGestureRecognizer).inverted else { return true }
+        
+        guard abs(gr.velocity(in: gr.view).y) > abs(gr.velocity(in: gr.view).x), queueCount > 0 else { return false }
+        
+        if tableView.isEditing, let indexPath = tableView.indexPathForRow(at: gr.location(in: tableView)), tableView(self.tableView, canMoveRowAt: indexPath) {
+            
+            return false
+        }
+        
+        return CGRect.init(x: view.frame.size.width - 44, y: 0, width: 44, height: view.bounds.height).contains(gr.location(in: view))
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        
+        guard (gestureRecognizer is UIScreenEdgePanGestureRecognizer).inverted else { return false }
+        
+        return otherGestureRecognizer is UIScreenEdgePanGestureRecognizer
     }
 }
 
@@ -2184,7 +2206,7 @@ extension QueueViewController: EntityCellDelegate {
         
         var actions = [SongAction.collect, .info(context: context(from: indexPath)), .newPlaylist, .addTo, .show(title: cell.nameLabel.text, context: context(from: indexPath), canDisplayInLibrary: true)/*, .search(unwinder: { [weak self] in self?.parent })*/].map({ singleItemAlertAction(for: $0, entityType: .song, using: item, from: self) })
         
-        if item.existsInLibrary.inverted {
+        if item.canBeAddedToLibrary {
             
             actions.append(singleItemAlertAction(for: .library, entityType: .song, using: item, from: self))
         }

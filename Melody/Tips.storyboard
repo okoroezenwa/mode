@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13189.4" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
-    <device id="retina4_7" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13165.3"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -31,7 +28,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <containerView opaque="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OLd-kv-zZu">
-                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <connections>
                                     <segue destination="oAn-cm-dMx" kind="embed" id="zuF-0k-Z1v"/>
                                 </connections>
@@ -60,7 +57,7 @@
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                         <view key="tableFooterView" contentMode="scaleToFill" id="URV-7y-GpS">
-                            <rect key="frame" x="0.0" y="552" width="375" height="92"/>
+                            <rect key="frame" x="0.0" y="608" width="375" height="92"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nMT-VQ-gHo" userLabel="Top Divider View" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
@@ -92,17 +89,17 @@
                             <tableViewSection id="CEn-aZ-a5x">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="92" id="Cnh-0B-iwr">
-                                        <rect key="frame" x="0.0" y="0.0" width="375" height="92"/>
+                                        <rect key="frame" x="0.0" y="28" width="375" height="92"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Cnh-0B-iwr" id="sGQ-h3-goF">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="91.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="92"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="YfN-de-iIx">
-                                                    <rect key="frame" x="0.0" y="16" width="367" height="59.5"/>
+                                                    <rect key="frame" x="8" y="19" width="351" height="54"/>
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MCc-Gd-aU8" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                            <rect key="frame" x="0.0" y="0.0" width="50" height="59.5"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="50" height="54"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="50" id="8cu-4V-hUL"/>
                                                             </constraints>
@@ -114,7 +111,7 @@
                                                             </userDefinedRuntimeAttributes>
                                                         </label>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cQb-4i-xFh">
-                                                            <rect key="frame" x="58" y="0.0" width="309" height="59.5"/>
+                                                            <rect key="frame" x="58" y="0.0" width="293" height="54"/>
                                                             <attributedString key="attributedText">
                                                                 <fragment content="Get info for an entity (song or song collection) by tapping and holding that item">
                                                                     <attributes>
@@ -138,17 +135,17 @@
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="92" id="n1K-NI-gxd">
-                                        <rect key="frame" x="0.0" y="92" width="375" height="92"/>
+                                        <rect key="frame" x="0.0" y="120" width="375" height="92"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="n1K-NI-gxd" id="F1h-9C-pav">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="91.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="92"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="xDK-Fd-C2I">
-                                                    <rect key="frame" x="0.0" y="16" width="367" height="59.5"/>
+                                                    <rect key="frame" x="8" y="19" width="351" height="54"/>
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9YP-VE-dKp" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                            <rect key="frame" x="0.0" y="0.0" width="50" height="59.5"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="50" height="54"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="50" id="WPf-yF-qsS"/>
                                                             </constraints>
@@ -160,7 +157,7 @@
                                                             </userDefinedRuntimeAttributes>
                                                         </label>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ANP-mL-XLO">
-                                                            <rect key="frame" x="58" y="0.0" width="309" height="59.5"/>
+                                                            <rect key="frame" x="58" y="0.0" width="293" height="54"/>
                                                             <attributedString key="attributedText">
                                                                 <fragment content="Press and hold a tab bar button to go back to the start of that tab">
                                                                     <attributes>
@@ -184,17 +181,17 @@
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="92" id="vMH-MZ-O4l">
-                                        <rect key="frame" x="0.0" y="184" width="375" height="92"/>
+                                        <rect key="frame" x="0.0" y="212" width="375" height="92"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="vMH-MZ-O4l" id="FI7-y2-G8H">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="91.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="92"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="LFw-Cd-fTY">
-                                                    <rect key="frame" x="0.0" y="16" width="367" height="59.5"/>
+                                                    <rect key="frame" x="8" y="19" width="351" height="54"/>
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="3" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="t7v-Gl-HhU" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                            <rect key="frame" x="0.0" y="0.0" width="50" height="59.5"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="50" height="54"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="50" id="1Kb-3C-Nsl"/>
                                                             </constraints>
@@ -206,7 +203,7 @@
                                                             </userDefinedRuntimeAttributes>
                                                         </label>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1MC-6U-L4W">
-                                                            <rect key="frame" x="58" y="0.0" width="309" height="59.5"/>
+                                                            <rect key="frame" x="58" y="0.0" width="293" height="54"/>
                                                             <attributedString key="attributedText">
                                                                 <fragment content="Swipe right to begin editing, swipe left to end. When not editing, swiping left on a song will reveal its album">
                                                                     <attributes>
@@ -230,17 +227,17 @@
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="92" id="8U6-qB-a3C">
-                                        <rect key="frame" x="0.0" y="276" width="375" height="92"/>
+                                        <rect key="frame" x="0.0" y="304" width="375" height="92"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="8U6-qB-a3C" id="i0r-Tz-SEb">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="91.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="92"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="gjK-RT-tFK">
-                                                    <rect key="frame" x="0.0" y="16" width="367" height="59.5"/>
+                                                    <rect key="frame" x="8" y="19" width="351" height="54"/>
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="4" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PF4-8w-KKS" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                            <rect key="frame" x="0.0" y="0.0" width="50" height="59.5"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="50" height="54"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="50" id="08H-I4-B97"/>
                                                             </constraints>
@@ -252,7 +249,7 @@
                                                             </userDefinedRuntimeAttributes>
                                                         </label>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="g2W-h1-YUD">
-                                                            <rect key="frame" x="58" y="0.0" width="309" height="59.5"/>
+                                                            <rect key="frame" x="58" y="0.0" width="293" height="54"/>
                                                             <attributedString key="attributedText">
                                                                 <fragment content="On a stacked collection of windows, press and hold the edge (or the X button) to dismiss all.">
                                                                     <attributes>
@@ -276,17 +273,17 @@
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="92" id="KaF-7x-Beu">
-                                        <rect key="frame" x="0.0" y="368" width="375" height="92"/>
+                                        <rect key="frame" x="0.0" y="396" width="375" height="92"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KaF-7x-Beu" id="xhk-qU-ttb">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="91.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="92"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="mSO-B2-hTN">
-                                                    <rect key="frame" x="0.0" y="16" width="367" height="59.5"/>
+                                                    <rect key="frame" x="8" y="19" width="351" height="54"/>
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="5" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6SD-RK-gz1" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                            <rect key="frame" x="0.0" y="0.0" width="50" height="59.5"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="50" height="54"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="50" id="y5h-3w-n6F"/>
                                                             </constraints>
@@ -298,7 +295,7 @@
                                                             </userDefinedRuntimeAttributes>
                                                         </label>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nBE-mK-iMe">
-                                                            <rect key="frame" x="58" y="0.0" width="309" height="59.5"/>
+                                                            <rect key="frame" x="58" y="0.0" width="293" height="54"/>
                                                             <attributedString key="attributedText">
                                                                 <fragment content="Tap on the artwork of any entity to play just that item">
                                                                     <attributes>
@@ -322,17 +319,17 @@
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="92" id="4kA-dd-u2a">
-                                        <rect key="frame" x="0.0" y="460" width="375" height="92"/>
+                                        <rect key="frame" x="0.0" y="488" width="375" height="92"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="4kA-dd-u2a" id="vhh-oh-coR">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="91.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="92"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="J9f-u5-aJ3">
-                                                    <rect key="frame" x="0.0" y="16" width="367" height="59.5"/>
+                                                    <rect key="frame" x="8" y="19" width="351" height="54"/>
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="6" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="U9B-68-2jC" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                            <rect key="frame" x="0.0" y="0.0" width="50" height="59.5"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="50" height="54"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="50" id="dID-Cz-bls"/>
                                                             </constraints>
@@ -344,7 +341,7 @@
                                                             </userDefinedRuntimeAttributes>
                                                         </label>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fp1-J1-iQJ">
-                                                            <rect key="frame" x="58" y="0.0" width="309" height="59.5"/>
+                                                            <rect key="frame" x="58" y="0.0" width="293" height="54"/>
                                                             <attributedString key="attributedText">
                                                                 <fragment content="Within a collection of songs, press and hold the 'Select' button to reveal options for all songs">
                                                                     <attributes>

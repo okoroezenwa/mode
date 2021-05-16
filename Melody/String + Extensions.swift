@@ -66,6 +66,7 @@ public extension String {
     static let isFolder = "isFolder"
     static let isEditable = "isEditable"
     static let albumLikedState = "albumLikedState"
+    static let isPlayable = "isPlayable"
     
     // MARK: - Control Titles
     static let inactiveEditButtonTitle = "Edit"

@@ -756,7 +756,7 @@ extension Filterable {
                 
                 switch property {
                     
-                    case .dateAdded, .lastPlayed, .year: return "on or after"
+                    case .dateAdded, .lastPlayed, .year: return "on or before"
                     
                     default: return "is at most"
                 }

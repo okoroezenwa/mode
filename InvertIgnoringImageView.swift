@@ -62,7 +62,7 @@ class InvertIgnoringImageView: UIImageView, EntityArtworkDisplaying {
     }
 }
 
-protocol ThemeStatusProvider: class {
+protocol ThemeStatusProvider: AnyObject {
     
     var isDarkTheme: Bool { get }
 }

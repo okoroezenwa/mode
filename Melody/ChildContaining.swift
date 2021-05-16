@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol ChildContaining: class {
+protocol ChildContaining: AnyObject {
     
     var activeChildViewController: UIViewController? { get set }
     var containerView: UIView! { get set }
@@ -126,7 +126,7 @@ extension ChildContaining where Self: UIViewController {
             libraryVC.updateCurrentView(to: libraryVC.currentCentreView, animated: false, setAlpha: false)
             container.centreView.transform = .init(translationX: 0, y: verticalTranslation)
             
-            container.visualEffectNavigationBar.animateViews(direction: .forward, section: .preparation, with: oldVC, and: newVC, preferVerticalTransition: true)
+            container.visualEffectNavigationBar.animateViews(direction: .forward, section: .preparation, with: oldVC, and: newVC, preferVerticalTransition: true) // won't update constraints if from
             
             UIView.setAnimationsEnabled(true)
         
@@ -199,10 +199,12 @@ extension ChildContaining where Self: UIViewController {
             
         }, completion: { [weak self] _ in
             
-            self?.viewControllerSnapshot?.removeFromSuperview()
-            self?.viewControllerSnapshot = nil
+            guard let self = self else { return }
+            
+            self.viewControllerSnapshot?.removeFromSuperview()
+            self.viewControllerSnapshot = nil
             centreViewSnapshot?.removeFromSuperview()
-            self?.containerView.alpha = 1
+            self.containerView.alpha = 1
             
             if let displayer = container.activeViewController?.topViewController as? CentreViewDisplaying {
                 

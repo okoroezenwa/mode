@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina3_5" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -31,7 +31,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" alwaysBounceVertical="YES" keyboardDismissMode="onDrag" dataMode="prototypes" style="grouped" separatorStyle="none" allowsSelectionDuringEditing="YES" allowsMultipleSelectionDuringEditing="YES" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" contentViewInsetsToSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QqZ-Xc-6ma" customClass="MELTableView" customModule="Mode" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="436"/>
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="boolean" keyPath="header" value="YES"/>
@@ -44,93 +44,126 @@
                                 </connections>
                             </tableView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hBh-VU-5Af">
-                                <rect key="frame" x="0.0" y="436" width="320" height="44"/>
+                                <rect key="frame" x="0.0" y="424" width="320" height="56"/>
                                 <subviews>
-                                    <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="v0y-1J-GMf" customClass="MELActivityIndicatorView" customModule="Mode" customModuleProvider="target">
-                                        <rect key="frame" x="256.5" y="12" width="20" height="20"/>
+                                    <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" hidesWhenStopped="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="v0y-1J-GMf" customClass="MELActivityIndicatorView" customModule="Mode" customModuleProvider="target">
+                                        <rect key="frame" x="43.5" y="12" width="20" height="20"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                     </activityIndicatorView>
-                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="RV3-bT-ZXA">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                                        <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nGO-rE-wF6" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="0.0" width="106.5" height="44"/>
-                                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                <inset key="titleEdgeInsets" minX="5" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="5" maxY="2"/>
-                                                <state key="normal" title="Clear..." image="Discard">
-                                                    <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                </state>
-                                                <userDefinedRuntimeAttributes>
-                                                    <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
-                                                        <integer key="value" value="1"/>
-                                                    </userDefinedRuntimeAttribute>
-                                                    <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="body"/>
-                                                </userDefinedRuntimeAttributes>
-                                                <connections>
-                                                    <action selector="clearQueue:" destination="9EO-ML-dX3" eventType="touchUpInside" id="Vxl-gD-Qdx"/>
-                                                </connections>
-                                            </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="td3-Wf-RjJ" customClass="ActionsButton" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="106.5" y="0.0" width="107" height="44"/>
-                                                <gestureRecognizers/>
-                                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                <state key="normal">
-                                                    <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                </state>
-                                                <connections>
-                                                    <action selector="showLibraryOptions" destination="9EO-ML-dX3" eventType="touchUpInside" id="8So-dJ-xiS"/>
-                                                </connections>
-                                            </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6SX-E3-8Yx" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="213.5" y="0.0" width="106.5" height="44"/>
-                                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                <inset key="titleEdgeInsets" minX="5" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="5" maxY="2"/>
-                                                <state key="normal" title="Edit" image="Add"/>
-                                                <userDefinedRuntimeAttributes>
-                                                    <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
-                                                        <integer key="value" value="1"/>
-                                                    </userDefinedRuntimeAttribute>
-                                                    <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="body"/>
-                                                </userDefinedRuntimeAttributes>
-                                            </button>
-                                        </subviews>
+                                    <imageView userInteractionEnabled="NO" alpha="0.5" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="QjU-pv-COZ" customClass="ShadowImageView" customModule="Mode" customModuleProvider="target">
+                                        <rect key="frame" x="-26" y="-32" width="372" height="114"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="radius">
+                                                <integer key="value" value="16"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="length">
+                                                <integer key="value" value="32"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="blur">
+                                                <integer key="value" value="32"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="boolean" keyPath="visibleInDarkMode" value="NO"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </imageView>
+                                    <visualEffectView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7Bf-pT-X9U" customClass="MELVisualEffectView" customModule="Mode" customModuleProvider="target">
+                                        <rect key="frame" x="6" y="0.0" width="308" height="50"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="i9h-sI-IwM">
+                                            <rect key="frame" x="0.0" y="0.0" width="308" height="50"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <subviews>
+                                                <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="RV3-bT-ZXA">
+                                                    <rect key="frame" x="0.0" y="0.0" width="308" height="50"/>
+                                                    <subviews>
+                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6SX-E3-8Yx" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                                            <rect key="frame" x="0.0" y="0.0" width="102.5" height="50"/>
+                                                            <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
+                                                            <inset key="titleEdgeInsets" minX="5" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                                            <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="5" maxY="2"/>
+                                                            <state key="normal" title="Edit" image="EditNoBorder15"/>
+                                                            <userDefinedRuntimeAttributes>
+                                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                    <integer key="value" value="1"/>
+                                                                </userDefinedRuntimeAttribute>
+                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="body"/>
+                                                            </userDefinedRuntimeAttributes>
+                                                        </button>
+                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="td3-Wf-RjJ" customClass="ActionsButton" customModule="Mode" customModuleProvider="target">
+                                                            <rect key="frame" x="102.5" y="0.0" width="103" height="50"/>
+                                                            <gestureRecognizers/>
+                                                            <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
+                                                            <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                                            <state key="normal">
+                                                                <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                                            </state>
+                                                            <connections>
+                                                                <action selector="showLibraryOptions" destination="9EO-ML-dX3" eventType="touchUpInside" id="8So-dJ-xiS"/>
+                                                            </connections>
+                                                        </button>
+                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nGO-rE-wF6" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                                            <rect key="frame" x="205.5" y="0.0" width="102.5" height="50"/>
+                                                            <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
+                                                            <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                                            <inset key="titleEdgeInsets" minX="5" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                                            <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="5" maxY="2"/>
+                                                            <state key="normal" title="Actions" image="ActionsMenu15">
+                                                                <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                                            </state>
+                                                            <userDefinedRuntimeAttributes>
+                                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                    <integer key="value" value="1"/>
+                                                                </userDefinedRuntimeAttribute>
+                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="body"/>
+                                                            </userDefinedRuntimeAttributes>
+                                                            <connections>
+                                                                <action selector="clearQueue:" destination="9EO-ML-dX3" eventType="touchUpInside" id="Vxl-gD-Qdx"/>
+                                                            </connections>
+                                                        </button>
+                                                    </subviews>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="50" id="aLF-4a-vqQ">
+                                                            <userDefinedRuntimeAttributes>
+                                                                <userDefinedRuntimeAttribute type="number" keyPath="constant">
+                                                                    <integer key="value" value="0"/>
+                                                                </userDefinedRuntimeAttribute>
+                                                            </userDefinedRuntimeAttributes>
+                                                        </constraint>
+                                                    </constraints>
+                                                </stackView>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="RV3-bT-ZXA" firstAttribute="leading" secondItem="i9h-sI-IwM" secondAttribute="leading" id="JfS-mG-Fi7"/>
+                                                <constraint firstAttribute="bottom" secondItem="RV3-bT-ZXA" secondAttribute="bottom" id="SJM-7P-dAk"/>
+                                                <constraint firstItem="RV3-bT-ZXA" firstAttribute="top" secondItem="i9h-sI-IwM" secondAttribute="top" id="TvF-nd-fqL"/>
+                                                <constraint firstAttribute="trailing" secondItem="RV3-bT-ZXA" secondAttribute="trailing" id="gf5-A4-Onx"/>
+                                            </constraints>
+                                        </view>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="44" id="aLF-4a-vqQ">
-                                                <userDefinedRuntimeAttributes>
-                                                    <userDefinedRuntimeAttribute type="number" keyPath="constant">
-                                                        <integer key="value" value="0"/>
-                                                    </userDefinedRuntimeAttribute>
-                                                </userDefinedRuntimeAttributes>
-                                            </constraint>
+                                            <constraint firstAttribute="height" constant="50" id="HNp-Qf-wrf"/>
                                         </constraints>
-                                    </stackView>
-                                    <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="X2N-4X-HH1" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="1"/>
-                                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.050000000000000003" colorSpace="calibratedRGB"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="1" id="OHQ-5Y-pQh"/>
-                                        </constraints>
-                                    </view>
+                                        <blurEffect style="regular"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="16"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="boolean" keyPath="floating" value="YES"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </visualEffectView>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="X2N-4X-HH1" secondAttribute="trailing" id="2Pn-hW-A9G"/>
-                                    <constraint firstItem="RV3-bT-ZXA" firstAttribute="top" secondItem="hBh-VU-5Af" secondAttribute="top" id="9zF-NV-1lW"/>
-                                    <constraint firstItem="X2N-4X-HH1" firstAttribute="top" secondItem="hBh-VU-5Af" secondAttribute="top" id="KY5-O2-bWg"/>
-                                    <constraint firstItem="RV3-bT-ZXA" firstAttribute="leading" secondItem="hBh-VU-5Af" secondAttribute="leading" id="L3X-Nh-khD"/>
-                                    <constraint firstItem="X2N-4X-HH1" firstAttribute="leading" secondItem="hBh-VU-5Af" secondAttribute="leading" id="MWw-Xk-Fcc"/>
-                                    <constraint firstAttribute="bottom" secondItem="RV3-bT-ZXA" secondAttribute="bottom" id="OWn-jc-Hpv"/>
-                                    <constraint firstItem="v0y-1J-GMf" firstAttribute="centerY" secondItem="6SX-E3-8Yx" secondAttribute="centerY" id="Rwc-P3-nZr"/>
-                                    <constraint firstItem="v0y-1J-GMf" firstAttribute="centerX" secondItem="6SX-E3-8Yx" secondAttribute="centerX" id="UnB-hp-Wvg"/>
-                                    <constraint firstAttribute="trailing" secondItem="RV3-bT-ZXA" secondAttribute="trailing" id="xQm-6s-aHH"/>
+                                    <constraint firstItem="7Bf-pT-X9U" firstAttribute="leading" secondItem="hBh-VU-5Af" secondAttribute="leading" constant="6" id="4ro-RF-kUO"/>
+                                    <constraint firstItem="7Bf-pT-X9U" firstAttribute="top" secondItem="QjU-pv-COZ" secondAttribute="top" constant="32" id="5Bf-Dx-TWd"/>
+                                    <constraint firstItem="7Bf-pT-X9U" firstAttribute="trailing" secondItem="QjU-pv-COZ" secondAttribute="trailing" constant="-32" id="6Ki-w1-WlE"/>
+                                    <constraint firstItem="7Bf-pT-X9U" firstAttribute="bottom" secondItem="QjU-pv-COZ" secondAttribute="bottom" constant="-32" id="Et4-Ik-9DL"/>
+                                    <constraint firstAttribute="trailing" secondItem="7Bf-pT-X9U" secondAttribute="trailing" constant="6" id="QeJ-yc-m5w"/>
+                                    <constraint firstItem="7Bf-pT-X9U" firstAttribute="top" secondItem="hBh-VU-5Af" secondAttribute="top" id="cEF-m6-KR2"/>
+                                    <constraint firstAttribute="bottom" secondItem="7Bf-pT-X9U" secondAttribute="bottom" constant="6" id="guT-Uk-qFS"/>
+                                    <constraint firstItem="7Bf-pT-X9U" firstAttribute="leading" secondItem="QjU-pv-COZ" secondAttribute="leading" constant="32" id="zgt-co-ujn"/>
                                 </constraints>
                             </view>
                             <view clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vOc-6V-gOn">
-                                <rect key="frame" x="130" y="188" width="60" height="60"/>
+                                <rect key="frame" x="130" y="210" width="60" height="60"/>
                                 <subviews>
                                     <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="o9E-Td-iCq" customClass="MELVisualEffectView" customModule="Mode" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="60" height="60"/>
@@ -176,12 +209,12 @@
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="QqZ-Xc-6ma" firstAttribute="leading" secondItem="Q7A-84-rbg" secondAttribute="leading" id="1eA-lY-U1N"/>
+                            <constraint firstItem="A4C-J7-FdJ" firstAttribute="top" secondItem="QqZ-Xc-6ma" secondAttribute="bottom" id="3Ux-dk-sMv"/>
                             <constraint firstItem="hBh-VU-5Af" firstAttribute="leading" secondItem="Q7A-84-rbg" secondAttribute="leading" id="9hU-iF-eZa"/>
                             <constraint firstItem="vOc-6V-gOn" firstAttribute="centerY" secondItem="QqZ-Xc-6ma" secondAttribute="centerY" id="C4z-uZ-DUP"/>
                             <constraint firstAttribute="trailing" secondItem="QqZ-Xc-6ma" secondAttribute="trailing" id="MP8-Fa-S1f"/>
                             <constraint firstItem="QqZ-Xc-6ma" firstAttribute="top" secondItem="eK6-yU-LsR" secondAttribute="bottom" id="a9O-VU-22N"/>
                             <constraint firstAttribute="trailing" secondItem="hBh-VU-5Af" secondAttribute="trailing" id="bSD-CK-lp5"/>
-                            <constraint firstItem="hBh-VU-5Af" firstAttribute="top" secondItem="QqZ-Xc-6ma" secondAttribute="bottom" id="cee-cl-AWc"/>
                             <constraint firstItem="vOc-6V-gOn" firstAttribute="centerX" secondItem="QqZ-Xc-6ma" secondAttribute="centerX" id="dwp-Yt-KdQ"/>
                             <constraint firstItem="A4C-J7-FdJ" firstAttribute="top" secondItem="hBh-VU-5Af" secondAttribute="bottom" id="f9T-On-cCO"/>
                         </constraints>
@@ -192,8 +225,8 @@
                         <outlet property="activityView" destination="vOc-6V-gOn" id="UAd-bE-cZe"/>
                         <outlet property="activityVisualEffectView" destination="o9E-Td-iCq" id="HMI-2n-xPO"/>
                         <outlet property="bottomView" destination="hBh-VU-5Af" id="Qnq-WN-AkN"/>
-                        <outlet property="clearButton" destination="nGO-rE-wF6" id="wSd-a4-N7h"/>
                         <outlet property="editButton" destination="6SX-E3-8Yx" id="6bE-XB-8Pw"/>
+                        <outlet property="itemActionsButton" destination="nGO-rE-wF6" id="GVi-35-gTh"/>
                         <outlet property="largeActivityIndicator" destination="n91-GM-jJz" id="L4D-Ey-xRy"/>
                         <outlet property="queueStackView" destination="RV3-bT-ZXA" id="aZF-lv-4bg"/>
                         <outlet property="queueStackViewHeightConstraint" destination="aLF-4a-vqQ" id="xMP-vO-tDs"/>
@@ -445,7 +478,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="6v1-nP-7Mo" customClass="MELCollectionView" customModule="Mode" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="1556"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="1600"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="0.0" minimumInteritemSpacing="0.0" id="0Dh-pf-Rhp">
                                     <size key="itemSize" width="50" height="50"/>
@@ -1691,114 +1724,169 @@
                                     <outlet property="delegate" destination="9S9-Nb-Hqt" id="RVr-NI-6yz"/>
                                 </connections>
                             </collectionView>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="KmB-rD-gdy">
-                                <rect key="frame" x="0.0" y="1556" width="375" height="44"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6R9-hD-LDZ">
+                                <rect key="frame" x="0.0" y="1544" width="375" height="56"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" alpha="0.5" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Zrh-1t-n56" customClass="ShadowImageView" customModule="Mode" customModuleProvider="target">
+                                        <rect key="frame" x="-26" y="-32" width="427" height="114"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="radius">
+                                                <integer key="value" value="16"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="length">
+                                                <integer key="value" value="32"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="blur">
+                                                <integer key="value" value="32"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="boolean" keyPath="visibleInDarkMode" value="NO"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </imageView>
+                                    <visualEffectView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gfz-Y7-rwp" customClass="MELVisualEffectView" customModule="Mode" customModuleProvider="target">
+                                        <rect key="frame" x="6" y="0.0" width="363" height="50"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="SXC-Ld-l9e">
+                                            <rect key="frame" x="0.0" y="0.0" width="363" height="50"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <subviews>
+                                                <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="j1t-Oj-hnI">
+                                                    <rect key="frame" x="0.0" y="0.0" width="363" height="50"/>
+                                                    <subviews>
+                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7r9-Zh-o7G" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                                            <rect key="frame" x="0.0" y="0.0" width="72.5" height="50"/>
+                                                            <state key="normal" image="BackArrow12"/>
+                                                            <connections>
+                                                                <action selector="previousItem" destination="9S9-Nb-Hqt" eventType="touchUpInside" id="DY4-Ob-hdN"/>
+                                                            </connections>
+                                                        </button>
+                                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Een-b8-Kd2">
+                                                            <rect key="frame" x="72.5" y="0.0" width="72.5" height="50"/>
+                                                            <subviews>
+                                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ATJ-md-bbi" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                                                    <rect key="frame" x="0.0" y="0.0" width="72.5" height="50"/>
+                                                                    <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
+                                                                    <inset key="titleEdgeInsets" minX="8" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                                                    <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="8" maxY="2"/>
+                                                                    <state key="normal" title="Shuffle" image="Shuffle14"/>
+                                                                    <connections>
+                                                                        <action selector="shuffle" destination="9S9-Nb-Hqt" eventType="touchUpInside" id="Ck8-De-okj"/>
+                                                                    </connections>
+                                                                </button>
+                                                            </subviews>
+                                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                            <constraints>
+                                                                <constraint firstItem="ATJ-md-bbi" firstAttribute="leading" secondItem="Een-b8-Kd2" secondAttribute="leading" id="0ku-fB-6pq"/>
+                                                                <constraint firstItem="ATJ-md-bbi" firstAttribute="top" secondItem="Een-b8-Kd2" secondAttribute="top" id="O2u-80-6C9"/>
+                                                                <constraint firstAttribute="bottom" secondItem="ATJ-md-bbi" secondAttribute="bottom" id="fVp-g9-dW1"/>
+                                                                <constraint firstAttribute="trailing" secondItem="ATJ-md-bbi" secondAttribute="trailing" id="mvq-CQ-4mz"/>
+                                                            </constraints>
+                                                        </view>
+                                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="u0T-3t-FtA">
+                                                            <rect key="frame" x="145" y="0.0" width="73" height="50"/>
+                                                            <subviews>
+                                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mXl-zy-QIc" customClass="ActionsButton" customModule="Mode" customModuleProvider="target">
+                                                                    <rect key="frame" x="0.0" y="0.0" width="73" height="50"/>
+                                                                    <gestureRecognizers/>
+                                                                    <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="15"/>
+                                                                    <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                                                    <state key="normal">
+                                                                        <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                                                    </state>
+                                                                    <connections>
+                                                                        <action selector="showLibraryOptions" destination="9S9-Nb-Hqt" eventType="touchUpInside" id="KNn-wR-Skq"/>
+                                                                    </connections>
+                                                                </button>
+                                                            </subviews>
+                                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                            <constraints>
+                                                                <constraint firstItem="mXl-zy-QIc" firstAttribute="top" secondItem="u0T-3t-FtA" secondAttribute="top" id="6Nm-BR-EbS"/>
+                                                                <constraint firstItem="mXl-zy-QIc" firstAttribute="leading" secondItem="u0T-3t-FtA" secondAttribute="leading" id="CkD-cL-RVo"/>
+                                                                <constraint firstAttribute="bottom" secondItem="mXl-zy-QIc" secondAttribute="bottom" id="ayN-5J-R5c"/>
+                                                                <constraint firstAttribute="trailing" secondItem="mXl-zy-QIc" secondAttribute="trailing" id="xVI-rd-jsV"/>
+                                                            </constraints>
+                                                        </view>
+                                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zbH-WN-MeF">
+                                                            <rect key="frame" x="218" y="0.0" width="72.5" height="50"/>
+                                                            <subviews>
+                                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JkV-Vz-TqD" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                                                    <rect key="frame" x="0.0" y="0.0" width="72.5" height="50"/>
+                                                                    <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
+                                                                    <inset key="titleEdgeInsets" minX="8" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                                                    <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="8" maxY="1"/>
+                                                                    <state key="normal" title="Play" image="PlayFilled12"/>
+                                                                    <connections>
+                                                                        <action selector="play" destination="9S9-Nb-Hqt" eventType="touchUpInside" id="Ea7-O6-uuq"/>
+                                                                    </connections>
+                                                                </button>
+                                                            </subviews>
+                                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="trailing" secondItem="JkV-Vz-TqD" secondAttribute="trailing" id="0vM-bE-bwW"/>
+                                                                <constraint firstItem="JkV-Vz-TqD" firstAttribute="leading" secondItem="zbH-WN-MeF" secondAttribute="leading" id="YeA-56-6Lb"/>
+                                                                <constraint firstItem="JkV-Vz-TqD" firstAttribute="top" secondItem="zbH-WN-MeF" secondAttribute="top" id="nyV-dL-3mP"/>
+                                                                <constraint firstAttribute="bottom" secondItem="JkV-Vz-TqD" secondAttribute="bottom" id="ouK-G7-1zN"/>
+                                                            </constraints>
+                                                        </view>
+                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bi9-8t-RAs" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                                            <rect key="frame" x="290.5" y="0.0" width="72.5" height="50"/>
+                                                            <state key="normal" image="ForwardArrow12"/>
+                                                            <connections>
+                                                                <action selector="nextItem" destination="9S9-Nb-Hqt" eventType="touchUpInside" id="Z49-Ls-vjo"/>
+                                                            </connections>
+                                                        </button>
+                                                    </subviews>
+                                                </stackView>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="bottom" secondItem="j1t-Oj-hnI" secondAttribute="bottom" id="5ep-lW-KY9"/>
+                                                <constraint firstItem="j1t-Oj-hnI" firstAttribute="leading" secondItem="SXC-Ld-l9e" secondAttribute="leading" id="Neo-TX-FVn"/>
+                                                <constraint firstItem="j1t-Oj-hnI" firstAttribute="top" secondItem="SXC-Ld-l9e" secondAttribute="top" id="eGi-Pl-azU"/>
+                                                <constraint firstAttribute="trailing" secondItem="j1t-Oj-hnI" secondAttribute="trailing" id="u02-kg-joQ"/>
+                                            </constraints>
+                                        </view>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="50" id="Cyo-hF-VoF"/>
+                                        </constraints>
+                                        <blurEffect style="regular"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="16"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="alphaOverride">
+                                                <real key="value" value="0.20000000000000001"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="boolean" keyPath="floating" value="YES"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </visualEffectView>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstItem="gfz-Y7-rwp" firstAttribute="leading" secondItem="6R9-hD-LDZ" secondAttribute="leading" constant="6" id="2n3-Rr-xsu"/>
+                                    <constraint firstAttribute="trailing" secondItem="gfz-Y7-rwp" secondAttribute="trailing" constant="6" id="5hh-cA-59E"/>
+                                    <constraint firstItem="Zrh-1t-n56" firstAttribute="trailing" secondItem="gfz-Y7-rwp" secondAttribute="trailing" constant="32" id="Fdp-tE-LcO"/>
+                                    <constraint firstItem="Zrh-1t-n56" firstAttribute="top" secondItem="gfz-Y7-rwp" secondAttribute="top" constant="-32" id="MhK-WD-Ttg"/>
+                                    <constraint firstAttribute="bottom" secondItem="gfz-Y7-rwp" secondAttribute="bottom" constant="6" id="XAD-I6-Gtm"/>
+                                    <constraint firstItem="gfz-Y7-rwp" firstAttribute="top" secondItem="6R9-hD-LDZ" secondAttribute="top" id="d8u-xB-APX"/>
+                                    <constraint firstItem="Zrh-1t-n56" firstAttribute="bottom" secondItem="gfz-Y7-rwp" secondAttribute="bottom" constant="32" id="qIo-oS-4eP"/>
+                                    <constraint firstItem="Zrh-1t-n56" firstAttribute="leading" secondItem="gfz-Y7-rwp" secondAttribute="leading" constant="-32" id="tI3-Rf-aGU"/>
+                                </constraints>
+                            </view>
+                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="KmB-rD-gdy">
+                                <rect key="frame" x="0.0" y="1600" width="375" height="0.0"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2hi-0e-ttt" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="1"/>
                                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.050000000000000003" colorSpace="calibratedRGB"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="1" id="K84-6D-vF7"/>
+                                            <constraint firstAttribute="height" priority="999" constant="1" id="K84-6D-vF7"/>
                                         </constraints>
                                     </view>
-                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="j1t-Oj-hnI">
-                                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
-                                        <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7r9-Zh-o7G" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="0.0" width="75" height="44"/>
-                                                <state key="normal" image="BackArrow12"/>
-                                                <connections>
-                                                    <action selector="previousItem" destination="9S9-Nb-Hqt" eventType="touchUpInside" id="DY4-Ob-hdN"/>
-                                                </connections>
-                                            </button>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Een-b8-Kd2">
-                                                <rect key="frame" x="75" y="0.0" width="75" height="44"/>
-                                                <subviews>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ATJ-md-bbi" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                        <rect key="frame" x="0.0" y="0.0" width="75" height="44"/>
-                                                        <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                        <inset key="titleEdgeInsets" minX="8" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="8" maxY="2"/>
-                                                        <state key="normal" title="Shuffle" image="Shuffle14"/>
-                                                        <connections>
-                                                            <action selector="shuffle" destination="9S9-Nb-Hqt" eventType="touchUpInside" id="Ck8-De-okj"/>
-                                                        </connections>
-                                                    </button>
-                                                </subviews>
-                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                                <constraints>
-                                                    <constraint firstItem="ATJ-md-bbi" firstAttribute="leading" secondItem="Een-b8-Kd2" secondAttribute="leading" id="0ku-fB-6pq"/>
-                                                    <constraint firstItem="ATJ-md-bbi" firstAttribute="top" secondItem="Een-b8-Kd2" secondAttribute="top" id="O2u-80-6C9"/>
-                                                    <constraint firstAttribute="bottom" secondItem="ATJ-md-bbi" secondAttribute="bottom" id="fVp-g9-dW1"/>
-                                                    <constraint firstAttribute="trailing" secondItem="ATJ-md-bbi" secondAttribute="trailing" id="mvq-CQ-4mz"/>
-                                                </constraints>
-                                            </view>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="u0T-3t-FtA">
-                                                <rect key="frame" x="150" y="0.0" width="75" height="44"/>
-                                                <subviews>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mXl-zy-QIc" customClass="ActionsButton" customModule="Mode" customModuleProvider="target">
-                                                        <rect key="frame" x="0.0" y="0.0" width="75" height="44"/>
-                                                        <gestureRecognizers/>
-                                                        <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="15"/>
-                                                        <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                        <state key="normal">
-                                                            <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                        </state>
-                                                        <connections>
-                                                            <action selector="showLibraryOptions" destination="9S9-Nb-Hqt" eventType="touchUpInside" id="KNn-wR-Skq"/>
-                                                        </connections>
-                                                    </button>
-                                                </subviews>
-                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                                <constraints>
-                                                    <constraint firstItem="mXl-zy-QIc" firstAttribute="top" secondItem="u0T-3t-FtA" secondAttribute="top" id="6Nm-BR-EbS"/>
-                                                    <constraint firstItem="mXl-zy-QIc" firstAttribute="leading" secondItem="u0T-3t-FtA" secondAttribute="leading" id="CkD-cL-RVo"/>
-                                                    <constraint firstAttribute="bottom" secondItem="mXl-zy-QIc" secondAttribute="bottom" id="ayN-5J-R5c"/>
-                                                    <constraint firstAttribute="trailing" secondItem="mXl-zy-QIc" secondAttribute="trailing" id="xVI-rd-jsV"/>
-                                                </constraints>
-                                            </view>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zbH-WN-MeF">
-                                                <rect key="frame" x="225" y="0.0" width="75" height="44"/>
-                                                <subviews>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JkV-Vz-TqD" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                        <rect key="frame" x="0.0" y="0.0" width="75" height="44"/>
-                                                        <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
-                                                        <inset key="titleEdgeInsets" minX="8" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="8" maxY="1"/>
-                                                        <state key="normal" title="Play" image="PlayFilled12"/>
-                                                        <connections>
-                                                            <action selector="play" destination="9S9-Nb-Hqt" eventType="touchUpInside" id="Ea7-O6-uuq"/>
-                                                        </connections>
-                                                    </button>
-                                                </subviews>
-                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="trailing" secondItem="JkV-Vz-TqD" secondAttribute="trailing" id="0vM-bE-bwW"/>
-                                                    <constraint firstItem="JkV-Vz-TqD" firstAttribute="leading" secondItem="zbH-WN-MeF" secondAttribute="leading" id="YeA-56-6Lb"/>
-                                                    <constraint firstItem="JkV-Vz-TqD" firstAttribute="top" secondItem="zbH-WN-MeF" secondAttribute="top" id="nyV-dL-3mP"/>
-                                                    <constraint firstAttribute="bottom" secondItem="JkV-Vz-TqD" secondAttribute="bottom" id="ouK-G7-1zN"/>
-                                                </constraints>
-                                            </view>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bi9-8t-RAs" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="300" y="0.0" width="75" height="44"/>
-                                                <state key="normal" image="ForwardArrow12"/>
-                                                <connections>
-                                                    <action selector="nextItem" destination="9S9-Nb-Hqt" eventType="touchUpInside" id="Z49-Ls-vjo"/>
-                                                </connections>
-                                            </button>
-                                        </subviews>
-                                    </stackView>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstItem="j1t-Oj-hnI" firstAttribute="top" secondItem="KmB-rD-gdy" secondAttribute="top" id="1D0-u5-hXd"/>
                                     <constraint firstItem="2hi-0e-ttt" firstAttribute="top" secondItem="KmB-rD-gdy" secondAttribute="top" id="4a4-9x-bSO"/>
-                                    <constraint firstAttribute="bottom" secondItem="j1t-Oj-hnI" secondAttribute="bottom" id="Ed2-s6-fZ6"/>
                                     <constraint firstAttribute="trailing" secondItem="2hi-0e-ttt" secondAttribute="trailing" id="Pvx-MW-TBm"/>
                                     <constraint firstItem="2hi-0e-ttt" firstAttribute="leading" secondItem="KmB-rD-gdy" secondAttribute="leading" id="Tk6-7z-2lS"/>
-                                    <constraint firstAttribute="height" constant="44" id="jFf-Ns-iHT"/>
-                                    <constraint firstAttribute="trailing" secondItem="j1t-Oj-hnI" secondAttribute="trailing" id="nH6-Jv-1sj"/>
-                                    <constraint firstItem="j1t-Oj-hnI" firstAttribute="leading" secondItem="KmB-rD-gdy" secondAttribute="leading" id="wUb-Aw-1JT"/>
+                                    <constraint firstAttribute="height" id="jFf-Ns-iHT"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -1807,16 +1895,20 @@
                             <constraint firstItem="6v1-nP-7Mo" firstAttribute="top" secondItem="FfV-fw-TIe" secondAttribute="bottom" id="2ZR-ei-bFn"/>
                             <constraint firstItem="JbZ-4i-AW6" firstAttribute="top" secondItem="KmB-rD-gdy" secondAttribute="bottom" id="4KF-LR-TDa"/>
                             <constraint firstAttribute="trailing" secondItem="KmB-rD-gdy" secondAttribute="trailing" id="X2F-1q-BT6"/>
+                            <constraint firstItem="JbZ-4i-AW6" firstAttribute="top" secondItem="6R9-hD-LDZ" secondAttribute="bottom" id="b8I-nI-fbB"/>
                             <constraint firstAttribute="trailing" secondItem="6v1-nP-7Mo" secondAttribute="trailing" id="cDa-vc-JW4"/>
                             <constraint firstItem="KmB-rD-gdy" firstAttribute="top" secondItem="6v1-nP-7Mo" secondAttribute="bottom" id="ijU-Ox-anO"/>
+                            <constraint firstItem="6R9-hD-LDZ" firstAttribute="leading" secondItem="4uu-Ho-A3K" secondAttribute="leading" id="kWD-Yp-xQ5"/>
                             <constraint firstItem="KmB-rD-gdy" firstAttribute="leading" secondItem="4uu-Ho-A3K" secondAttribute="leading" id="ktA-W1-h7U"/>
                             <constraint firstItem="6v1-nP-7Mo" firstAttribute="leading" secondItem="4uu-Ho-A3K" secondAttribute="leading" id="m0E-Gk-8Nf"/>
+                            <constraint firstAttribute="trailing" secondItem="6R9-hD-LDZ" secondAttribute="trailing" id="u5I-YV-cz9"/>
                         </constraints>
                     </view>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="375" height="1600"/>
                     <connections>
                         <outlet property="actionsButton" destination="mXl-zy-QIc" id="fcG-oF-PWb"/>
+                        <outlet property="bottomView" destination="6R9-hD-LDZ" id="UJa-xn-OBL"/>
                         <outlet property="collectionView" destination="6v1-nP-7Mo" id="vGM-1u-HXL"/>
                         <outlet property="flowLayout" destination="0Dh-pf-Rhp" id="CBh-LB-rnZ"/>
                         <outlet property="nextButton" destination="bi9-8t-RAs" id="5XR-tl-NdC"/>
@@ -1850,7 +1942,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" keyboardDismissMode="onDrag" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelectionDuringEditing="YES" allowsMultipleSelectionDuringEditing="YES" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" contentViewInsetsToSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2Ve-qy-ddh" customClass="MELTableView" customModule="Mode" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="388"/>
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <userDefinedRuntimeAttributes>
@@ -1861,131 +1953,127 @@
                                     <outlet property="delegate" destination="yiG-nb-WaK" id="MEJ-jK-Kjg"/>
                                 </connections>
                             </tableView>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RBd-xf-vLH">
-                                <rect key="frame" x="0.0" y="388" width="320" height="92"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rYN-69-A5F">
+                                <rect key="frame" x="0.0" y="424" width="320" height="56"/>
                                 <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5ys-q0-KQd" userLabel="Top Divider View" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="1"/>
-                                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.050000000000000003" colorSpace="calibratedRGB"/>
+                                    <imageView userInteractionEnabled="NO" alpha="0.5" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Fwx-eE-RMP" customClass="ShadowImageView" customModule="Mode" customModuleProvider="target">
+                                        <rect key="frame" x="-26" y="-32" width="372" height="114"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="radius">
+                                                <integer key="value" value="16"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="length">
+                                                <integer key="value" value="32"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="blur">
+                                                <integer key="value" value="32"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="boolean" keyPath="visibleInDarkMode" value="NO"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </imageView>
+                                    <visualEffectView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HG7-2N-uRb" customClass="MELVisualEffectView" customModule="Mode" customModuleProvider="target">
+                                        <rect key="frame" x="6" y="0.0" width="308" height="50"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="vWp-lR-2ws">
+                                            <rect key="frame" x="0.0" y="0.0" width="308" height="50"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <subviews>
+                                                <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="gUT-oI-HSg">
+                                                    <rect key="frame" x="0.0" y="0.0" width="308" height="50"/>
+                                                    <subviews>
+                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Y0S-9o-oW5" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                                            <rect key="frame" x="0.0" y="0.0" width="102.5" height="50"/>
+                                                            <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
+                                                            <inset key="titleEdgeInsets" minX="5" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                                            <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="5" maxY="2"/>
+                                                            <state key="normal" title="Edit" image="EditNoBorder15"/>
+                                                            <userDefinedRuntimeAttributes>
+                                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                    <integer key="value" value="1"/>
+                                                                </userDefinedRuntimeAttribute>
+                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="body"/>
+                                                            </userDefinedRuntimeAttributes>
+                                                        </button>
+                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tga-ax-5XU" customClass="ActionsButton" customModule="Mode" customModuleProvider="target">
+                                                            <rect key="frame" x="102.5" y="0.0" width="103" height="50"/>
+                                                            <gestureRecognizers/>
+                                                            <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
+                                                            <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                                            <state key="normal">
+                                                                <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                                            </state>
+                                                            <connections>
+                                                                <action selector="showLibraryOptions" destination="9EO-ML-dX3" eventType="touchUpInside" id="CBi-Ke-DMr"/>
+                                                                <action selector="showLibraryOptions" destination="yiG-nb-WaK" eventType="touchUpInside" id="s6h-ND-gUz"/>
+                                                            </connections>
+                                                        </button>
+                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="v41-Vr-l5x" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                                            <rect key="frame" x="205.5" y="0.0" width="102.5" height="50"/>
+                                                            <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
+                                                            <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                                            <inset key="titleEdgeInsets" minX="5" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                                            <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="5" maxY="2"/>
+                                                            <state key="normal" title="Actions" image="ActionsMenu15">
+                                                                <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                                            </state>
+                                                            <userDefinedRuntimeAttributes>
+                                                                <userDefinedRuntimeAttribute type="number" keyPath="fontWeight">
+                                                                    <integer key="value" value="1"/>
+                                                                </userDefinedRuntimeAttribute>
+                                                                <userDefinedRuntimeAttribute type="string" keyPath="textStyle" value="body"/>
+                                                            </userDefinedRuntimeAttributes>
+                                                        </button>
+                                                    </subviews>
+                                                </stackView>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="trailing" secondItem="gUT-oI-HSg" secondAttribute="trailing" id="76M-ce-CZ8"/>
+                                                <constraint firstItem="gUT-oI-HSg" firstAttribute="top" secondItem="vWp-lR-2ws" secondAttribute="top" id="l9C-PZ-5Wq"/>
+                                                <constraint firstAttribute="bottom" secondItem="gUT-oI-HSg" secondAttribute="bottom" id="rx4-Cp-3S1"/>
+                                                <constraint firstItem="gUT-oI-HSg" firstAttribute="leading" secondItem="vWp-lR-2ws" secondAttribute="leading" id="yTv-Hh-6gh"/>
+                                            </constraints>
+                                        </view>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="1" id="37k-4z-FLm"/>
+                                            <constraint firstAttribute="height" constant="50" id="0lf-1X-Jmh"/>
                                         </constraints>
-                                    </view>
-                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="ngJ-Ar-yfh">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="92"/>
-                                        <subviews>
-                                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="k1Y-XR-fc4">
-                                                <rect key="frame" x="0.0" y="0.0" width="320" height="48"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="48" id="s02-Dw-DX2"/>
-                                                </constraints>
-                                            </stackView>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cZv-PL-sis">
-                                                <rect key="frame" x="0.0" y="48" width="320" height="44"/>
-                                                <subviews>
-                                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="hqk-Sh-i8R">
-                                                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                                                        <subviews>
-                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="r9g-UY-hmu" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                                <rect key="frame" x="0.0" y="0.0" width="64" height="44"/>
-                                                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="15"/>
-                                                                <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                                <inset key="titleEdgeInsets" minX="8" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="8" maxY="2"/>
-                                                                <state key="normal" image="AddNoBorder11"/>
-                                                                <connections>
-                                                                    <action selector="showAddActions" destination="yiG-nb-WaK" eventType="touchUpInside" id="EIE-kU-WG6"/>
-                                                                </connections>
-                                                            </button>
-                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YVs-7G-qay" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                                <rect key="frame" x="64" y="0.0" width="64" height="44"/>
-                                                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="15"/>
-                                                                <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                                <inset key="titleEdgeInsets" minX="8" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="8" maxY="2"/>
-                                                                <state key="normal" image="Shuffle14"/>
-                                                                <connections>
-                                                                    <action selector="showPlayShuffleActions:" destination="yiG-nb-WaK" eventType="touchUpInside" id="lHl-ET-i0I"/>
-                                                                </connections>
-                                                            </button>
-                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NRb-XV-QyE" customClass="ActionsButton" customModule="Mode" customModuleProvider="target">
-                                                                <rect key="frame" x="128" y="0.0" width="64" height="44"/>
-                                                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="15"/>
-                                                                <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                                <connections>
-                                                                    <action selector="showLibraryOptions" destination="yiG-nb-WaK" eventType="touchUpInside" id="TK0-1s-k2I"/>
-                                                                </connections>
-                                                            </button>
-                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tmX-Ar-XCS" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                                <rect key="frame" x="192" y="0.0" width="64" height="44"/>
-                                                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="15"/>
-                                                                <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                                <inset key="titleEdgeInsets" minX="8" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="8" maxY="1"/>
-                                                                <state key="normal" image="PlayFilled12"/>
-                                                                <connections>
-                                                                    <action selector="showPlayShuffleActions:" destination="yiG-nb-WaK" eventType="touchUpInside" id="UqG-ft-3Kb"/>
-                                                                </connections>
-                                                            </button>
-                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KyQ-B2-HqV" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                                <rect key="frame" x="256" y="0.0" width="64" height="44"/>
-                                                                <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="15"/>
-                                                                <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                                <inset key="titleEdgeInsets" minX="8" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="8" maxY="1"/>
-                                                                <state key="normal" image="AddSong14"/>
-                                                                <connections>
-                                                                    <action selector="showPlayShuffleActions:" destination="yiG-nb-WaK" eventType="touchUpInside" id="qvD-ho-zkz"/>
-                                                                </connections>
-                                                            </button>
-                                                        </subviews>
-                                                    </stackView>
-                                                </subviews>
-                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                                <constraints>
-                                                    <constraint firstItem="hqk-Sh-i8R" firstAttribute="top" secondItem="cZv-PL-sis" secondAttribute="top" id="0vK-ZA-BCw"/>
-                                                    <constraint firstItem="hqk-Sh-i8R" firstAttribute="leading" secondItem="cZv-PL-sis" secondAttribute="leading" id="QSo-oA-mCx"/>
-                                                    <constraint firstAttribute="height" constant="44" id="i5E-1q-f9F"/>
-                                                    <constraint firstAttribute="bottom" secondItem="hqk-Sh-i8R" secondAttribute="bottom" id="vgt-3d-HBs"/>
-                                                    <constraint firstAttribute="trailing" secondItem="hqk-Sh-i8R" secondAttribute="trailing" id="zOH-EJ-dPN"/>
-                                                </constraints>
-                                            </view>
-                                        </subviews>
-                                    </stackView>
+                                        <blurEffect style="regular"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="16"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="boolean" keyPath="floating" value="YES"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </visualEffectView>
                                 </subviews>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstItem="ngJ-Ar-yfh" firstAttribute="top" secondItem="RBd-xf-vLH" secondAttribute="top" id="Ii4-2W-r9H"/>
-                                    <constraint firstItem="5ys-q0-KQd" firstAttribute="top" secondItem="RBd-xf-vLH" secondAttribute="top" id="JJP-cU-cyi"/>
-                                    <constraint firstAttribute="bottom" secondItem="ngJ-Ar-yfh" secondAttribute="bottom" id="dvq-8q-8YN"/>
-                                    <constraint firstAttribute="trailing" secondItem="ngJ-Ar-yfh" secondAttribute="trailing" id="fmQ-TA-UF5"/>
-                                    <constraint firstAttribute="trailing" secondItem="5ys-q0-KQd" secondAttribute="trailing" id="hF9-Wf-lS0"/>
-                                    <constraint firstItem="5ys-q0-KQd" firstAttribute="leading" secondItem="RBd-xf-vLH" secondAttribute="leading" id="pch-MQ-ub6"/>
-                                    <constraint firstItem="ngJ-Ar-yfh" firstAttribute="leading" secondItem="RBd-xf-vLH" secondAttribute="leading" id="xlY-Ex-41b"/>
+                                    <constraint firstAttribute="trailing" secondItem="HG7-2N-uRb" secondAttribute="trailing" constant="6" id="0KT-q0-NFp"/>
+                                    <constraint firstItem="Fwx-eE-RMP" firstAttribute="leading" secondItem="HG7-2N-uRb" secondAttribute="leading" constant="-32" id="M6L-K8-QYT"/>
+                                    <constraint firstItem="Fwx-eE-RMP" firstAttribute="top" secondItem="HG7-2N-uRb" secondAttribute="top" constant="-32" id="P4U-KQ-wmm"/>
+                                    <constraint firstItem="Fwx-eE-RMP" firstAttribute="trailing" secondItem="HG7-2N-uRb" secondAttribute="trailing" constant="32" id="UET-PG-WG9"/>
+                                    <constraint firstItem="HG7-2N-uRb" firstAttribute="leading" secondItem="rYN-69-A5F" secondAttribute="leading" constant="6" id="Wgv-b1-85I"/>
+                                    <constraint firstItem="Fwx-eE-RMP" firstAttribute="bottom" secondItem="HG7-2N-uRb" secondAttribute="bottom" constant="32" id="dC7-Mk-RqZ"/>
+                                    <constraint firstItem="HG7-2N-uRb" firstAttribute="top" secondItem="rYN-69-A5F" secondAttribute="top" id="nfZ-cV-fYT"/>
+                                    <constraint firstAttribute="bottom" secondItem="HG7-2N-uRb" secondAttribute="bottom" constant="6" id="xj5-dD-2ON"/>
                                 </constraints>
                             </view>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstAttribute="bottom" secondItem="2Ve-qy-ddh" secondAttribute="bottom" id="BVP-h5-hX6"/>
                             <constraint firstAttribute="trailing" secondItem="2Ve-qy-ddh" secondAttribute="trailing" id="CSu-Wk-vbm"/>
                             <constraint firstItem="2Ve-qy-ddh" firstAttribute="top" secondItem="p96-vN-2pK" secondAttribute="bottom" id="JyV-nm-WSB"/>
                             <constraint firstItem="2Ve-qy-ddh" firstAttribute="leading" secondItem="0TC-zT-RdH" secondAttribute="leading" id="OgQ-YP-uWG"/>
-                            <constraint firstItem="RBd-xf-vLH" firstAttribute="top" secondItem="2Ve-qy-ddh" secondAttribute="bottom" id="OwH-23-kki"/>
-                            <constraint firstItem="RBd-xf-vLH" firstAttribute="leading" secondItem="0TC-zT-RdH" secondAttribute="leading" id="XfH-2B-xcO"/>
-                            <constraint firstAttribute="trailing" secondItem="RBd-xf-vLH" secondAttribute="trailing" id="ZU4-wl-efZ"/>
-                            <constraint firstItem="Zod-4U-rV2" firstAttribute="top" secondItem="RBd-xf-vLH" secondAttribute="bottom" id="yPg-9g-8N9"/>
+                            <constraint firstAttribute="trailing" secondItem="rYN-69-A5F" secondAttribute="trailing" id="Qnv-AK-KEF"/>
+                            <constraint firstItem="Zod-4U-rV2" firstAttribute="top" secondItem="rYN-69-A5F" secondAttribute="bottom" id="dKP-BQ-TaK"/>
+                            <constraint firstItem="rYN-69-A5F" firstAttribute="leading" secondItem="0TC-zT-RdH" secondAttribute="leading" id="koo-bv-fvc"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="actionsButton" destination="NRb-XV-QyE" id="Z0s-IV-0xQ"/>
-                        <outlet property="actionsView" destination="cZv-PL-sis" id="o66-tK-ps0"/>
-                        <outlet property="addToButton" destination="r9g-UY-hmu" id="hWf-5O-HQt"/>
-                        <outlet property="bottomView" destination="RBd-xf-vLH" id="zSu-6c-2CN"/>
-                        <outlet property="playButton" destination="tmX-Ar-XCS" id="XGw-EZ-Hl5"/>
-                        <outlet property="shuffleButton" destination="YVs-7G-qay" id="0wz-w4-rIR"/>
-                        <outlet property="stackView" destination="k1Y-XR-fc4" id="yr0-t9-GJD"/>
+                        <outlet property="actionsButton" destination="tga-ax-5XU" id="P6U-rP-DVO"/>
+                        <outlet property="bottomView" destination="rYN-69-A5F" id="ff6-TQ-pz9"/>
+                        <outlet property="editButton" destination="Y0S-9o-oW5" id="YO2-Hm-4JY"/>
+                        <outlet property="itemActionsButton" destination="v41-Vr-l5x" id="eh9-fh-ctv"/>
                         <outlet property="tableView" destination="2Ve-qy-ddh" id="e3T-9H-6Uw"/>
-                        <outlet property="upNextButton" destination="KyQ-B2-HqV" id="jd1-WA-Lla"/>
                         <segue destination="DmY-j5-lqK" kind="unwind" identifier="toAlbumArtistUnwind" unwindAction="albumArtistUnwind:" id="E2S-eU-0qt"/>
                         <segue destination="DmY-j5-lqK" kind="unwind" identifier="toAlbumUnwind" unwindAction="albumUnwind:" id="ow1-X7-NQ2"/>
                         <segue destination="DmY-j5-lqK" kind="unwind" identifier="toArtistUnwind" unwindAction="artistUnwind:" id="b4V-4c-man"/>
@@ -2022,34 +2110,64 @@
                                     <outlet property="delegate" destination="Xxp-fE-2RI" id="qlk-Iq-VAp"/>
                                 </connections>
                             </tableView>
-                            <view contentMode="scaleToFill" placeholderIntrinsicWidth="320" placeholderIntrinsicHeight="53" translatesAutoresizingMaskIntoConstraints="NO" id="X67-KL-9Xe" customClass="FilterViewContainer" customModule="Mode" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="427" width="320" height="53"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="X67-KL-9Xe">
+                                <rect key="frame" x="0.0" y="421" width="320" height="59"/>
                                 <subviews>
-                                    <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1xh-JD-OQD" customClass="MELVisualEffectView" customModule="Mode" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="53"/>
+                                    <imageView userInteractionEnabled="NO" alpha="0.5" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="FFF-MA-6Qg" customClass="ShadowImageView" customModule="Mode" customModuleProvider="target">
+                                        <rect key="frame" x="-26" y="-32" width="372" height="117"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="radius">
+                                                <integer key="value" value="16"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="length">
+                                                <integer key="value" value="32"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="blur">
+                                                <integer key="value" value="32"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="boolean" keyPath="visibleInDarkMode" value="NO"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </imageView>
+                                    <visualEffectView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1xh-JD-OQD" customClass="MELVisualEffectView" customModule="Mode" customModuleProvider="target">
+                                        <rect key="frame" x="6" y="0.0" width="308" height="53"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="CgS-cG-l9F">
-                                            <rect key="frame" x="0.0" y="0.0" width="320" height="53"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="308" height="53"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <subviews>
+                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lRA-WC-zAk" customClass="FilterViewContainer" customModule="Mode" customModuleProvider="target">
+                                                    <rect key="frame" x="0.0" y="0.0" width="308" height="53"/>
+                                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                </view>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="lRA-WC-zAk" firstAttribute="top" secondItem="CgS-cG-l9F" secondAttribute="top" id="1PK-Jd-cRS"/>
+                                                <constraint firstAttribute="trailing" secondItem="lRA-WC-zAk" secondAttribute="trailing" id="Ydb-zB-qeW"/>
+                                                <constraint firstAttribute="bottom" secondItem="lRA-WC-zAk" secondAttribute="bottom" id="cYO-Y0-C5N"/>
+                                                <constraint firstItem="lRA-WC-zAk" firstAttribute="leading" secondItem="CgS-cG-l9F" secondAttribute="leading" id="l9m-rl-VRt"/>
+                                            </constraints>
                                         </view>
-                                        <blurEffect style="regular"/>
-                                    </visualEffectView>
-                                    <view hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="18b-f2-HJ1" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="1"/>
-                                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.050000000000000003" colorSpace="calibratedRGB"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" priority="900" constant="1" id="lw1-w3-CRi"/>
+                                            <constraint firstAttribute="height" constant="53" id="xF6-in-46w"/>
                                         </constraints>
-                                    </view>
+                                        <blurEffect style="regular"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="16"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="boolean" keyPath="floating" value="YES"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </visualEffectView>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="18b-f2-HJ1" secondAttribute="trailing" id="GAt-Ac-8lq"/>
-                                    <constraint firstAttribute="trailing" secondItem="1xh-JD-OQD" secondAttribute="trailing" id="Ne9-TG-DOO"/>
-                                    <constraint firstItem="18b-f2-HJ1" firstAttribute="leading" secondItem="X67-KL-9Xe" secondAttribute="leading" id="STk-jp-oZE"/>
-                                    <constraint firstItem="1xh-JD-OQD" firstAttribute="leading" secondItem="X67-KL-9Xe" secondAttribute="leading" id="fNf-DU-ZJO"/>
+                                    <constraint firstItem="FFF-MA-6Qg" firstAttribute="trailing" secondItem="1xh-JD-OQD" secondAttribute="trailing" constant="32" id="4ct-OE-UVB"/>
+                                    <constraint firstAttribute="trailing" secondItem="1xh-JD-OQD" secondAttribute="trailing" constant="6" id="Ne9-TG-DOO"/>
+                                    <constraint firstItem="FFF-MA-6Qg" firstAttribute="bottom" secondItem="1xh-JD-OQD" secondAttribute="bottom" constant="32" id="Q9K-ll-3WX"/>
+                                    <constraint firstItem="FFF-MA-6Qg" firstAttribute="top" secondItem="1xh-JD-OQD" secondAttribute="top" constant="-32" id="RFB-P1-hPi"/>
+                                    <constraint firstItem="1xh-JD-OQD" firstAttribute="leading" secondItem="X67-KL-9Xe" secondAttribute="leading" constant="6" id="fNf-DU-ZJO"/>
                                     <constraint firstItem="1xh-JD-OQD" firstAttribute="top" secondItem="X67-KL-9Xe" secondAttribute="top" id="lwU-A1-dmK"/>
-                                    <constraint firstItem="18b-f2-HJ1" firstAttribute="top" secondItem="X67-KL-9Xe" secondAttribute="top" id="pv0-Xf-Q6Z"/>
-                                    <constraint firstAttribute="bottom" secondItem="1xh-JD-OQD" secondAttribute="bottom" id="qt7-0S-Jqa"/>
+                                    <constraint firstAttribute="bottom" secondItem="1xh-JD-OQD" secondAttribute="bottom" constant="6" id="qt7-0S-Jqa"/>
+                                    <constraint firstItem="FFF-MA-6Qg" firstAttribute="leading" secondItem="1xh-JD-OQD" secondAttribute="leading" constant="-32" id="uJG-My-Frq"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -2065,8 +2183,9 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="bottomView" destination="X67-KL-9Xe" id="5le-QY-HI5"/>
                         <outlet property="bottomViewBottomConstraint" destination="mDX-6T-cRJ" id="FeS-EC-0MY"/>
-                        <outlet property="filterViewContainer" destination="X67-KL-9Xe" id="28j-ed-zeK"/>
+                        <outlet property="filterViewContainer" destination="lRA-WC-zAk" id="ysZ-Ek-kqb"/>
                         <outlet property="tableView" destination="Q8w-g7-skU" id="Yum-6r-xDR"/>
                         <segue destination="XSw-Fd-637" kind="unwind" identifier="toAlbumArtistUnwind" unwindAction="albumArtistUnwind:" id="ULt-Ae-492"/>
                         <segue destination="XSw-Fd-637" kind="unwind" identifier="toAlbumUnwind" unwindAction="albumUnwind:" id="0cU-tP-dYz"/>
@@ -2096,10 +2215,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" translatesAutoresizingMaskIntoConstraints="NO" id="Hgz-A7-3uj">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="436"/>
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                                 <subviews>
                                     <tableView clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" keyboardDismissMode="onDrag" dataMode="prototypes" style="grouped" separatorStyle="none" allowsSelection="NO" allowsSelectionDuringEditing="YES" allowsMultipleSelectionDuringEditing="YES" rowHeight="44" sectionHeaderHeight="16" sectionFooterHeight="1" contentViewInsetsToSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GbA-yo-Lcx" customClass="MELTableView" customModule="Mode" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="436"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         <color key="separatorColor" red="0.0" green="0.0" blue="0.0" alpha="0.10000000000000001" colorSpace="calibratedRGB"/>
                                         <userDefinedRuntimeAttributes>
@@ -2126,135 +2245,113 @@
                                     <constraint firstItem="GbA-yo-Lcx" firstAttribute="top" secondItem="Hgz-A7-3uj" secondAttribute="top" id="gG3-bu-hfG"/>
                                 </constraints>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="E3x-Zq-uqK">
-                                <rect key="frame" x="0.0" y="436" width="320" height="44"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xLA-tG-v7G">
+                                <rect key="frame" x="0.0" y="424" width="320" height="56"/>
                                 <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qst-ec-pPG" userLabel="Top Divider View" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="1"/>
-                                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.050000000000000003" colorSpace="calibratedRGB"/>
+                                    <imageView userInteractionEnabled="NO" alpha="0.5" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="iYE-oD-0oE" customClass="ShadowImageView" customModule="Mode" customModuleProvider="target">
+                                        <rect key="frame" x="-26" y="-32" width="372" height="114"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="radius">
+                                                <integer key="value" value="16"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="length">
+                                                <integer key="value" value="32"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="blur">
+                                                <integer key="value" value="32"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="boolean" keyPath="visibleInDarkMode" value="NO"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </imageView>
+                                    <visualEffectView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="64U-bY-wpO" customClass="MELVisualEffectView" customModule="Mode" customModuleProvider="target">
+                                        <rect key="frame" x="6" y="0.0" width="308" height="50"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="dyt-4l-F5S">
+                                            <rect key="frame" x="0.0" y="0.0" width="308" height="50"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <subviews>
+                                                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="xyL-UX-Gcq">
+                                                    <rect key="frame" x="0.0" y="0.0" width="308" height="50"/>
+                                                    <subviews>
+                                                        <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BSi-gx-xk2">
+                                                            <rect key="frame" x="0.0" y="0.0" width="308" height="50"/>
+                                                            <subviews>
+                                                                <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ybj-QC-Kni" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                                                    <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                                                    <constraints>
+                                                                        <constraint firstAttribute="width" constant="50" id="PwY-OT-X5x"/>
+                                                                    </constraints>
+                                                                    <state key="normal" image="EditNoBorder17"/>
+                                                                </button>
+                                                                <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Playlist Name" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="86o-Ow-qzI" customClass="MELTextField" customModule="Mode" customModuleProvider="target">
+                                                                    <rect key="frame" x="50" y="0.0" width="208" height="50"/>
+                                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                                    <textInputTraits key="textInputTraits" autocapitalizationType="words" autocorrectionType="no" spellCheckingType="no"/>
+                                                                    <connections>
+                                                                        <outlet property="delegate" destination="Uz3-1f-hrv" id="MGj-eD-RKX"/>
+                                                                    </connections>
+                                                                </textField>
+                                                                <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ijB-rg-Jse" customClass="MELButton" customModule="Mode" customModuleProvider="target">
+                                                                    <rect key="frame" x="258" y="0.0" width="50" height="50"/>
+                                                                    <state key="normal" image="More15"/>
+                                                                    <connections>
+                                                                        <action selector="showMore" destination="Uz3-1f-hrv" eventType="touchUpInside" id="m6D-Qj-xs7"/>
+                                                                    </connections>
+                                                                </button>
+                                                            </subviews>
+                                                            <constraints>
+                                                                <constraint firstItem="Ybj-QC-Kni" firstAttribute="width" secondItem="ijB-rg-Jse" secondAttribute="width" id="ulY-X6-f9g"/>
+                                                            </constraints>
+                                                        </stackView>
+                                                    </subviews>
+                                                </stackView>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="xyL-UX-Gcq" firstAttribute="leading" secondItem="dyt-4l-F5S" secondAttribute="leading" id="CDu-Md-I8A"/>
+                                                <constraint firstAttribute="trailing" secondItem="xyL-UX-Gcq" secondAttribute="trailing" id="TJ4-tx-iDe"/>
+                                                <constraint firstItem="xyL-UX-Gcq" firstAttribute="top" secondItem="dyt-4l-F5S" secondAttribute="top" id="Xkr-4p-U4Q"/>
+                                                <constraint firstAttribute="bottom" secondItem="xyL-UX-Gcq" secondAttribute="bottom" id="hVn-4C-Rns"/>
+                                            </constraints>
+                                        </view>
                                         <constraints>
-                                            <constraint firstAttribute="height" priority="900" constant="1" id="pKO-cd-lHb"/>
+                                            <constraint firstAttribute="height" constant="50" id="hqM-uA-P4C"/>
                                         </constraints>
-                                    </view>
-                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="xyL-UX-Gcq">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                                        <subviews>
-                                            <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BSi-gx-xk2">
-                                                <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                                                <subviews>
-                                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6n1-wF-BKD">
-                                                        <rect key="frame" x="0.0" y="0.0" width="44" height="44"/>
-                                                        <subviews>
-                                                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ybj-QC-Kni" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                                <rect key="frame" x="0.0" y="0.0" width="44" height="44"/>
-                                                                <state key="normal" image="EditNoBorder13"/>
-                                                            </button>
-                                                            <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sMp-VG-bgO" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                                                <rect key="frame" x="10" y="10" width="24" height="24"/>
-                                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                                <constraints>
-                                                                    <constraint firstAttribute="height" constant="24" id="GKj-hm-bQY"/>
-                                                                    <constraint firstAttribute="width" constant="24" id="KsO-Ru-oaW"/>
-                                                                </constraints>
-                                                                <userDefinedRuntimeAttributes>
-                                                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                                                        <integer key="value" value="12"/>
-                                                                    </userDefinedRuntimeAttribute>
-                                                                </userDefinedRuntimeAttributes>
-                                                            </view>
-                                                        </subviews>
-                                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="width" constant="44" id="69U-Xc-G53"/>
-                                                            <constraint firstAttribute="trailing" secondItem="Ybj-QC-Kni" secondAttribute="trailing" id="CPg-vL-RXL"/>
-                                                            <constraint firstAttribute="bottom" secondItem="Ybj-QC-Kni" secondAttribute="bottom" id="c7w-qh-IpY"/>
-                                                            <constraint firstItem="sMp-VG-bgO" firstAttribute="centerY" secondItem="6n1-wF-BKD" secondAttribute="centerY" id="dr6-3C-5Hw"/>
-                                                            <constraint firstItem="sMp-VG-bgO" firstAttribute="centerX" secondItem="6n1-wF-BKD" secondAttribute="centerX" id="qCc-Qh-Ffc"/>
-                                                            <constraint firstItem="Ybj-QC-Kni" firstAttribute="top" secondItem="6n1-wF-BKD" secondAttribute="top" id="t8L-lM-LHA"/>
-                                                            <constraint firstItem="Ybj-QC-Kni" firstAttribute="leading" secondItem="6n1-wF-BKD" secondAttribute="leading" id="zjX-gw-tyG"/>
-                                                        </constraints>
-                                                    </view>
-                                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Playlist Name" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="86o-Ow-qzI" customClass="MELTextField" customModule="Mode" customModuleProvider="target">
-                                                        <rect key="frame" x="44" y="0.0" width="232" height="44"/>
-                                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                        <textInputTraits key="textInputTraits" autocapitalizationType="words" autocorrectionType="no" spellCheckingType="no"/>
-                                                        <connections>
-                                                            <outlet property="delegate" destination="Uz3-1f-hrv" id="MGj-eD-RKX"/>
-                                                        </connections>
-                                                    </textField>
-                                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="39E-G7-06u">
-                                                        <rect key="frame" x="276" y="0.0" width="44" height="44"/>
-                                                        <subviews>
-                                                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ijB-rg-Jse" customClass="MELButton" customModule="Mode" customModuleProvider="target">
-                                                                <rect key="frame" x="0.0" y="0.0" width="44" height="44"/>
-                                                                <state key="normal" image="More13"/>
-                                                                <connections>
-                                                                    <action selector="showMore" destination="Uz3-1f-hrv" eventType="touchUpInside" id="m6D-Qj-xs7"/>
-                                                                </connections>
-                                                            </button>
-                                                            <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NAN-ys-hBJ" customClass="MELBorderView" customModule="Mode" customModuleProvider="target">
-                                                                <rect key="frame" x="10" y="10" width="24" height="24"/>
-                                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                                <constraints>
-                                                                    <constraint firstAttribute="width" constant="24" id="F8C-2X-0TQ"/>
-                                                                    <constraint firstAttribute="height" constant="24" id="mFM-Pb-Ka0"/>
-                                                                </constraints>
-                                                                <userDefinedRuntimeAttributes>
-                                                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                                                        <integer key="value" value="12"/>
-                                                                    </userDefinedRuntimeAttribute>
-                                                                </userDefinedRuntimeAttributes>
-                                                            </view>
-                                                        </subviews>
-                                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                        <constraints>
-                                                            <constraint firstItem="NAN-ys-hBJ" firstAttribute="centerX" secondItem="39E-G7-06u" secondAttribute="centerX" id="iKx-Sj-Gqy"/>
-                                                            <constraint firstItem="NAN-ys-hBJ" firstAttribute="centerY" secondItem="39E-G7-06u" secondAttribute="centerY" id="mYv-rw-jwk"/>
-                                                            <constraint firstAttribute="bottom" secondItem="ijB-rg-Jse" secondAttribute="bottom" id="nqS-EX-v5w"/>
-                                                            <constraint firstItem="ijB-rg-Jse" firstAttribute="leading" secondItem="39E-G7-06u" secondAttribute="leading" id="uNV-kS-GWJ"/>
-                                                            <constraint firstAttribute="trailing" secondItem="ijB-rg-Jse" secondAttribute="trailing" id="xON-yt-MK1"/>
-                                                            <constraint firstItem="ijB-rg-Jse" firstAttribute="top" secondItem="39E-G7-06u" secondAttribute="top" id="xk9-uv-Aby"/>
-                                                        </constraints>
-                                                    </view>
-                                                </subviews>
-                                                <constraints>
-                                                    <constraint firstItem="39E-G7-06u" firstAttribute="width" secondItem="6n1-wF-BKD" secondAttribute="width" id="mcM-iF-bfK"/>
-                                                </constraints>
-                                            </stackView>
-                                        </subviews>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="44" id="1fd-Qc-gOq"/>
-                                        </constraints>
-                                    </stackView>
+                                        <blurEffect style="regular"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="16"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="boolean" keyPath="floating" value="YES"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </visualEffectView>
                                 </subviews>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="qst-ec-pPG" secondAttribute="trailing" id="3Cu-g9-x1a"/>
-                                    <constraint firstAttribute="bottom" secondItem="xyL-UX-Gcq" secondAttribute="bottom" id="3RB-3n-Qfi"/>
-                                    <constraint firstItem="qst-ec-pPG" firstAttribute="top" secondItem="E3x-Zq-uqK" secondAttribute="top" id="EAt-7u-tT4"/>
-                                    <constraint firstAttribute="trailing" secondItem="xyL-UX-Gcq" secondAttribute="trailing" id="HEH-ll-BWr"/>
-                                    <constraint firstItem="qst-ec-pPG" firstAttribute="leading" secondItem="E3x-Zq-uqK" secondAttribute="leading" id="V6R-cw-THI"/>
-                                    <constraint firstItem="xyL-UX-Gcq" firstAttribute="top" secondItem="E3x-Zq-uqK" secondAttribute="top" id="jeJ-q7-Whe"/>
-                                    <constraint firstItem="xyL-UX-Gcq" firstAttribute="leading" secondItem="E3x-Zq-uqK" secondAttribute="leading" id="rgy-eY-LOP"/>
+                                    <constraint firstAttribute="trailing" secondItem="64U-bY-wpO" secondAttribute="trailing" constant="6" id="1RQ-MR-MPf"/>
+                                    <constraint firstItem="iYE-oD-0oE" firstAttribute="top" secondItem="64U-bY-wpO" secondAttribute="top" constant="-32" id="99P-7P-s6A"/>
+                                    <constraint firstItem="64U-bY-wpO" firstAttribute="leading" secondItem="xLA-tG-v7G" secondAttribute="leading" constant="6" id="JlL-QO-fJR"/>
+                                    <constraint firstItem="iYE-oD-0oE" firstAttribute="leading" secondItem="64U-bY-wpO" secondAttribute="leading" constant="-32" id="Oxd-y3-TUG"/>
+                                    <constraint firstItem="64U-bY-wpO" firstAttribute="top" secondItem="xLA-tG-v7G" secondAttribute="top" id="fdz-Md-RcP"/>
+                                    <constraint firstAttribute="bottom" secondItem="64U-bY-wpO" secondAttribute="bottom" constant="6" id="nTB-6K-FCJ"/>
+                                    <constraint firstItem="iYE-oD-0oE" firstAttribute="bottom" secondItem="64U-bY-wpO" secondAttribute="bottom" constant="32" id="pcQ-Ab-vMp"/>
+                                    <constraint firstItem="iYE-oD-0oE" firstAttribute="trailing" secondItem="64U-bY-wpO" secondAttribute="trailing" constant="32" id="zJw-he-diF"/>
                                 </constraints>
                             </view>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="oig-9V-GvQ" firstAttribute="top" secondItem="E3x-Zq-uqK" secondAttribute="bottom" id="Djn-CS-2fs"/>
+                            <constraint firstItem="xLA-tG-v7G" firstAttribute="leading" secondItem="VoS-nT-fCo" secondAttribute="leading" id="CWS-U6-XHK"/>
                             <constraint firstItem="Hgz-A7-3uj" firstAttribute="leading" secondItem="VoS-nT-fCo" secondAttribute="leading" id="NHc-22-ZNz"/>
+                            <constraint firstItem="oig-9V-GvQ" firstAttribute="top" secondItem="xLA-tG-v7G" secondAttribute="bottom" id="OCS-2A-0BS"/>
                             <constraint firstItem="Hgz-A7-3uj" firstAttribute="top" secondItem="p5m-js-1lf" secondAttribute="bottom" id="dRL-OW-zzn"/>
+                            <constraint firstItem="oig-9V-GvQ" firstAttribute="top" secondItem="Hgz-A7-3uj" secondAttribute="bottom" id="nX2-zz-ovl"/>
                             <constraint firstAttribute="trailing" secondItem="Hgz-A7-3uj" secondAttribute="trailing" id="sTq-p0-wNP"/>
-                            <constraint firstItem="E3x-Zq-uqK" firstAttribute="leading" secondItem="VoS-nT-fCo" secondAttribute="leading" id="wUq-Hc-VBe"/>
-                            <constraint firstAttribute="trailing" secondItem="E3x-Zq-uqK" secondAttribute="trailing" id="wfD-K7-qTQ"/>
-                            <constraint firstItem="E3x-Zq-uqK" firstAttribute="top" secondItem="Hgz-A7-3uj" secondAttribute="bottom" id="yD0-eh-KsX"/>
+                            <constraint firstAttribute="trailing" secondItem="xLA-tG-v7G" secondAttribute="trailing" id="z4D-IS-ta3"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="bottomView" destination="E3x-Zq-uqK" id="NJL-W2-2uV"/>
-                        <outlet property="bottomViewBottomConstraint" destination="Djn-CS-2fs" id="kYB-Ue-jV9"/>
+                        <outlet property="bottomView" destination="xLA-tG-v7G" id="ulE-ld-kHN"/>
+                        <outlet property="bottomViewBottomConstraint" destination="OCS-2A-0BS" id="x88-xy-vEI"/>
                         <outlet property="editButton" destination="Ybj-QC-Kni" id="C5G-lZ-hTn"/>
-                        <outlet property="editView" destination="6n1-wF-BKD" id="HZc-SF-MqV"/>
                         <outlet property="nameTextField" destination="86o-Ow-qzI" id="baf-iT-U9F"/>
                         <outlet property="tableView" destination="GbA-yo-Lcx" id="e5D-dI-WNS"/>
                         <segue destination="vJL-YB-7qo" kind="presentation" identifier="toDetails" id="jDO-Bh-bIr"/>
@@ -2280,10 +2377,10 @@
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pxL-hd-iV7" userLabel="Description View">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="392"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="394"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="11n-w3-R0x">
-                                                <rect key="frame" x="0.0" y="0.0" width="320" height="392"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="320" height="394"/>
                                                 <subviews>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lqg-mO-MuK">
                                                         <rect key="frame" x="0.0" y="0.0" width="320" height="50"/>
@@ -2321,10 +2418,10 @@
                                                         </constraints>
                                                     </view>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EeX-q6-P5C" customClass="GradientView" customModule="Mode" customModuleProvider="target">
-                                                        <rect key="frame" x="0.0" y="50" width="320" height="342"/>
+                                                        <rect key="frame" x="0.0" y="50" width="320" height="344"/>
                                                         <subviews>
                                                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" keyboardDismissMode="onDrag" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="PeY-LN-vYt" customClass="MELTextView" customModule="Mode" customModuleProvider="target">
-                                                                <rect key="frame" x="0.0" y="0.0" width="320" height="342"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="320" height="344"/>
                                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                                 <fontDescription key="fontDescription" name="MyriadPro-Regular" family="Myriad Pro" pointSize="17"/>
                                                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
@@ -2359,10 +2456,10 @@
                                         </constraints>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3vY-cN-ln1" userLabel="Creator View">
-                                        <rect key="frame" x="0.0" y="392" width="320" height="88"/>
+                                        <rect key="frame" x="0.0" y="394" width="320" height="86"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="751" text="creator" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aUi-6k-74B" customClass="MELLabel" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="10" width="300" height="22"/>
+                                                <rect key="frame" x="10" y="10" width="300" height="20"/>
                                                 <fontDescription key="fontDescription" name="MyriadPro-Semibold" family="Myriad Pro" pointSize="22"/>
                                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                                 <nil key="highlightedColor"/>
@@ -2375,13 +2472,13 @@
                                                 </userDefinedRuntimeAttributes>
                                             </label>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iRa-NK-VJ3">
-                                                <rect key="frame" x="0.0" y="0.0" width="320" height="32"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="320" height="30"/>
                                                 <connections>
                                                     <action selector="focusCreator" destination="HY4-3W-yW7" eventType="touchUpInside" id="FZx-hF-o81"/>
                                                 </connections>
                                             </button>
                                             <searchBar contentMode="redraw" searchBarStyle="minimal" text="" placeholder="Mode" translatesAutoresizingMaskIntoConstraints="NO" id="ExB-bD-IAL" customClass="MELSearchBar" customModule="Mode" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="32" width="320" height="56"/>
+                                                <rect key="frame" x="0.0" y="30" width="320" height="56"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="56" id="zeh-43-lJy"/>
                                                 </constraints>
@@ -2469,15 +2566,13 @@
     </scenes>
     <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
     <resources>
-        <image name="Add" width="13" height="13"/>
-        <image name="AddNoBorder11" width="12" height="12"/>
-        <image name="AddSong14" width="17" height="14"/>
+        <image name="ActionsMenu15" width="15" height="15"/>
         <image name="BackArrow12" width="7" height="12"/>
         <image name="Check" width="11" height="8"/>
-        <image name="Discard" width="9" height="13"/>
-        <image name="EditNoBorder13" width="13" height="9"/>
+        <image name="EditNoBorder15" width="15" height="11"/>
+        <image name="EditNoBorder17" width="17" height="12"/>
         <image name="ForwardArrow12" width="7" height="12"/>
-        <image name="More13" width="13" height="3"/>
+        <image name="More15" width="15" height="3"/>
         <image name="NoSongLight300" width="300" height="300"/>
         <image name="PlayFilled12" width="11" height="13"/>
         <image name="Playlists10" width="10" height="12"/>

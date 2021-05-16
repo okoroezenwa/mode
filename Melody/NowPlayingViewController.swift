@@ -9,7 +9,7 @@
 import UIKit
 import StoreKit
 
-class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTransitionable, AlbumArtistTransitionable, GenreTransitionable, ComposerTransitionable, PreviewTransitionable, InteractivePresenter, TimerBased, SingleItemActionable, Boldable, EntityVerifiable, Peekable, BackgroundHideable, ArtworkModifying, ArtworkModifierContaining, ThemeStatusProvider {
+class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTransitionable, AlbumArtistTransitionable, GenreTransitionable, ComposerTransitionable, PreviewTransitionable/*, InteractivePresenter*/, TimerBased, SingleItemActionable, Boldable, EntityVerifiable, Peekable, BackgroundHideable, ArtworkModifying, ArtworkModifierContaining, ThemeStatusProvider, ScrollViewDismissable, StatusBarControlling {
 
     @IBOutlet var songName: MELButton!
     @IBOutlet var artistButton: MELButton!
@@ -109,23 +109,38 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
             editButton.addTarget(songManager, action: #selector(SongActionManager.showActionsForAll(_:)), for: .touchUpInside)
         }
     }
+    @IBOutlet var bottomConstraint: NSLayoutConstraint!
+    @IBOutlet var closeViewTopConstraint: NSLayoutConstraint!
     
     @objc lazy var rateShareView: RateShareView = { RateShareView.instance(container: self) }()
     lazy var volumeView = VolumeView.instance(leadingWith: 25)
     
-    override var modalPresentationStyle: UIModalPresentationStyle {
+    var currentOffset = 0 as CGFloat
+    let preferredOffset = 0 as CGFloat
+    
+    var gestureRecogniser: UIPanGestureRecognizer?
+    var scroller: UIScrollView?
+    let isAtTop = true
+    let isPresentedFullScreen = true
+    
+    var useLightStatusBar = false {
         
-        get { return .overFullScreen }
-        
-        set { }
+        didSet {
+            
+            guard oldValue != useLightStatusBar else { return }
+            
+            UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseInOut, .allowUserInteraction], animations: { self.setNeedsStatusBarAppearanceUpdate() })
+        }
     }
     
-    @objc var actionableSongs: [MPMediaItem] { return [activeItem].compactMap({ $0 }) }
+    let presenter = PresentationManager(interactor: PresentationInteractor())
+    
+    @objc var actionableSongs: [MPMediaItem] { return [activeItem].unpacked() }
     var applicableActions: [SongAction] {
         
         var actions = [SongAction.collect, .newPlaylist, .addTo, .show(title: activeItem?.validTitle, context: .song(location: .list, at: 0, within: actionableSongs), canDisplayInLibrary: true)/*, .search(unwinder: { [weak self] in self })*/]
         
-        if activeItem?.existsInLibrary == false {
+        if activeItem?.canBeAddedToLibrary == true {
             
             actions.append(.library)
         }
@@ -144,8 +159,8 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
     }()
     @objc lazy var temporaryEffectView = MELVisualEffectView()
     
-    @objc let animator = NowPlayingAnimationController.init(interactor: NowPlayingInteractionController.init())
-    @objc let presenter = PresentationAnimationController.init(interactor: InteractionController())
+//    @objc let animator = NowPlayingAnimationController.init(interactor: NowPlayingInteractionController.init())
+//    @objc let presenter = PresentationAnimationController.init(interactor: InteractionController())
     
     @objc weak var peeker: UIViewController?
     var oldArtwork: UIImage?
@@ -196,6 +211,8 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         
         super.viewDidLoad()
         
+        presenter.interactor.addToVC(self)
+        
         if let button = repeatButton {
         
             repeatView?.superview?.bringSubviewToFront(button)
@@ -210,7 +227,11 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         NowPlaying.shared.nowPlayingVC = self
         ArtworkManager.shared.nowPlayingVC = self
         
-        animator.interactor.addToVC(self)
+        closeViewTopConstraint.constant = statusBarHeightValue(from: view)
+        
+        bottomConstraint.constant = 20 + DrawerConstants.cornerRadius
+        
+//        animator.interactor.addToVC(self)
         
         if let _ = peeker, let imageView = container?.imageView {
         
@@ -313,115 +334,109 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
         musicPlayer.currentPlaybackTime = item.playbackDuration
     }
     
-    @objc func performHold(_ sender: UILongPressGestureRecognizer) {
+    @objc func performHold(_ gr: UILongPressGestureRecognizer) {
         
-        switch sender.state {
+        let block: () -> Void = { [weak self] in
             
-            case .began:
+            guard let self = self else { return }
                 
-                enum HeldButton {
+            enum HeldButton {
+                
+                case song, artist, album
+                
+                var entityType: EntityType {
                     
-                    case song, artist, album
-                    
-                    var entityType: EntityType {
+                    switch self {
                         
-                        switch self {
-                            
-                            case .song: return .song
-                            
-                            case .artist: return .artist
-                            
-                            case .album: return .album
-                        }
+                        case .song: return .song
+                        
+                        case .artist: return .artist
+                        
+                        case .album: return .album
                     }
                 }
+            }
+            
+            let button: HeldButton = {
                 
-                let button: HeldButton = {
+                switch gr.view {
                     
-                    switch sender.view {
-                        
-                        case let x where x == songName: return .song
-                        
-                        case let x where x == artistButton: return .artist
-                        
-                        default: return .album
-                    }
-                }()
-                
-                guard let entity: MPMediaEntity = {
+                    case let x where x == self.songName: return .song
                     
-                    switch button {
-                        
-                        case .song: return activeItem
-                        
-                        case .album: return albumQuery?.collections?.first
-                        
-                        case .artist: return artistQuery?.collections?.first
-                    }
+                    case let x where x == self.artistButton: return .artist
                     
-                }() else {
-                
-                    switch button {
-                        
-                        case .song: return
-                        
-                        case .album:
-                        
-                            let newBanner = Banner.init(title: showiCloudItems ? "This album is not in your library" : "This album is not available offline", subtitle: nil, image: nil, backgroundColor: .black, didTapBlock: nil)
-                            newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
-                            newBanner.show(duration: 1)
-                            
-                            return
-                        
-                        case .artist:
-                        
-                            let newBanner = Banner.init(title: showiCloudItems ? "This artist is not in your library" : "This artist is not available offline", subtitle: nil, image: nil, backgroundColor: .black, didTapBlock: nil)
-                            newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
-                            newBanner.show(duration: 1)
-                            
-                            return
-                    }
+                    default: return .album
                 }
+            }()
             
-                let info = AlertAction.init(title: "Get Info", style: .default, requiresDismissalFirst: true, handler: { [weak self] in
-                    
-                    guard let weakSelf = self else { return }
-                    
-                    switch button {
-                        
-                        case .song: weakSelf.showOptions(weakSelf)
-                        
-                        case .album: weakSelf.performSegue(withIdentifier: "toAlbumOptions", sender: nil)
-                        
-                        case .artist: weakSelf.performSegue(withIdentifier: "toArtistOptions", sender: nil)
-                    }
-                })
-            
-                let temp: [SongAction] = {
-                    
-                    switch button {
-                        
-                        case .song: return applicableActions
-                        
-                        case .album: return [SongAction.collect, .show(title: albumButton.title(for: .normal), context: .album(at: 0, within: albumQuery?.collections ?? []), canDisplayInLibrary: true), .newPlaylist, .addTo/*, .search(unwinder: { [weak self] in self })*/]
-                        
-                        case .artist: return [SongAction.collect, .show(title: artistButton.title(for: .normal), context: .collection(kind: .artist, at: 0, within: artistQuery?.collections ?? []), canDisplayInLibrary: true), .newPlaylist, .addTo/*, .search(unwinder: { [weak self] in self })*/]
-                    }
-                }()
+            guard let entity: MPMediaEntity = {
                 
-                var array = temp.map({ singleItemAlertAction(for: $0, entityType: button.entityType, using: entity, from: self, useAlternateTitle: false) })
-                array.append(info)
+                switch button {
+                    
+                    case .song: return self.activeItem
+                    
+                    case .album: return self.albumQuery?.collections?.first
+                    
+                    case .artist: return self.artistQuery?.collections?.first
+                }
                 
-                showAlert(title: (sender.view as? UIButton)?.title(for: .normal), with: array)
+            }() else {
             
-            case .changed, .ended:
-            
-                guard let top = topViewController as? VerticalPresentationContainerViewController else { return }
+                switch button {
+                    
+                    case .song: return
+                    
+                    case .album:
+                    
+                        let newBanner = Banner.init(title: showiCloudItems ? "This album is not in your library" : "This album is not available offline", subtitle: nil, image: nil, backgroundColor: .black, didTapBlock: nil)
+                        newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
+                        newBanner.show(duration: 1)
+                        
+                        return
+                    
+                    case .artist:
+                    
+                        let newBanner = Banner.init(title: showiCloudItems ? "This artist is not in your library" : "This artist is not available offline", subtitle: nil, image: nil, backgroundColor: .black, didTapBlock: nil)
+                        newBanner.titleLabel.font = UIFont.font(ofWeight: .regular, size: 15)
+                        newBanner.show(duration: 1)
+                        
+                        return
+                }
+            }
+        
+            let info = AlertAction.init(title: "Get Info", style: .default, image: SongAction.info(context: .album(at: 0, within: [])).icon22, requiresDismissalFirst: true, handler: { [weak self] in
                 
-                top.gestureActivated(sender)
+                guard let weakSelf = self else { return }
+                
+                switch button {
+                    
+                    case .song: weakSelf.showOptions(weakSelf)
+                    
+                    case .album: weakSelf.performSegue(withIdentifier: "toAlbumOptions", sender: nil)
+                    
+                    case .artist: weakSelf.performSegue(withIdentifier: "toArtistOptions", sender: nil)
+                }
+            })
+        
+            let temp: [SongAction] = {
+                
+                switch button {
+                    
+                    case .song: return self.applicableActions
+                    
+                    case .album: return [SongAction.collect, .show(title: self.albumButton.title(for: .normal), context: .album(at: 0, within: self.albumQuery?.collections ?? []), canDisplayInLibrary: true), .newPlaylist, .addTo/*, .search(unwinder: { [weak self] in self })*/]
+                    
+                    case .artist: return [SongAction.collect, .show(title: self.artistButton.title(for: .normal), context: .collection(kind: .artist, at: 0, within: self.artistQuery?.collections ?? []), canDisplayInLibrary: true), .newPlaylist, .addTo/*, .search(unwinder: { [weak self] in self })*/]
+                }
+            }()
             
-            default: break
+            var array = temp.map({ self.singleItemAlertAction(for: $0, entityType: button.entityType, using: entity, from: self, useAlternateTitle: false) })
+            array.append(info)
+            
+            self.showAlert(title: (gr.view as? UIButton)?.title(for: .normal), with: array)
         }
+        
+        gr.recogniseContinuously(with: block, and: nil)
     }
     
     @IBAction func showSongActions() {
@@ -1059,6 +1074,8 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         
+        guard !useLightStatusBar else { return .lightContent }
+        
         guard /*!useSmallerArt &&*/
             !isSmallScreen &&
             (musicPlayer.isPlaying || !compressOnPause) &&
@@ -1175,7 +1192,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
             
             guard let presentedVC = presentedStoryboard.instantiateViewController(withIdentifier: "presentedVC") as? PresentedContainerViewController else { return }
                 
-            presentedVC.qVC = vc as! QueueViewController
+            presentedVC.queueVC = vc as! QueueViewController
             presentedVC.context = .queue
             
             present(presentedVC, animated: false, completion: nil)
@@ -1230,7 +1247,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
                 if let presentedVC = segue.destination as? PresentedContainerViewController {
                     
                     presentedVC.context = .info
-                    presentedVC.optionsContext = .song(location: .queue(loaded: false, index: Queue.shared.indexToUse), at: 0, within: [activeItem].compactMap({ $0 }))
+                    presentedVC.optionsContext = .song(location: .queue(loaded: false, index: Queue.shared.indexToUse), at: 0, within: [activeItem].unpacked())
                 }
             
             case "toArtistOptions":
@@ -1253,7 +1270,7 @@ class NowPlayingViewController: UIViewController, ArtistTransitionable, AlbumTra
             
             case "toLibraryOptions":
                 
-                let options = LibraryOptions.init(fromVC: self, configuration: .nowPlaying, context: .song(location: .queue(loaded: false, index: Queue.shared.indexToUse), at: 0, within: [activeItem].compactMap({ $0 })))
+                let options = LibraryOptions.init(fromVC: self, configuration: .nowPlaying, context: .song(location: .queue(loaded: false, index: Queue.shared.indexToUse), at: 0, within: [activeItem].unpacked()))
                 
                 Transitioner.shared.transition(to: segue.destination, using: options, sourceView: actionsButton)
             
@@ -1426,5 +1443,17 @@ extension NowPlayingViewController: UIGestureRecognizerDelegate {
         }
         
         return true
+    }
+}
+
+extension NowPlayingViewController {
+    
+    func scrollerDoesNotContainTouch(from gr: UIPanGestureRecognizer) -> Bool { false }
+    
+    func allowRecognition(of gr: UIGestureRecognizer) -> Bool {
+        
+        guard let gr = gr as? UIScreenEdgePanGestureRecognizer else { return true }
+        
+        return gr.edges != .right
     }
 }

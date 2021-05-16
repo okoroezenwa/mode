@@ -37,6 +37,9 @@ class TodayViewController: UIViewController, NCWidgetProviding, ThemeStatusProvi
     @IBOutlet var previousButton: UIButton!
     @IBOutlet var nextButton: UIButton!
     @IBOutlet var ratingBorderView: UIView!
+    @IBOutlet var downrateButton: UIButton!
+    @IBOutlet var uprateButton: UIButton!
+    @IBOutlet var rateLabelButton: UIButton!
     
     enum QueueLocation { case upNext, previous }
     
@@ -143,9 +146,9 @@ class TodayViewController: UIViewController, NCWidgetProviding, ThemeStatusProvi
         updateMaxSizes()
         updateNowPlayingLabel()
         
-        let tap = UITapGestureRecognizer.init(target: self, action: #selector(open(_:)))
-        tap.delegate = self
-        view.addGestureRecognizer(tap)
+//        let tap = UITapGestureRecognizer.init(target: self, action: #selector(open(_:)))
+//        tap.delegate = self
+//        view.addGestureRecognizer(tap)
         
         musicPlayer.beginGeneratingPlaybackNotifications()
         
@@ -414,7 +417,7 @@ class TodayViewController: UIViewController, NCWidgetProviding, ThemeStatusProvi
             } else {
                 
                 label?.font = UIFont.init(name: musicPlayer.isPlaying ? "MyriadPro-It" : "MyriadPro-Regular", size: 18)
-                artworkContainer?.transform = musicPlayer.isPlaying ? .identity : .init(scaleX: 35/45, y: 35/45)
+                artworkContainer?.transform = musicPlayer.isPlaying ? .identity : .init(scaleX: CGFloat(35/45), y: CGFloat(35/45))
                 artworkContainer?.layer.shadowOpacity = musicPlayer.isPlaying ? 0.25 : 0
                 
                 if sender is TodayViewController {
@@ -494,18 +497,26 @@ class TodayViewController: UIViewController, NCWidgetProviding, ThemeStatusProvi
     
     @objc func prepareRatingView() {
         
-        guard let song = musicPlayer.nowPlayingItem, let subviews = ratingStackView?.arrangedSubviews as? [UIButton] else { return }
+        guard let song = musicPlayer.nowPlayingItem else { return }
         
-        subviews.forEach { $0.setImage(song.rating >= $0.tag ? #imageLiteral(resourceName: "StarFilled15") : #imageLiteral(resourceName: "Dot"), for: .normal) }
+        rateLabelButton.setTitle(song.rating.description, for: .normal)
+        rateLabelButton.setImage(song.rating == 0 ? #imageLiteral(resourceName: "Star13") : #imageLiteral(resourceName: "StarFilled13"), for: .normal)
+        uprateButton.isEnabled = song.rating < 5
+        downrateButton.isEnabled = song.rating > 0
     }
     
     @IBAction func rate(_ sender: UIButton) {
         
-        guard let song = musicPlayer.nowPlayingItem, let ratingStackView = ratingStackView else { return }
+        guard let song = musicPlayer.nowPlayingItem/*, let ratingStackView = ratingStackView*/ else { return }
         
-        song.set(property: MPMediaItemPropertyRating, to: NSNumber.init(value: sender.tag))
+        let rating = song.rating
         
-        UIView.transition(with: ratingStackView, duration: 0.3, options: .transitionCrossDissolve, animations: { self.prepareRatingView() }, completion: nil)
+        if (sender == uprateButton && rating < 5) || (sender == downrateButton && rating > 0) {
+            
+            song.set(property: MPMediaItemPropertyRating, to: NSNumber.init(value: sender == uprateButton ? rating + 1 : rating - 1))
+        }
+        
+        self.prepareRatingView()
     }
     
     @IBAction func setLiked(_ sender: Any) {
@@ -639,7 +650,7 @@ extension TodayViewController: UIGestureRecognizerDelegate {
     
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         
-        if gestureRecognizer is UITapGestureRecognizer, musicPlayer.nowPlayingItem != nil {
+        if gestureRecognizer is UITapGestureRecognizer, musicPlayer.nowPlayingItem != nil/*, let superview = buttonsStackView.superview, superview.frame.contains(gestureRecognizer.location(in: stackView))*/ {
             
             return false
         }

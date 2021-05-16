@@ -51,7 +51,9 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
     @objc var collection: MPMediaItemCollection?
     var entityContainerType = EntityContainerType.playlist
     var kind = AlbumBasedCollectionKind.artist
+    #warning("Understand why I use another property that mirrors this instead of changing it directly")
     var startPoint = StartPoint(rawValue: artistItemsStartingPoint) ?? .songs
+    lazy var currentStartPoint = startPoint
     @objc var query: MPMediaQuery? {
         
         didSet {
@@ -178,6 +180,18 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         
         set { }
     }
+    var passthroughFrames: [CGRect]? {
+        
+        if let vc = activeChildViewController as? SupplementaryHeaderInfoLoading & TableViewContaining & UIViewController, let tableView = vc.tableView, let header = tableView.tableHeaderView as? HeaderView, let container = appDelegate.window?.rootViewController as? ContainerViewController {
+            
+            let first = tableView.convert(header.frame, to: vc.view)
+            let second = containerView.convert(first, to: container.centreView)
+            
+            return [second]
+        }
+        
+        return nil
+    }
     
     @objc lazy var artistSongsViewController: ArtistSongsViewController = {
         
@@ -276,10 +290,6 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
             temporaryImageView.image = artworkType.image
         }
         
-        let edge = UIScreenEdgePanGestureRecognizer.init(target: self, action: #selector(updateSections))
-        edge.edges = .right
-        view.addGestureRecognizer(edge)
-        
         firstLaunch = false
     }
     
@@ -295,7 +305,7 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         }
     }
     
-    @objc func updateSections(_ gr: UIScreenEdgePanGestureRecognizer) {
+    @objc func updateSections(_ gr: UIPanGestureRecognizer) {
         
         guard let tableDelegate = (activeChildViewController as? TableViewContainer)?.tableDelegate else { return }
         
@@ -305,47 +315,9 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
                 
             case .changed:
                 
-                guard let sectionVC = (activeChildViewController as? IndexContaining)?.sectionIndexViewController, let view = sectionVC.view, let collectionView = sectionVC.collectionView, let containerView = sectionVC.containerView, let effectView = sectionVC.effectView, let location: CGPoint = {
-                    
-                    if view.convert(effectView.frame, from: containerView).contains(gr.location(in: view)) {
-                        
-                        return gr.location(in: collectionView)
-                        
-                    } else if sectionVC.overflowBahaviour == .squeeze || sectionVC.array.count <= sectionVC.maxRowsAtMaxFontSize, let location: CGPoint = {
-                        
-                        let height: CGFloat = {
-                            
-                            if gr.location(in: collectionView).y < 0 {
-                                
-                                return 1 + 4
-                                
-                            } else if gr.location(in: collectionView).y > collectionView.frame.height {
-                                
-                                return collectionView.frame.height - 1 - 3
-                            }
-                            
-                            return gr.location(in: collectionView).y
-                        }()
-                        
-                        return .init(x: collectionView.center.x, y: height)
-                        
-                    }() {
-                        
-                        return location
-                    }
-                    
-                    return nil
-                    
-                }(), let indexPath = collectionView.indexPathForItem(at: location) else { return }
+                guard let sectionVC = (activeChildViewController as? IndexContaining)?.sectionIndexViewController else { return }
                 
-                if sectionVC.hasHeader, indexPath.row == 0 {
-                    
-                    sectionVC.container?.tableView.setContentOffset(.init(x: 0, y: -inset), animated: false)
-                    
-                } else {
-                    
-                    sectionVC.container?.tableView.scrollToRow(at: .init(row: NSNotFound, section: indexPath.row - (sectionVC.hasHeader ? 1 : 0)), at: .top, animated: false)
-                }
+                sectionVC.changeSection(gr)
                 
             case .ended, .failed/*, .cancelled*/: (activeChildViewController as? IndexContaining)?.sectionIndexViewController?.dismissVC()
                 
@@ -640,9 +612,17 @@ class EntityItemsViewController: UIViewController, BackgroundHideable, ArtworkMo
         let albumCount = query?.collections?.count ?? 0
         let songCount = query?.items?.count ?? 0
         
-        let songs = AlertAction.init(title: "Songs", subtitle: songCount.fullCountText(for: .song), style: .default, accessoryType: .check({ [weak self] in self?.activeChildViewController == self?.artistSongsViewController }), image: EntityType.song.images.size23, requiresDismissalFirst: false, handler: { [weak self] in self?.activeChildViewController = self?.artistSongsViewController })
+        let songs = AlertAction.init(title: "Songs", subtitle: songCount.fullCountText(for: .song), style: .default, accessoryType: .check({ [weak self] in self?.activeChildViewController == self?.artistSongsViewController }), image: EntityType.song.images.size23, requiresDismissalFirst: false, handler: { [weak self] in
+            
+            self?.currentStartPoint = .songs
+            self?.activeChildViewController = self?.artistSongsViewController
+        })
         
-        let albums = AlertAction.init(title: "Albums", subtitle: albumCount.fullCountText(for: .album), style: .default, accessoryType: .check({ [weak self] in self?.activeChildViewController == self?.artistAlbumsViewController }), image: EntityType.album.images.size23, requiresDismissalFirst: false, handler: { [weak self] in self?.activeChildViewController = self?.artistAlbumsViewController })
+        let albums = AlertAction.init(title: "Albums", subtitle: albumCount.fullCountText(for: .album), style: .default, accessoryType: .check({ [weak self] in self?.activeChildViewController == self?.artistAlbumsViewController }), image: EntityType.album.images.size23, requiresDismissalFirst: false, handler: { [weak self] in
+                                        
+            self?.currentStartPoint = .albums
+            self?.activeChildViewController = self?.artistAlbumsViewController
+        })
         
         showAlert(title: title, subtitle: "Group by...", topHeaderMode: .themedImage(name: "Grouping22", height: 22), with: songs, albums)
     }
@@ -777,5 +757,24 @@ extension EntityItemsViewController: EntityVerifiable {
         let array: [UIPreviewActionItem] = [play] + shuffleArray + [info] + (musicPlayer.nowPlayingItem == nil ? [] : [queue])
         
         return array
+    }
+}
+
+extension EntityItemsViewController: UIGestureRecognizerDelegate {
+    
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        
+        guard let gr = gestureRecognizer as? UIPanGestureRecognizer, (gr is UIScreenEdgePanGestureRecognizer).inverted else { return true }
+        
+        guard abs(gr.velocity(in: gr.view).y) > abs(gr.velocity(in: gr.view).x), let vc = activeChildViewController as? TableViewContainer, vc.tableDelegate.sectionIndexTitles(for: vc.tableView, filtering: false) != nil else { return false }
+        
+        return CGRect.init(x: view.frame.size.width - 44, y: 0, width: 44, height: view.bounds.height).contains(gr.location(in: view))
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        
+        guard (gestureRecognizer is UIScreenEdgePanGestureRecognizer).inverted else { return false }
+        
+        return otherGestureRecognizer is UIScreenEdgePanGestureRecognizer
     }
 }

@@ -17,6 +17,16 @@ class MELVisualEffectView: UIVisualEffectView {
     @objc var darkAlphaOverride: CGFloat = 0
     @objc var darkPresentationAccomodation = false
     @objc var verticallyPresented = false
+    @objc var floating = false {
+        
+        didSet {
+            
+            layer.borderWidth = floating ? 1.1 : 0
+            updateEffectViewBorder()
+        }
+    }
+    
+    var shadowImageView: ShadowImageView?
 
     override func awakeFromNib() {
         
@@ -47,6 +57,11 @@ class MELVisualEffectView: UIVisualEffectView {
     }
     
     @objc func changeThemeColor() {
+        
+        if floating {
+        
+            updateEffectViewBorder()
+        }
         
         if vibrant {
             
@@ -82,5 +97,12 @@ class MELVisualEffectView: UIVisualEffectView {
             effect = Themer.vibrancyContainingEffect
             backgroundColor = darkTheme ? dark : UIColor.white.withAlphaComponent((verticallyPresented ? 0.6 : 0.4) - alphaOverride)
         }
+    }
+    
+    func updateEffectViewBorder() {
+        
+        let value = 0.06 as CGFloat
+        
+        layer.borderColor = darkTheme ? Themer.themeColour().withAlphaComponent(value).cgColor : UIColor.clear.cgColor
     }
 }

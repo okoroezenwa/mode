@@ -48,6 +48,7 @@ extension MPMediaItem {
     
     @objc var copyright: String? { return value(forProperty: .copyright) as? String }
     @objc var fileSize: Int64 { return value(forProperty: .fileSize) as? Int64 ?? 0 }
+    @objc var isPlayable: Bool { return (value(forProperty: .isPlayable) as? NSNumber)?.boolValue ?? false }
     
     @objc var validDateAdded: Date {
         
@@ -122,6 +123,8 @@ extension MPMediaItem {
         
         return nil
     }
+    
+    var canBeAddedToLibrary: Bool { existsInLibrary.inverted && isPlayable }
 }
 
 extension MPMediaItem: Settable { }

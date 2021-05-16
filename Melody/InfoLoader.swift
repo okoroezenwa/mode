@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol InfoLoading: class {
+protocol InfoLoading: AnyObject {
     
     var operations: ImageOperations { get set }
     var infoOperations: InfoOperations { get set }
@@ -23,12 +23,11 @@ protocol InfoLoading: class {
 //    var recentsOperations: ImageOperations { get set }
 //}
 
-protocol SupplementaryHeaderInfoLoading: InfoLoading {
+protocol SupplementaryHeaderInfoLoading: InfoLoading, HeaderViewContaining {
     
     var applicableSupplementaryProperties: [SecondaryCategory] { get set }
     var supplementaryOperation: BlockOperation? { get set }
     var sortOperationQueue: OperationQueue { get }
-    var headerView: HeaderView { get set }
 }
 
 extension SupplementaryHeaderInfoLoading {
@@ -44,6 +43,8 @@ extension SupplementaryHeaderInfoLoading {
                 guard let vc = vc as? CollectionsViewController, let items = vc.collectionsQuery.items else { return nil }
             
                 return .init(items: items)
+                
+            case .collections(kind: let kind) where kind == .playlist: return .init(items: [])
             
             case .songs:
             
@@ -102,26 +103,30 @@ extension SupplementaryHeaderInfoLoading {
             
             case .affinity: headerView.buttonDetails[index] = (details.type, SecondaryCategory.loved.propertyImage(from: collection, context: .header), nil, details.action)
             
-            case .grouping: headerView.buttonDetails[index] = (details.type, details.image, {
+            case .grouping:
                 
-                switch vc.location {
+                headerView.buttonDetails[index] = (details.type, details.image, {
                 
-                    case .playlist: return collectionCount?.fullCountText(for: .song, capitalised: false)
+                    switch vc.location {
                     
-                    case .album, .collection(kind: _, point: .songs): return collection.count.fullCountText(for: .song, capitalised: false)
+                        case .playlist: return collectionCount?.fullCountText(for: .song, capitalised: false)
+                        
+                        case .album, .collection(kind: _, point: .songs): return collection.count.fullCountText(for: .song, capitalised: false)
+                        
+                        case .collection(kind: _, point: .albums): return (vc as? ArtistAlbumsViewController)?.currentArtistQuery?.collections?.count.fullCountText(for: .album, capitalised: false)
+                        
+                        case .collections(kind: .playlist): return (vc as? CollectionsViewController)?.playlistsViewText
+                        
+                        default: return nil
+                    }
                     
-                    case .collection(kind: _, point: .albums): return (vc as? ArtistAlbumsViewController)?.currentArtistQuery?.collections?.count.fullCountText(for: .album, capitalised: false)
-                    
-                    case .collections(kind: .playlist): return (vc as? CollectionsViewController)?.playlistsViewText
-                    
-                    default: return nil
-                }
-                
-            }(), details.action)
+                }(), details.action)
             
             case .sort: headerView.buttonDetails[index] = (details.type, details.image, (vc as? Arrangeable)?.arrangementLabelText, details.action)
+                
+//            case .share: headerView.buttonDetails[index] = (details.type, details.image, "Share", details.action)
             
-            default: return nil
+            case .artist, .info, .insert, .newPlaylist, .share: return nil
         }
         
         if shouldReload {
@@ -139,7 +144,7 @@ extension SupplementaryHeaderInfoLoading {
     
     func prepareSupplementaryInfo(animated: Bool = true) {
         
-        guard let collection = collection, let vc = self as? UIViewController, let _ = vc.viewIfLoaded else { return }
+        guard let collection = collection, collection.items.isEmpty.inverted, let vc = self as? UIViewController, let _ = vc.viewIfLoaded else { return }
         
         let array = [HeaderButtonType.grouping, .affinity].reduce([IndexPath](), {
             
@@ -167,7 +172,7 @@ extension SupplementaryHeaderInfoLoading {
             
             let array = weakSelf.applicableSupplementaryProperties.reduce([HeaderPropertyDetails](), {
                 
-                guard let string = $1.propertyString(from: collection, context: .header) else { return $0 }
+                guard let string = $1.propertyString(from: collection, context: .header, vc: self) else { return $0 }
                 
                 return $0.appending((string, $1))
             })
@@ -402,7 +407,7 @@ extension InfoLoading {
                 
                 var dictionary = dict
                 
-                guard let entity = entity, let string: String = property.propertyString(from: entity, context: .cell), let image: UIImage = property.propertyImage(from: entity, context: .cell) else { return dict }
+                guard let entity = entity, let string: String = property.propertyString(from: entity, context: .cell, vc: self), let image: UIImage = property.propertyImage(from: entity, context: .cell) else { return dict }
                 
                 dictionary[property] = (image: image, text: string)
                 

@@ -180,7 +180,7 @@ class Transitioner: NSObject {
         vc.optionsContext = context
         vc.context = .info
         
-        vc.newOptionsVC.filterContainer = (sender as? FilterContaining)?.filterContainer ?? sender as? FilterViewController
+        vc.infoVC.filterContainer = (sender as? FilterContaining)?.filterContainer ?? sender as? FilterViewController
         
         sender.present(vc, animated: true, completion: completion)
     }
@@ -240,7 +240,7 @@ class Transitioner: NSObject {
             return array
         }()
         vc.requiresTopBorderView = vc.alertVC.actions.isEmpty.inverted
-        vc.segments = [.init(title: "Next", image: #imageLiteral(resourceName: "PlayNext")), .init(title: "After...", image: #imageLiteral(resourceName: "PlayAfter")), .init(title: "Last", image: #imageLiteral(resourceName: "PlayLater"))]
+        vc.segments = [.init(title: "Next", image: #imageLiteral(resourceName: "PlayNext17")), .init(title: "After...", image: #imageLiteral(resourceName: "PlayAfter17")), .init(title: "Last", image: #imageLiteral(resourceName: "PlayLater17"))]
         
         sender.present(vc, animated: true, completion: nil)
     }

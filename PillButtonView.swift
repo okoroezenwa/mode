@@ -42,6 +42,7 @@ class PillButtonView: UIView, BorderedButtonContaining {
             
             let hold = UILongPressGestureRecognizer.init(target: longPressAction.target, action: longPressAction.action)
             hold.minimumPressDuration = longPressDuration
+            hold.delegate = self
             addGestureRecognizer(hold)
             LongPressManager.shared.gestureRecognisers.append(Weak.init(value: hold))
         }
@@ -84,7 +85,7 @@ class PillButtonView: UIView, BorderedButtonContaining {
         super.awakeFromNib()
         
         borderViewContainer.layer.setRadiusTypeIfNeeded()
-        borderViewContainer.layer.cornerRadius = 19
+        borderViewContainer.layer.cornerRadius = 12//19
         button.isHidden = true
         button.setTitle(nil, for: .normal)
         button.setImage(nil, for: .normal)
@@ -184,6 +185,16 @@ class PillButtonView: UIView, BorderedButtonContaining {
         view.longPressClosure = longPressClosure
         
         return view
+    }
+}
+
+extension PillButtonView: UIGestureRecognizerDelegate {
+    
+    override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        
+        guard gestureRecognizer is UILongPressGestureRecognizer else { return true }
+        
+        return longPressAction != nil
     }
 }
 

@@ -420,3 +420,14 @@ var showCustomCollections: Bool {
     
     set { prefs.set(newValue, forKey: .showCustomCollections) }
 }
+
+var hideMiniPlayerTabLabel: Bool {
+    
+    get { prefs.bool(forKey: .hideMiniPlayerTabLabel) }
+    
+    set {
+        
+        prefs.set(newValue, forKey: .hideMiniPlayerTabLabel)
+        notifier.post(name: .hideMiniPlayerTabLabelChanged, object: nil)
+    }
+}

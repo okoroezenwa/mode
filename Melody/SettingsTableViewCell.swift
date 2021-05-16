@@ -300,7 +300,7 @@ class SettingsTableViewCell: UITableViewCell {
     }
 }
 
-protocol SettingsCellDelegate: class {
+protocol SettingsCellDelegate: AnyObject {
     
     func accessoryButtonTapped(in cell: SettingsTableViewCell)
 }

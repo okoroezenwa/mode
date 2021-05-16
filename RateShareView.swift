@@ -55,6 +55,7 @@ class RateShareView: UIView {
         translatesAutoresizingMaskIntoConstraints = false
         
         let gr = UIPanGestureRecognizer.init(target: self, action: #selector(changeRating(_:)))
+        gr.delegate = self
         ratingStackView.addGestureRecognizer(gr)
         
         let tapGR = UITapGestureRecognizer.init(target: self, action: #selector(tap(_:)))
@@ -223,7 +224,7 @@ class RateShareView: UIView {
     
     func shareItems(_ items: [Any]) {
         
-        let activity = UIActivityViewController.init(activityItems: items.compactMap({ $0 }), applicationActivities: nil)
+        let activity = UIActivityViewController.init(activityItems: items/*.compactMap({ $0 })*/, applicationActivities: nil)
         
         if let actionsVC = topViewController as? ActionsViewController {
             
@@ -250,7 +251,7 @@ class RateShareView: UIView {
             let songName = song?.validTitle ?? .untitledSong
             let artist = song?.validArtist ?? .unknownArtist
             
-            itemsToShare = [songName + " – " + artist, UIImage.from(nowPlayingVC.view) as Any]
+            itemsToShare = [songName + " – " + artist, UIImage.from(appDelegate.window ?? nowPlayingVC.view) as Any]
             
         } else if let item = entity as? MPMediaItem {
             
@@ -313,5 +314,15 @@ extension RateShareView {
         view.container = container
         
         return view
+    }
+}
+
+extension RateShareView: UIGestureRecognizerDelegate {
+    
+    override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        
+        guard let gr = gestureRecognizer as? UIPanGestureRecognizer else { return true }
+        
+        return abs(gr.velocity(in: gr.view).x) > abs(gr.velocity(in: gr.view).y)
     }
 }

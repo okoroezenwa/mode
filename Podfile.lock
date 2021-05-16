@@ -6,14 +6,14 @@ PODS:
     - KissXML/Core
   - LastFm (1.17.0):
     - KissXML (~> 5.0.3)
-  - SwiftSoup (2.2.0)
+  - SwiftSoup (2.3.2)
 
 DEPENDENCIES:
   - LastFm
   - SwiftSoup
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  trunk:
     - KissXML
     - LastFm
     - SwiftSoup
@@ -21,8 +21,8 @@ SPEC REPOS:
 SPEC CHECKSUMS:
   KissXML: d19dd6dc65e0dc721ba92b3077b8ebdd240f1c1e
   LastFm: a624fa250bbda5950fccbd068ea7950dcba2da1f
-  SwiftSoup: 230991361c5ba249d140161860a3864a28b63860
+  SwiftSoup: f97bc4e988c7729d6457f9642f974c617a6e2510
 
 PODFILE CHECKSUM: 86a427c17e8b2d4feed45334332436e5e8acd214
 
-COCOAPODS: 1.7.1
+COCOAPODS: 1.10.1

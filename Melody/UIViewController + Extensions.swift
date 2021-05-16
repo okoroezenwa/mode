@@ -124,6 +124,7 @@ extension UIViewController {
         topAction: UnwindAction? = nil,
         topPreviewAction: PreviewAction? = nil,
         showMenuParameters parameters: [ShowMenuParameters] = [],
+        configurationActions: ((VerticalPresentationContainerViewController) -> ())? = nil,
         completion: (() -> ())? = nil) {
         
         if useSystemAlerts {
@@ -167,6 +168,7 @@ extension UIViewController {
                 vc.images = images
             }
             
+            vc.configurationActions = configurationActions
             vc.alertVC.segmentActions = segmentDetails.actions
             vc.alertVC.showMenuParameters = parameters
             vc.leftButtonAction = leftAction
@@ -185,7 +187,16 @@ extension UIViewController {
                 
                 return title != nil || subtitle != nil
             }()
-            vc.requiresTopView = title != nil || subtitle != nil
+            vc.requiresTopView = {
+                
+                if (topHeaderMode == .bar && leftAction == nil && rightAction == nil) || (title == nil && subtitle == nil) {
+                    
+                    return false
+                }
+                
+                return true 
+            }()
+            
             
             present(vc, animated: true, completion: completion)
         }
@@ -206,8 +217,9 @@ extension UIViewController {
         topAction: UnwindAction? = nil,
         topPreviewAction: PreviewAction? = nil,
         showMenuParameters parameters: [ShowMenuParameters] = [],
+        configurationActions: ((VerticalPresentationContainerViewController) -> ())? = nil,
         completion: (() -> ())? = nil) {
         
-        showAlert(title: title, subtitle: subtitle, context: context, topHeaderMode: topHeaderMode, with: actions, shouldSortActions: shouldSortActions, segmentDetails: segmentDetails, leftAction: leftAction, rightAction: rightAction, topAction: topAction, topPreviewAction: topPreviewAction, showMenuParameters: parameters, completion: completion)
+        showAlert(title: title, subtitle: subtitle, context: context, topHeaderMode: topHeaderMode, with: actions, shouldSortActions: shouldSortActions, segmentDetails: segmentDetails, leftAction: leftAction, rightAction: rightAction, topAction: topAction, topPreviewAction: topPreviewAction, showMenuParameters: parameters, configurationActions: configurationActions, completion: completion)
     }
 }

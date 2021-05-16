@@ -178,6 +178,11 @@ class NavigationAnimationController: NSObject, UIViewControllerAnimatedTransitio
                 container.imageView.image = completed ? final.artworkType.image : initial.artworkType.image
             }
             
+            if completed, container.queue.isEmpty.inverted, container.collectedViewTopConstraint.isActive.inverted {
+                #warning("Redo this properly")
+                container.modifyCollectedButton(forState: .invoked, animated: true)
+            }
+            
             if completed {
                 
                 if needsToUpdateBottomBar {

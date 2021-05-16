@@ -108,6 +108,14 @@
 		BE34A4901DDEDCCF0023A0EB /* CollectionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE34A48F1DDEDCCF0023A0EB /* CollectionsViewController.swift */; };
 		BE34C96D21A9C40A00236BAE /* GestureSelectableCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = BE34C96C21A9C40A00236BAE /* GestureSelectableCell.xib */; };
 		BE34C96F21A9C62700236BAE /* GestureSelectableCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE34C96E21A9C62700236BAE /* GestureSelectableCollectionViewCell.swift */; };
+		BE358227263DD46700D93542 /* MyriadPro-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE358223263DD46600D93542 /* MyriadPro-Bold.otf */; };
+		BE358228263DD46700D93542 /* MyriadPro-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE358223263DD46600D93542 /* MyriadPro-Bold.otf */; };
+		BE358229263DD46700D93542 /* MyriadPro-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE358224263DD46600D93542 /* MyriadPro-Regular.otf */; };
+		BE35822A263DD46700D93542 /* MyriadPro-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE358224263DD46600D93542 /* MyriadPro-Regular.otf */; };
+		BE35822B263DD46700D93542 /* MyriadPro-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE358225263DD46700D93542 /* MyriadPro-Black.otf */; };
+		BE35822C263DD46700D93542 /* MyriadPro-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE358225263DD46700D93542 /* MyriadPro-Black.otf */; };
+		BE35822D263DD46700D93542 /* MyriadPro-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE358226263DD46700D93542 /* MyriadPro-Light.otf */; };
+		BE35822E263DD46700D93542 /* MyriadPro-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE358226263DD46700D93542 /* MyriadPro-Light.otf */; };
 		BE358980219EA1F300637E9F /* AlertTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE35897F219EA1F300637E9F /* AlertTableViewController.swift */; };
 		BE37EDF722E5A65700AF1F6F /* LastFMTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE37EDF622E5A65700AF1F6F /* LastFMTableViewController.swift */; };
 		BE37EDF922E5E14200AF1F6F /* LoginDetailsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = BE37EDF822E5E14200AF1F6F /* LoginDetailsCell.xib */; };
@@ -136,6 +144,7 @@
 		BE48E029216D428700A7E7C4 /* UIViewController + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE48E026216D2B7500A7E7C4 /* UIViewController + Extensions.swift */; };
 		BE494D301D2F1310007DE1F6 /* PlaylistItemsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE494D2F1D2F1310007DE1F6 /* PlaylistItemsViewController.swift */; };
 		BE4A48D525308193004D3408 /* CollectionItemsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE4A48D425308193004D3408 /* CollectionItemsTableViewController.swift */; };
+		BE4FAC42262D9299000EE7AD /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE4FAC41262D9299000EE7AD /* NavigationController.swift */; };
 		BE500F1F1F9918EE0005E568 /* QueueInsertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE500F1E1F9918EE0005E568 /* QueueInsertController.swift */; };
 		BE50D7161FA1C5DD00D22D67 /* GradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE50D7151FA1C5DD00D22D67 /* GradientView.swift */; };
 		BE512F4F1D53C6A400775142 /* MELVolumeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE512F4E1D53C6A400775142 /* MELVolumeView.swift */; };
@@ -147,6 +156,12 @@
 		BE53A9A61DD0D77000FB3073 /* TableHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE53A9A51DD0D77000FB3073 /* TableHeaderView.swift */; };
 		BE5439A51E87E62D0082645C /* ESTMusicIndicatorContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5439A31E87E62D0082645C /* ESTMusicIndicatorContentView.swift */; };
 		BE5439A61E87E62D0082645C /* ESTMusicIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5439A41E87E62D0082645C /* ESTMusicIndicatorView.swift */; };
+		BE54533D261C27430077C14F /* ConstantValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE545337261C27400077C14F /* ConstantValues.swift */; };
+		BE54533E261C27430077C14F /* DismissalProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE545338261C27410077C14F /* DismissalProtocols.swift */; };
+		BE54533F261C27430077C14F /* PresentationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE545339261C27410077C14F /* PresentationManager.swift */; };
+		BE545340261C27430077C14F /* PresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE54533A261C27410077C14F /* PresentationController.swift */; };
+		BE545341261C27430077C14F /* PresentationInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE54533B261C27420077C14F /* PresentationInteractor.swift */; };
+		BE545342261C27430077C14F /* PresentationAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE54533C261C27430077C14F /* PresentationAnimator.swift */; };
 		BE55746B1E7D027000E870A5 /* Arrangeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE55746A1E7D027000E870A5 /* Arrangeable.swift */; };
 		BE55746D1E7D02EF00E870A5 /* InfoLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE55746C1E7D02EF00E870A5 /* InfoLoader.swift */; };
 		BE56D13E1DD4C96D00BBF64B /* PlaylistCollectionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = BE56D13D1DD4C96D00BBF64B /* PlaylistCollectionCell.xib */; };
@@ -202,16 +217,8 @@
 		BE7D96DE2104784E00A0F5D4 /* PropertiesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7D96DD2104784E00A0F5D4 /* PropertiesViewController.swift */; };
 		BE7DE706214BACE30032FCBD /* PropertiesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7DE705214BACE30032FCBD /* PropertiesTableViewController.swift */; };
 		BE7E73B720ADF7B2008A52B7 /* ActionsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7E73B620ADF7B2008A52B7 /* ActionsManager.swift */; };
-		BE828DF124647F5300DD67E4 /* MyriadPro-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE828DEB24647F4600DD67E4 /* MyriadPro-Bold.otf */; };
-		BE828DF224647F5400DD67E4 /* MyriadPro-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE828DEB24647F4600DD67E4 /* MyriadPro-Bold.otf */; };
-		BE828DF324647F5400DD67E4 /* MyriadPro-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE828DEC24647F4800DD67E4 /* MyriadPro-Regular.otf */; };
-		BE828DF424647F5400DD67E4 /* MyriadPro-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE828DEC24647F4800DD67E4 /* MyriadPro-Regular.otf */; };
-		BE828DF524647F5400DD67E4 /* MyriadPro-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE828DED24647F4C00DD67E4 /* MyriadPro-Black.otf */; };
-		BE828DF624647F5400DD67E4 /* MyriadPro-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE828DED24647F4C00DD67E4 /* MyriadPro-Black.otf */; };
 		BE828DF724647F5400DD67E4 /* MyriadPro-It.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE828DEE24647F4E00DD67E4 /* MyriadPro-It.otf */; };
 		BE828DF824647F5400DD67E4 /* MyriadPro-It.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE828DEE24647F4E00DD67E4 /* MyriadPro-It.otf */; };
-		BE828DF924647F5400DD67E4 /* MyriadPro-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE828DEF24647F5000DD67E4 /* MyriadPro-Light.otf */; };
-		BE828DFA24647F5400DD67E4 /* MyriadPro-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE828DEF24647F5000DD67E4 /* MyriadPro-Light.otf */; };
 		BE828DFB24647F5400DD67E4 /* MyriadPro-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE828DF024647F5300DD67E4 /* MyriadPro-Semibold.otf */; };
 		BE828DFC24647F5400DD67E4 /* MyriadPro-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE828DF024647F5300DD67E4 /* MyriadPro-Semibold.otf */; };
 		BE828E032464815E00DD67E4 /* MuseoSansRounded900.otf in Resources */ = {isa = PBXBuildFile; fileRef = BE828DFD2464815800DD67E4 /* MuseoSansRounded900.otf */; };
@@ -233,6 +240,7 @@
 		BEA013FC1E63984400BC3C1D /* MELTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA013FB1E63984400BC3C1D /* MELTableView.swift */; };
 		BEA013FE1E6399AA00BC3C1D /* MELTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA013FD1E6399AA00BC3C1D /* MELTableViewCell.swift */; };
 		BEA29A7C2450131F000E8789 /* PassthroughView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA29A7B2450120E000E8789 /* PassthroughView.swift */; };
+		BEA7B0C725E7921600F935ED /* Collector.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA7B0C625E7921500F935ED /* Collector.swift */; };
 		BEA9E5672118A52600D3095D /* LyricsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA9E5662118A52600D3095D /* LyricsViewController.swift */; };
 		BEA9E5692118A5F000D3095D /* LyricsViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BEA9E5682118A5F000D3095D /* LyricsViewController.storyboard */; };
 		BEAEF61C1D5DB09D00156271 /* CollectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEAEF61B1D5DB09D00156271 /* CollectorViewController.swift */; };
@@ -346,7 +354,7 @@
 			remoteGlobalIDString = BE0F5C201D2D663F00C9E8A1;
 			remoteInfo = Melody;
 		};
-		BE877B9B24674A340039464C /* PBXContainerItemProxy */ = {
+		BEFBAE2025DA9F23005DB4C5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BE0F5C191D2D663F00C9E8A1 /* Project object */;
 			proxyType = 1;
@@ -384,6 +392,7 @@
 		33647741EF36C3E4AB4022FF /* Pods-Mode.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mode.release.xcconfig"; path = "Pods/Target Support Files/Pods-Mode/Pods-Mode.release.xcconfig"; sourceTree = "<group>"; };
 		3F09DD84C16D64F49A375355 /* Pods-ModeWidget.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ModeWidget.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ModeWidget/Pods-ModeWidget.debug.xcconfig"; sourceTree = "<group>"; };
 		79C1E4E0F197AFC9BB7028AE /* Pods-Mode.stable.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mode.stable.xcconfig"; path = "Pods/Target Support Files/Pods-Mode/Pods-Mode.stable.xcconfig"; sourceTree = "<group>"; };
+		8FA0EF202C9137CE5D58BF71 /* Pods-Mode.personal.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mode.personal.xcconfig"; path = "Pods/Target Support Files/Pods-Mode/Pods-Mode.personal.xcconfig"; sourceTree = "<group>"; };
 		9A59EA189D3F0588B00B6F3C /* Pods_ModeWidget.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ModeWidget.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA152319663BBD04963820C0 /* Pods-ModeWidget.stable.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ModeWidget.stable.xcconfig"; path = "Pods/Target Support Files/Pods-ModeWidget/Pods-ModeWidget.stable.xcconfig"; sourceTree = "<group>"; };
 		BE0136A7211DCED600D7588A /* TextViewTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextViewTableViewCell.swift; sourceTree = "<group>"; };
@@ -494,6 +503,10 @@
 		BE34A48F1DDEDCCF0023A0EB /* CollectionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionsViewController.swift; sourceTree = "<group>"; };
 		BE34C96C21A9C40A00236BAE /* GestureSelectableCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GestureSelectableCell.xib; sourceTree = "<group>"; };
 		BE34C96E21A9C62700236BAE /* GestureSelectableCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureSelectableCollectionViewCell.swift; sourceTree = "<group>"; };
+		BE358223263DD46600D93542 /* MyriadPro-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MyriadPro-Bold.otf"; sourceTree = "<group>"; };
+		BE358224263DD46600D93542 /* MyriadPro-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MyriadPro-Regular.otf"; sourceTree = "<group>"; };
+		BE358225263DD46700D93542 /* MyriadPro-Black.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MyriadPro-Black.otf"; sourceTree = "<group>"; };
+		BE358226263DD46700D93542 /* MyriadPro-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MyriadPro-Light.otf"; sourceTree = "<group>"; };
 		BE35897F219EA1F300637E9F /* AlertTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertTableViewController.swift; sourceTree = "<group>"; };
 		BE37EDF622E5A65700AF1F6F /* LastFMTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastFMTableViewController.swift; sourceTree = "<group>"; };
 		BE37EDF822E5E14200AF1F6F /* LoginDetailsCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LoginDetailsCell.xib; sourceTree = "<group>"; };
@@ -526,6 +539,7 @@
 		BE48E027216D2E8E00A7E7C4 /* ChildContaining.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildContaining.swift; sourceTree = "<group>"; };
 		BE494D2F1D2F1310007DE1F6 /* PlaylistItemsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaylistItemsViewController.swift; sourceTree = "<group>"; };
 		BE4A48D425308193004D3408 /* CollectionItemsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionItemsTableViewController.swift; sourceTree = "<group>"; };
+		BE4FAC41262D9299000EE7AD /* NavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
 		BE500F1E1F9918EE0005E568 /* QueueInsertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueueInsertController.swift; sourceTree = "<group>"; };
 		BE50D7151FA1C5DD00D22D67 /* GradientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientView.swift; sourceTree = "<group>"; };
 		BE512F4E1D53C6A400775142 /* MELVolumeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MELVolumeView.swift; path = Melody/MELVolumeView.swift; sourceTree = "<group>"; };
@@ -537,6 +551,12 @@
 		BE53A9A51DD0D77000FB3073 /* TableHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TableHeaderView.swift; path = Melody/TableHeaderView.swift; sourceTree = "<group>"; };
 		BE5439A31E87E62D0082645C /* ESTMusicIndicatorContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ESTMusicIndicatorContentView.swift; sourceTree = "<group>"; };
 		BE5439A41E87E62D0082645C /* ESTMusicIndicatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ESTMusicIndicatorView.swift; sourceTree = "<group>"; };
+		BE545337261C27400077C14F /* ConstantValues.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ConstantValues.swift; path = "../../My Projects/Drawer/Drawer/ConstantValues.swift"; sourceTree = "<group>"; };
+		BE545338261C27410077C14F /* DismissalProtocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DismissalProtocols.swift; path = "../../My Projects/Drawer/Drawer/DismissalProtocols.swift"; sourceTree = "<group>"; };
+		BE545339261C27410077C14F /* PresentationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PresentationManager.swift; path = "../../My Projects/Drawer/Drawer/PresentationManager.swift"; sourceTree = "<group>"; };
+		BE54533A261C27410077C14F /* PresentationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PresentationController.swift; path = "../../My Projects/Drawer/Drawer/PresentationController.swift"; sourceTree = "<group>"; };
+		BE54533B261C27420077C14F /* PresentationInteractor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PresentationInteractor.swift; path = "../../My Projects/Drawer/Drawer/PresentationInteractor.swift"; sourceTree = "<group>"; };
+		BE54533C261C27430077C14F /* PresentationAnimator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PresentationAnimator.swift; path = "../../My Projects/Drawer/Drawer/PresentationAnimator.swift"; sourceTree = "<group>"; };
 		BE55746A1E7D027000E870A5 /* Arrangeable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Arrangeable.swift; sourceTree = "<group>"; };
 		BE55746C1E7D02EF00E870A5 /* InfoLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InfoLoader.swift; sourceTree = "<group>"; };
 		BE56D13D1DD4C96D00BBF64B /* PlaylistCollectionCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PlaylistCollectionCell.xib; path = Melody/PlaylistCollectionCell.xib; sourceTree = "<group>"; };
@@ -593,11 +613,7 @@
 		BE7D96DD2104784E00A0F5D4 /* PropertiesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertiesViewController.swift; sourceTree = "<group>"; };
 		BE7DE705214BACE30032FCBD /* PropertiesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertiesTableViewController.swift; sourceTree = "<group>"; };
 		BE7E73B620ADF7B2008A52B7 /* ActionsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionsManager.swift; sourceTree = "<group>"; };
-		BE828DEB24647F4600DD67E4 /* MyriadPro-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MyriadPro-Bold.otf"; sourceTree = "<group>"; };
-		BE828DEC24647F4800DD67E4 /* MyriadPro-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MyriadPro-Regular.otf"; sourceTree = "<group>"; };
-		BE828DED24647F4C00DD67E4 /* MyriadPro-Black.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MyriadPro-Black.otf"; sourceTree = "<group>"; };
 		BE828DEE24647F4E00DD67E4 /* MyriadPro-It.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MyriadPro-It.otf"; sourceTree = "<group>"; };
-		BE828DEF24647F5000DD67E4 /* MyriadPro-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MyriadPro-Light.otf"; sourceTree = "<group>"; };
 		BE828DF024647F5300DD67E4 /* MyriadPro-Semibold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MyriadPro-Semibold.otf"; sourceTree = "<group>"; };
 		BE828DFD2464815800DD67E4 /* MuseoSansRounded900.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = MuseoSansRounded900.otf; sourceTree = "<group>"; };
 		BE828DFE2464815900DD67E4 /* MuseoSansRounded1000.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = MuseoSansRounded1000.otf; sourceTree = "<group>"; };
@@ -608,6 +624,7 @@
 		BE8328641D8B4D38001F015E /* NewPlaylistViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewPlaylistViewController.swift; sourceTree = "<group>"; };
 		BE89790D1E30C22B008634E6 /* NowPlaying.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NowPlaying.swift; sourceTree = "<group>"; };
 		BE8B6A6320D5963000A823A1 /* SharedTypeAliases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedTypeAliases.swift; sourceTree = "<group>"; };
+		BE934A6726515CED00F2DD24 /* Personal.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Personal.xcconfig; sourceTree = "<group>"; };
 		BE93B4042433B1A200217501 /* ItemsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemsViewController.swift; sourceTree = "<group>"; };
 		BE9481331EA4085000AAE895 /* Filterable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Filterable.swift; sourceTree = "<group>"; };
 		BE99B5351ED6CF130033B796 /* MELLayerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MELLayerView.swift; sourceTree = "<group>"; };
@@ -617,6 +634,7 @@
 		BEA013FB1E63984400BC3C1D /* MELTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MELTableView.swift; sourceTree = "<group>"; };
 		BEA013FD1E6399AA00BC3C1D /* MELTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MELTableViewCell.swift; sourceTree = "<group>"; };
 		BEA29A7B2450120E000E8789 /* PassthroughView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassthroughView.swift; sourceTree = "<group>"; };
+		BEA7B0C625E7921500F935ED /* Collector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Collector.swift; sourceTree = "<group>"; };
 		BEA9E5662118A52600D3095D /* LyricsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsViewController.swift; sourceTree = "<group>"; };
 		BEA9E5682118A5F000D3095D /* LyricsViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LyricsViewController.storyboard; sourceTree = "<group>"; };
 		BEAEF61B1D5DB09D00156271 /* CollectorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectorViewController.swift; sourceTree = "<group>"; };
@@ -716,6 +734,7 @@
 		BEFF5569212873A5006CBAEE /* VisualEffectNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualEffectNavigationBar.swift; sourceTree = "<group>"; };
 		BEFF556B212874F0006CBAEE /* VisualEffectNavigationBar.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = VisualEffectNavigationBar.xib; sourceTree = "<group>"; };
 		CEFDA6C7BA080EA500DCD005 /* Pods_Mode.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Mode.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F2F260856CB9935E4F85A6E0 /* Pods-ModeWidget.personal.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ModeWidget.personal.xcconfig"; path = "Pods/Target Support Files/Pods-ModeWidget/Pods-ModeWidget.personal.xcconfig"; sourceTree = "<group>"; };
 		FE692D708D4291C7BE54BAEB /* Pods-ModeWidget.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ModeWidget.release.xcconfig"; path = "Pods/Target Support Files/Pods-ModeWidget/Pods-ModeWidget.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -760,11 +779,11 @@
 		BE06B17C1D2E59FF007457E7 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
-				BE828DED24647F4C00DD67E4 /* MyriadPro-Black.otf */,
-				BE828DEB24647F4600DD67E4 /* MyriadPro-Bold.otf */,
+				BE358225263DD46700D93542 /* MyriadPro-Black.otf */,
+				BE358226263DD46700D93542 /* MyriadPro-Light.otf */,
+				BE358223263DD46600D93542 /* MyriadPro-Bold.otf */,
+				BE358224263DD46600D93542 /* MyriadPro-Regular.otf */,
 				BE828DEE24647F4E00DD67E4 /* MyriadPro-It.otf */,
-				BE828DEF24647F5000DD67E4 /* MyriadPro-Light.otf */,
-				BE828DEC24647F4800DD67E4 /* MyriadPro-Regular.otf */,
 				BE828DF024647F5300DD67E4 /* MyriadPro-Semibold.otf */,
 				BE828DFF2464815B00DD67E4 /* MuseoSansRounded100.otf */,
 				BE828E012464815D00DD67E4 /* MuseoSansRounded300.otf */,
@@ -791,6 +810,7 @@
 		BE0F5C181D2D663F00C9E8A1 = {
 			isa = PBXGroup;
 			children = (
+				BE934A6726515CED00F2DD24 /* Personal.xcconfig */,
 				BE45495424A3FFC30092D998 /* Base.xcconfig */,
 				BE45495124A3F78F0092D998 /* Debug.xcconfig */,
 				BE45495224A3F79F0092D998 /* Stable.xcconfig */,
@@ -1137,6 +1157,7 @@
 				BE3BC1062025A627004B0FB1 /* ActionsButton.swift */,
 				BE43524B2101EEBA0027C02C /* SwipeContainer.swift */,
 				BE42A621213540B10094DD0C /* SwipeView.swift */,
+				BE4FAC41262D9299000EE7AD /* NavigationController.swift */,
 			);
 			name = "View Subclasses";
 			path = ..;
@@ -1160,6 +1181,7 @@
 				BE0136AD211EFDAB00D7588A /* LyricsManager.swift */,
 				BE5BB4FC22E1C50200F03322 /* Scrobbler.swift */,
 				BEF232432511F9FB006A16D7 /* SettingsConstants.swift */,
+				BEA7B0C625E7921500F935ED /* Collector.swift */,
 			);
 			name = "Delegates & Handlers";
 			sourceTree = "<group>";
@@ -1228,6 +1250,19 @@
 				BEC933CB1F6D996C00FB5984 /* SwipeTransitionLayout.swift */,
 			);
 			name = SwipeCellKit;
+			sourceTree = "<group>";
+		};
+		BE545336261C27310077C14F /* Drawer */ = {
+			isa = PBXGroup;
+			children = (
+				BE545337261C27400077C14F /* ConstantValues.swift */,
+				BE545338261C27410077C14F /* DismissalProtocols.swift */,
+				BE54533C261C27430077C14F /* PresentationAnimator.swift */,
+				BE54533A261C27410077C14F /* PresentationController.swift */,
+				BE54533B261C27420077C14F /* PresentationInteractor.swift */,
+				BE545339261C27410077C14F /* PresentationManager.swift */,
+			);
+			name = Drawer;
 			sourceTree = "<group>";
 		};
 		BE5574691E7D025F00E870A5 /* Protocols */ = {
@@ -1301,6 +1336,7 @@
 		BE7B88DE1D305FFF00DC18BD /* Animation Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				BE545336261C27310077C14F /* Drawer */,
 				BE6CB7241D9D603700328C19 /* NowPlayingAnimationController.swift */,
 				BEDAA3061DABF83A006E3EDB /* PresentationAnimationController.swift */,
 				BE7486E91D982CA60062EB68 /* NavigationAnimationController.swift */,
@@ -1443,6 +1479,8 @@
 				FE692D708D4291C7BE54BAEB /* Pods-ModeWidget.release.xcconfig */,
 				79C1E4E0F197AFC9BB7028AE /* Pods-Mode.stable.xcconfig */,
 				AA152319663BBD04963820C0 /* Pods-ModeWidget.stable.xcconfig */,
+				8FA0EF202C9137CE5D58BF71 /* Pods-Mode.personal.xcconfig */,
+				F2F260856CB9935E4F85A6E0 /* Pods-ModeWidget.personal.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -1474,8 +1512,8 @@
 			buildPhases = (
 				08043B4DCD05580AC0421D86 /* [CP] Check Pods Manifest.lock */,
 				BE0F5C1D1D2D663F00C9E8A1 /* Sources */,
-				BE0F5C1E1D2D663F00C9E8A1 /* Frameworks */,
 				BE0F5C1F1D2D663F00C9E8A1 /* Resources */,
+				BE0F5C1E1D2D663F00C9E8A1 /* Frameworks */,
 				BE0CE5A71ED8473E00D8DF6D /* Embed App Extensions */,
 				BE4AA8891F29161900F52E84 /* Embed Frameworks */,
 				F3BC29C8473895C12E5480AF /* [CP] Embed Pods Frameworks */,
@@ -1483,7 +1521,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				BE877B9C24674A340039464C /* PBXTargetDependency */,
+				BEFBAE2125DA9F23005DB4C5 /* PBXTargetDependency */,
 			);
 			name = Mode;
 			productName = Melody;
@@ -1533,7 +1571,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0830;
-				LastUpgradeCheck = 1200;
+				LastUpgradeCheck = 1240;
 				ORGANIZATIONNAME = "Ezenwa Okoro";
 				TargetAttributes = {
 					BE0CE5961ED8473E00D8DF6D = {
@@ -1610,11 +1648,11 @@
 				BE828DFC24647F5400DD67E4 /* MyriadPro-Semibold.otf in Resources */,
 				BE828DF824647F5400DD67E4 /* MyriadPro-It.otf in Resources */,
 				BEC1110A1ED9493E00A6C338 /* Assets.xcassets in Resources */,
-				BE828DFA24647F5400DD67E4 /* MyriadPro-Light.otf in Resources */,
+				BE35822A263DD46700D93542 /* MyriadPro-Regular.otf in Resources */,
+				BE35822E263DD46700D93542 /* MyriadPro-Light.otf in Resources */,
+				BE35822C263DD46700D93542 /* MyriadPro-Black.otf in Resources */,
+				BE358228263DD46700D93542 /* MyriadPro-Bold.otf in Resources */,
 				BE0CE59F1ED8473E00D8DF6D /* MainInterface.storyboard in Resources */,
-				BE828DF624647F5400DD67E4 /* MyriadPro-Black.otf in Resources */,
-				BE828DF424647F5400DD67E4 /* MyriadPro-Regular.otf in Resources */,
-				BE828DF224647F5400DD67E4 /* MyriadPro-Bold.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1626,7 +1664,6 @@
 				BE381D5420DA7B6A00D6C2F3 /* SettingsCell.xib in Resources */,
 				BE2A69271F1D561300DEE878 /* VolumeView.xib in Resources */,
 				BEC0B16A2021D506008CBEB5 /* Light App Icon Medium@2x.png in Resources */,
-				BE828DF924647F5400DD67E4 /* MyriadPro-Light.otf in Resources */,
 				BE573CF31E669E0B0021DCBD /* Popovers.storyboard in Resources */,
 				BEC0B1662021D506008CBEB5 /* Light App Icon Medium@3x.png in Resources */,
 				BE14559E237FF4B90016CAE8 /* Dark Rainbow App Icon Thin@2x.png in Resources */,
@@ -1634,6 +1671,7 @@
 				BEDB79A82191BC870013F9A9 /* InfoLyricsCell.xib in Resources */,
 				BE1C349D1E672DF100561D28 /* ScrollHeaderSubview.xib in Resources */,
 				BEC0B1692021D506008CBEB5 /* Light App Icon Thin@2x.png in Resources */,
+				BE358229263DD46700D93542 /* MyriadPro-Regular.otf in Resources */,
 				BE1455A8237FF4C80016CAE8 /* Light Rainbow App Icon Wide@3x.png in Resources */,
 				BE28088A1FC97F3200D3AB1C /* PropertyCollectionViewCell.xib in Resources */,
 				BE34C96D21A9C40A00236BAE /* GestureSelectableCell.xib in Resources */,
@@ -1643,7 +1681,6 @@
 				BE73B1E31D96708C0059D084 /* EntityCell.xib in Resources */,
 				BE14559F237FF4B90016CAE8 /* Dark Rainbow App Icon Wide@2x.png in Resources */,
 				BEC0B16B2021D506008CBEB5 /* Light App Icon Thin@3x.png in Resources */,
-				BE828DF524647F5400DD67E4 /* MyriadPro-Black.otf in Resources */,
 				BEBC4E321FB2DAE200F18E06 /* InputView.xib in Resources */,
 				BE37EDF922E5E14200AF1F6F /* LoginDetailsCell.xib in Resources */,
 				BE7B39032380001D00CB7A86 /* Dark Trans App Icon Medium@2x.png in Resources */,
@@ -1659,8 +1696,10 @@
 				BE828DFB24647F5400DD67E4 /* MyriadPro-Semibold.otf in Resources */,
 				BE56D13E1DD4C96D00BBF64B /* PlaylistCollectionCell.xib in Resources */,
 				BEA9E5692118A5F000D3095D /* LyricsViewController.storyboard in Resources */,
+				BE35822B263DD46700D93542 /* MyriadPro-Black.otf in Resources */,
 				BE573CF11E669D8E0021DCBD /* EntityChildren.storyboard in Resources */,
 				BE14559D237FF4B90016CAE8 /* Dark Rainbow App Icon Thin@3x.png in Resources */,
+				BE358227263DD46700D93542 /* MyriadPro-Bold.otf in Resources */,
 				BE7B39042380001D00CB7A86 /* Dark Trans App Icon Medium@3x.png in Resources */,
 				BE53A9A41DD0D5F100FB3073 /* TableHeaderView.xib in Resources */,
 				BECA9766250F882B0026ECE5 /* EntityPropertyCollectionViewCell.xib in Resources */,
@@ -1678,10 +1717,8 @@
 				BE828E072464815E00DD67E4 /* MuseoSansRounded100.otf in Resources */,
 				BE573CF71E669E970021DCBD /* Settings.storyboard in Resources */,
 				BE828DF724647F5400DD67E4 /* MyriadPro-It.otf in Resources */,
-				BE828DF124647F5300DD67E4 /* MyriadPro-Bold.otf in Resources */,
 				BEFB93CC2124421900590993 /* PlaybackCell.xib in Resources */,
 				BE573CF91E669F300021DCBD /* Tips.storyboard in Resources */,
-				BE828DF324647F5400DD67E4 /* MyriadPro-Regular.otf in Resources */,
 				BE573D041E66A1760021DCBD /* LibraryChildren.storyboard in Resources */,
 				BEBF0E74204616BC001C29CC /* RecentSearchCell.xib in Resources */,
 				BE25606C1E74428E00858C02 /* HeaderView.xib in Resources */,
@@ -1700,6 +1737,7 @@
 				BE14559B237FF4B90016CAE8 /* Dark Rainbow App Icon Medium@2x.png in Resources */,
 				BE1455A0237FF4B90016CAE8 /* Dark Rainbow App Icon Wide@3x.png in Resources */,
 				BE42A620213523070094DD0C /* SwipeView.xib in Resources */,
+				BE35822D263DD46700D93542 /* MyriadPro-Light.otf in Resources */,
 				BE1455AB237FF4C80016CAE8 /* Light Rainbow App Icon Medium@2x.png in Resources */,
 				BE573CFF1E66A0F30021DCBD /* PresentedChildren.storyboard in Resources */,
 				BE0F5C2C1D2D663F00C9E8A1 /* Main.storyboard in Resources */,
@@ -1895,6 +1933,7 @@
 				BEC0B1512021C05E008CBEB5 /* IconSelectionTableViewController.swift in Sources */,
 				BE0136AC211E12C500D7588A /* ModeOnlyStringExtensions.swift in Sources */,
 				BEC933DF1F6D9B3600FB5984 /* SwipeTableViewCell+Accessibility.swift in Sources */,
+				BE545340261C27430077C14F /* PresentationController.swift in Sources */,
 				BE15AA1F1E869B100053D10B /* Notification + Extensions.swift in Sources */,
 				BE5BB4FD22E1C50300F03322 /* Scrobbler.swift in Sources */,
 				BEF7CD221EAC965D007543C9 /* Actionable.swift in Sources */,
@@ -1920,12 +1959,14 @@
 				BE3F1CD5218E1A9B0099907D /* InfoItemCollectionViewCell.swift in Sources */,
 				BE47B44E22C0A0D000734E82 /* AnyHashable + Extensions.swift in Sources */,
 				BE48E029216D428700A7E7C4 /* UIViewController + Extensions.swift in Sources */,
+				BE54533E261C27430077C14F /* DismissalProtocols.swift in Sources */,
 				BE7A66961E62C91E0091A216 /* MELSlider.swift in Sources */,
 				BE0AB2DD22D4F7EE00EBEDB8 /* Song+Methods.swift in Sources */,
 				BEBC4E341FB37D1200F18E06 /* InputView.swift in Sources */,
 				BED985BD240BC95400011FFC /* Sequence + Extensions.swift in Sources */,
 				BE89790E1E30C22B008634E6 /* NowPlaying.swift in Sources */,
 				BEA013FC1E63984400BC3C1D /* MELTableView.swift in Sources */,
+				BE545342261C27430077C14F /* PresentationAnimator.swift in Sources */,
 				BEC933D81F6D9B2100FB5984 /* SwipeActionTransitioning.swift in Sources */,
 				BEAEF61C1D5DB09D00156271 /* CollectorViewController.swift in Sources */,
 				BEE7F64A1E637C1F005927C7 /* UIImageEffects.m in Sources */,
@@ -1941,6 +1982,7 @@
 				BE11A63D1F95334000A852C2 /* LibraryAddable.swift in Sources */,
 				BE31DDB01FE41DB00029CC41 /* ArtworkTableViewController.swift in Sources */,
 				BEC933E21F6D9B3E00FB5984 /* SwipeTransitionLayout.swift in Sources */,
+				BEA7B0C725E7921600F935ED /* Collector.swift in Sources */,
 				BEBF0E7620461B2F001C29CC /* RecentSearchTableViewCell.swift in Sources */,
 				BE494D301D2F1310007DE1F6 /* PlaylistItemsViewController.swift in Sources */,
 				BE2B3DC6202AF39D0006F43E /* MPMediaQuery+Other.m in Sources */,
@@ -1952,6 +1994,7 @@
 				BEA013FE1E6399AA00BC3C1D /* MELTableViewCell.swift in Sources */,
 				BEA9E5672118A52600D3095D /* LyricsViewController.swift in Sources */,
 				BEE7F64C1E638A6A005927C7 /* MELTextView.swift in Sources */,
+				BE54533F261C27430077C14F /* PresentationManager.swift in Sources */,
 				BEF6EDA9201CE486007B7010 /* StringScore.swift in Sources */,
 				BE3445D51E5729BB00E6AE3B /* Transitioner.swift in Sources */,
 				BE2EADCA203459EF000FE197 /* FullPlayerTableViewController.swift in Sources */,
@@ -1995,6 +2038,7 @@
 				BE63F5681D57C50200D03019 /* QueueViewController.swift in Sources */,
 				BE42A62B21357A850094DD0C /* MessageTone.swift in Sources */,
 				BEC933DE1F6D9B3400FB5984 /* SwipeTableViewCell.swift in Sources */,
+				BE4FAC42262D9299000EE7AD /* NavigationController.swift in Sources */,
 				BEBDE8342264838D003530CE /* UIButton + Extensions.swift in Sources */,
 				BEC933E11F6D9B3C00FB5984 /* SwipeTableViewCellDelegate.swift in Sources */,
 				BE25606A1E74189700858C02 /* MELTextField.swift in Sources */,
@@ -2013,8 +2057,10 @@
 				BEDC53AB1EBCE06D00566424 /* CellSecondaryDetailsSettingViewController.swift in Sources */,
 				BE2189251EF2CB4700B40CEE /* Refreshable.swift in Sources */,
 				BE7314F21E263FF80050A46B /* PillButtonView.swift in Sources */,
+				BE545341261C27430077C14F /* PresentationInteractor.swift in Sources */,
 				BE1171912427D48500D01FD9 /* SearchLeftView.swift in Sources */,
 				BE93B4052433B1A200217501 /* ItemsViewController.swift in Sources */,
+				BE54533D261C27430077C14F /* ConstantValues.swift in Sources */,
 				BEC933D21F6D9B0800FB5984 /* SwipeExtensions.swift in Sources */,
 				BE2A692B1F1E2A0600DEE878 /* ThemeTableViewController.swift in Sources */,
 				BE6A9CB81D7F989B00FA4CB9 /* SongsViewController.swift in Sources */,
@@ -2051,10 +2097,10 @@
 			target = BE0F5C201D2D663F00C9E8A1 /* Mode */;
 			targetProxy = BE0F5C431D2D663F00C9E8A1 /* PBXContainerItemProxy */;
 		};
-		BE877B9C24674A340039464C /* PBXTargetDependency */ = {
+		BEFBAE2125DA9F23005DB4C5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = BE0CE5961ED8473E00D8DF6D /* ModeWidget */;
-			targetProxy = BE877B9B24674A340039464C /* PBXContainerItemProxy */;
+			targetProxy = BEFBAE2025DA9F23005DB4C5 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -2187,6 +2233,7 @@
 			baseConfigurationReference = BE45495124A3F78F0092D998 /* Debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				APP_BUILD_NUMBER = 23881;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -2236,7 +2283,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				sharedBuildNumber = 22314;
+				sharedBuildNumber = 23881;
 				sharedVersionNumber = 1.2;
 			};
 			name = Debug;
@@ -2246,6 +2293,7 @@
 			baseConfigurationReference = BE45495324A3F7B00092D998 /* Release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				APP_BUILD_NUMBER = 23881;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -2290,7 +2338,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				VALIDATE_PRODUCT = YES;
-				sharedBuildNumber = 22314;
+				sharedBuildNumber = 23881;
 				sharedVersionNumber = 1.2;
 			};
 			name = Release;
@@ -2412,6 +2460,7 @@
 			baseConfigurationReference = BE45495224A3F79F0092D998 /* Stable.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				APP_BUILD_NUMBER = 23881;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -2461,7 +2510,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				sharedBuildNumber = 22314;
+				sharedBuildNumber = 23881;
 				sharedVersionNumber = 1.2;
 			};
 			name = Stable;
@@ -2550,6 +2599,145 @@
 			};
 			name = Stable;
 		};
+		BE934A6826515F3D00F2DD24 /* Personal */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BE934A6726515CED00F2DD24 /* Personal.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				APP_BUILD_NUMBER = 23881;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				VALIDATE_PRODUCT = YES;
+				sharedBuildNumber = 23881;
+				sharedVersionNumber = 1.2;
+			};
+			name = Personal;
+		};
+		BE934A6926515F3D00F2DD24 /* Personal */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8FA0EF202C9137CE5D58BF71 /* Pods-Mode.personal.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Mode.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = $sharedBuildNumber;
+				DEVELOPMENT_TEAM = P75398C8MB;
+				GCC_OPTIMIZATION_LEVEL = fast;
+				INFOPLIST_FILE = Melody/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_SWIFT_FLAGS = "-DRELEASE";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(MODE_BUNDLE_ID)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Melody/Melody-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Personal;
+		};
+		BE934A6A26515F3D00F2DD24 /* Personal */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = P75398C8MB;
+				INFOPLIST_FILE = MelodyTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.okoroezenwa.MelodyTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Mode.app/Mode";
+			};
+			name = Personal;
+		};
+		BE934A6B26515F3D00F2DD24 /* Personal */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEVELOPMENT_TEAM = P75398C8MB;
+				INFOPLIST_FILE = MelodyUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.okoroezenwa.MelodyUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = Melody;
+			};
+			name = Personal;
+		};
+		BE934A6C26515F3D00F2DD24 /* Personal */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F2F260856CB9935E4F85A6E0 /* Pods-ModeWidget.personal.xcconfig */;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CODE_SIGN_ENTITLEMENTS = ModeWidget/ModeWidget.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = $sharedBuildNumber;
+				DEVELOPMENT_TEAM = P75398C8MB;
+				INFOPLIST_FILE = ModeWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MARKETING_VERSION = "$(sharedVersionNumber)";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(MODE_WIDGET_BUNDLE_ID)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "ModeWidget/ModeWidget-Bridging-Header.h";
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "ModeWidget-Bridging-Header";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Personal;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -2559,6 +2747,7 @@
 				BE0CE5A41ED8473E00D8DF6D /* Debug */,
 				BE45495024A3F6480092D998 /* Stable */,
 				BE0CE5A51ED8473E00D8DF6D /* Release */,
+				BE934A6C26515F3D00F2DD24 /* Personal */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -2569,6 +2758,7 @@
 				BE0F5C491D2D663F00C9E8A1 /* Debug */,
 				BE45494C24A3F6480092D998 /* Stable */,
 				BE0F5C4A1D2D663F00C9E8A1 /* Release */,
+				BE934A6826515F3D00F2DD24 /* Personal */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -2579,6 +2769,7 @@
 				BE0F5C4C1D2D663F00C9E8A1 /* Debug */,
 				BE45494D24A3F6480092D998 /* Stable */,
 				BE0F5C4D1D2D663F00C9E8A1 /* Release */,
+				BE934A6926515F3D00F2DD24 /* Personal */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -2589,6 +2780,7 @@
 				BE0F5C4F1D2D663F00C9E8A1 /* Debug */,
 				BE45494E24A3F6480092D998 /* Stable */,
 				BE0F5C501D2D663F00C9E8A1 /* Release */,
+				BE934A6A26515F3D00F2DD24 /* Personal */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -2599,6 +2791,7 @@
 				BE0F5C521D2D663F00C9E8A1 /* Debug */,
 				BE45494F24A3F6480092D998 /* Stable */,
 				BE0F5C531D2D663F00C9E8A1 /* Release */,
+				BE934A6B26515F3D00F2DD24 /* Personal */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

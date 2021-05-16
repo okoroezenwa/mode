@@ -13,6 +13,13 @@ class ShadowImageView: UIImageView {
     @objc var radius: CGFloat = 0
     @objc var blur: CGFloat = 15
     @objc var length: CGFloat = 5
+    @objc var visibleInDarkMode = true {
+        
+        didSet {
+            
+            isHidden = visibleInDarkMode.inverted && darkTheme
+        }
+    }
     
     override func awakeFromNib() {
         
@@ -34,10 +41,12 @@ class ShadowImageView: UIImageView {
         self.length = length
         
         changeThemeColor()
+        notifier.addObserver(self, selector: #selector(changeThemeColor), name: .themeChanged, object: nil)
     }
     
     @objc func changeThemeColor() {
         
-        image = .resizableShadowImage(withSideLength: length, cornerRadius: radius, shadow: Shadow(offset: .zero, blur: blur, color: UIColor.darkGray.withAlphaComponent(0.7)))
+        isHidden = visibleInDarkMode.inverted && darkTheme
+        image = darkTheme ? nil : .resizableShadowImage(withSideLength: length, cornerRadius: radius, shadow: Shadow(offset: .zero, blur: blur, color: UIColor.darkGray.withAlphaComponent(0.7)))
     }
 }

@@ -8,60 +8,31 @@
 
 import UIKit
 
-class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable, EntityContainer, Peekable, SingleItemActionable, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, GenreTransitionable, ComposerTransitionable, EntityVerifiable, PillButtonContaining, Detailing {
+class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable, EntityContainer, Peekable, SingleItemActionable, AlbumTransitionable, ArtistTransitionable, AlbumArtistTransitionable, GenreTransitionable, ComposerTransitionable, EntityVerifiable, Detailing {
     
     @IBOutlet var tableView: MELTableView!
     @IBOutlet var bottomView: UIView!
-    @IBOutlet var actionsView: UIView!
-    @IBOutlet var actionsButton: MELButton! {
+    @IBOutlet var editButton: MELButton!
+    @IBOutlet var itemActionsButton: MELButton! {
         
         didSet {
             
+            let gr = UILongPressGestureRecognizer.init(target: self, action: #selector(showActions))
+            gr.minimumPressDuration = longPressDuration
+            itemActionsButton.addGestureRecognizer(gr)
+            LongPressManager.shared.gestureRecognisers.append(Weak.init(value: gr))
+        }
+    }
+    @IBOutlet var actionsButton: MELButton! {
+
+        didSet {
+
             let gr = UILongPressGestureRecognizer.init(target: self, action: #selector(showSettings(with:)))
             gr.minimumPressDuration = longPressDuration
             actionsButton.addGestureRecognizer(gr)
             LongPressManager.shared.gestureRecognisers.append(Weak.init(value: gr))
         }
     }
-    @IBOutlet var stackView: UIStackView! {
-        
-        didSet {
-            
-//            let lockView = PillButtonView.with(title: "Lock", image: #imageLiteral(resourceName: "Locked13"), action: /*#selector(addSongs)*/nil, target: self)
-//            lockButton = lockView.button
-//            self.lockView = lockView
-            
-            let clearView = PillButtonView.with(title: "Clear...", image: #imageLiteral(resourceName: "Discard"), tapAction: .init(action: #selector(clear), target: self))
-            clearButton = clearView.button
-            self.clearView = clearView
-            
-            let editView = PillButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, tapAction: .init(action: #selector(SongActionManager.toggleEditing(_:)), target: songManager))
-            editButton = editView.button
-            self.editView = editView
-            
-            for view in [/*lockView, */clearView, editView] {
-                
-//                view.button.contentEdgeInsets.top = 10
-//                view.button.contentEdgeInsets.bottom = 0
-                view.borderViewContainerBottomConstraint.constant = 2
-                view.borderViewContainerTopConstraint.constant = 10
-                stackView.addArrangedSubview(view)
-            }
-        }
-    }
-    @IBOutlet var addToButton: MELButton!
-    @IBOutlet var upNextButton: MELButton!
-    @IBOutlet var playButton: MELButton!
-    @IBOutlet var shuffleButton: MELButton!
-    
-//    @objc var lockButton: MELButton!
-    @objc var clearButton: MELButton!
-    @objc var editButton: MELButton!
-//    @objc var lockView: PillButtonView!
-    @objc var clearView: PillButtonView!
-    @objc var editView: PillButtonView!
-    
-    var borderedButtons = [PillButtonView?]()
     
     var manager: QueueManager!
     @objc lazy var itemsToAdd = [MPMediaItem]()
@@ -73,7 +44,35 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
     
     lazy var songManager: SongActionManager = { SongActionManager.init(actionable: self) }()
     var actionableSongs: [MPMediaItem] { return manager.queue }
-    let applicableActions = [SongAction.newPlaylist, .addTo]
+    var applicableActions: [SongAction] {
+        
+        var array = [SongAction.newPlaylist,
+                     .addTo,
+                     .info(context: .song(location: .list, at: 0, within: manager.queue)),
+        ]
+        
+        if manager.queue.count > 1 {
+            
+            array.append(.shuffle(mode: .songs, title: "Collected Songs", completion: { notifier.post(name: .endQueueModification, object: nil) }))
+            
+            if manager.queue.canShuffleAlbums {
+                
+                array.append(.shuffle(mode: .albums, title: "Collected Songs", completion: { notifier.post(name: .endQueueModification, object: nil) }))
+            }
+        }
+        
+        if musicPlayer.nowPlayingItem != nil {
+            
+            array.append(contentsOf: [
+                
+                .queue(type: .all, name: "Collected Songs", query: nil),
+                .queue(type: .playNext, name: "Collected Songs", query: nil),
+                .queue(type: .playLater, name: "Collected Songs", query: nil)
+            ])
+        }
+        
+        return array
+    }
     
     @objc var currentItem: MPMediaItem?
     @objc var currentAlbum: MPMediaItemCollection?
@@ -138,6 +137,21 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
 
         tableView.tableFooterView = UIView.init(frame: .zero)
         
+        let inset = 56 as CGFloat
+        tableView.contentInset.bottom = inset
+        
+        if #available(iOS 13, *) {
+
+            tableView.verticalScrollIndicatorInsets.bottom = inset
+
+        } else {
+
+            tableView.scrollIndicatorInsets.bottom = inset
+        }
+        
+        editButton.addTarget(songManager, action: #selector(SongActionManager.toggleEditing(_:)), for: .touchUpInside)
+        itemActionsButton.addTarget(self, action: #selector(showActions), for: .touchUpInside)
+        
         let swipeRight = UISwipeGestureRecognizer.init(target: songManager, action: #selector(SongActionManager.toggleEditing(_:)))
         swipeRight.direction = .right
         tableView.addGestureRecognizer(swipeRight)
@@ -152,14 +166,17 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
         tableView.addGestureRecognizer(hold)
         LongPressManager.shared.gestureRecognisers.append(Weak.init(value: hold))
         
-        updateUpNextButton()
-        updateShuffleButton()
-        updateHeaderView()
+        updatePlayingIndicators()
         
-        [Notification.Name.playerChanged, .MPMusicPlayerControllerNowPlayingItemDidChange].forEach({ notifier.addObserver(self, selector: #selector(updateUpNextButton), name: $0, object: /*musicPlayer*/nil) })
+        [Notification.Name.playerChanged, .MPMusicPlayerControllerNowPlayingItemDidChange].forEach({ notifier.addObserver(self, selector: #selector(updatePlayingIndicators), name: $0, object: /*musicPlayer*/nil) })
         notifier.addObserver(self, selector: #selector(updateForChangedItems), name: .managerItemsChanged, object: nil)
         notifier.addObserver(tableView as Any, selector: #selector(UITableView.reloadData), name: .lineHeightsCalculated, object: nil)
         [Notification.Name.entityCountVisibilityChanged, .showExplicitnessChanged].forEach({ notifier.addObserver(self, selector: #selector(updateEntityCountVisibility), name: $0, object: nil) })
+        
+        if animateWithPresentation {
+        
+            bottomView.transform = .init(translationX: 0, y: inset)
+        }
     }
     
     @objc func updateEntityCountVisibility() {
@@ -167,6 +184,42 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
         guard let indexPaths = tableView.indexPathsForVisibleRows else { return }
         
         tableView.reloadRows(at: indexPaths, with: .none)
+    }
+    
+    @objc func showActions(_ sender: Any) {
+        
+        let block: () -> Void = { [weak self] in
+            
+            guard let self = self else { return }
+        
+            let actions = self.applicableActions.map({ self.alertAction(for: $0, from: self, using: self.manager.queue) })
+            
+            let leftAction: AccessoryButtonAction = { _, vc in vc.dismiss(animated: true, completion: { [weak self] in
+                
+                guard let self = self else { return }
+                                                            
+                self.actionDetails(for: .play(title: "Collected Songs", completion: { notifier.post(name: .endQueueModification, object: nil) }), from: self, using: self.actionableSongs, useAlternateTitle: false).handler()
+                })
+            }
+            
+            let rightAction: AccessoryButtonAction = { [weak self] _, vc in
+                
+                guard let self = self else { return }
+                
+                vc.dismiss(animated: true, completion: { self.clear() })
+            }
+            
+            self.showAlert(title: "Collected Songs", subtitle: self.manager.queue.count.fullCountText(for: .song), with: actions, leftAction: leftAction, rightAction: rightAction, images: (#imageLiteral(resourceName: "PlayFilled12"), #imageLiteral(resourceName: "Discard15")), configurationActions: { vc in vc.leftButton.contentEdgeInsets = .init(top: 0, left: 2, bottom: 1, right: 0) })
+        }
+        
+        if let gr = sender as? UILongPressGestureRecognizer {
+            
+            gr.recogniseContinuously(with: block, and: nil)
+            
+        } else {
+            
+            block()
+        }
     }
     
     @objc func performHold(_ sender: UILongPressGestureRecognizer) {
@@ -189,14 +242,14 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
                 
                 } else {
                     
-                    var actions = [SongAction.queue(name: cell.nameLabel.text, query: nil), .newPlaylist, .addTo, .show(title: cell.nameLabel.text, context: .song(location: .list, at: indexPath.row, within: manager.queue), canDisplayInLibrary: true), .remove(indexPath)/*, .search(unwinder: { [weak self] in self?.parent })*/].map({ singleItemAlertAction(for: $0, entityType: .song, using: item, from: self) })
+                    var actions = [SongAction.queue(type: .all, name: cell.nameLabel.text, query: nil), .queue(type: .playNext, name: cell.nameLabel.text, query: nil), .queue(type: .playLater, name: cell.nameLabel.text, query: nil), .newPlaylist, .addTo, .show(title: cell.nameLabel.text, context: .song(location: .list, at: indexPath.row, within: manager.queue), canDisplayInLibrary: true), .remove(indexPath)/*, .search(unwinder: { [weak self] in self?.parent })*/].map({ singleItemAlertAction(for: $0, entityType: .song, using: item, from: self) })
                     
-                    if item.existsInLibrary.inverted {
+                    if item.canBeAddedToLibrary {
                         
                         actions.append(singleItemAlertAction(for: .library, entityType: .song, using: item, from: self))
                     }
                     
-                    actions.append(.init(title: "Get Info", style: .default, requiresDismissalFirst: true, handler: { [weak self] in
+                    actions.append(.init(title: "Get Info", style: .default, image: SongAction.info(context: .album(at: 0, within: [])).icon22, requiresDismissalFirst: true, handler: { [weak self] in
 
                         guard let weakSelf = self else { return }
 
@@ -272,26 +325,15 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
     }
     
     @objc func updateForChangedItems() {
-        
-        updateShuffleButton()
         tableView.reloadData()
     }
     
-    @objc func updateShuffleButton() {
-        
-        shuffleButton.lightOverride = manager.queue.count < 2
-        shuffleButton.isUserInteractionEnabled = manager.queue.count > 1
-    }
-    
-    @objc func updateUpNextButton() {
+    @objc func updatePlayingIndicators() {
         
         if peeker != nil {
         
             oldArtwork = ArtworkManager.shared.activeContainer?.modifier?.artworkType.image
         }
-        
-        upNextButton.lightOverride = musicPlayer.nowPlayingItem == nil
-        upNextButton.isUserInteractionEnabled = musicPlayer.nowPlayingItem != nil
         
         for cell in tableView.visibleCells {
             
@@ -318,78 +360,6 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
         guard let actionsVC = Transitioner.shared.transition(to: vc, using: .init(fromVC: self, configuration: .collected), sourceView: actionsButton) else { return }
         
         show(actionsVC, sender: nil)
-    }
-    
-    @IBAction func showAddActions() {
-        
-        let actions = applicableActions.map({ alertAction(for: $0, from: self, using: manager.queue) })
-        
-        showAlert(title: "Add To...", with: actions)
-    }
-    
-    @IBAction func showPlayShuffleActions(_ sender: Any) {
-        
-        if (sender as? UIButton) == playButton {
-            
-            musicPlayer.play(manager.queue, startingFrom: nil, from: self, withTitle: nil, alertTitle: "Play", completion: { notifier.post(name: .endQueueModification, object: nil) })
-        
-        } else if (sender as? UIButton) == shuffleButton {
-            
-            let canShuffleAlbums = manager.queue.canShuffleAlbums
-            
-            if canShuffleAlbums {
-                
-                let shuffleSongs = AlertAction.init(title: .shuffle(.songs), style: .default, requiresDismissalFirst: true, handler: { [weak self] in
-                    
-                    guard let weakSelf = self else { return }
-                    
-                    musicPlayer.play(weakSelf.manager.queue.shuffled(), startingFrom: nil, from: weakSelf, withTitle: nil, alertTitle: .shuffle(.songs), completion: { notifier.post(name: .endQueueModification, object: nil) })
-                })
-                
-                let shuffleAlbums = AlertAction.init(title: .shuffle(.albums), style: .default, requiresDismissalFirst: true, handler: { [weak self] in
-                    
-                    guard let weakSelf = self else { return }
-                    
-                    musicPlayer.play(weakSelf.manager.queue.albumsShuffled, startingFrom: nil, from: weakSelf, withTitle: nil, alertTitle: .shuffle(.albums), completion: { notifier.post(name: .endQueueModification, object: nil) })
-                })
-                
-                showAlert(title: "Collected Songs", with: shuffleSongs, shuffleAlbums)
-                
-            } else {
-                
-                musicPlayer.play(manager.queue.shuffled(), startingFrom: nil, from: self, withTitle: nil, alertTitle: .shuffle(), completion: { notifier.post(name: .endQueueModification, object: nil) })
-            }
-        
-        } else if (sender as? UIButton) == upNextButton {
-            
-            Transitioner.shared.addToQueue(from: self, kind: .items(manager.queue), context: .collector(manager: manager), index: (parent as? PresentedContainerViewController)?.index ?? -1)
-        }
-    }
-    
-    @objc func updateHeaderView() {
-        
-//        UIView.animate(withDuration: animated ? 0.3 : 0, animations: {
-//
-//            ([self.editView, self.clearView] as [UIView]).forEach({
-//
-//                if $0.isHidden && count == 0 { } else {
-//
-//                    $0.isHidden = count == 0
-//                    $0.alpha = count == 0 ? 0 : 1
-//                }
-//            })
-//        })
-//
-//        var array = [lockView, clearView, editView]
-//
-//        if count == 0 {
-//
-//            array.removeLast(2)
-//        }
-        
-        borderedButtons = [/*lockView, */clearView, editView]//array
-        
-        updateButtons()
     }
     
     func updateItems(at indexPaths: [IndexPath], for action: SelectionAction) {
@@ -532,7 +502,7 @@ class CollectorViewController: UIViewController, InfoLoading, BackgroundHideable
                 guard let presentedVC = segue.destination as? PresentedContainerViewController else { return }
                 
                 presentedVC.manager = manager
-                presentedVC.context = .upNext
+                presentedVC.context = .playAfter
             
             default: break
         }
@@ -753,14 +723,14 @@ extension CollectorViewController: EntityCellDelegate {
         
         let item = manager.queue[indexPath.row]
         
-        var actions = [SongAction.queue(name: cell.nameLabel.text, query: nil), .newPlaylist, .addTo, .show(title: cell.nameLabel.text, context: .song(location: .list, at: indexPath.row, within: manager.queue), canDisplayInLibrary: true), .remove(indexPath)/*, .search(unwinder: { [weak self] in self?.parent })*/].map({ singleItemAlertAction(for: $0, entityType: .song, using: item, from: self) })
+        var actions = [SongAction.queue(type: .all, name: cell.nameLabel.text, query: nil), .queue(type: .playNext, name: cell.nameLabel.text, query: nil), .queue(type: .playLater, name: cell.nameLabel.text, query: nil), .newPlaylist, .addTo, .show(title: cell.nameLabel.text, context: .song(location: .list, at: indexPath.row, within: manager.queue), canDisplayInLibrary: true), .remove(indexPath)/*, .search(unwinder: { [weak self] in self?.parent })*/].map({ singleItemAlertAction(for: $0, entityType: .song, using: item, from: self) })
         
-        if item.existsInLibrary.inverted {
+        if item.canBeAddedToLibrary {
             
             actions.insert(singleItemAlertAction(for: .library, entityType: .song, using: item, from: self), at: 1)
         }
         
-        actions.append(.init(title: "Get Info", style: .default, requiresDismissalFirst: false, handler: { [weak self] in
+        actions.append(.init(title: "Get Info", style: .default, image: SongAction.info(context: .album(at: 0, within: [])).icon22, requiresDismissalFirst: false, handler: { [weak self] in
 
             guard let weakSelf = self else { return }
 

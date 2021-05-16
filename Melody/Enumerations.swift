@@ -10,7 +10,7 @@ enum BackgroundViewState { case visible, removed }
 
 enum VisibilityState { case hidden, visible }
 
-enum QueueViewState { case invoked, dismissed }
+enum CollectedViewState { case invoked, dismissed }
 
 enum DisplayArea { case smaller, typical }
 
@@ -29,8 +29,6 @@ enum StartPoint: Int { case library, search }
 @objc enum ItemStatus: Int { case present, absent }
 
 enum Interval: Int { case pastHour, pastDay, pastWeek, pastMonth, pastThreeMonths, pastSixMonths }
-
-enum LikedState: Int { case none = 1, liked = 2, disliked = 3 }
 
 enum HeaderProperty { case songCount, albumCount, sortOrder, duration, size, dateCreated, creator, copyright, year, genre, likedState }
 
@@ -72,8 +70,6 @@ enum Location { case playlist, album, collection(kind: AlbumBasedCollectionKind,
 enum EditingStyle { case insert, select/*, both*/ }
 
 enum CellState { case untouched, highlighted, selected }
-
-enum HeaderButtonType { case grouping, sort, artist, affinity, insert, info }
 
 // MARK: - Well-Defined
 
@@ -212,7 +208,7 @@ enum EntityType: Int {
             
             case .artist, .albumArtist: return (#imageLiteral(resourceName: "Artists13"), #imageLiteral(resourceName: "Artists16"), #imageLiteral(resourceName: "Artists20"), #imageLiteral(resourceName: "Artists23"))
             
-            case .composer: return (#imageLiteral(resourceName: "ComposersSmall"), #imageLiteral(resourceName: "Composers16"), #imageLiteral(resourceName: "Composers"), #imageLiteral(resourceName: "ComposersLarge"))
+            case .composer: return (#imageLiteral(resourceName: "Composers13"), #imageLiteral(resourceName: "Composers16"), #imageLiteral(resourceName: "Composers20"), #imageLiteral(resourceName: "Composers23"))
             
             case .genre: return (#imageLiteral(resourceName: "Genres16"), #imageLiteral(resourceName: "Genres16"), #imageLiteral(resourceName: "Genres20"), #imageLiteral(resourceName: "Genres23"))
             
@@ -531,7 +527,7 @@ enum LibrarySection: Int, PropertyStripPresented {
             
              case .compilations: return #imageLiteral(resourceName: "Compilations")
             
-            case .composers: return #imageLiteral(resourceName: "Composers")
+            case .composers: return #imageLiteral(resourceName: "Composers20")
             
             case .artists, .albumArtists: return #imageLiteral(resourceName: "Artists20")
             
@@ -551,7 +547,7 @@ enum LibrarySection: Int, PropertyStripPresented {
             
             case .compilations: return #imageLiteral(resourceName: "CompilationsSmall")
             
-            case .composers: return #imageLiteral(resourceName: "ComposersSmall")
+            case .composers: return #imageLiteral(resourceName: "Composers13")
             
             case .artists, .albumArtists: return #imageLiteral(resourceName: "Artists16")
             
@@ -1222,21 +1218,68 @@ enum LibraryRefreshInterval: Int {
 
 enum SongAction {
     
-    case collect, addTo, newPlaylist, remove(IndexPath?), library, queue(name: String?, query: MPMediaQuery?), likedState, rate, insert(items: [MPMediaItem], completions: Completions?), show(title: String?, context: InfoViewController.Context, canDisplayInLibrary: Bool), info(context: InfoViewController.Context), reveal(indexPath: IndexPath), play(title: String?, completion: (() -> ())?), shuffle(mode: String.ShuffleSuffix, title: String?, completion: (() -> ())?), search(unwinder: (() -> UIViewController?)?), customCollection
+    enum QueueAdditionType {
+        
+        case all, playNext, playLater, playAfter, shuffleNext, shuffleLater, shuffleAfter
+        
+        var title: String {
+            
+            switch self {
+                
+                case .all: return "Queue..."
+                    
+                case .playNext: return "Play Next"
+                    
+                case .playLater: return "Play Later"
+                    
+                case .playAfter: return "Play After..."
+                    
+                case .shuffleNext: return "Shuffle Next"
+                    
+                case .shuffleLater: return "Shuffle Later"
+                    
+                case .shuffleAfter: return "Shuffle After..."
+            }
+        }
+    }
+    
+    case collect, addTo, newPlaylist, remove(IndexPath?), library, queue(type: QueueAdditionType, name: String?, query: MPMediaQuery?), likedState, rate, insert(items: [MPMediaItem], completions: Completions?), show(title: String?, context: InfoViewController.Context, canDisplayInLibrary: Bool), info(context: InfoViewController.Context), reveal(indexPath: IndexPath), play(title: String?, completion: (() -> ())?), shuffle(mode: String.ShuffleSuffix, title: String?, completion: (() -> ())?), search(unwinder: (() -> UIViewController?)?), customCollection
     
     var icon: UIImage {
         
         switch self {
             
             case .collect: return #imageLiteral(resourceName: "Collected17")
+                
+            case .newPlaylist: return #imageLiteral(resourceName: "New17")
             
-            case .addTo, .newPlaylist, .customCollection: return #imageLiteral(resourceName: "AddNoBorder")
+            case .customCollection: return #imageLiteral(resourceName: "AddNoBorder")
+                
+            case .addTo: return #imageLiteral(resourceName: "AddToPlaylist17")
             
             case .remove: return #imageLiteral(resourceName: "Discard17")
             
-            case .library: return #imageLiteral(resourceName: "AddToLibrary")
+            case .library: return #imageLiteral(resourceName: "AddToLibrary17")
             
-            case .queue: return #imageLiteral(resourceName: "AddSong17")
+            case .queue(type: let type, name: _, query: _):
+                
+                switch type {
+                    #warning("Incomplete queue song action images")
+                    case .all: return #imageLiteral(resourceName: "AddSong17")
+                        
+                    case .playAfter: return #imageLiteral(resourceName: "PlayAfter17")
+                        
+                    case .playNext: return #imageLiteral(resourceName: "PlayNext17")
+                        
+                    case .playLater: return #imageLiteral(resourceName: "PlayLater17")
+                        
+                    case .shuffleAfter: return #imageLiteral(resourceName: "ShuffleAfter17")
+
+                    case .shuffleNext: return #imageLiteral(resourceName: "ShuffleNext17")
+
+                    case .shuffleLater: return #imageLiteral(resourceName: "ShuffleLater17")
+                }
+                
             
             case .likedState: return #imageLiteral(resourceName: "NoLove17")
             
@@ -1244,7 +1287,7 @@ enum SongAction {
             
             case .insert: return #imageLiteral(resourceName: "AddToPlaylist17")
             
-            case .show: return #imageLiteral(resourceName: "GoTo17NoBorder")
+            case .show: return #imageLiteral(resourceName: "GoToNoBorder17")
             
             case .info: return #imageLiteral(resourceName: "InfoNoBorder17")
             
@@ -1252,9 +1295,79 @@ enum SongAction {
             
             case .play: return #imageLiteral(resourceName: "PlayFilled17")
             
-            case .shuffle: return #imageLiteral(resourceName: "Shuffle15")
+            case .shuffle(mode: let mode, title: _, completion: _):
+                
+                switch mode {
+                    
+                    case .none, .songs: return #imageLiteral(resourceName: "Shuffle15")
+                        
+                    case .albums: return #imageLiteral(resourceName: "ShuffleAlbums17")
+                }
             
             case .search: return #imageLiteral(resourceName: "SearchTab")
+        }
+    }
+    
+    var icon22: UIImage {
+        
+        switch self {
+            
+            case .collect: return #imageLiteral(resourceName: "Collected22")
+                
+            case .newPlaylist: return #imageLiteral(resourceName: "New22")
+            
+            case .customCollection: return #imageLiteral(resourceName: "AddNoBorder22")
+                
+            case .addTo: return #imageLiteral(resourceName: "AddToPlaylist22")
+            
+            case .remove: return #imageLiteral(resourceName: "Discard22")
+            
+            case .library: return #imageLiteral(resourceName: "AddToLibrary22")
+            
+            case .queue(type: let type, name: _, query: _):
+                
+                switch type {
+                    
+                    case .all: return #imageLiteral(resourceName: "AddSong22")
+                        
+                    case .playAfter: return #imageLiteral(resourceName: "PlayAfter22")
+                        
+                    case .playNext: return #imageLiteral(resourceName: "PlayNext22")
+                        
+                    case .playLater: return #imageLiteral(resourceName: "PlayLater22")
+                        
+                    case .shuffleAfter: return #imageLiteral(resourceName: "ShuffleAfter22")
+
+                    case .shuffleNext: return #imageLiteral(resourceName: "ShuffleNext22")
+
+                    case .shuffleLater: return #imageLiteral(resourceName: "ShuffleLater22")
+                }
+                
+            
+            case .likedState: return #imageLiteral(resourceName: "NoLove22")
+            
+            case .rate: return #imageLiteral(resourceName: "Star22")
+            
+            case .insert: return #imageLiteral(resourceName: "AddToPlaylist22")
+            
+            case .show: return #imageLiteral(resourceName: "GoToNoBorder22")
+            
+            case .info: return #imageLiteral(resourceName: "InfoNoBorder22")
+            
+            case .reveal: return #imageLiteral(resourceName: "Context22")
+            
+            case .play: return #imageLiteral(resourceName: "PlayFilled22")
+            
+            case .shuffle(mode: let mode, title: _, completion: _):
+                
+                switch mode {
+                    
+                    case .none, .songs: return #imageLiteral(resourceName: "Shuffle22")
+                        
+                    case .albums: return #imageLiteral(resourceName: "ShuffleAlbums22")
+                }
+            
+            case .search: return #imageLiteral(resourceName: "Search22")
         }
     }
     
@@ -1262,7 +1375,16 @@ enum SongAction {
         
         switch self {
             
-            case .addTo, .newPlaylist, .play, .shuffle, .info, .queue, .rate, .likedState, .show, .customCollection: return true
+            case .addTo, .newPlaylist, .play, .shuffle, .info, .rate, .likedState, .show, .customCollection: return true
+                
+            case .queue(type: let type, name: _, query: _):
+                
+                switch type {
+                    
+                    case .all, .playAfter, .shuffleAfter: return true
+                        
+                    default: return warnForQueueInterruption && addGuard
+                }
         
             case .collect, .remove, .library, .insert, .reveal, .search: return false
         }
@@ -1676,7 +1798,7 @@ enum SecondaryCategory: Int, CaseIterable {
         }
     }
     
-    func propertyString(from entity: MPMediaEntity, context: EntityPropertyCollectionViewCell.EntityPropertyContext) -> String? {
+    func propertyString(from entity: MPMediaEntity, context: EntityPropertyCollectionViewCell.EntityPropertyContext, vc: Any? = nil) -> String? {
         
         switch self {
             
@@ -1808,9 +1930,23 @@ enum SecondaryCategory: Int, CaseIterable {
                 
                 return year == 0 ? (context == .cell ? "-" : nil) : String(year)
             
-            case .songCount: return (entity as? MPMediaItemCollection)?.songCount.formatted
+            case .songCount:
+                
+                if let playlist = entity as? MPMediaPlaylist {
+                    
+                    return (MPMediaQuery.for(.playlist, using: playlist).itemsAccessed(at: (vc as? CollectionsViewController)?.presented == true || showiCloudItems ? .all : .standard).overrideOffline(if: (vc as? CollectionsViewController)?.presented == true).items?.count ?? (entity as? MPMediaItemCollection)?.songCount)?.formatted
+                }
+                
+                return (entity as? MPMediaItemCollection)?.songCount.formatted
             
-            case .albumCount: return (entity as? MPMediaItemCollection)?.albumCount.formatted
+            case .albumCount:
+                
+                if let playlist = entity as? MPMediaPlaylist {
+                    
+                    return (MPMediaQuery.for(.playlist, using: playlist).itemsAccessed(at: (vc as? CollectionsViewController)?.presented == true || showiCloudItems ? .all : .standard).overrideOffline(if: (vc as? CollectionsViewController)?.presented == true).items?.count ?? (entity as? MPMediaItemCollection)?.albumCount)?.formatted
+                }
+                
+                return (entity as? MPMediaItemCollection)?.albumCount.formatted
             
             case .copyright: return (entity as? MPMediaItem)?.copyright
             
@@ -1920,6 +2056,150 @@ enum SecondaryCategory: Int, CaseIterable {
                 }
             
             default: return image
+        }
+    }
+}
+
+enum HeaderButtonType: String {
+    
+    case grouping = "Grouping",
+         sort = "Sort",
+         artist = "View Artist",
+         affinity = "Affinity",
+         insert = "Insert",
+         info = "Get Info",
+         newPlaylist = "New Playlist",
+         share = "Share"
+    
+    var requiresDismissalFirst: Bool {
+        
+        switch self {
+            
+            case .grouping, .sort, .affinity, .insert, .info, .newPlaylist, .share: return true
+                
+            case .artist: return false
+        }
+    }
+    
+    func subtitleDetails(with assistiveText: String?, basedOn entityType: EntityType?, for entity: MPMediaEntity?) -> (text: String?, attributes: [Attributes]?)? {
+        
+        switch self {
+            
+            case .grouping:
+                
+                guard let assistiveText = assistiveText else { return nil }
+                
+                let text = "Change grouping from \(assistiveText)"//\(entityType == nil ? "viewing" : "grouped by") \(assistiveText)"
+                
+                return (text, [.init(name: .font, value: .other(UIFont.font(ofWeight: .bold, size: TextStyle.secondary.textSize())), range: text.nsRange(of: assistiveText, options: []))])
+                
+            case .sort:
+                
+                guard let assistiveText = assistiveText else { return nil }
+                
+                let text = "Change sort order from \(assistiveText)"
+                
+                return (text, [.init(name: .font, value: .other(UIFont.font(ofWeight: .bold, size: TextStyle.secondary.textSize())), range: text.nsRange(of: assistiveText, options: []))])
+                
+            case .artist: return nil
+                
+            case .affinity:
+                
+                guard let entity = entity as? Settable else { return nil }
+                
+                let text = "Change heart rating from \(entity.likedState.title)"
+                
+                return (text, [.init(name: .font, value: .other(UIFont.font(ofWeight: .bold, size: TextStyle.secondary.textSize())), range: text.nsRange(of: entity.likedState.title, options: []))])
+                
+            case .insert: return ("Add songs to this playlist from my library", nil)
+                
+            case .info: return nil
+                
+//                guard let entityType = entityType else { return nil }
+//
+//                return ("Get \(entityType.title()) info", nil)
+            
+            case .newPlaylist: return nil//("Create and edit a new playlist", nil)
+                
+            case .share: return nil
+                
+//                guard let entityType = entityType else { return nil }
+//
+//                return ("Share \(entityType.title()) details", nil)
+        }
+    }
+    
+    func action(at index: Int, for entity: MPMediaEntity?, basedOn vc: HeaderViewContaining & UIViewController) -> (() -> Void)? {
+
+        switch self {
+
+            case .grouping, .sort, .artist, .insert, .info, .newPlaylist, .share: return vc.headerView.buttonDetails[index].action
+
+            case .affinity: return {
+                
+                let actions = [LikedState.none, .liked, .disliked].map({ value in AlertAction.init(title: value.title, accessoryType: .check({ (entity as? Settable)?.likedState == value }), image: value.alertImage, requiresDismissalFirst: false, handler: {
+                    
+                    guard let entity = entity, let settable = entity as? Settable else { return }
+                
+                    settable.set(property: entity is MPMediaItem || entity is MPMediaPlaylist ? .likedState : .albumLikedState, to: NSNumber.init(value: value.rawValue))
+                    
+                    notifier.post(name: .likedStateChanged, object: nil, userInfo: [String.id: entity.persistentID])
+                    
+                }) })
+                
+                vc.showAlert(title: vc.parent?.title, subtitle: "Change heart rating to...", with: actions)
+            }
+        }
+    }
+    
+    var image: UIImage {
+        
+        switch self {
+            
+            case .grouping: return #imageLiteral(resourceName: "Grouping22")
+                    
+            case .sort: return #imageLiteral(resourceName: "Order22")
+                
+            case .artist: return #imageLiteral(resourceName: "Artists23")
+                
+            case .affinity: return #imageLiteral(resourceName: "NoLove22")
+                
+            case .insert: return #imageLiteral(resourceName: "AddNoBorder22")
+                
+            case .info: return #imageLiteral(resourceName: "InfoNoBorder22")
+            
+            case .newPlaylist: return #imageLiteral(resourceName: "New22")
+                
+            case .share: return #imageLiteral(resourceName: "Share22")
+        }
+    }
+}
+
+enum LikedState: Int {
+    
+    case none = 1, liked = 2, disliked = 3
+    
+    var title: String {
+        
+        switch self {
+            
+            case .none: return "None" // Neutral
+                
+            case .liked: return "Loved" // Liked
+                
+            case .disliked: return "Disliked"
+        }
+    }
+    
+    var alertImage: UIImage {
+        
+        switch self {
+            
+            case .none: return #imageLiteral(resourceName: "NoLove22")
+                
+            case .liked: return #imageLiteral(resourceName: "Loved22")
+                
+            case .disliked: return #imageLiteral(resourceName: "Unloved22")
         }
     }
 }

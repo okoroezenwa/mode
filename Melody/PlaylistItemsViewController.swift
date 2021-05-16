@@ -12,13 +12,34 @@ import StoreKit
 
 class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, AlbumTransitionable, AlbumArtistTransitionable, GenreTransitionable, ComposerTransitionable, ArtistTransitionable, SupplementaryHeaderInfoLoading, QueryUpdateable, CellAnimatable, SingleItemActionable, PillButtonContaining, Refreshable, EntityVerifiable, TopScrollable, EntityContainer {
 
-    @IBOutlet var tableView: MELTableView!
+    @IBOutlet var tableView: MELTableView! {
+        
+        didSet {
+            
+            let gr = UIPanGestureRecognizer.init(target: entityVC, action: #selector(EntityItemsViewController.updateSections))
+            gr.delegate = entityVC
+            tableView.addGestureRecognizer(gr)
+        }
+    }
     @objc lazy var headerView: HeaderView = {
         
         let view = HeaderView.instance
         self.actionsStackView = view.actionsStackView
         self.stackView = view.scrollStackView
-        view.buttonDetails = [(.grouping, #imageLiteral(resourceName: "Grouping13"), "Grouping", { }), (.sort, #imageLiteral(resourceName: "Order13"), arrangementLabelText, { [weak self] in self?.showArranger() }), (.info, #imageLiteral(resourceName: "InfoNoBorder13"), nil, { [weak self] in self?.entityVC?.showOptions() }), (.insert, #imageLiteral(resourceName: "AddToPlaylist10"), nil, { [weak self] in self?.addSongs() }), (.affinity, SecondaryCategory.loved.propertyImage(from: playlist, context: .header), nil, { [weak self] in self?.setLiked() })]
+        view.buttonDetails = [
+            
+            (.grouping, #imageLiteral(resourceName: "Grouping13"), "Grouping", { }),
+            (.sort, #imageLiteral(resourceName: "Order13"), arrangementLabelText, { [weak self] in self?.showArranger() }),
+            (.info, #imageLiteral(resourceName: "InfoNoBorder13"), nil, { [weak self] in self?.entityVC?.showOptions() }),
+            (.affinity, SecondaryCategory.loved.propertyImage(from: playlist, context: .header), nil, { [weak self] in self?.setLiked() }),
+            (.share, #imageLiteral(resourceName: "Share14"), nil, { })
+        ]
+        
+        if playlist?.isAppleMusic == false {
+            
+            view.buttonDetails.insert((.insert, #imageLiteral(resourceName: "AddNoBorder11"), nil, { [weak self] in self?.addSongs() }), at: 3)
+        }
+        
         view.tapDelegate = self
         view.showTextView = true
         view.showLoved = true
@@ -39,9 +60,9 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
         
         didSet {
             
-            let shuffleView = PillButtonView.with(title: .shuffleButtonTitle, image: #imageLiteral(resourceName: "Shuffle13"), tapAction: .init(action: #selector(shuffle), target: self))
-            shuffleButton = shuffleView.button
-            self.shuffleView = shuffleView
+            let actionsView = PillButtonView.with(title: "Actions", image: #imageLiteral(resourceName: "ActionsMenu15"), tapAction: .init(action: #selector(SongActionManager.showActionsForAll(_:)), target: songManager), longPressAction: .init(action: #selector(SongActionManager.showActionsForAll(_:)), target: songManager))
+            itemActionsButton = actionsView.button
+            self.itemActionsView = actionsView
             
             let filterView = PillButtonView.with(title: "Filter", image: #imageLiteral(resourceName: "Filter13"), tapClosure: { [weak self] _ in
                 
@@ -51,11 +72,11 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
             })
             self.filterView = filterView
             
-            let editView = PillButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, tapAction: .init(action: #selector(SongActionManager.toggleEditing(_:)), target: songManager), longPressAction: .init(action: #selector(SongActionManager.showActionsForAll(_:)), target: songManager))
+            let editView = PillButtonView.with(title: .inactiveEditButtonTitle, image: .inactiveEditImage, tapAction: .init(action: #selector(SongActionManager.toggleEditing(_:)), target: songManager))
             editButton = editView.button
             self.editView = editView
             
-            [shuffleView, filterView, editView].forEach({ actionsStackView.addArrangedSubview($0) })
+            [editView, filterView, actionsView].forEach({ actionsStackView.addArrangedSubview($0) })
         }
     }
     @objc var stackView: UIStackView! {
@@ -88,19 +109,10 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
     @objc var descriptionTextView: MELTextView!
     @objc var activityIndicator: MELActivityIndicatorView!
     @objc var arrangeButton: MELButton!
-    @objc var editButton: MELButton! {
-        
-        didSet {
-            
-            let allHold = UILongPressGestureRecognizer.init(target: songManager, action: #selector(SongActionManager.showActionsForAll(_:)))
-            allHold.minimumPressDuration = longPressDuration
-            (editButton.superview as? PillButtonView)?.addGestureRecognizer(allHold)
-            LongPressManager.shared.gestureRecognisers.append(Weak.init(value: allHold))
-        }
-    }
-    @objc var shuffleButton: MELButton!
+    @objc var editButton: MELButton!
+    @objc var itemActionsButton: MELButton!
 //    @objc var likedStateButton: MELButton!
-    @objc var shuffleView: PillButtonView!
+    @objc var itemActionsView: PillButtonView!
     @objc var filterView: PillButtonView!
     @objc var editView: PillButtonView!
     
@@ -112,7 +124,19 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
     @objc lazy var sorter: Sorter = { Sorter.init(operation: self.operation) }()
     
     @objc var actionableSongs: [MPMediaItem] { return filtering ? filteredSongs : songs }
-    var applicableActions: [SongAction] { return [SongAction.collect, .info(context: .album(at: 0, within: [])), .queue(name: playlist?.name ??? .untitledPlaylist, query: nil), .newPlaylist, .addTo]/* + (isInDebugMode ? [.customCollection] : [])*/ }
+    var applicableActions: [SongAction] { return [
+        
+        .collect,
+        .info(context: .album(at: 0, within: [])),
+        .queue(type: .all, name: playlist?.name ??? .untitledPlaylist, query: nil),
+        .queue(type: .playNext, name: playlist?.name ??? .untitledPlaylist, query: nil),
+        .queue(type: .playLater, name: playlist?.name ??? .untitledPlaylist, query: nil),
+        .newPlaylist,
+        .addTo,
+        .shuffle(mode: .songs, title: playlist?.name ??? .untitledPlaylist, completion: nil),
+        .shuffle(mode: .albums, title: playlist?.name ??? .untitledPlaylist, completion: nil)
+        
+    ]/* + (isInDebugMode ? [.customCollection] : [])*/ }
     @objc lazy var songManager: SongActionManager = { return SongActionManager.init(actionable: self) }()
     
     @objc var playlistQuery: MPMediaQuery? { return entityVC?.query }
@@ -153,7 +177,15 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
                 
                 if applySort {
                     
-                    sortAllItems()
+                    if sortCriteria == .random {
+                        
+                        songs.reverse()
+                        tableView.reloadData()
+                        
+                    } else {
+                    
+                        sortAllItems()
+                    }
                 }
                 
                 if let playlist = playlist {
@@ -431,16 +463,16 @@ class PlaylistItemsViewController: UIViewController, FilterContextDiscoverable, 
             }
         }()
         
-        shuffleButton.superview?.isHidden = count < 2
+//        shuffleButton.superview?.isHidden = count < 2
         tableView.tableHeaderView?.frame.size.height = 92 + descriptionHeight
         tableView.tableHeaderView = headerView
         
-        var array = [shuffleView, filterView, editView]
+        let array = [editView, filterView, itemActionsView]
         
-        if count < 2 {
-            
-            array.remove(at: 0)
-        }
+//        if count < 2 {
+//
+//            array.remove(at: 0)
+//        }
         
         borderedButtons = array
         

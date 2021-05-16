@@ -477,7 +477,7 @@ struct LyricsObject {
     }
 }
 
-protocol LyricsObjectContainer: class {
+protocol LyricsObjectContainer: AnyObject {
     
     var currentObject: LyricsObject { get set }
     var hits: [Hit] { get set }
